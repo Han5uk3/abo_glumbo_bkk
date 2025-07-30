@@ -1,0 +1,11 @@
+{
+    "provider": "apple_pay",
+    "data": {
+      "merchantIdentifier": "merchant.com.aboglumbo.telr",
+      "displayName": "Abo Glumbo",
+      "merchantCapabilities": ["3DS", "debit", "credit"],
+      "supportedNetworks": ["visa", "masterCard", "amex"],
+      "countryCode": "SA",
+      "currencyCode": "SAR"
+    }
+  }
