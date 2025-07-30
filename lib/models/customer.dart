@@ -3,7 +3,7 @@ import 'package:abo_glumbo_bbk/models/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CustomerModel {
-  final String uid;
+  final String? uid;
   final String? name;
   final String? email;
   final String? phone;
@@ -19,7 +19,7 @@ class CustomerModel {
   final String? districtName;
 
   CustomerModel({
-    required this.uid,
+    this.uid,
     this.name,
     this.email,
     this.phone,
@@ -47,11 +47,13 @@ class CustomerModel {
       location: json['location'] != null
           ? LocationModel.fromJson(json['location'] as Map<String, dynamic>)
           : null,
-      addresses: (json['addresses'] as List<dynamic>?)
+      addresses:
+          (json['addresses'] as List<dynamic>?)
               ?.map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      favourites: (json['favourites'] as List<dynamic>?)
+      favourites:
+          (json['favourites'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
@@ -133,8 +135,11 @@ class CustomerModel {
     checkAndSet('lanCode', lanCode, previous.lanCode);
     checkAndSet('country', country, previous.country);
     checkAndSet('location', location?.toJson(), previous.location?.toJson());
-    checkAndSet('addresses', addresses.map((e) => e.toJson()).toList(),
-        previous.addresses.map((e) => e.toJson()).toList());
+    checkAndSet(
+      'addresses',
+      addresses.map((e) => e.toJson()).toList(),
+      previous.addresses.map((e) => e.toJson()).toList(),
+    );
     checkAndSet('favourites', favourites, previous.favourites);
     checkAndSet('createdAt', createdAt, previous.createdAt);
     checkAndSet('isAdmin', isAdmin, previous.isAdmin);

@@ -1,30 +1,30 @@
 import 'package:abo_glumbo_bbk/firebase_options.dart';
-import 'package:abo_glumbo_bbk/helpers/app_color.dart';
+import 'package:abo_glumbo_bbk/pages/splash%20screen/splash_screen.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
-import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/providers.dart';
 import 'package:abo_glumbo_bbk/services/notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 final String hiveBoxName = 'myBox';
 GlobalKey<NavigatorState>? navigatorKey = GlobalKey();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
+  await Hive.initFlutter();
+  await Hive.openBox(hiveBoxName);
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
   await NotificationServices.setupFCMListeners();
   await NotificationServices.checkForInitialMessage();
-
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -32,7 +32,6 @@ Future<void> main() async {
       statusBarColor: Colors.transparent,
     ),
   );
-
   runApp(MyApp(navigatorKey: navigatorKey));
 }
 
@@ -43,13 +42,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AccountBloc(),
-      child: BlocBuilder<AccountBloc, AccountState>(
-        builder: (context, state) {
-          return MultiBlocProvider(
-            providers: providers,
-            child: MaterialApp(
+    return MultiBlocProvider(
+      providers: providers,
+      child: BlocListener<AccountBloc, AccountState>(
+        listener: (context, state) {
+          debugPrint(
+            '👂 BlocListener: Locale changed to: ${state.locale.languageCode}',
+          );
+        },
+        child: BlocBuilder<AccountBloc, AccountState>(
+          builder: (context, state) {
+            debugPrint(
+              '🎨 MaterialApp: Building with locale: ${state.locale.languageCode}',
+            );
+            return MaterialApp(
               navigatorKey: navigatorKey,
               title: 'Abo Glumbo',
               locale: state.locale,
@@ -60,6 +66,36 @@ class MyApp extends StatelessWidget {
                 GlobalCupertinoLocalizations.delegate,
               ],
               supportedLocales: const [Locale('en'), Locale('ar')],
+              localeResolutionCallback: (locale, supportedLocales) {
+                debugPrint(
+                  '🌍 MaterialApp: Locale resolution - device: ${locale?.languageCode}, current: ${state.locale.languageCode}',
+                );
+
+                // Always return the user's saved locale preference, not the device locale
+                if (supportedLocales.any(
+                  (supported) =>
+                      supported.languageCode == state.locale.languageCode,
+                )) {
+                  debugPrint(
+                    '✅ MaterialApp: Using saved user locale: ${state.locale.languageCode}',
+                  );
+                  return state.locale;
+                }
+
+                // Fallback to first supported locale only if user locale is not supported
+                debugPrint(
+                  '⚠️ MaterialApp: User locale not supported, falling back to: ${supportedLocales.first.languageCode}',
+                );
+                return supportedLocales.first;
+              },
+              builder: (context, child) {
+                return Directionality(
+                  textDirection: state.locale.languageCode == 'ar'
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  child: child!,
+                );
+              },
               theme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
                 scaffoldBackgroundColor: AppColors.bgWhite,
@@ -140,10 +176,11 @@ class MyApp extends StatelessWidget {
                 ),
                 useMaterial3: true,
               ),
-              home: const LoginPage(),
-            ),
-          );
-        },
+              debugShowCheckedModeBanner: false,
+              home: const SplashScreen(),
+            );
+          },
+        ),
       ),
     );
   }

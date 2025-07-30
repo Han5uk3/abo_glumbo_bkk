@@ -12,7 +12,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'abo glumbo';
 
   @override
-  String get appLoginCaption => 'Your go-to app for finding qualified professionals.';
+  String get appLoginCaption =>
+      'Your go-to app for finding qualified professionals.';
 
   @override
   String get mobileNumber => 'Mobile Number';
@@ -36,10 +37,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otpSent => 'OTP Sent';
 
   @override
-  String get anErrorOccurredPleaseTryAgainLater => 'An error occurred, please try again later';
+  String get anErrorOccurredPleaseTryAgainLater =>
+      'An error occurred, please try again later';
 
   @override
-  String get pleaseEnterAValidPhoneNumber => 'Please enter a valid phone number';
+  String get pleaseEnterAValidPhoneNumber =>
+      'Please enter a valid phone number';
 
   @override
   String get invalidOtp => 'Invalid OTP';
@@ -198,7 +201,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAccount => 'Create account';
 
   @override
-  String get pleaseFillTheInputBelowHereToContinue => 'Please fill the input below here to continue';
+  String get pleaseFillTheInputBelowHereToContinue =>
+      'Please fill the input below here to continue';
 
   @override
   String get failedToLoadContent => 'Failed to load content';
@@ -213,7 +217,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobCategories => 'Job categories';
 
   @override
-  String get failedToLoadDataPleaseTryAgainLater => 'Failed to load data. Please try again later.';
+  String get failedToLoadDataPleaseTryAgainLater =>
+      'Failed to load data. Please try again later.';
 
   @override
   String get noBookingsFound => 'No bookings found.';
@@ -240,7 +245,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serviceBookedSuccessfully => 'Service booked successfully';
 
   @override
-  String get checkForBookingStatus => 'Check your booking status in \'My Bookings\' section';
+  String get checkForBookingStatus =>
+      'Check your booking status in \'My Bookings\' section';
 
   @override
   String get selectDateTime => 'Select date & time';
@@ -312,10 +318,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failedToCancelBooking => 'Failed to cancel booking';
 
   @override
-  String get areYouSureToWantCancelBooking => 'Are you sure to want cancel booking?';
+  String get areYouSureToWantCancelBooking =>
+      'Are you sure to want cancel booking?';
 
   @override
-  String get youWillBeRefundedTheFullAmount => 'You will be refunded the full amount';
+  String get youWillBeRefundedTheFullAmount =>
+      'You will be refunded the full amount';
 
   @override
   String get no => 'No';
@@ -348,7 +356,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccount => 'Delete account';
 
   @override
-  String get areYouSureYouWantToDeleteAccount => 'Are you sure you want to delete the account permenantly';
+  String get areYouSureYouWantToDeleteAccount =>
+      'Are you sure you want to delete the account permenantly';
 
   @override
   String get signUpLater => 'Sign up later';
@@ -384,31 +393,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get processingPayment => 'Processing Payment';
 
   @override
-  String get processingPaymentDesc => 'Please wait while we securely process your transaction';
+  String get processingPaymentDesc =>
+      'Please wait while we securely process your transaction';
 
   @override
   String get transactionError => 'Transaction Error';
 
   @override
-  String get transactionErrorDesc => 'An unexpected error occurred. Please try again later.';
+  String get transactionErrorDesc =>
+      'An unexpected error occurred. Please try again later.';
 
   @override
   String get paymentSuccessful => 'Payment Successful';
 
   @override
-  String get paymentSuccessfulDesc => 'Your booking has been processed successfully.';
+  String get paymentSuccessfulDesc =>
+      'Your booking has been processed successfully.';
 
   @override
   String get paymentFailed => 'Payment Failed';
 
   @override
-  String get paymentFailedDesc => 'Booking could not be saved. Please try again.';
+  String get paymentFailedDesc =>
+      'Booking could not be saved. Please try again.';
 
   @override
   String get paymentPending => 'Cash Payment Pending';
 
   @override
-  String get paymentPendingDesc => 'Your booking is confirmed. Please pay the worker in cash at the time of service.';
+  String get paymentPendingDesc =>
+      'Your booking is confirmed. Please pay the worker in cash at the time of service.';
 
   @override
   String get ok => 'Ok';
@@ -417,7 +431,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupRequired => 'Signup Required';
 
   @override
-  String get signUpRequiredDes => 'You\'re currently using the app as a guest. To access more features, please sign up or log in.';
+  String get signUpRequiredDes =>
+      'You\'re currently using the app as a guest. To access more features, please sign up or log in.';
 
   @override
   String get contactSupportOptions => 'Contact Support Options';
@@ -432,7 +447,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidVerificationCode => 'Invalid verification code';
 
   @override
-  String get invalidVerificationId => 'Invalid verification ID. Please request a new OTP.';
+  String get invalidVerificationId =>
+      'Invalid verification ID. Please request a new OTP.';
 
   @override
   String get otpExpired => 'OTP expired. Please request a new OTP.';
@@ -534,10 +550,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get service => 'Service';
 
   @override
-  String get permissionLocation => 'Could not fetch location. Please check permissions.';
+  String get permissionLocation =>
+      'Could not fetch location. Please check permissions.';
 
   @override
-  String get enterServiceLocation => 'Enter service location or tap to fetch current location';
+  String get enterServiceLocation =>
+      'Enter service location or tap to fetch current location';
 
   @override
   String get yourLocation => 'Your location';
@@ -582,7 +600,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorInitializingPayment => 'Error initializing payment';
 
   @override
-  String get telrNotConfigured => 'Telr credentials not configured. Please update TelrConfig class.';
+  String get telrNotConfigured =>
+      'Telr credentials not configured. Please update TelrConfig class.';
 
   @override
   String get paymentError => 'Payment Error';
@@ -606,7 +625,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingCompleted => 'Booking completed!';
 
   @override
-  String get bookingCompletedDesc => 'Transaction completed successfully. Your booking has been confirmed.';
+  String get bookingCompletedDesc =>
+      'Transaction completed successfully. Your booking has been confirmed.';
 
   @override
   String get date => 'Date';
@@ -636,7 +656,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentStatus => 'Payment Status';
 
   @override
-  String get pendingPayment => 'Payment pending. Please pay when the worker completes the work.';
+  String get pendingPayment =>
+      'Payment pending. Please pay when the worker completes the work.';
 
   @override
   String get notifications => 'Notifications';
@@ -714,10 +735,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get migratingData => 'Migrating your data';
 
   @override
-  String get weAreMigratingYourData => 'We\'re securely transferring all your data to your new number. This process may take a few minutes.';
+  String get weAreMigratingYourData =>
+      'We\'re securely transferring all your data to your new number. This process may take a few minutes.';
 
   @override
-  String get pleaseDontCloseTheApp => 'Please do not close the application during this process, as it may lead to loss of your data.';
+  String get pleaseDontCloseTheApp =>
+      'Please do not close the application during this process, as it may lead to loss of your data.';
 
   @override
   String get transferringData => 'Status: Transferring data...';
@@ -738,7 +761,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectDistrict => 'Select District';
 
   @override
-  String get deleteAccoundSnack => 'Deleting Account..., you will be logged out';
+  String get deleteAccoundSnack =>
+      'Deleting Account..., you will be logged out';
 
   @override
   String get bioMetricAuthentication => 'Biometric Authentication';
@@ -747,7 +771,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseServiceAddress => 'Choose Service Address';
 
   @override
-  String get pickServiceAddress => 'Pick the address where you need the service.';
+  String get pickServiceAddress =>
+      'Pick the address where you need the service.';
 
   @override
   String get serviceto => 'Service to:';
@@ -768,16 +793,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseAddANewAddress => 'Please add a new address';
 
   @override
-  String get locationServicesDisabled => 'Location services are disabled. Please enable location services in your device settings.';
+  String get locationServicesDisabled =>
+      'Location services are disabled. Please enable location services in your device settings.';
 
   @override
-  String get locationPermissionDenied => 'Location permissions are denied. Please enable location permissions in your device settings.';
+  String get locationPermissionDenied =>
+      'Location permissions are denied. Please enable location permissions in your device settings.';
 
   @override
-  String get locationPermissionDeniedForever => 'Location permissions are permanently denied. Please enable location permissions in your device settings.';
+  String get locationPermissionDeniedForever =>
+      'Location permissions are permanently denied. Please enable location permissions in your device settings.';
 
   @override
-  String get couldNotGetCurrentLocation => 'Could not fetch location. Please check permissions.';
+  String get couldNotGetCurrentLocation =>
+      'Could not fetch location. Please check permissions.';
 
   @override
   String get selectedLocation => 'Selected Location';
@@ -924,7 +953,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get call => 'Call';
 
   @override
-  String get biometricNotSupported => 'Biometric authentication is not supported on this device';
+  String get biometricNotSupported =>
+      'Biometric authentication is not supported on this device';
 
   @override
   String get pleaseAuthenticateToContinue => 'Please authenticate to continue';
@@ -933,10 +963,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authenticationFailed => 'Authentication failed';
 
   @override
-  String get biometricNotAvailable => 'Biometric authentication is not available on this device';
+  String get biometricNotAvailable =>
+      'Biometric authentication is not available on this device';
 
   @override
-  String get biometricTemporarilyLocked => 'Biometric authentication is temporarily locked on this device';
+  String get biometricTemporarilyLocked =>
+      'Biometric authentication is temporarily locked on this device';
+
+  @override
+  String get notificationLanguageChanged => 'Notification language changed';
+
+  @override
+  String get noWishlistItems => 'No wishlist items';
+
+  @override
+  String get errorFillingProfile => 'Error filling profile';
+
+  @override
+  String get errorFetchingLocations => 'Error fetching locations';
 
   @override
   String get category => 'Category';

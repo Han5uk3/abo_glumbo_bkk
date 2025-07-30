@@ -2,7 +2,7 @@
   "appName": "أبو جلمبو",
   "appLoginCaption": "التطبيق للعثور على محترفين مؤهلين.",
   "mobileNumber": "رقم الهاتف ",
-  "continue": "متابعة",
+  "continueText": "يكمل",
   "byContinuingYouAgreeToOur": "من خلال المتابعة، فإنك توافق علينا ",
   "termsOfUseAndPrivacyPolicy": "شروط الاستخدام وسياسة الخصوصية",
   "otpAutoVerified": "تم التحقق التلقائي من رمز التحقق",
@@ -125,7 +125,6 @@
   "cards":"الدفع بالبطاقه",
   "applePay":"الدفع بواسطة ابل باي",
   "cashOnHands":"الدفع نقدي",
-  "continueText":"يكمل",
   "processingPayment":"معالجة الدفع",
   "processingPaymentDesc":"يرجى الانتظار بينما نقوم بمعالجة معاملتك بشكل آمن",
   "transactionError":"خطأ في المعاملة",
@@ -303,6 +302,7 @@
   "submitReviewAndTip": "ارسل التقييم إكرامية",
   "submitReview":"ارسل التقييم",
   "submitting":"جاري الارسال...",
+  "processing":"Processing...",
   "liveTracking":"تتبع مباشر",
   "loadingLocation":"جاري تحميل الموقع...",
   "trackWorker":"تتبع العامل",
@@ -317,6 +317,9 @@
   "authenticationFailed":"فشل التصفية البصمة",
   "biometricNotAvailable":"التصفية البصمة غير متوفرة على هذا الجهاز",
   "biometricTemporarilyLocked":"التصفية البصمة مقفلة مؤقتا على هذا الجهاز",
-  
+  "notificationLanguageChanged":"تم تغيير لغة الاشعارات",
+  "noWishlistItems":"لا توجد عناصر المفضلة",
+  "errorFillingProfile":"خطاء في تعبئة الملف الشخصي",
+  "errorFetchingLocations":"خطاء في جلب المواقع",
   "category":"فئة"
 }

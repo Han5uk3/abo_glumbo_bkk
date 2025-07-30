@@ -319,5 +319,9 @@
   "authenticationFailed":"Authentication failed",
   "biometricNotAvailable":"Biometric authentication is not available on this device",
   "biometricTemporarilyLocked":"Biometric authentication is temporarily locked on this device",
+  "notificationLanguageChanged":"Notification language changed",
+  "noWishlistItems":"No wishlist items",
+  "errorFillingProfile":"Error filling profile",
+  "errorFetchingLocations":"Error fetching locations",
   "category":"Category"
 }

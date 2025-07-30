@@ -36,7 +36,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otpSent => 'تم إرسال رمز التحقق';
 
   @override
-  String get anErrorOccurredPleaseTryAgainLater => 'حدث خطأ، يرجى المحاولة مرة أخرى لاحقًا';
+  String get anErrorOccurredPleaseTryAgainLater =>
+      'حدث خطأ، يرجى المحاولة مرة أخرى لاحقًا';
 
   @override
   String get pleaseEnterAValidPhoneNumber => 'يرجى إدخال رقم الهاتف الصالح';
@@ -198,7 +199,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get createAccount => 'إنشاء حساب';
 
   @override
-  String get pleaseFillTheInputBelowHereToContinue => 'يرجى ملء المعلومات أدناه للمتابعة';
+  String get pleaseFillTheInputBelowHereToContinue =>
+      'يرجى ملء المعلومات أدناه للمتابعة';
 
   @override
   String get failedToLoadContent => 'فشل في تحميل المحتوى';
@@ -213,7 +215,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get jobCategories => 'فئات الوظائف';
 
   @override
-  String get failedToLoadDataPleaseTryAgainLater => 'فشل في تحميل البيانات. يرجى المحاولة مرة أخرى لاحقًا.';
+  String get failedToLoadDataPleaseTryAgainLater =>
+      'فشل في تحميل البيانات. يرجى المحاولة مرة أخرى لاحقًا.';
 
   @override
   String get noBookingsFound => 'لم يتم العثور على حجوزات.';
@@ -222,7 +225,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchServices => 'ابحث عن الخدمات';
 
   @override
-  String get noServicesInYourWishlist => 'لا توجد خدمات في قائمة الرغبات الخاصة بك';
+  String get noServicesInYourWishlist =>
+      'لا توجد خدمات في قائمة الرغبات الخاصة بك';
 
   @override
   String get failedToSaveBooking => 'فشل في حفظ الحجز';
@@ -312,7 +316,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failedToCancelBooking => 'فشل في إلغاء الحجز';
 
   @override
-  String get areYouSureToWantCancelBooking => 'هل أنت متأكد أنك تريد إلغاء الحجز؟';
+  String get areYouSureToWantCancelBooking =>
+      'هل أنت متأكد أنك تريد إلغاء الحجز؟';
 
   @override
   String get youWillBeRefundedTheFullAmount => 'سيتم استرداد المبلغ بالكامل';
@@ -348,7 +353,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteAccount => 'حذف الحساب';
 
   @override
-  String get areYouSureYouWantToDeleteAccount => 'هل أنت متأكد أنك تريد حذف الحساب نهائيًا؟';
+  String get areYouSureYouWantToDeleteAccount =>
+      'هل أنت متأكد أنك تريد حذف الحساب نهائيًا؟';
 
   @override
   String get signUpLater => 'التسجيل لاحقاً';
@@ -384,13 +390,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get processingPayment => 'معالجة الدفع';
 
   @override
-  String get processingPaymentDesc => 'يرجى الانتظار بينما نقوم بمعالجة معاملتك بشكل آمن';
+  String get processingPaymentDesc =>
+      'يرجى الانتظار بينما نقوم بمعالجة معاملتك بشكل آمن';
 
   @override
   String get transactionError => 'خطأ في المعاملة';
 
   @override
-  String get transactionErrorDesc => 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقًا.';
+  String get transactionErrorDesc =>
+      'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقًا.';
 
   @override
   String get paymentSuccessful => 'تم الدفع بنجاح';
@@ -408,7 +416,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get paymentPending => 'الدفع النقدي معلق';
 
   @override
-  String get paymentPendingDesc => 'تم تأكيد حجزك، يرجى دفع المبلغ نقدًا للعامل عند تقديم الخدمة.';
+  String get paymentPendingDesc =>
+      'تم تأكيد حجزك، يرجى دفع المبلغ نقدًا للعامل عند تقديم الخدمة.';
 
   @override
   String get ok => 'نعم';
@@ -417,7 +426,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signupRequired => 'التسجيل مطلوب';
 
   @override
-  String get signUpRequiredDes => 'أنت تستخدم التطبيق حاليًا كضيف. للوصول إلى المزيد من الميزات، يرجى التسجيل أو تسجيل الدخول.';
+  String get signUpRequiredDes =>
+      'أنت تستخدم التطبيق حاليًا كضيف. للوصول إلى المزيد من الميزات، يرجى التسجيل أو تسجيل الدخول.';
 
   @override
   String get contactSupportOptions => 'خيارات الاتصال بالدعم';
@@ -432,16 +442,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invalidVerificationCode => 'كود التحقق غير صالح';
 
   @override
-  String get invalidVerificationId => 'معرف التحقق غير صالح. يُرجى طلب رمز تحقق جديد.';
+  String get invalidVerificationId =>
+      'معرف التحقق غير صالح. يُرجى طلب رمز تحقق جديد.';
 
   @override
   String get otpExpired => 'انتهت صلاحية رمز. يرجى طلب رمز جديد.';
 
   @override
-  String get quotaExceeded => 'تم تجاوز الحد الأقصى للرسائل القصيرة. حاول مرة أخرى لاحقًا.';
+  String get quotaExceeded =>
+      'تم تجاوز الحد الأقصى للرسائل القصيرة. حاول مرة أخرى لاحقًا.';
 
   @override
-  String get tooManyAttempts => 'عدد المحاولات كبير جدًا. يرجى الانتظار والمحاولة مرة أخرى.';
+  String get tooManyAttempts =>
+      'عدد المحاولات كبير جدًا. يرجى الانتظار والمحاولة مرة أخرى.';
 
   @override
   String get networkError => 'خطأ في الشبكة. يرجى التحقق من اتصالك.';
@@ -534,10 +547,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get service => 'خدمة';
 
   @override
-  String get permissionLocation => 'لا يمكن استرداد الموقع. يرجى التحقق من الصلاحيات.';
+  String get permissionLocation =>
+      'لا يمكن استرداد الموقع. يرجى التحقق من الصلاحيات.';
 
   @override
-  String get enterServiceLocation => 'ادخل موقع الخدمة او اضغط للحصول على الموقع الحالي';
+  String get enterServiceLocation =>
+      'ادخل موقع الخدمة او اضغط للحصول على الموقع الحالي';
 
   @override
   String get yourLocation => 'موقعك';
@@ -582,7 +597,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorInitializingPayment => 'خطاء في تحميل الدفعة';
 
   @override
-  String get telrNotConfigured => 'اعدادات Telr غير مكونة. يرجى تحديث قسم TelrConfig.';
+  String get telrNotConfigured =>
+      'اعدادات Telr غير مكونة. يرجى تحديث قسم TelrConfig.';
 
   @override
   String get paymentError => 'خطاء في الدفع';
@@ -606,7 +622,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingCompleted => 'تم الحجز';
 
   @override
-  String get bookingCompletedDesc => 'لقد تم تاكيد الحجز. سيتم التواصل معك قريبا.';
+  String get bookingCompletedDesc =>
+      'لقد تم تاكيد الحجز. سيتم التواصل معك قريبا.';
 
   @override
   String get date => 'التاريخ';
@@ -636,7 +653,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get paymentStatus => 'حالة الدفع';
 
   @override
-  String get pendingPayment => 'الدفعة قيد التحميل. يرجى الدفع عندما يكون العميل قد اكمل الخدمة.';
+  String get pendingPayment =>
+      'الدفعة قيد التحميل. يرجى الدفع عندما يكون العميل قد اكمل الخدمة.';
 
   @override
   String get notifications => 'الاشعارات';
@@ -714,10 +732,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get migratingData => 'جارٍ ترحيل بياناتك';
 
   @override
-  String get weAreMigratingYourData => 'نقوم بنقل جميع بياناتك بأمان إلى رقمك الجديد. قد تستغرق هذه العملية بضع دقائق.';
+  String get weAreMigratingYourData =>
+      'نقوم بنقل جميع بياناتك بأمان إلى رقمك الجديد. قد تستغرق هذه العملية بضع دقائق.';
 
   @override
-  String get pleaseDontCloseTheApp => '.يرجى عدم إغلاق التطبيق أثناء هذه العملية، فقد يؤدي ذلك إلى فقدان بياناتك';
+  String get pleaseDontCloseTheApp =>
+      '.يرجى عدم إغلاق التطبيق أثناء هذه العملية، فقد يؤدي ذلك إلى فقدان بياناتك';
 
   @override
   String get transferringData => 'الحالة: جاري نقل البيانات...';
@@ -768,16 +788,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseAddANewAddress => 'يرجى اضافة عنوان جديد';
 
   @override
-  String get locationServicesDisabled => 'خدمات الموقع معطلة. يرجى تمكين خدمات الموقع في اعدادات الجهاز الخاص بك.';
+  String get locationServicesDisabled =>
+      'خدمات الموقع معطلة. يرجى تمكين خدمات الموقع في اعدادات الجهاز الخاص بك.';
 
   @override
-  String get locationPermissionDenied => 'اذن الموقع مرفوض. يرجى تمكين اذن الموقع في اعدادات الجهاز الخاص بك.';
+  String get locationPermissionDenied =>
+      'اذن الموقع مرفوض. يرجى تمكين اذن الموقع في اعدادات الجهاز الخاص بك.';
 
   @override
-  String get locationPermissionDeniedForever => 'اذن الموقع مرفوض دائما. يرجى تمكين اذن الموقع في اعدادات الجهاز الخاص بك.';
+  String get locationPermissionDeniedForever =>
+      'اذن الموقع مرفوض دائما. يرجى تمكين اذن الموقع في اعدادات الجهاز الخاص بك.';
 
   @override
-  String get couldNotGetCurrentLocation => 'لا يمكن استخراج الموقع. يرجى التحقق من الاذونات.';
+  String get couldNotGetCurrentLocation =>
+      'لا يمكن استخراج الموقع. يرجى التحقق من الاذونات.';
 
   @override
   String get selectedLocation => 'الموقع المحدد';
@@ -924,7 +948,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get call => 'اتصال';
 
   @override
-  String get biometricNotSupported => 'التصفية البصمة غير مدعومة على هذا الجهاز';
+  String get biometricNotSupported =>
+      'التصفية البصمة غير مدعومة على هذا الجهاز';
 
   @override
   String get pleaseAuthenticateToContinue => 'يرجى تصفية البصمة للمتابعة';
@@ -933,10 +958,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authenticationFailed => 'فشل التصفية البصمة';
 
   @override
-  String get biometricNotAvailable => 'التصفية البصمة غير متوفرة على هذا الجهاز';
+  String get biometricNotAvailable =>
+      'التصفية البصمة غير متوفرة على هذا الجهاز';
 
   @override
-  String get biometricTemporarilyLocked => 'التصفية البصمة مقفلة مؤقتا على هذا الجهاز';
+  String get biometricTemporarilyLocked =>
+      'التصفية البصمة مقفلة مؤقتا على هذا الجهاز';
+
+  @override
+  String get notificationLanguageChanged => 'تم تغيير لغة الاشعارات';
+
+  @override
+  String get noWishlistItems => 'لا توجد عناصر المفضلة';
+
+  @override
+  String get errorFillingProfile => 'خطاء في تعبئة الملف الشخصي';
+
+  @override
+  String get errorFetchingLocations => 'خطاء في جلب المواقع';
 
   @override
   String get category => 'فئة';
