@@ -16,14 +16,12 @@ class ServiceTile extends StatelessWidget {
     this.isGuestUser,
     this.onFavPressed,
     this.isFavorite = false,
-    this.languageCode = 'en',
   });
 
   final ServiceModel service;
   final VoidCallback? onFavPressed;
   final bool? isGuestUser;
   final bool isFavorite;
-  final String languageCode;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +79,12 @@ class ServiceTile extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        service.nameLocalized(languageCode: languageCode) ?? '',
+                        service.nameLocalized(
+                              languageCode:
+                                  AppLocalizations.of(context)?.localeName ??
+                                  '',
+                            ) ??
+                            '',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.dmSans(
@@ -107,7 +110,10 @@ class ServiceTile extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  service.descriptionLocalized(languageCode: languageCode) ??
+                  service.descriptionLocalized(
+                        languageCode:
+                            AppLocalizations.of(context)?.localeName ?? '',
+                      ) ??
                       '',
                   style: GoogleFonts.dmSans(
                     color: Colors.black45,

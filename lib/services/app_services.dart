@@ -367,4 +367,65 @@ class AppServices {
       return false;
     }
   }
+
+  static Future<bool> cancelBooking(BookingModel booking) async {
+    try {
+      await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+        'bookingStatusCode': 'X',
+        'cancelledAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      return true;
+    } catch (e) {
+      debugPrint('❌ Error cancelling booking: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> checkCustomerPhoneNumberAlredyExist(
+    String phoneNumber,
+  ) async {
+    try {
+      String normalizedPhoneNumber = phoneNumber.replaceAll(
+        RegExp(r'[^\d+]'),
+        '',
+      );
+      final customerQuery = await AppFirestore.customersCollectionRef
+          .where('phone', isEqualTo: normalizedPhoneNumber)
+          .limit(1)
+          .get();
+      if (customerQuery.docs.isEmpty) {
+        final customerQueryOriginal = await AppFirestore.customersCollectionRef
+            .where('phone', isEqualTo: phoneNumber)
+            .limit(1)
+            .get();
+        return customerQueryOriginal.docs.isNotEmpty;
+      }
+      return customerQuery.docs.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<void> deleteFCMToken() async {
+    try {
+      await AppFirestore.customersCollectionRef.doc(uid).update({
+        'fcmToken': FieldValue.delete(),
+      });
+    } catch (e) {
+      debugPrint('❌ Error deleting FCM token: $e');
+    }
+  }
+
+  static Future<void> deleteAccount() async {
+    try {
+      await AppFirestore.customersCollectionRef.doc(uid).delete();
+      await LocalStoreHelper.clearUID();
+      await LocalStoreHelper.clearGuestUser();
+      await LocalStoreHelper.clearLogoutStatus();
+    } catch (e) {
+      debugPrint('❌ Error deleting account: $e');
+    }
+  }
 }

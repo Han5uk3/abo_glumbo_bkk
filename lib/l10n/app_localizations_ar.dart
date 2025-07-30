@@ -984,5 +984,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingFailed => 'فشل الحجز';
 
   @override
+  String get bookingCancelError => 'خطاء في إلغاء الحجز';
+
+  @override
   String get category => 'فئة';
 }

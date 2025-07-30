@@ -989,5 +989,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingFailed => 'Booking Failed';
 
   @override
+  String get bookingCancelError => 'Booking Cancel Error';
+
+  @override
   String get category => 'Category';
 }

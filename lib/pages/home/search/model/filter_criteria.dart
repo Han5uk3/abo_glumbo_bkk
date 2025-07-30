@@ -46,7 +46,7 @@ class FilterCriteria extends Equatable {
 
     // Category filter
     if (selectedCategories.isNotEmpty) {
-      final matchesCategory = selectedCategories.contains(service.id);
+      final matchesCategory = selectedCategories.contains(service.category);
       if (!matchesCategory) return false;
     }
 

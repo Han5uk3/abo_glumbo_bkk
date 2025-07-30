@@ -1,46 +1,105 @@
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class LanguageSelector extends StatelessWidget {
+class LanguageSelectorCard extends StatelessWidget {
   final String currentLanguageCode;
 
-  const LanguageSelector({super.key, required this.currentLanguageCode});
+  const LanguageSelectorCard({super.key, required this.currentLanguageCode});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade300),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
         ),
-        child: SegmentedButton<String>(
-          style: SegmentedButton.styleFrom(
-            backgroundColor: Colors.white,
-            selectedBackgroundColor: Theme.of(
-              context,
-            ).primaryColor.withOpacity(0.1),
-            selectedForegroundColor: Theme.of(context).primaryColor,
-            foregroundColor: Colors.black,
-            side: BorderSide(color: Colors.grey.shade300),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          segments: const <ButtonSegment<String>>[
-            ButtonSegment<String>(value: 'en', label: Text('English')),
-            ButtonSegment<String>(value: 'ar', label: Text('العربية')),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildCardLanguageOption(
+              context,
+              'en',
+              'EN',
+              '🇺🇸',
+              isSelected: currentLanguageCode == 'en',
+            ),
+            _buildCardLanguageOption(
+              context,
+              'ar',
+              'AR',
+              '🇸🇦',
+              isSelected: currentLanguageCode == 'ar',
+            ),
           ],
-          selected: {currentLanguageCode},
-          onSelectionChanged: (newSelection) {
-            final selectedLang = newSelection.first;
-            context.read<AccountBloc>().add(
-              ChangeLocale(languageCode: selectedLang),
-            );
-          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCardLanguageOption(
+    BuildContext context,
+    String langCode,
+    String langShort,
+    String flag, {
+    required bool isSelected,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        if (langCode != currentLanguageCode) {
+          context.read<AccountBloc>().add(
+            ChangeLocale(languageCode: langCode),
+          );
+        }
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        width: 60,
+        height: 44,
+        decoration: BoxDecoration(
+          color: isSelected 
+              ? Colors.white.withOpacity(0.2) 
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              flag,
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 2),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: GoogleFonts.dmSans(
+                color: isSelected 
+                    ? Colors.white 
+                    : Colors.white.withOpacity(0.7),
+                fontSize: 11,
+                fontWeight: isSelected 
+                    ? FontWeight.w700 
+                    : FontWeight.w500,
+                letterSpacing: 0.5,
+              ),
+              child: Text(langShort),
+            ),
+          ],
         ),
       ),
     );

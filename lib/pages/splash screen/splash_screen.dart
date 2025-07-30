@@ -17,6 +17,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool _hasInitialized = false;
+  bool _isUserLogout = false;
 
   @override
   void initState() {
@@ -24,33 +25,22 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!_hasInitialized) {
       _hasInitialized = true;
       String savedLanguage = LocalStoreHelper.getUserlanguage();
-      debugPrint(
-        '🚀 SplashScreen: Initializing with saved language: $savedLanguage',
-      );
-
-      // Only dispatch if the current bloc state is different
+      _isUserLogout = LocalStoreHelper.getLogoutStatus();
       final currentLocale = context
           .read<AccountBloc>()
           .state
           .locale
           .languageCode;
       if (currentLocale != savedLanguage) {
-        debugPrint(
-          '🔄 SplashScreen: Current locale ($currentLocale) != saved ($savedLanguage), updating...',
-        );
         context.read<AccountBloc>().add(
           ChangeLocale(languageCode: savedLanguage),
-        );
-      } else {
-        debugPrint(
-          '✅ SplashScreen: Locale already matches saved language ($savedLanguage)',
         );
       }
     }
 
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
-        if (LocalStoreHelper.getUID() != null) {
+        if (LocalStoreHelper.getUID() != null && !_isUserLogout) {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => Home()),
@@ -65,7 +55,6 @@ class _SplashScreenState extends State<SplashScreen> {
         }
       }
     });
-    super.initState();
   }
 
   @override
@@ -74,24 +63,37 @@ class _SplashScreenState extends State<SplashScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.primary,
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const SizedBox(width: double.infinity),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SvgPicture.asset(
-                  state.locale.languageCode == "ar"
-                      ? 'assets/svg/logo_wide_white_ar.svg'
-                      : 'assets/svg/logo_wide_white_en.svg',
-                  height: 80,
-                ),
+          body: SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: SvgPicture.asset(
+                      state.locale.languageCode == "ar"
+                          ? 'assets/svg/logo_wide_white_ar.svg'
+                          : 'assets/svg/logo_wide_white_en.svg',
+                      height: 80,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+
+                  const SizedBox(height: 60),
+
+                  
+                  const SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: Center(
+                      child: Loader(color: Colors.white, size: 38.0),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 50),
-              Loader(color: Colors.white, size: 38.0),
-            ],
+            ),
           ),
         );
       },

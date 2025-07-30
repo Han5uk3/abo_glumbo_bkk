@@ -11,6 +11,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     on<LoadBookingsEvent>(_onLoadBookings);
     on<ChangeStatusEvent>(_onChangeStatus);
     on<RefreshBookingsEvent>(_onRefreshBookings);
+    on<CancelBookingEvent>(_onCancelBooking);
   }
 
   void _onLoadBookings(
@@ -72,5 +73,23 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     Emitter<BookingState> emit,
   ) {
     add(LoadBookingsEvent(event.customerId));
+  }
+
+  void _onCancelBooking(
+    CancelBookingEvent event,
+    Emitter<BookingState> emit,
+  ) async {
+    emit(CancelBookingLoading());
+    await AppServices.cancelBooking(event.booking)
+        .then((success) {
+          if (success) {
+            emit(CancelBookingSuccess());
+          } else {
+            emit(CancelBookingError(message: 'Failed to cancel booking'));
+          }
+        })
+        .catchError((error) {
+          emit(CancelBookingError(message: error.toString()));
+        });
   }
 }

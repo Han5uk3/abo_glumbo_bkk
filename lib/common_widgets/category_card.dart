@@ -1,6 +1,4 @@
 // ignore_for_file: deprecated_member_use
-import 'dart:developer';
-
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
@@ -22,7 +20,6 @@ class _CategoryCardState extends State<CategoryCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        log(widget.category.id ?? '');
         Navigator.push(
           context,
           MaterialPageRoute(

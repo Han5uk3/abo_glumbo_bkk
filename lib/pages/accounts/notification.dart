@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:convert';
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -335,6 +336,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Query _getNotificationsQuery({DocumentSnapshot? startAfterDoc}) {
     Query query = FirebaseFirestore.instance
         .collection('notifications')
+        .where('userId', isEqualTo: LocalStoreHelper.getUID())
         .orderBy('createdAt', descending: true)
         .limit(pageSize);
 

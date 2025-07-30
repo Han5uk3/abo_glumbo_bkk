@@ -27,3 +27,11 @@ class RefreshBookingsEvent extends BookingEvent {
   @override
   List<Object> get props => [customerId];
 }
+
+class CancelBookingEvent extends BookingEvent {
+  final BookingModel booking;
+  const CancelBookingEvent(this.booking);
+
+  @override
+  List<Object> get props => [booking];
+}

@@ -67,6 +67,8 @@ class AuthServices {
       _sanitizePhoneNumber(phoneNumber),
     );
     try {
+      AuthServices.phoneNumber = sanitizedPhoneNumber;
+      _verificationId = null; // Reset verification ID before sending OTP
       await _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: forceResendingToken,
@@ -129,10 +131,6 @@ class AuthServices {
   }) async {
     try {
       String sanitizedOTP = _sanitizeOTP(otp);
-      debugPrint(
-        "Verifying OTP: $sanitizedOTP with verification ID: $verificationId",
-      );
-
       final credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
         smsCode: sanitizedOTP,
@@ -140,7 +138,6 @@ class AuthServices {
       final tempUserCredential = await _auth.signInWithCredential(credential);
       final userPhoneNumber = tempUserCredential.user?.phoneNumber ?? '';
 
-      debugPrint("User phone number from credential: $userPhoneNumber");
       AuthServices.phoneNumber = userPhoneNumber;
 
       return tempUserCredential;
@@ -167,13 +164,11 @@ class AuthServices {
         debugPrint("Error: User UID is null");
         return;
       }
-
-      debugPrint("Checking user with UID: $uid");
       final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
-
       if (userDoc.exists) {
-        debugPrint("User exists, navigating to Home");
-        LocalStoreHelper.putUID(uid);
+        await LocalStoreHelper.putUID(uid);
+        await LocalStoreHelper.putGuestUser(false);
+        await LocalStoreHelper.putlogoutStatus(false);
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => Home()),
@@ -183,18 +178,20 @@ class AuthServices {
         debugPrint("User doesn't exist, navigating to SignUp");
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => SignupPage()),
+          MaterialPageRoute(builder: (context) => SignupPage(uid: uid)),
           (route) => false,
         );
       }
     } catch (e) {
       debugPrint("Error in checkUser: $e");
-      // If there's an error, still navigate to signup as fallback
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => SignupPage()),
-        (route) => false,
-      );
+      if (e is FirebaseAuthException) {
+        throw e;
+      } else {
+        throw FirebaseAuthException(
+          code: 'check-user-failed',
+          message: 'Failed to check user: $e',
+        );
+      }
     }
   }
 }

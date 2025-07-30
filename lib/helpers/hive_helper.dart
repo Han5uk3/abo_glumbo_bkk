@@ -23,6 +23,48 @@ class LocalStoreHelper {
     return MyApp.box.get('is_guest', defaultValue: false) ?? false;
   }
 
+  static Future<void> clearGuestUser() {
+    return MyApp.box.delete('is_guest');
+  }
+
+  static Future<void> putlogoutStatus(bool isLoggedOut) async {
+    await MyApp.box.put('is_logged_out', isLoggedOut);
+  }
+
+  static bool getLogoutStatus() {
+    return MyApp.box.get('is_logged_out', defaultValue: false) ?? false;
+  }
+
+  static Future<void> clearLogoutStatus() async {
+    await MyApp.box.delete('is_logged_out');
+  }
+
+  // Remember me feature
+  static Future<void> putRememberMe(bool rememberMe) async {
+    return MyApp.box.put('remember_me', rememberMe);
+  }
+
+  static bool getRememberMe() {
+    return MyApp.box.get('remember_me', defaultValue: false) ?? false;
+  }
+
+  static Future<void> clearRememberMe() async {
+    return MyApp.box.delete('remember_me');
+  }
+
+  static Future<void> putPhoneNumber(String phoneNumber) async {
+    await MyApp.box.put('phone_number', phoneNumber);
+    await MyApp.box.flush();
+  }
+
+  static String? getPhoneNumber() {
+    return MyApp.box.get('phone_number');
+  }
+
+  static Future<void> clearPhoneNumber() async {
+    await MyApp.box.delete('phone_number');
+  }
+
   static Future<String> putUserlanguage(String lang) async {
     debugPrint('💾 Saving user language to Hive: $lang');
     await MyApp.box.put('user_language', lang);

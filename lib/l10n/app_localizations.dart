@@ -1994,6 +1994,12 @@ abstract class AppLocalizations {
   /// **'Booking Failed'**
   String get bookingFailed;
 
+  /// No description provided for @bookingCancelError.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Cancel Error'**
+  String get bookingCancelError;
+
   /// No description provided for @category.
   ///
   /// In en, this message translates to:

@@ -323,5 +323,6 @@
   "errorFetchingLocations":"خطاء في جلب المواقع",
   "bookingSuccess":"نجاح الحجز",
   "bookingFailed":"فشل الحجز",
+  "bookingCancelError":"خطاء في إلغاء الحجز",
   "category":"فئة"
 }

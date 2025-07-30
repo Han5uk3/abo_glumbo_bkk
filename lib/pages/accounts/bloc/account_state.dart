@@ -88,3 +88,59 @@ class UpdateCustomerLocationError extends AccountState {
   @override
   List<Object?> get props => [error, locale];
 }
+
+class FavoriteServiceUpdating extends AccountState {
+  final String serviceId;
+  const FavoriteServiceUpdating({
+    required this.serviceId,
+    required super.locale,
+  });
+
+  @override
+  List<Object?> get props => [serviceId, locale];
+}
+
+class FavoriteServiceUpdated extends AccountState {
+  final String serviceId;
+  const FavoriteServiceUpdated({
+    required this.serviceId,
+    required super.locale,
+  });
+
+  @override
+  List<Object?> get props => [serviceId, locale];
+}
+
+class FavoriteServiceError extends AccountState {
+  final String error;
+  const FavoriteServiceError({required this.error, required super.locale});
+
+  @override
+  List<Object?> get props => [error, locale];
+}
+
+class UpdateCustomerPhoneNumberLoading extends AccountState {
+  const UpdateCustomerPhoneNumberLoading({required super.locale});
+
+  @override
+  List<Object?> get props => [locale];
+}
+
+class UpdateCustomerPhoneNumberSuccess extends AccountState {
+  const UpdateCustomerPhoneNumberSuccess({required super.locale});
+
+  @override
+  List<Object?> get props => [locale];
+}
+
+class UpdateCustomerPhoneNumberError extends AccountState {
+  final String error;
+
+  const UpdateCustomerPhoneNumberError({
+    required this.error,
+    required super.locale,
+  });
+
+  @override
+  List<Object?> get props => [error, locale];
+}

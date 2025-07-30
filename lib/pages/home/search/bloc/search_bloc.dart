@@ -1,5 +1,7 @@
 import 'package:abo_glumbo_bbk/models/service.dart';
+import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/pages/home/search/model/filter_criteria.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -13,6 +15,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   SearchBloc() : super(SearchInitial()) {
     on<SearchInitialized>(_onSearchInitialized);
+    on<LoadServices>(_onLoadServices);
     on<SearchQueryChanged>(_onSearchQueryChanged);
     on<FiltersApplied>(_onFiltersApplied);
     on<FiltersCleared>(_onFiltersCleared);
@@ -24,19 +27,24 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     emit(SearchLoading());
+    _currentQuery = event.initialQuery;
+    add(LoadServices());
+  }
+
+  Future<void> _onLoadServices(
+    LoadServices event,
+    Emitter<SearchState> emit,
+  ) async {
     try {
-      // final result = await _searchServices.execute();
-      // result.fold((failure) => emit(SearchError(failure.message)), (services) {
-      //   _allServices = services;
-      //   emit(
-      //     SearchSuccess(
-      //       services: services,
-      //       query: _currentQuery,
-      //       filters: _currentFilters,
-      //       hasActiveFilters: _currentFilters.hasActiveFilters,
-      //     ),
-      //   );
-      // });
+      final querySnapshot = await AppFirestore.servicesCollectionRef
+          .where('isActive', isEqualTo: true)
+          .get();
+
+      _allServices = querySnapshot.docs.map((doc) {
+        return ServiceModel.fromQueryDocumentSnapshot(doc);
+      }).toList();
+
+      _applyFiltersAndSearch(emit);
     } catch (e) {
       emit(SearchError(e.toString()));
     }
@@ -72,18 +80,27 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     try {
-      // final result = await _toggleFavorite.execute(event.serviceId);
-      // result.fold(
-      //   (failure) => emit(SearchError(failure.message)),
-      //   (isFavorite) => emit(
-      //     FavoriteUpdateSuccess(
-      //       serviceId: event.serviceId,
-      //       isFavorite: isFavorite,
-      //     ),
-      //   ),
-      // );
+      List<String> updatedFavorites = List.from(event.customerData.favourites);
+      final isFavorite = updatedFavorites.contains(event.serviceId);
+
+      if (isFavorite) {
+        updatedFavorites.remove(event.serviceId);
+      } else {
+        updatedFavorites.add(event.serviceId);
+      }
+
+      await AppFirestore.customersCollectionRef
+          .doc(event.customerData.uid)
+          .update({'favourites': updatedFavorites});
+
+      emit(
+        FavoriteUpdateSuccess(
+          serviceId: event.serviceId,
+          isFavorite: !isFavorite,
+        ),
+      );
     } catch (e) {
-      emit(SearchError(e.toString()));
+      emit(FavoriteUpdateError(e.toString()));
     }
   }
 
@@ -101,15 +118,25 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     );
   }
 
-  List<ServiceModel> _filterServices(List<ServiceModel> services) {
+  List<ServiceModel> _filterServices(
+    List<ServiceModel> services, {
+    bool isArabic = false,
+  }) {
     var filtered = services;
 
     // Apply search query filter
     if (_currentQuery != null && _currentQuery!.isNotEmpty) {
       filtered = filtered.where((service) {
         final query = _currentQuery!.toLowerCase();
-        return service.name!.toLowerCase().contains(query) ||
-            service.description!.toLowerCase().contains(query);
+        final serviceName = isArabic
+            ? (service.name_ar?.toLowerCase() ??
+                  service.name?.toLowerCase() ??
+                  '')
+            : (service.name?.toLowerCase() ?? '');
+        final serviceDescription = service.description?.toLowerCase() ?? '';
+
+        return serviceName.contains(query) ||
+            serviceDescription.contains(query);
       }).toList();
     }
 

@@ -180,7 +180,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         FocusScope.of(context).unfocus();
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SearchView()),
+          MaterialPageRoute(builder: (context) => SearchPage()),
         );
       },
       onSubmitted: (value) {

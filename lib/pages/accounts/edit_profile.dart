@@ -1,11 +1,15 @@
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/location.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
+import 'package:abo_glumbo_bbk/pages/login/otp.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/services/auth_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +27,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool isLoading = false;
   bool isUpdating = false;
   List<LocationModel> _locations = [];
+  bool isPhoneNumberUpdated = false;
+  int? _resendToken;
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
@@ -174,19 +180,134 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  void _updatePhoneNumber() {
-    setState(() => isLoading = true);
-
-    // Simulate phone number update process
-    Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) {
-        setState(() => isLoading = false);
+  void _updatePhoneNumber() async {
+    bool isNumberAlreadyExists =
+        await AppServices.checkCustomerPhoneNumberAlredyExist(
+          phoneController.text,
+        );
+    if (phoneController.text != widget.customer.phone) {
+      if (mounted) setState(() => isLoading = true);
+      if (isNumberAlreadyExists) {
+        if (mounted) setState(() => isLoading = false);
         _showSnackBar(
-          AppLocalizations.of(context)?.otpSent ?? 'OTP sent successfully',
-          backgroundColor: AppColors.green,
+          AppLocalizations.of(context)?.phoneNumberAlreadyExists ?? '',
+          backgroundColor: AppColors.yellow,
+        );
+        return;
+      }
+      if (phoneController.text.contains('+966')) {
+        if (mounted) setState(() => isPhoneNumberUpdated = true);
+        await AuthServices().sendOTP(
+          context,
+          phoneNumber: phoneController.text,
+          forceResendingToken: _resendToken,
+          onCodeSent: (String verificationId, {int? resendToken}) {
+            if (mounted) {
+              setState(() {
+                _resendToken = resendToken;
+                isLoading = false;
+              });
+            }
+            showSnackBar(
+              AppLocalizations.of(context)?.sendingOTP ?? 'Sending OTP...',
+              backgroundColor: AppColors.primary,
+              context,
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OtpPage(
+                  phoneNumber: phoneController.text,
+                  verificationId: verificationId,
+                  isFromProfile: true,
+                ),
+              ),
+            );
+          },
+          onError: (FirebaseAuthException e) {
+            showSnackBar(e.message ?? '', context, backgroundColor: Colors.red);
+          },
+          //  onCodeSent: (verificationId, {int? resendToken}) {
+
+          //  }
+          //   (phoneAuthCredential) async {
+          //     if (mounted) {
+          //       _showSnackBar(
+          //         AppLocalizations.of(context)?.otpAutoVerified ??
+          //             'OTP automatically verified',
+          //         backgroundColor: AppColors.green,
+          //       );
+          //     }
+
+          //     try {
+          //       UserCredential result = await FirebaseAuth.instance
+          //           .signInWithCredential(phoneAuthCredential);
+
+          //       if (result.user != null) {
+          //         FirebaseAnalytics.instance.logLogin(loginMethod: "Phone");
+          //       }
+          //     } catch (e) {
+          //       if (mounted) {
+          //         setState(() => isLoading = false);
+          //         _showSnackBar(
+          //           AppLocalizations.of(context)?.somethingWentWrongTryAgain ??
+          //               'Something went wrong. Please try again.',
+          //           backgroundColor: AppColors.yellow,
+          //         );
+          //       }
+          //     }
+          //   },
+          //   (verificationId, forceResendingToken) {
+          //     ref.read(mobileNumberState.notifier).state = phoneController.text;
+          //     ref.read(authVerificationIdState.notifier).state = verificationId;
+          //     setState(() => isLoading = false);
+          //     _showSnackBar(
+          //       AppLocalizations.of(context)?.otpSent ?? 'OTP sent successfully',
+          //       backgroundColor: AppColors.green,
+          //     );
+          //     _resendToken = forceResendingToken;
+          //     AppNavigation.pushOtp(context, isFromEditProfile: true);
+          //   },
+          //   (verificationId) {
+          //     if (mounted) {
+          //       ref.read(authVerificationIdState.notifier).state = verificationId;
+          //       setState(() => isLoading = false);
+          //       if (isLoading) {
+          //         _showSnackBar(
+          //           "OTP request timed out. Please try again.",
+          //           backgroundColor: AppColors.yellow,
+          //         );
+          //       }
+          //     }
+          //   },
+          //   (FirebaseAuthException error) {
+          //     if (mounted) setState(() => isPhoneNumberUpdated = false);
+          //     ScaffoldMessenger.of(context).showSnackBar(
+          //       SnackBar(
+          //         content: Text(error.message ?? ''),
+          //         behavior: SnackBarBehavior.floating,
+          //       ),
+          //     );
+          //   },
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)?.pleaseAddCountryCode ?? '',
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
-    });
+    } else {
+      if (mounted) setState(() => isLoading = false);
+      _showSnackBar(
+        AppLocalizations.of(context)?.phoneNumberAlreadyUpdated ?? '',
+        backgroundColor: AppColors.yellow,
+      );
+      return;
+    }
   }
 
   @override

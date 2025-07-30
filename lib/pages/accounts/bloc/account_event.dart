@@ -22,3 +22,10 @@ class UpdateCustomerProfile extends AccountEvent {
 }
 
 class UpdateCustomerLocation extends AccountEvent {}
+
+class ToggleFavoriteService extends AccountEvent {
+  final ServiceModel service;
+  ToggleFavoriteService({required this.service});
+
+  List<Object> get props => [service];
+}

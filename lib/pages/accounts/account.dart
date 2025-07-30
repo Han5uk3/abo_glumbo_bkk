@@ -10,10 +10,13 @@ import 'package:abo_glumbo_bbk/pages/accounts/widgets/account_list_tile.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/contact_bottom_sheet.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/language_dialog.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/wishlist.dart';
+import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/biometric_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -233,7 +236,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   Widget _buildDangerZone() {
     return AccountListTile(
       title: AppLocalizations.of(context)?.deleteAccount ?? '',
-      onTap: _handleDeleteAccount,
+      onTap: () => _showDeleteAccountConfirmationDialog(),
       dense: true,
     );
   }
@@ -350,10 +353,161 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
     );
   }
 
-  void _handleDeleteAccount() {}
+  void _showDeleteAccountConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            AppLocalizations.of(context)?.deleteAccount ?? 'Delete Account',
+            style: GoogleFonts.dmSans(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: AppColors.red,
+            ),
+          ),
+          content: Text(
+            AppLocalizations.of(context)?.areYouSureYouWantToDeleteAccount ??
+                'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.',
+            style: GoogleFonts.dmSans(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: Text(
+                AppLocalizations.of(context)?.cancel ?? 'Cancel',
+                style: GoogleFonts.dmSans(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close dialog
+                await _performDeleteAccount();
+              },
+              child: Text(
+                AppLocalizations.of(context)?.deleteAccount ?? 'Delete',
+                style: GoogleFonts.dmSans(
+                  color: AppColors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _performDeleteAccount() async {
+    try {
+      await AppServices.deleteAccount();
+      await FirebaseAuth.instance.signOut();
+      SystemNavigator.pop();
+    } catch (e) {
+      debugPrint('Error during account deletion: $e');
+      if (mounted) {
+        showSnackBar(
+          'Failed to delete account. Please try again.',
+          context,
+          backgroundColor: AppColors.red,
+        );
+      }
+    }
+  }
 
   void _handleAuthAction() {
     if (_isGuest) {
-    } else {}
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (route) => false,
+        );
+      }
+    } else {
+      _showLogoutConfirmationDialog();
+    }
+  }
+
+  void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            AppLocalizations.of(context)?.logout ?? 'Logout',
+            style: GoogleFonts.dmSans(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          content: Text(
+            AppLocalizations.of(context)?.areYouSureYouWantToLogout ??
+                'Are you sure you want to logout?',
+            style: GoogleFonts.dmSans(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                AppLocalizations.of(context)?.cancel ?? 'Cancel',
+                style: GoogleFonts.dmSans(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _performLogout();
+              },
+              child: Text(
+                AppLocalizations.of(context)?.logout ?? 'Logout',
+                style: GoogleFonts.dmSans(
+                  color: AppColors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _performLogout() async {
+    try {
+      await LocalStoreHelper.putlogoutStatus(true);
+      await LocalStoreHelper.putGuestUser(false);
+      try {
+        await AppServices.deleteFCMToken();
+      } catch (e) {
+        debugPrint('❌ Error deleting FCM token: $e');
+      }
+      await FirebaseAuth.instance.signOut();
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        showSnackBar(
+          'Failed to logout. Please try again.',
+          context,
+          backgroundColor: AppColors.red,
+        );
+      }
+    }
   }
 }

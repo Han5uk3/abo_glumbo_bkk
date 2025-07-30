@@ -1,9 +1,12 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/bloc/booking_bloc.dart';
 import 'package:abo_glumbo_bbk/sheets/booking_details.dart';
+import 'package:abo_glumbo_bbk/sheets/cancel_booking_dialog.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ServiceBookingTile extends StatelessWidget {
@@ -157,14 +160,16 @@ class ServiceBookingTile extends StatelessWidget {
                         ),
                       ),
                       onPressed: () async {
-                        // bool? res = await showBookingCancelDialog(
-                        //   context,
-                        //   booking: booking,
-                        // );
-                        // if (res == true) {
-                        //   // refresh the page
-                        //   onRefresh.call();
-                        // }
+                        final bookingBloc = context.read<BookingBloc>();
+                        bool? res = await showBookingCancelDialog(
+                          context,
+                          booking: booking,
+                        );
+                        if (res == true) {
+                          bookingBloc.add(CancelBookingEvent(booking));
+                          // refresh the page
+                          onRefresh.call();
+                        }
                       },
                       child: Text(
                         AppLocalizations.of(context)?.cancel ?? '',

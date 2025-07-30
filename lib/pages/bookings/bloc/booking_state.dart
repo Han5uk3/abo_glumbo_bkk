@@ -25,7 +25,10 @@ class BookingsLoaded extends BookingState {
   final List<BookingModel> allBookings;
   final BookingStatusType selectedStatus;
 
-  const BookingsLoaded({required this.allBookings, required this.selectedStatus});
+  const BookingsLoaded({
+    required this.allBookings,
+    required this.selectedStatus,
+  });
 
   List<BookingModel> get filteredBookings {
     switch (selectedStatus) {
@@ -66,4 +69,17 @@ class BookingsError extends BookingState {
   });
   @override
   List<Object> get props => [message, selectedStatus];
+}
+
+class CancelBookingLoading extends BookingState {}
+
+class CancelBookingSuccess extends BookingState {}
+
+class CancelBookingError extends BookingState {
+  final String message;
+
+  const CancelBookingError({required this.message});
+
+  @override
+  List<Object> get props => [message];
 }

@@ -7,7 +7,15 @@ abstract class SearchEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class SearchInitialized extends SearchEvent {}
+class SearchInitialized extends SearchEvent {
+  final String? initialQuery;
+  const SearchInitialized({this.initialQuery});
+
+  @override
+  List<Object?> get props => [initialQuery];
+}
+
+class LoadServices extends SearchEvent {}
 
 class SearchQueryChanged extends SearchEvent {
   final String query;
@@ -29,8 +37,9 @@ class FiltersCleared extends SearchEvent {}
 
 class FavoriteToggled extends SearchEvent {
   final String serviceId;
-  const FavoriteToggled(this.serviceId);
+  final CustomerModel customerData;
+  const FavoriteToggled({required this.serviceId, required this.customerData});
 
   @override
-  List<Object> get props => [serviceId];
+  List<Object> get props => [serviceId, customerData];
 }

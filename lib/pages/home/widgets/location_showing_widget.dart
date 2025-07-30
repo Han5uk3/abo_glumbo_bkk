@@ -15,14 +15,20 @@ class LocationShowingWidget extends StatefulWidget {
 
 class _LocationShowingWidgetState extends State<LocationShowingWidget> {
   String? _location;
+  bool _hasAttemptedFetch = false;
 
   @override
   void initState() {
-    super.initState();
     _fetchLocation();
+    super.initState();
+    // Removed _fetchLocation() from here - now only loads on manual refresh
   }
 
   Future<void> _fetchLocation() async {
+    setState(() {
+      _hasAttemptedFetch = true;
+    });
+
     try {
       LocationPermission permission = await Geolocator.requestPermission();
 
@@ -62,6 +68,19 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
         } else if (state is UpdateCustomerLocationError) {
           _location = state.error;
         }
+
+        // Determine what text to show
+        String displayText;
+        if (state is UpdateCustomerLocationLoading) {
+          displayText = 'Loading...';
+        } else if (_location != null && _location!.isNotEmpty) {
+          displayText = _location!;
+        } else if (_hasAttemptedFetch) {
+          displayText = 'Unable to get location';
+        } else {
+          displayText = 'Tap refresh to get location';
+        }
+
         return Container(
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width - 32,
@@ -70,7 +89,11 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Icon(Icons.place_rounded, color: Colors.white38, size: 20),
+              const Icon(
+                Icons.place_rounded,
+                color: Colors.redAccent,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               state is UpdateCustomerLocationLoading
                   ? const SizedBox(
@@ -83,7 +106,7 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
                     )
                   : Flexible(
                       child: Text(
-                        _location ?? 'Location not set',
+                        displayText,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,

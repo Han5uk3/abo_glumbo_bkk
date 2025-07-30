@@ -62,3 +62,11 @@ class FavoriteUpdateSuccess extends SearchState {
   @override
   List<Object> get props => [serviceId, isFavorite];
 }
+
+class FavoriteUpdateError extends SearchState {
+  final String message;
+  const FavoriteUpdateError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

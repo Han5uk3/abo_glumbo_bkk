@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/services/auth_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +15,13 @@ import 'package:google_fonts/google_fonts.dart';
 class OtpPage extends StatefulWidget {
   final String? phoneNumber;
   final String? verificationId;
-  const OtpPage({super.key, this.phoneNumber, this.verificationId});
+  final bool? isFromProfile;
+  const OtpPage({
+    super.key,
+    this.phoneNumber,
+    this.verificationId,
+    this.isFromProfile,
+  });
 
   @override
   State<OtpPage> createState() => _OtpPageState();
@@ -27,6 +37,7 @@ class _OtpPageState extends State<OtpPage> {
   final otpController = TextEditingController();
   String? _verificationId;
   int? _resendToken;
+  bool _isDialogShowing = false;
 
   @override
   void initState() {
@@ -111,6 +122,84 @@ class _OtpPageState extends State<OtpPage> {
     );
   }
 
+  Future<void> migrateUserData(
+    String oldUid,
+    String newUid,
+    String newPhone,
+  ) async {
+    try {
+      if (mounted) {
+        setState(() => _isMigratingCustomerData = true);
+        _showMigrationDialog();
+      }
+
+      final oldCustomerDoc = await AppFirestore.customersCollectionRef
+          .doc(oldUid)
+          .get();
+      if (oldCustomerDoc.exists) {
+        final oldData = oldCustomerDoc.data() as Map<String, dynamic>;
+        final newData = <String, dynamic>{
+          ...oldData,
+          'uid': newUid,
+          'phone': newPhone,
+          'updatedAt': FieldValue.serverTimestamp(),
+        };
+        await AppFirestore.customersCollectionRef.doc(newUid).set(newData);
+      }
+
+      final bookingsQuery = await AppFirestore.bookingsCollectionRef
+          .where('customer.uid', isEqualTo: oldUid)
+          .get();
+      if (bookingsQuery.docs.isNotEmpty) {
+        for (final bookingDoc in bookingsQuery.docs) {
+          final Map<String, dynamic> updatedCustomer =
+              Map<String, dynamic>.from(bookingDoc['customer'] ?? {});
+          updatedCustomer['uid'] = newUid;
+          updatedCustomer['phone'] = newPhone;
+          updatedCustomer['updatedAt'] = FieldValue.serverTimestamp();
+
+          await AppFirestore.bookingsCollectionRef.doc(bookingDoc.id).update({
+            'customer': updatedCustomer,
+            'phone': newPhone,
+            'uid': newUid,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+        }
+      }
+
+      final notificationQuery = await AppFirestore.notificationsCollectionRef
+          .where('userId', isEqualTo: oldUid)
+          .get();
+      if (notificationQuery.docs.isNotEmpty) {
+        for (final notificationDoc in notificationQuery.docs) {
+          await AppFirestore.notificationsCollectionRef
+              .doc(notificationDoc.id)
+              .update({'userId': newUid});
+        }
+      }
+
+      await AppFirestore.customersCollectionRef.doc(oldUid).delete();
+
+      if (mounted) {
+        setState(() => _isMigratingCustomerData = false);
+        _closeMigrationDialog();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isMigratingCustomerData = false);
+        _closeMigrationDialog();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${AppLocalizations.of(context)?.unexpectedErrorOccurred}: $e',
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
   void verifyOtp() async {
     if (!_formKey.currentState!.validate() || isLoading) return;
 
@@ -135,24 +224,42 @@ class _OtpPageState extends State<OtpPage> {
     }
 
     try {
-      print("Verifying OTP: $otp with verification ID: $verificationId");
-
       final UserCredential userCredential = await AuthServices().verifyOTP(
         context,
         otp,
         verificationId: verificationId,
         smsCode: otp,
       );
-
-      print("OTP verification successful, checking user...");
-
-      // Navigate to the appropriate page without using .then()
-      await AuthServices().checkUser(
-        userCredential: userCredential,
-        context: context,
-      );
+      if (widget.isFromProfile == true) {
+        final String oldUid = LocalStoreHelper.getUID() ?? '';
+        final String newUid = userCredential.user?.uid ?? '';
+        if (oldUid != null && newUid != null && oldUid != newUid) {
+          await migrateUserData(
+            oldUid,
+            newUid,
+            userCredential.user?.phoneNumber ?? '',
+          );
+        }
+        LocalStoreHelper.clearGuestUser();
+        LocalStoreHelper.clearUID();
+        LocalStoreHelper.putlogoutStatus(true);
+        await FirebaseAuth.instance.signOut();
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          setState(() => isLoading = false);
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+            (route) => false,
+          );
+        }
+      } else {
+        await AuthServices().checkUser(
+          userCredential: userCredential,
+          context: context,
+        );
+      }
     } catch (e) {
-      print("OTP verification failed: $e");
       if (mounted) {
         setState(() {
           isLoading = false;
@@ -405,6 +512,137 @@ class _OtpPageState extends State<OtpPage> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _closeMigrationDialog() {
+    if (_isDialogShowing && mounted) {
+      _isDialogShowing = false;
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _showMigrationDialog() {
+    if (!_isDialogShowing && mounted) {
+      _isDialogShowing = true;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        barrierColor: Colors.black.withOpacity(0.85),
+        builder: (context) => _migratingDataDialog(),
+      );
+    }
+  }
+
+  Widget _migratingDataDialog() {
+    return AlertDialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      contentPadding: const EdgeInsets.all(32),
+      content: WillPopScope(
+        onWillPop: () async => false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppColors.secondary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.sync_alt_rounded,
+                  size: 40,
+                  color: AppColors.secondary,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Loader(),
+            const SizedBox(height: 28),
+            Text(
+              AppLocalizations.of(context)!.migratingData,
+              style: GoogleFonts.dmSans(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              AppLocalizations.of(context)!.weAreMigratingYourData,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.dmSans(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: Colors.black54,
+                height: 1.5,
+                letterSpacing: 0.1,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              height: 6,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(3),
+                child: LinearProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColors.secondary,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.orange.shade200, width: 1),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline_rounded,
+                    color: Colors.orange.shade600,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)!.pleaseDontCloseTheApp,
+                      style: GoogleFonts.dmSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.orange.shade700,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              AppLocalizations.of(context)!.transferringData,
+              style: GoogleFonts.dmSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ],
         ),
       ),
     );

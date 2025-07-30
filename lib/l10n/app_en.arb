@@ -325,5 +325,6 @@
   "errorFetchingLocations":"Error fetching locations",
   "bookingSuccess":"Booking Success",
   "bookingFailed":"Booking Failed",
+  "bookingCancelError":"Booking Cancel Error",
   "category":"Category"
 }
