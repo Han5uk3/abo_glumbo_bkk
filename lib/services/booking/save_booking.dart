@@ -1,0 +1,124 @@
+import 'dart:io';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/models/booking.dart';
+import 'package:abo_glumbo_bbk/models/customer.dart';
+import 'package:abo_glumbo_bbk/models/service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+
+class BookingUtils {
+  static String getPaymentModeCode(String paymentMode) {
+    switch (paymentMode) {
+      case "Cards":
+        return "C";
+      case "Apple Pay":
+        return "A";
+      case "Cash On Hands":
+        return "O";
+      default:
+        return "U"; // Unknown
+    }
+  }
+
+  static Future<bool> saveBooking({
+    required ServiceModel service,
+    required DateTime selectedDate,
+    required String paymentMode,
+    required CustomerModel customerData,
+    required String notes,
+    File? selectedImage,
+    File? selectedVideo,
+    required Map timeSlot,
+  }) async {
+    try {
+      DateTime bookingDate = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        timeSlot["time"].hour,
+        timeSlot["time"].minute,
+      );
+
+      String? selectedImageDownloadUrl;
+      String? selectedVideoDownloadUrl;
+
+      try {
+        if (selectedImage != null) {
+          String fileName =
+              'users/${customerData.uid}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+          final storageRef = FirebaseStorage.instance.ref().child(fileName);
+          final uploadTask = storageRef.putFile(selectedImage);
+          final snapshot = await uploadTask;
+          selectedImageDownloadUrl = await snapshot.ref.getDownloadURL();
+        }
+        if (selectedVideo != null) {
+          String fileName =
+              'users/${customerData.uid}/${DateTime.now().millisecondsSinceEpoch}.mp4';
+          final storageRef = FirebaseStorage.instance.ref().child(fileName);
+          final uploadTask = storageRef.putFile(
+              selectedVideo, SettableMetadata(contentType: 'video/mp4'));
+          final snapshot = await uploadTask;
+          selectedVideoDownloadUrl = await snapshot.ref.getDownloadURL();
+        }
+      } catch (e) {
+        debugPrint("Error uploading files: $e");
+      }
+
+      final bookingId = AppFirestore.bookingsCollectionRef.doc().id;
+
+      BookingModel booking = BookingModel(
+        id: bookingId,
+        service: service,
+        bookingDateTime: Timestamp.fromDate(bookingDate),
+        bookingStatusCode: 'P',
+        notes: notes.trim(),
+        issueImage: selectedImageDownloadUrl ?? "",
+        issueVideo: selectedVideoDownloadUrl ?? "",
+        customer: customerData,
+        paymentModeCode: getPaymentModeCode(paymentMode),
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      );
+
+      // Add the booking to Firestore
+      await AppFirestore.bookingsCollectionRef
+          .doc(bookingId)
+          .set(booking.toJson());
+
+      // If we reach here, the booking was created successfully
+      return true;
+    } catch (e) {
+      debugPrint("Error during booking process: $e");
+      return false;
+    }
+  }
+
+  static Future<bool> saveReview({
+    required BookingModel booking,
+    required ReviewModel? review,
+  }) async {
+    try {
+      Map<String, dynamic> updateData = {
+        "review": review?.toJson() ?? {},
+      };
+
+      if ((review?.tipAmount ?? 0) > 0 &&
+          review?.paymentType?.isNotEmpty == true) {
+        updateData.addAll({
+          'tipAmount': review?.tipAmount,
+          'paymentType': review?.paymentType,
+          'createdAt': Timestamp.now(),
+        });
+      }
+
+      await AppFirestore.bookingsCollectionRef
+          .doc(booking.id)
+          .update(updateData);
+      return true;
+    } catch (e) {
+      debugPrint("Error saving review: $e");
+      return false;
+    }
+  }
+}

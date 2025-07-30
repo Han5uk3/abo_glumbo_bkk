@@ -46,15 +46,9 @@ class MyApp extends StatelessWidget {
       providers: providers,
       child: BlocListener<AccountBloc, AccountState>(
         listener: (context, state) {
-          debugPrint(
-            '👂 BlocListener: Locale changed to: ${state.locale.languageCode}',
-          );
         },
         child: BlocBuilder<AccountBloc, AccountState>(
           builder: (context, state) {
-            debugPrint(
-              '🎨 MaterialApp: Building with locale: ${state.locale.languageCode}',
-            );
             return MaterialApp(
               navigatorKey: navigatorKey,
               title: 'Abo Glumbo',
@@ -67,25 +61,13 @@ class MyApp extends StatelessWidget {
               ],
               supportedLocales: const [Locale('en'), Locale('ar')],
               localeResolutionCallback: (locale, supportedLocales) {
-                debugPrint(
-                  '🌍 MaterialApp: Locale resolution - device: ${locale?.languageCode}, current: ${state.locale.languageCode}',
-                );
-
                 // Always return the user's saved locale preference, not the device locale
                 if (supportedLocales.any(
                   (supported) =>
                       supported.languageCode == state.locale.languageCode,
                 )) {
-                  debugPrint(
-                    '✅ MaterialApp: Using saved user locale: ${state.locale.languageCode}',
-                  );
                   return state.locale;
                 }
-
-                // Fallback to first supported locale only if user locale is not supported
-                debugPrint(
-                  '⚠️ MaterialApp: User locale not supported, falling back to: ${supportedLocales.first.languageCode}',
-                );
                 return supportedLocales.first;
               },
               builder: (context, child) {

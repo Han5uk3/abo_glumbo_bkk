@@ -2,6 +2,7 @@ import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 class BookingModel {
   String id;
   late ServiceModel service;
@@ -81,29 +82,34 @@ class BookingModel {
   });
 
   BookingModel.fromMap(Map<String, dynamic> data)
-      : service = ServiceModel.fromJson(data['service']),
-        bookingDateTime = data['bookingDateTime'],
-        bookingStatusCode = data['bookingStatusCode'],
-        isStartTracking = data['isStarted'] ?? false,
-        notes = data['notes'],
-        id = data['id'] ?? '',
-        issueImage = data['issueImage'],
-        issueVideo = data['issueVideo'],
-        customer = CustomerModel.fromJson(data['customer']),
-        paymentModeCode = data['paymentModeCode'],
-        review =
-            data['review'] != null ? ReviewModel.fromMap(data['review']) : null,
-        agent =
-            data['agent'] != null ? UserModel.fromJson(data['agent']) : null,
-        createdAt = data['createdAt'],
-        updatedAt = data['updatedAt'],
-        acceptedAt = data['acceptedAt'],
-        rejectedAt = data['rejectedAt'],
-        completedAt = data['completedAt'],
-        cancelledAt = data['cancelledAt'];
+    : service = ServiceModel.fromJson(data['service']),
+      bookingDateTime = data['bookingDateTime'],
+      bookingStatusCode = data['bookingStatusCode'],
+      isStartTracking = data['isStarted'] ?? false,
+      notes = data['notes'],
+      id = data['id'] ?? '',
+      issueImage = data['issueImage'],
+      issueVideo = data['issueVideo'],
+      customer = CustomerModel.fromJson(data['customer']),
+      paymentModeCode = data['paymentModeCode'],
+      review = data['review'] != null
+          ? ReviewModel.fromMap(data['review'])
+          : null,
+      agent = data['agent'] != null ? UserModel.fromJson(data['agent']) : null,
+      createdAt = data['createdAt'],
+      updatedAt = data['updatedAt'],
+      acceptedAt = data['acceptedAt'],
+      rejectedAt = data['rejectedAt'],
+      completedAt = data['completedAt'],
+      cancelledAt = data['cancelledAt'];
+
+  factory BookingModel.fromJson(Map<String, dynamic> data) {
+    return BookingModel.fromMap(data);
+  }
 
   factory BookingModel.fromQueryDocumentSnapshot(
-      QueryDocumentSnapshot snapshot) {
+    QueryDocumentSnapshot snapshot,
+  ) {
     Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
     return BookingModel.fromMap(data);
   }
@@ -150,13 +156,14 @@ class ReviewModel {
   String? paymentType;
   bool? isTipPaid;
   Timestamp? createdAt;
-  ReviewModel(
-      {required this.rating,
-      required this.review,
-      this.createdAt,
-      this.tipAmount,
-      this.paymentType,
-      this.isTipPaid});
+  ReviewModel({
+    required this.rating,
+    required this.review,
+    this.createdAt,
+    this.tipAmount,
+    this.paymentType,
+    this.isTipPaid,
+  });
 
   factory ReviewModel.fromMap(Map<String, dynamic> data) {
     return ReviewModel(
@@ -180,3 +187,5 @@ class ReviewModel {
     };
   }
 }
+
+enum BookingStatusType { pending, confirmed, pastBookings }

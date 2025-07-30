@@ -978,5 +978,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorFetchingLocations => 'خطاء في جلب المواقع';
 
   @override
+  String get bookingSuccess => 'نجاح الحجز';
+
+  @override
+  String get bookingFailed => 'فشل الحجز';
+
+  @override
   String get category => 'فئة';
 }

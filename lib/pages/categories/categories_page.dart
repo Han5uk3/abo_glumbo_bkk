@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:abo_glumbo_bbk/common_widgets/category_card.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -37,6 +39,7 @@ class CategoriesPage extends StatelessWidget {
               ),
               itemCount: categories.length,
               itemBuilder: (context, index) {
+                log('Category ID: ${categories[index].id}');
                 return CategoryCard(category: categories[index]);
               },
             );

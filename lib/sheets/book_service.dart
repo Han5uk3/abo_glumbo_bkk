@@ -1,0 +1,787 @@
+import 'dart:developer';
+import 'dart:io';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
+import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/models/address.dart';
+import 'package:abo_glumbo_bbk/models/customer.dart';
+import 'package:abo_glumbo_bbk/models/service.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/add_image_booking.dart';
+import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/sheets/payment.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+showBookServiceBottomSheet(
+  BuildContext context, {
+  required ServiceModel service,
+}) async {
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    clipBehavior: Clip.antiAlias,
+    builder: (context) {
+      return BookServiceBottomSheet(service: service);
+    },
+  );
+}
+
+class BookServiceBottomSheet extends StatefulWidget {
+  final ServiceModel service;
+  const BookServiceBottomSheet({super.key, required this.service});
+
+  @override
+  State<BookServiceBottomSheet> createState() => _BookServiceBottomSheetState();
+}
+
+class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
+  bool isFirstStep = true;
+  DateTime? selectedDate;
+  bool cashInHand = true;
+  bool saving = false;
+  List<AddressModel> _customerAddresses = [];
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController notesController = TextEditingController();
+  int selectedTimeCategory = 0;
+  int selectedTimeSlot = 0;
+  List<Map> timeSlots = [
+    {
+      "label": "Morning",
+      "values": [
+        {"label": "09:00 AM", "time": const TimeOfDay(hour: 9, minute: 0)},
+        {"label": "09:30 AM", "time": const TimeOfDay(hour: 9, minute: 30)},
+        {"label": "10:00 AM", "time": const TimeOfDay(hour: 10, minute: 0)},
+        {"label": "10:30 AM", "time": const TimeOfDay(hour: 10, minute: 30)},
+        {"label": "11:00 AM", "time": const TimeOfDay(hour: 11, minute: 0)},
+        {"label": "11:30 AM", "time": const TimeOfDay(hour: 11, minute: 30)},
+      ],
+    },
+    {
+      "label": "After noon",
+      "values": [
+        {"label": "12:00 PM", "time": const TimeOfDay(hour: 12, minute: 0)},
+        {"label": "12:30 PM", "time": const TimeOfDay(hour: 12, minute: 30)},
+        {"label": "01:00 PM", "time": const TimeOfDay(hour: 13, minute: 0)},
+        {"label": "01:30 PM", "time": const TimeOfDay(hour: 13, minute: 30)},
+        {"label": "02:00 PM", "time": const TimeOfDay(hour: 14, minute: 0)},
+        {"label": "02:30 PM", "time": const TimeOfDay(hour: 14, minute: 30)},
+      ],
+    },
+    {
+      "label": "Evening",
+      "values": [
+        {"label": "03:00 PM", "time": const TimeOfDay(hour: 15, minute: 0)},
+        {"label": "03:30 PM", "time": const TimeOfDay(hour: 15, minute: 30)},
+        {"label": "04:00 PM", "time": const TimeOfDay(hour: 16, minute: 0)},
+        {"label": "04:30 PM", "time": const TimeOfDay(hour: 16, minute: 30)},
+        {"label": "05:00 PM", "time": const TimeOfDay(hour: 17, minute: 0)},
+        {"label": "05:30 PM", "time": const TimeOfDay(hour: 17, minute: 30)},
+      ],
+    },
+    {
+      "label": "Night",
+      "values": [
+        {"label": "06:00 PM", "time": const TimeOfDay(hour: 18, minute: 0)},
+        {"label": "06:30 PM", "time": const TimeOfDay(hour: 18, minute: 30)},
+        {"label": "07:00 PM", "time": const TimeOfDay(hour: 19, minute: 0)},
+        {"label": "07:30 PM", "time": const TimeOfDay(hour: 19, minute: 30)},
+        {"label": "08:00 PM", "time": const TimeOfDay(hour: 20, minute: 0)},
+        {"label": "08:30 PM", "time": const TimeOfDay(hour: 20, minute: 30)},
+        {"label": "09:00 PM", "time": const TimeOfDay(hour: 21, minute: 0)},
+        {"label": "09:30 PM", "time": const TimeOfDay(hour: 21, minute: 30)},
+        {"label": "10:00 PM", "time": const TimeOfDay(hour: 22, minute: 0)},
+        {"label": "10:30 PM", "time": const TimeOfDay(hour: 22, minute: 30)},
+        {"label": "11:00 PM", "time": const TimeOfDay(hour: 23, minute: 0)},
+        {"label": "11:30 PM", "time": const TimeOfDay(hour: 23, minute: 30)},
+        {"label": "12:00 AM", "time": const TimeOfDay(hour: 0, minute: 0)},
+        {"label": "12:30 AM", "time": const TimeOfDay(hour: 0, minute: 30)},
+      ],
+    },
+  ];
+
+  File? _selectedImage;
+  File? _selectedVideo;
+  AddressModel? _selectedAddress;
+  String? selectedImageDownloadUrl;
+  String? selectedVideoDownloadUrl;
+  CustomerModel? customerData;
+
+  void _onDaySelect(DateTime day, DateTime focusedDay) {
+    setState(() {
+      selectedDate = day;
+      // Reset time selection when date changes
+      selectedTimeCategory = 0;
+      selectedTimeSlot = 0;
+    });
+  }
+
+  // Check if a time slot is in the past for today
+  bool _isTimeSlotPast(int categoryIndex, int slotIndex) {
+    if (selectedDate == null) return false;
+
+    // Only check for today's date
+    final now = DateTime.now();
+    if (!isSameDay(selectedDate!, now)) return false;
+
+    final timeOfDay =
+        timeSlots[categoryIndex]["values"][slotIndex]["time"] as TimeOfDay;
+    final selectedDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      timeOfDay.hour,
+      timeOfDay.minute,
+    );
+
+    // Add 30 minutes buffer to current time to prevent very close bookings
+    final currentTimeWithBuffer = now.add(const Duration(minutes: 30));
+
+    return selectedDateTime.isBefore(currentTimeWithBuffer);
+  }
+
+  // Check if entire time category should be disabled
+  bool _isTimeCategoryDisabled(int categoryIndex) {
+    if (selectedDate == null) return false;
+
+    final now = DateTime.now();
+    if (!isSameDay(selectedDate!, now)) return false;
+
+    final timeSlotsList = timeSlots[categoryIndex]["values"] as List<Map>;
+
+    // Check if all slots in this category are in the past
+    for (int i = 0; i < timeSlotsList.length; i++) {
+      if (!_isTimeSlotPast(categoryIndex, i)) {
+        return false; // At least one slot is available
+      }
+    }
+
+    return true; // All slots are in the past
+  }
+
+  // Get the first available time slot for a category
+  int _getFirstAvailableTimeSlot(int categoryIndex) {
+    if (selectedDate == null) return 0;
+
+    final now = DateTime.now();
+    if (!isSameDay(selectedDate!, now)) return 0;
+
+    final timeSlotsList = timeSlots[categoryIndex]["values"] as List<Map>;
+
+    for (int i = 0; i < timeSlotsList.length; i++) {
+      if (!_isTimeSlotPast(categoryIndex, i)) {
+        return i;
+      }
+    }
+
+    return 0;
+  }
+
+  Future<void> fetchCustomerAddresses() async {
+    try {
+      _customerAddresses = await AppServices.getCustomerAddress();
+    } catch (e) {
+      // Handle error
+      debugPrint("Error fetching addresses: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    fetchCustomerAddresses();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final safePadding = MediaQuery.of(context).padding;
+    return StreamBuilder<CustomerModel>(
+      stream: AppServices.listenToCustomerData(LocalStoreHelper.getUID() ?? ''),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          customerData = snapshot.data;
+          log(customerData!.toJson().toString());
+        }
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: Scaffold(
+            appBar: AppBar(),
+            body: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 16,
+                      left: 16,
+                      right: 16,
+                      bottom: 0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          isFirstStep
+                              ? AppLocalizations.of(context)?.selectDateTime ??
+                                    ''
+                              : AppLocalizations.of(
+                                      context,
+                                    )?.completeYourBooking ??
+                                    '',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: isFirstStep
+                        ? ListView(
+                            padding: const EdgeInsets.only(bottom: 16, top: 5),
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                  bottom: 18,
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context)?.selectDate ??
+                                      '',
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 13,
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: const Color(0XFFEAEAEA),
+                                  ),
+                                  borderRadius: BorderRadius.circular(9),
+                                ),
+                                child: TableCalendar(
+                                  locale: AppLocalizations.of(
+                                    context,
+                                  )?.localeName,
+                                  availableGestures: AvailableGestures.all,
+                                  headerStyle: HeaderStyle(
+                                    formatButtonVisible: false,
+                                    titleCentered: true,
+                                    titleTextStyle: GoogleFonts.poppins(
+                                      color: AppColors.black4,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  calendarStyle: CalendarStyle(
+                                    selectedDecoration: BoxDecoration(
+                                      color: AppColors.blue2,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    todayDecoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: AppColors.blue2,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    selectedTextStyle: GoogleFonts.mulish(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 11,
+                                    ),
+                                    todayTextStyle: GoogleFonts.mulish(
+                                      color: AppColors.blue2,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                  rowHeight: 38,
+                                  selectedDayPredicate: (day) =>
+                                      isSameDay(day, selectedDate),
+                                  focusedDay: selectedDate ?? DateTime.now(),
+                                  firstDay: DateTime.now(),
+                                  lastDay: DateTime.utc(2050, 01, 16),
+                                  onDaySelected: _onDaySelect,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 17,
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(
+                                        context,
+                                      )?.availableTimeSlot ??
+                                      '',
+                                  style: GoogleFonts.dmSans(
+                                    color: Colors.black87,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 31,
+                                child: ListView.builder(
+                                  padding: const EdgeInsets.only(left: 16.0),
+                                  scrollDirection: Axis.horizontal,
+                                  shrinkWrap: true,
+                                  itemCount: 4,
+                                  itemBuilder: (context, index) {
+                                    final isDisabled = _isTimeCategoryDisabled(
+                                      index,
+                                    );
+
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 8.0,
+                                      ),
+                                      child: InkWell(
+                                        onTap: isDisabled
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  selectedTimeCategory = index;
+                                                  selectedTimeSlot =
+                                                      _getFirstAvailableTimeSlot(
+                                                        index,
+                                                      );
+                                                });
+                                              },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: isDisabled
+                                                ? Colors.grey.shade300
+                                                : selectedTimeCategory == index
+                                                ? AppColors.secondary
+                                                : Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                            border: Border.all(
+                                              color: isDisabled
+                                                  ? Colors.grey.shade400
+                                                  : selectedTimeCategory ==
+                                                        index
+                                                  ? AppColors.secondary
+                                                  : Colors.black,
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                _getLocalizedTimeCategory(
+                                                  timeSlots[index]["label"],
+                                                ),
+                                                style: GoogleFonts.dmSans(
+                                                  color: isDisabled
+                                                      ? Colors.grey.shade600
+                                                      : selectedTimeCategory ==
+                                                            index
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  top: 16,
+                                  right: 5,
+                                ),
+                                child: Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    for (
+                                      int i = 0;
+                                      i <
+                                          (timeSlots[selectedTimeCategory]["values"]
+                                                  as List<Map>)
+                                              .length;
+                                      i++
+                                    )
+                                      Builder(
+                                        builder: (context) {
+                                          final isPast = _isTimeSlotPast(
+                                            selectedTimeCategory,
+                                            i,
+                                          );
+
+                                          return InkWell(
+                                            onTap: isPast
+                                                ? null
+                                                : () {
+                                                    setState(
+                                                      () =>
+                                                          selectedTimeSlot = i,
+                                                    );
+                                                  },
+                                            child: Container(
+                                              height: 30,
+                                              width: 80,
+                                              alignment: Alignment.center,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: isPast
+                                                    ? Colors.grey.shade200
+                                                    : selectedTimeSlot == i
+                                                    ? Colors.transparent
+                                                    : AppColors.grey4,
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                                border: Border.all(
+                                                  color: isPast
+                                                      ? Colors.grey.shade400
+                                                      : selectedTimeSlot == i
+                                                      ? AppColors.secondary
+                                                      : Colors.transparent,
+                                                  width: 1,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "${(timeSlots[selectedTimeCategory]["values"] as List<Map>)[i]["label"].toString().substring(0, 5)} ${_getLocalizedTimeSlots((timeSlots[selectedTimeCategory]["values"] as List<Map>)[i]["label"])}",
+                                                style: GoogleFonts.dmSans(
+                                                  color: isPast
+                                                      ? Colors.grey.shade500
+                                                      : selectedTimeSlot == i
+                                                      ? AppColors.secondary
+                                                      : Colors.black87,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : ListView(
+                            children: [
+                              AddIssueImageAndVideo(
+                                onImageSelected: (value) {
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) {
+                                    if (mounted) {
+                                      setState(() => _selectedImage = value);
+                                    }
+                                  });
+                                },
+                                onVideoSelected: (value) {
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) {
+                                    if (mounted) {
+                                      setState(() => _selectedVideo = value);
+                                    }
+                                  });
+                                },
+                                isAddressSelected: (value) {
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) {
+                                    if (mounted) {
+                                      setState(() => _selectedAddress = value);
+                                    }
+                                  });
+                                },
+                                savedAddresses: _customerAddresses,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 10,
+                                  left: 16,
+                                  right: 16,
+                                  bottom: 0,
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context)?.addNotes ?? '',
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 13,
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 10,
+                                  left: 16,
+                                  right: 16,
+                                  bottom: 8,
+                                ),
+                                child: TextFormField(
+                                  controller: notesController,
+                                  maxLines: null,
+                                  minLines: 4,
+                                  keyboardType: TextInputType.multiline,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.black12,
+                                        width: 2.0,
+                                      ),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(8.0),
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.black12,
+                                        width: 2.0,
+                                      ),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(8.0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: safePadding.bottom + 3,
+                      top: 18,
+                      left: 16,
+                      right: 16,
+                    ),
+                    child: isFirstStep
+                        ? SizedBox(
+                            width: double.maxFinite,
+                            height: 50,
+                            child: Hero(
+                              tag: 'primary_button',
+                              child: FilledButton(
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: AppColors.secondary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (selectedDate == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        behavior: SnackBarBehavior.floating,
+                                        content: Text(
+                                          AppLocalizations.of(
+                                                context,
+                                              )?.pleaseSelectADate ??
+                                              '',
+                                        ),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  // Check if selected time is in the past
+                                  if (_isTimeSlotPast(
+                                    selectedTimeCategory,
+                                    selectedTimeSlot,
+                                  )) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        behavior: SnackBarBehavior.floating,
+                                        content: Text(
+                                          AppLocalizations.of(
+                                                context,
+                                              )?.pleaseSelectAValidTime ??
+                                              'Please select a valid time',
+                                        ),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  setState(() => isFirstStep = false);
+                                },
+                                child: Text(
+                                  AppLocalizations.of(context)?.continueText ??
+                                      '',
+                                  style: GoogleFonts.dmSans(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Row(
+                            children: [
+                              if (!saving)
+                                Expanded(
+                                  flex: 2,
+                                  child: SizedBox(
+                                    height: 50,
+                                    child: OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        side: const BorderSide(
+                                          color: Colors.black87,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        setState(() => isFirstStep = true);
+                                      },
+                                      child: Text(
+                                        AppLocalizations.of(context)?.back ??
+                                            '',
+                                        style: GoogleFonts.dmSans(
+                                          color: Colors.black87,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              if (!saving) const SizedBox(width: 16),
+                              Expanded(
+                                flex: 3,
+                                child: SizedBox(
+                                  height: 50,
+                                  child: Hero(
+                                    tag: 'primary_button',
+                                    child: FilledButton(
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor: AppColors.secondary,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        if (_selectedAddress == null) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              content: Text(
+                                                AppLocalizations.of(
+                                                      context,
+                                                    )?.pleaseSelectServiceAddress ??
+                                                    '',
+                                              ),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                          return;
+                                        }
+                                        showPaymentBottomSheet(
+                                          context,
+                                          service: widget.service,
+                                          selectedImage: _selectedImage,
+                                          selectedVideo: _selectedVideo,
+                                          selectedDate: selectedDate,
+                                          timeSlots: timeSlots,
+                                          selectedTimeCategory:
+                                              selectedTimeCategory,
+                                          selectedTimeSlot: selectedTimeSlot,
+                                          notesController: notesController,
+                                          customerData: customerData!,
+                                        );
+                                      },
+                                      child: saving
+                                          ? Loader()
+                                          : Text(
+                                              AppLocalizations.of(
+                                                    context,
+                                                  )?.completePayment ??
+                                                  '',
+                                              style: GoogleFonts.dmSans(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  _getLocalizedTimeCategory(String timeCategory) {
+    switch (timeCategory.toLowerCase()) {
+      case 'morning':
+        return AppLocalizations.of(context)?.morning ?? '';
+      case 'after noon':
+        return AppLocalizations.of(context)?.afterNoon ?? '';
+      case 'evening':
+        return AppLocalizations.of(context)?.evening ?? '';
+      case 'night':
+        return AppLocalizations.of(context)?.night ?? '';
+      default:
+        return '';
+    }
+  }
+
+  _getLocalizedTimeSlots(String timeSlot) {
+    if (timeSlot.toLowerCase().contains("am")) {
+      return AppLocalizations.of(context)?.am;
+    } else if (timeSlot.toLowerCase().contains("pm")) {
+      return AppLocalizations.of(context)?.pm;
+    } else {
+      return '';
+    }
+  }
+}

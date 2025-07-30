@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
+import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/banner.dart';
+import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/location.dart';
@@ -169,6 +171,23 @@ class AppServices {
         });
   }
 
+  static Stream<List<ServiceModel>> listenToServicesByCategory(
+    String categoryId,
+  ) {
+    return AppFirestore.servicesCollectionRef
+        .where('category', isEqualTo: categoryId)
+        .where('isActive', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map(
+                (doc) =>
+                    ServiceModel.fromJson(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
+        });
+  }
+
   static Future<List<BannerModel>> fetchBanners() async {
     try {
       final snapshot = await AppFirestore.bannersCollectionRef
@@ -222,6 +241,130 @@ class AppServices {
       });
     } catch (e) {
       debugPrint('❌ Error updating customer longitude and latitude: $e');
+    }
+  }
+
+  // Bookings
+  static Stream<List<BookingModel>> listenToBookings(String uid) {
+    return AppFirestore.bookingsCollectionRef
+        .where('customer.uid', isEqualTo: uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map(
+                (doc) =>
+                    BookingModel.fromJson(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
+        });
+  }
+
+  static Future<List<AddressModel>> getCustomerAddress() async {
+    try {
+      final docSnapshot = await AppFirestore.customersCollectionRef
+          .doc(uid)
+          .get();
+      final data = docSnapshot.data() as Map<String, dynamic>;
+      final addresses = data['addresses'] as List<dynamic>;
+      return addresses
+          .map((address) => AddressModel.fromJson(address))
+          .toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<bool> addCustomerAddress(AddressModel address) async {
+    try {
+      await AppFirestore.customersCollectionRef.doc(uid).update({
+        'addresses': FieldValue.arrayUnion([address.toJson()]),
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<AddressModel?>
+  getSelectedAddressAndUpdateIsSelectedToFalse() async {
+    try {
+      final docSnapshot = await AppFirestore.customersCollectionRef
+          .doc(uid)
+          .get();
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data() as Map<String, dynamic>;
+        final addresses = (data['addresses'] as List<dynamic>?) ?? [];
+
+        for (var address in addresses) {
+          if ((address as Map<String, dynamic>)['isSelected'] == true) {
+            // Update all addresses to set isSelected to false
+            final updatedAddresses = addresses.map((a) {
+              final addr = Map<String, dynamic>.from(a as Map);
+              addr['isSelected'] = false;
+              return addr;
+            }).toList();
+
+            await AppFirestore.customersCollectionRef.doc(uid).update({
+              'addresses': updatedAddresses,
+            });
+
+            return AddressModel.fromJson(address);
+          }
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint('❌ Error getting selected address: $e');
+      return null;
+    }
+  }
+
+  static Future<void> removeAddress(String id) async {
+    try {
+      final docSnapshot = await AppFirestore.customersCollectionRef
+          .doc(uid)
+          .get();
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data() as Map<String, dynamic>;
+        final addresses = (data['addresses'] as List<dynamic>?) ?? [];
+
+        final updatedAddresses = addresses
+            .where((a) => (a as Map<String, dynamic>)['id'] != id)
+            .toList();
+
+        await AppFirestore.customersCollectionRef.doc(uid).update({
+          'addresses': updatedAddresses,
+        });
+      }
+    } catch (e) {
+      debugPrint('❌ Error removing address: $e');
+    }
+  }
+
+  static Future<bool> selectLocation(String id) async {
+    try {
+      final docSnapshot = await AppFirestore.customersCollectionRef
+          .doc(uid)
+          .get();
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data() as Map<String, dynamic>;
+        final addresses = (data['addresses'] as List<dynamic>?) ?? [];
+
+        final updatedAddresses = addresses.map((a) {
+          final address = Map<String, dynamic>.from(a as Map);
+          address['isSelected'] = address['id'] == id;
+          return address;
+        }).toList();
+
+        await AppFirestore.customersCollectionRef.doc(uid).update({
+          'addresses': updatedAddresses,
+        });
+      }
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

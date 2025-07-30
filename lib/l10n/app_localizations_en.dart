@@ -983,5 +983,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorFetchingLocations => 'Error fetching locations';
 
   @override
+  String get bookingSuccess => 'Booking Success';
+
+  @override
+  String get bookingFailed => 'Booking Failed';
+
+  @override
   String get category => 'Category';
 }

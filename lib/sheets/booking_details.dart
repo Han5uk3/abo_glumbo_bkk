@@ -1,0 +1,456 @@
+// ignore_for_file: deprecated_member_use
+import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/models/address.dart';
+import 'package:abo_glumbo_bbk/models/booking.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+
+Future<void> showBookingDetailsBottomSheet(
+  BuildContext context, {
+  required BookingModel booking,
+  VoidCallback? onRefresh,
+}) {
+  return showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) =>
+        BookingDetailsBottomSheet(booking: booking, onRefresh: onRefresh),
+  );
+}
+
+class BookingDetailsBottomSheet extends StatelessWidget {
+  final BookingModel booking;
+  final VoidCallback? onRefresh;
+
+  const BookingDetailsBottomSheet({
+    super.key,
+    required this.booking,
+    this.onRefresh,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
+
+    AddressModel? customerSelectedAddress = booking.customer.addresses.isEmpty
+        ? null
+        : booking.customer.addresses.firstWhere(
+            (address) => address.isSelected ?? false,
+            orElse: () => booking.customer.addresses.first,
+          );
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    localization.bookingDetails,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildStatusBadge(localization),
+                  const SizedBox(height: 20),
+                  _buildSectionCard(
+                    title: localization.serviceInformation,
+                    icon: Icons.build_rounded,
+                    children: [
+                      _buildInfoRow(
+                        localization.service,
+                        booking.service.nameLocalized(
+                              languageCode:
+                                  AppLocalizations.of(context)?.localeName ??
+                                  '',
+                            ) ??
+                            'N/A',
+                      ),
+                      // _buildInfoRow(
+                      //     'Category', booking.service.category ?? 'N/A'),
+                      if (booking.service.description?.isNotEmpty == true)
+                        _buildInfoRow(
+                          localization.description,
+                          booking.service.descriptionLocalized(
+                            languageCode:
+                                AppLocalizations.of(context)?.localeName ?? '',
+                          )!,
+                        ),
+                      if (booking.service.price != null)
+                        _buildInfoRow(
+                          localization.servicePrice,
+                          '${localization.sar} ${booking.service.price}',
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildSectionCard(
+                    title: localization.schedule,
+                    icon: Icons.schedule_rounded,
+                    children: [
+                      _buildInfoRow(
+                        localization.dateAndTime,
+                        formatDateTime(
+                          booking.bookingDateTime.toDate(),
+                          AppLocalizations.of(context)?.localeName ?? '',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  if (customerSelectedAddress != null &&
+                      customerSelectedAddress.buildingNumber.isNotEmpty)
+                    _buildSectionCard(
+                      title: localization.location,
+                      icon: Icons.location_on_rounded,
+                      children: [
+                        _buildInfoRow(
+                          localization.address,
+                          customerSelectedAddress.buildingNumber,
+                        ),
+                        _buildInfoRow(
+                          localization.streetName,
+                          customerSelectedAddress.streetName ?? 'N/A',
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 16),
+                  _buildSectionCard(
+                    title: localization.pricingAndPayment,
+                    icon: Icons.payments_rounded,
+                    children: [
+                      if (booking.service.price != null)
+                        _buildInfoRow(
+                          localization.servicePrice,
+                          '${localization.sar} ${booking.service.price}',
+                          isHighlighted: true,
+                        ),
+                      _buildInfoRow(
+                        localization.paymentMethod,
+                        getLocalizedPaymentMode(
+                          booking.paymentModeGen,
+                          localization,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  if (booking.notes.isNotEmpty)
+                    _buildSectionCard(
+                      title: localization.additionalNotes,
+                      icon: Icons.note_rounded,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey[200]!),
+                          ),
+                          child: Text(
+                            booking.notes,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 14,
+                              color: Colors.black87,
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (booking.review != null)
+                    _buildSectionCard(
+                      title: localization.customerReview,
+                      icon: Icons.star_rounded,
+                      children: [
+                        _buildRatingRow(
+                          localization.rating,
+                          booking.review!.rating.toDouble(),
+                        ),
+                        if (booking.review!.review.isNotEmpty)
+                          _buildInfoRow(
+                            localization.review,
+                            booking.review!.review,
+                          ),
+                        if (booking.review!.tipAmount != null &&
+                            booking.review!.tipAmount! > 0)
+                          _buildInfoRow(
+                            localization.tipAmount,
+                            '${localization.sar} ${booking.review!.tipAmount!.toStringAsFixed(1)}',
+                          ),
+                        if (booking.review!.createdAt != null)
+                          _buildInfoRow(
+                            localization.reviewedOn,
+                            formatDateTime(
+                              booking.review!.createdAt!.toDate(),
+                              AppLocalizations.of(context)?.localeName ?? '',
+                            ),
+                          ),
+                      ],
+                    ),
+                  const SizedBox(height: 32),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  getLocalizedPaymentMode(String code, AppLocalizations localization) {
+    switch (code) {
+      case 'Cards':
+        return localization.cards;
+      case 'Apple Pay':
+        return localization.applePay;
+      case 'Cash On Hands':
+        return localization.cashOnHands;
+      default:
+        return localization.unknown;
+    }
+  }
+
+  Widget _buildStatusBadge(AppLocalizations localization) {
+    Color statusColor;
+    String statusText;
+    IconData statusIcon;
+
+    switch (booking.bookingStatusCode) {
+      case 'P':
+        statusColor = Colors.orange;
+        statusText = localization.pending;
+        statusIcon = Icons.schedule;
+        break;
+      case 'A':
+        statusColor = Colors.blue;
+        statusText = localization.accepted;
+        statusIcon = Icons.check_circle;
+        break;
+      case 'R':
+        statusColor = Colors.red;
+        statusText = localization.rejected;
+        statusIcon = Icons.cancel;
+        break;
+      case 'C':
+        statusColor = Colors.green;
+        statusText = localization.completed;
+        statusIcon = Icons.check_circle;
+        break;
+      case 'X':
+        statusColor = Colors.red;
+        statusText = localization.cancelled;
+        statusIcon = Icons.cancel;
+        break;
+      default:
+        statusColor = Colors.grey;
+        statusText = localization.unknown;
+        statusIcon = Icons.help;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: statusColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: statusColor.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(statusIcon, color: statusColor, size: 16),
+          const SizedBox(width: 6),
+          Text(
+            statusText,
+            style: GoogleFonts.dmSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: statusColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.blue1.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: AppColors.blue1, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: GoogleFonts.dmSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(
+    String label,
+    String value, {
+    bool isHighlighted = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: GoogleFonts.dmSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              value,
+              style: GoogleFonts.dmSans(
+                fontSize: 14,
+                fontWeight: isHighlighted ? FontWeight.w600 : FontWeight.w400,
+                color: isHighlighted ? AppColors.blue1 : Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRatingRow(String label, double rating) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: GoogleFonts.dmSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Row(
+              children: [
+                ...List.generate(5, (index) {
+                  return Icon(
+                    index < rating.floor()
+                        ? Icons.star
+                        : index < rating
+                        ? Icons.star_half
+                        : Icons.star_border,
+                    color: Colors.amber,
+                    size: 16,
+                  );
+                }),
+                const SizedBox(width: 6),
+                Text(
+                  '(${rating.toStringAsFixed(1)})',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String formatDateTime(DateTime dateTime, String locale) {
+    final dateFormat = DateFormat.yMMMMd(locale); // e.g., ١٩ يونيو، ٢٠٢٥
+    final timeFormat = DateFormat.jm(locale); // e.g., ٢:٣٠ م or 2:30 PM
+    return '${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}';
+  }
+}

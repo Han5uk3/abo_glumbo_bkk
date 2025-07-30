@@ -1982,6 +1982,18 @@ abstract class AppLocalizations {
   /// **'Error fetching locations'**
   String get errorFetchingLocations;
 
+  /// No description provided for @bookingSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Success'**
+  String get bookingSuccess;
+
+  /// No description provided for @bookingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Failed'**
+  String get bookingFailed;
+
   /// No description provided for @category.
   ///
   /// In en, this message translates to:

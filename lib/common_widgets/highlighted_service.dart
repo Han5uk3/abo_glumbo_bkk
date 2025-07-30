@@ -1,6 +1,7 @@
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/sheets/service_info.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -74,13 +75,8 @@ class HighlightedServiceWidget extends StatelessWidget {
                   );
 
                   return GestureDetector(
-                    onTap: () {
-                      // showServiceBottomSheet(
-                      //   context,
-                      //   service: service,
-                      //   isGuestUser: isGuestUser,
-                      // );
-                    },
+                    onTap: () =>
+                        showServiceBottomSheet(context, service: service),
                     child: Container(
                       height: 127,
                       width: 127,

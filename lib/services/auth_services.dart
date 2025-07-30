@@ -31,6 +31,17 @@ class AuthServices {
     return result;
   }
 
+  String _sanitizeOTP(String input) {
+    // Remove spaces and convert Arabic digits to ASCII for OTP
+    String result = input.replaceAll(RegExp(r'\s'), '');
+    const arabicDigits = '٠١٢٣٤٥٦٧٨٩';
+    const asciiDigits = '0123456789';
+    for (int i = 0; i < arabicDigits.length; i++) {
+      result = result.replaceAll(arabicDigits[i], asciiDigits[i]);
+    }
+    return result;
+  }
+
   String _formatToE164(String phoneNumber) {
     String sanitized = phoneNumber;
     if (sanitized.startsWith('+966')) {
@@ -117,7 +128,11 @@ class AuthServices {
     required String smsCode,
   }) async {
     try {
-      String sanitizedOTP = _sanitizePhoneNumber(otp);
+      String sanitizedOTP = _sanitizeOTP(otp);
+      debugPrint(
+        "Verifying OTP: $sanitizedOTP with verification ID: $verificationId",
+      );
+
       final credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
         smsCode: sanitizedOTP,
@@ -125,6 +140,7 @@ class AuthServices {
       final tempUserCredential = await _auth.signInWithCredential(credential);
       final userPhoneNumber = tempUserCredential.user?.phoneNumber ?? '';
 
+      debugPrint("User phone number from credential: $userPhoneNumber");
       AuthServices.phoneNumber = userPhoneNumber;
 
       return tempUserCredential;
@@ -145,19 +161,39 @@ class AuthServices {
     required UserCredential userCredential,
     required BuildContext context,
   }) async {
-    final uid = userCredential.user?.uid;
-    if (uid == null) return;
-    final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
-    if (userDoc.exists) {
-      LocalStoreHelper.putUID(uid);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Home()),
-      );
-    } else {
-      Navigator.pushReplacement(
+    try {
+      final uid = userCredential.user?.uid;
+      if (uid == null) {
+        debugPrint("Error: User UID is null");
+        return;
+      }
+
+      debugPrint("Checking user with UID: $uid");
+      final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
+
+      if (userDoc.exists) {
+        debugPrint("User exists, navigating to Home");
+        LocalStoreHelper.putUID(uid);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+          (route) => false,
+        );
+      } else {
+        debugPrint("User doesn't exist, navigating to SignUp");
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => SignupPage()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error in checkUser: $e");
+      // If there's an error, still navigate to signup as fallback
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => SignupPage()),
+        (route) => false,
       );
     }
   }

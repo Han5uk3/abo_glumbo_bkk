@@ -10,6 +10,11 @@ class LocalStoreHelper {
     return MyApp.box.get('uid');
   }
 
+  // clear uid
+  static Future<void> clearUID() {
+    return MyApp.box.delete('uid');
+  }
+
   static Future<void> putGuestUser(bool isGuest) {
     return MyApp.box.put('is_guest', isGuest);
   }
@@ -61,5 +66,18 @@ class LocalStoreHelper {
   static bool getBiometricAuthEnabled(String uid) {
     return MyApp.box.get('biometric_auth_enabled_$uid', defaultValue: false) ??
         false;
+  }
+
+  static Future<void> saveBackgroundTime() async {
+    final now = DateTime.now();
+    await MyApp.box.put('backgroundTime', now.toIso8601String());
+  }
+
+  static DateTime? getBackgroundTime() {
+    final timeString = MyApp.box.get('backgroundTime');
+    if (timeString != null) {
+      return DateTime.tryParse(timeString);
+    }
+    return null;
   }
 }

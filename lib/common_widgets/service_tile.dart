@@ -1,11 +1,29 @@
-import 'package:abo_glumbo_bbk/models/service.dart';
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
+import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/sheets/book_service.dart';
+import 'package:abo_glumbo_bbk/sheets/sign_up_alert.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../models/service.dart';
 
 class ServiceTile extends StatelessWidget {
+  const ServiceTile({
+    super.key,
+    required this.service,
+    this.isGuestUser,
+    this.onFavPressed,
+    this.isFavorite = false,
+    this.languageCode = 'en',
+  });
+
   final ServiceModel service;
   final VoidCallback? onFavPressed;
-  const ServiceTile({super.key, required this.service, this.onFavPressed});
+  final bool? isGuestUser;
+  final bool isFavorite;
+  final String languageCode;
 
   @override
   Widget build(BuildContext context) {
@@ -23,18 +41,33 @@ class ServiceTile extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            child: Container(
-              height: 85,
-              width: 85,
-              color: Colors.grey[300],
-              child: const Center(
-                child: Icon(
-                  Icons.image_not_supported,
-                  color: Colors.grey,
-                  size: 30,
-                ),
-              ),
-            ),
+            child:
+                (service.image != null &&
+                    service.image!.isNotEmpty &&
+                    Uri.tryParse(service.image!) != null &&
+                    Uri.tryParse(service.image!)!.hasAbsolutePath)
+                ? CachedNetworkImage(
+                    imageUrl: service.image!,
+                    height: 85,
+                    width: 85,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                        Container(color: Colors.grey[200]),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error, color: Colors.red, size: 30),
+                  )
+                : Container(
+                    height: 85,
+                    width: 85,
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey,
+                        size: 30,
+                      ),
+                    ),
+                  ),
           ),
           const SizedBox(width: 17),
           Expanded(
@@ -46,40 +79,50 @@ class ServiceTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Service Name',
+                        service.nameLocalized(languageCode: languageCode) ?? '',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: GoogleFonts.dmSans(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
                           color: Colors.black,
                         ),
                       ),
                     ),
-                    IconButton(
-                      onPressed: null,
-                      icon: const Icon(
-                        CupertinoIcons.heart,
-                        color: Colors.black45,
+                    if (!(LocalStoreHelper.getGuestUser()))
+                      IconButton(
+                        onPressed: onFavPressed,
+                        icon: isFavorite
+                            ? const Icon(
+                                CupertinoIcons.heart_fill,
+                                color: Colors.red,
+                              )
+                            : const Icon(
+                                CupertinoIcons.heart,
+                                color: Colors.black45,
+                              ),
                       ),
-                    ),
                   ],
                 ),
-                const Text(
-                  'Service description goes here and can span multiple lines with proper overflow handling',
-                  style: TextStyle(color: Colors.black45, fontSize: 12),
+                Text(
+                  service.descriptionLocalized(languageCode: languageCode) ??
+                      '',
+                  style: GoogleFonts.dmSans(
+                    color: Colors.black45,
+                    fontSize: 12,
+                  ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    const Text(
-                      "99 SAR",
-                      style: TextStyle(
-                        color: Color(0xFF4CAF50),
+                    Text(
+                      "${service.price} ${AppLocalizations.of(context)?.sar}",
+                      style: GoogleFonts.dmSans(
+                        color: AppColors.green1,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
                       ),
@@ -94,12 +137,19 @@ class ServiceTile extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          backgroundColor: const Color(0xFF2196F3),
+                          backgroundColor: AppColors.secondary,
                         ),
-                        onPressed: null,
-                        child: const Text(
-                          'Request Service',
-                          style: TextStyle(
+                        onPressed: () {
+                          if (LocalStoreHelper.getGuestUser()) {
+                            return SignUpAlertForGuestUsers().showSignUpAlert(
+                              context,
+                            );
+                          }
+                          showBookServiceBottomSheet(context, service: service);
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)?.requestService ?? '',
+                          style: GoogleFonts.dmSans(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 10,

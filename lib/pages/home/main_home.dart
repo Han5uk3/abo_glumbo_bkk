@@ -1,17 +1,13 @@
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/pages/SignUp/signup_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/account.dart';
-import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/bookings_page.dart';
 import 'package:abo_glumbo_bbk/pages/categories/categories_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/home_page.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
-import 'package:abo_glumbo_bbk/services/notifications.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/styles/app_icons.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 class Home extends StatefulWidget {
@@ -24,29 +20,23 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool? _isGuest;
   int currentIndex = 0;
+
+  // Create stable page instances to prevent recreation
+  late final List<Widget> _pages;
+
   @override
   void initState() {
     _isGuest = LocalStoreHelper.getGuestUser();
-    if (!(_isGuest ?? false)) {
-      context.read<AccountBloc>().add(
-        ListenCustomerData(uid: LocalStoreHelper.getUID() ?? ''),
-      );
-      _initializeNotifications();
-    }
-    super.initState();
-  }
 
-  Future<void> _initializeNotifications() async {
-    try {
-      await NotificationServices.initializeNotifications();
-      await NotificationServices.initializeFCM();
-      await NotificationServices.setupFCMListeners();
-      await NotificationServices.checkForInitialMessage();
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error initializing notifications: $e');
-      }
-    }
+    // Initialize pages once to prevent recreation
+    _pages = [
+      const HomePage(),
+      const CategoriesPage(),
+      const BookingsPage(),
+      // AccountPage will be handled separately since it needs customerData
+    ];
+
+    super.initState();
   }
 
   @override
@@ -55,18 +45,22 @@ class _HomeState extends State<Home> {
     return StreamBuilder(
       stream: AppServices.listenToCustomerData(LocalStoreHelper.getUID() ?? ''),
       builder: (context, snapshot) {
-        final customerData = snapshot.data;
-        if (customerData == null) {
-          return SignupPage();
+        if (snapshot.hasError) {
+          debugPrint("Error fetching customer data: ${snapshot.error}");
         }
-        final pages = [
-          HomePage(),
-          CategoriesPage(),
-          AccountPage(customerData: customerData),
-        ];
+        final customerData = snapshot.data;
+
+        // Use stable page instances, only create AccountPage when needed
+        Widget getCurrentPage() {
+          if (currentIndex == 3) {
+            return AccountPage(customerData: customerData);
+          }
+          return _pages[currentIndex];
+        }
+
         return Scaffold(
           extendBodyBehindAppBar: true,
-          body: pages[currentIndex],
+          body: getCurrentPage(),
           bottomNavigationBar: NavigationBar(
             selectedIndex: currentIndex,
             onDestinationSelected: (index) {

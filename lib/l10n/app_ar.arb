@@ -321,5 +321,7 @@
   "noWishlistItems":"لا توجد عناصر المفضلة",
   "errorFillingProfile":"خطاء في تعبئة الملف الشخصي",
   "errorFetchingLocations":"خطاء في جلب المواقع",
+  "bookingSuccess":"نجاح الحجز",
+  "bookingFailed":"فشل الحجز",
   "category":"فئة"
 }

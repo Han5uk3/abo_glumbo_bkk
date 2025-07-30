@@ -323,5 +323,7 @@
   "noWishlistItems":"No wishlist items",
   "errorFillingProfile":"Error filling profile",
   "errorFetchingLocations":"Error fetching locations",
+  "bookingSuccess":"Booking Success",
+  "bookingFailed":"Booking Failed",
   "category":"Category"
 }

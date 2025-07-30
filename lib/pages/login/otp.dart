@@ -112,7 +112,7 @@ class _OtpPageState extends State<OtpPage> {
   }
 
   void verifyOtp() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate() || isLoading) return;
 
     setState(() {
       isLoading = true;
@@ -135,6 +135,8 @@ class _OtpPageState extends State<OtpPage> {
     }
 
     try {
+      print("Verifying OTP: $otp with verification ID: $verificationId");
+
       final UserCredential userCredential = await AuthServices().verifyOTP(
         context,
         otp,
@@ -142,16 +144,15 @@ class _OtpPageState extends State<OtpPage> {
         smsCode: otp,
       );
 
-      await AuthServices()
-          .checkUser(userCredential: userCredential, context: context)
-          .then((_) {
-            if (mounted) {
-              setState(() {
-                isLoading = false;
-              });
-            }
-          });
+      print("OTP verification successful, checking user...");
+
+      // Navigate to the appropriate page without using .then()
+      await AuthServices().checkUser(
+        userCredential: userCredential,
+        context: context,
+      );
     } catch (e) {
+      print("OTP verification failed: $e");
       if (mounted) {
         setState(() {
           isLoading = false;

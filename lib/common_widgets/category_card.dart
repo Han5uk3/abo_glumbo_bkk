@@ -1,15 +1,17 @@
 // ignore_for_file: deprecated_member_use
+import 'dart:developer';
+
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
+import 'package:abo_glumbo_bbk/pages/categories/category_detail.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CategoryCard extends StatefulWidget {
-  const CategoryCard({super.key, required this.category});
-
   final CategoryModel category;
+  const CategoryCard({super.key, required this.category});
 
   @override
   State<CategoryCard> createState() => _CategoryCardState();
@@ -19,7 +21,17 @@ class _CategoryCardState extends State<CategoryCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        log(widget.category.id ?? '');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return CategoryDetail(category: widget.category);
+            },
+          ),
+        );
+      },
       child: Container(
         margin: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
         height: 105,

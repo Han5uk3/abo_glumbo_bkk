@@ -25,6 +25,9 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
   Future<void> _fetchLocation() async {
     try {
       LocationPermission permission = await Geolocator.requestPermission();
+
+      if (!mounted) return;
+
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
         showSnackBar(
@@ -34,9 +37,13 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
         );
         return;
       }
-      // Dispatch Bloc event to update customer location
-      context.read<AccountBloc>().add(UpdateCustomerLocation());
+
+      if (mounted) {
+        context.read<AccountBloc>().add(UpdateCustomerLocation());
+      }
     } catch (e) {
+      if (!mounted) return;
+
       showSnackBar(
         AppLocalizations.of(context)?.locationPermissionDeniedForever ?? '',
         context,
