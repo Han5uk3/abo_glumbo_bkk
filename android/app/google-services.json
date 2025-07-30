@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "629201660527",
+    "project_id": "worker-app-tnext",
+    "storage_bucket": "worker-app-tnext.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629201660527:android:830540db26fc90fb2dfb9a",
+        "android_client_info": {
+          "package_name": "com.aboglumbo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBk_ntYzCiL1uhCfuNBS9jqdK_Pmmzm0V8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629201660527:android:2e4177f0e86629d12dfb9a",
+        "android_client_info": {
+          "package_name": "com.aboglumbo.cPanel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBk_ntYzCiL1uhCfuNBS9jqdK_Pmmzm0V8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
