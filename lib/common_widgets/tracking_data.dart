@@ -2,6 +2,7 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TrackingData extends StatelessWidget {
   String? timeTakenToArrive;
@@ -38,7 +39,17 @@ class TrackingData extends StatelessWidget {
             fontWeight: FontWeight.normal,
           ),
           SizedBox(height: 5),
-          serviceWorkerCard(),
+          serviceWorkerCard(
+            name: worker?.name ?? 'Service Provider',
+            onCall: () => worker?.phone != null
+                ? () {
+                    launchUrl(
+                      Uri.parse('tel:${worker!.phone}'),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  }
+                : null,
+          ),
         ],
       ),
     );

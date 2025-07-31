@@ -79,80 +79,69 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> _fetchServices() async {
-    if (!mounted) return;
-
     try {
       setState(() {
         isLoading = true;
       });
+
+      print('🔍 SearchPage: Starting to fetch services...');
 
       final categoriesState = context.read<CategoriesBloc>().state;
       List<CategoryModel> categories = [];
 
       if (categoriesState is CategoriesLoaded) {
         categories = categoriesState.categories;
+        print('📂 SearchPage: Loaded ${categories.length} categories');
+      } else {
+        print(
+          '⚠️ SearchPage: Categories not loaded yet, state: $categoriesState',
+        );
       }
 
-      // Fetch services from AppFirestore with timeout
+      // Fetch services from AppFirestore
+      print('🔥 SearchPage: Querying Firestore for active services...');
       final querySnapshot = await AppFirestore.servicesCollectionRef
           .where('isActive', isEqualTo: true)
-          .get()
-          .timeout(
-            const Duration(seconds: 30),
-            onTimeout: () => throw TimeoutException(
-              'Request timed out',
-              const Duration(seconds: 30),
-            ),
-          );
+          .get();
 
-      if (!mounted) return;
+      print(
+        '📊 SearchPage: Found ${querySnapshot.docs.length} active services',
+      );
 
-      allServices = querySnapshot.docs
-          .map((doc) {
-            try {
-              final service = ServiceModel.fromQueryDocumentSnapshot(doc);
+      allServices = querySnapshot.docs.map((doc) {
+        try {
+          print('🔧 SearchPage: Processing service: ${doc.id}');
+          final service = ServiceModel.fromQueryDocumentSnapshot(doc);
 
-              // Only use copyWith if we have categories loaded and service is valid
-              if (categories.isNotEmpty && service.id != null) {
-                return service.copyWith(categories: categories);
-              } else {
-                return service;
-              }
-            } catch (e) {
-              debugPrint('Error parsing service from document ${doc.id}: $e');
-              // Return null for invalid services, we'll filter them out
-              return null;
-            }
-          })
-          .where((service) => service != null && service.id != null)
-          .cast<ServiceModel>()
-          .toList();
-
-      if (mounted) {
-        _applyFilters();
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error fetching services: $e');
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-          allServices = [];
-          filteredServices = [];
-        });
-
-        String errorMessage = 'Failed to load services';
-        if (e is TimeoutException) {
-          errorMessage = 'Request timed out. Please check your connection';
-        } else if (e.toString().contains('network')) {
-          errorMessage = 'Network error. Please check your connection';
+          // Only use copyWith if we have categories loaded
+          if (categories.isNotEmpty) {
+            return service.copyWith(categories: categories);
+          } else {
+            return service;
+          }
+        } catch (e) {
+          print('❌ SearchPage: Error processing service ${doc.id}: $e');
+          // Return the service without copyWith if there's an error
+          return ServiceModel.fromQueryDocumentSnapshot(doc);
         }
+      }).toList();
 
+      print(
+        '✅ SearchPage: Successfully processed ${allServices.length} services',
+      );
+      _applyFilters();
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print('❌ SearchPage: Error fetching services: $e');
+      setState(() {
+        isLoading = false;
+      });
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage),
+            content: Text('${AppLocalizations.of(context)?.error ?? ''}: $e'),
             backgroundColor: Colors.red,
             action: SnackBarAction(
               label: AppLocalizations.of(context)?.retry ?? 'Retry',
@@ -166,66 +155,73 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _applyFilters() {
-    if (!mounted) return;
+    print('🔄 SearchPage: Applying filters...');
+    print(
+      '📝 SearchPage: Total services before filtering: ${allServices.length}',
+    );
+    print('🔍 SearchPage: Search query: "$searchQuery"');
+    print('🎯 SearchPage: Has active filters: $_hasActiveFilters');
 
-    List<ServiceModel> filtered = List.from(allServices);
+    List<ServiceModel> filtered = allServices;
+    final isArabic = Directionality.of(context) == TextDirection.rtl;
     final currentLocale = Localizations.localeOf(context);
     final languageCode = currentLocale.languageCode;
 
-    // Apply search query filter
-    if (searchQuery != null && searchQuery!.trim().isNotEmpty) {
-      final query = searchQuery!.trim().toLowerCase();
-
+    if (searchQuery != null && searchQuery!.isNotEmpty) {
+      print(
+        '🔍 SearchPage: Applying search filter for: "$searchQuery" (Arabic: $isArabic, Locale: $languageCode)',
+      );
       filtered = filtered.where((service) {
-        // Ensure service has valid data
-        if (service.id == null) return false;
+        final query = searchQuery!.toLowerCase();
 
         // Get service name based on current language
         final serviceName =
-            (service.nameLocalized(languageCode: languageCode) ?? '')
-                .toLowerCase()
-                .trim();
-        final serviceNameEn = (service.name ?? '').toLowerCase().trim();
-        final serviceNameAr = (service.name_ar ?? '').toLowerCase().trim();
+            service.nameLocalized(languageCode: languageCode)?.toLowerCase() ??
+            '';
+        final serviceNameEn = service.name?.toLowerCase() ?? '';
+        final serviceNameAr = service.name_ar?.toLowerCase() ?? '';
 
         // Get description based on current language
         final serviceDescription =
-            (service.descriptionLocalized(languageCode: languageCode) ?? '')
-                .toLowerCase()
-                .trim();
-        final serviceDescriptionEn = (service.description ?? '')
-            .toLowerCase()
-            .trim();
-        final serviceDescriptionAr = (service.description_ar ?? '')
-            .toLowerCase()
-            .trim();
+            service
+                .descriptionLocalized(languageCode: languageCode)
+                ?.toLowerCase() ??
+            '';
+        final serviceDescriptionEn = service.description?.toLowerCase() ?? '';
+        final serviceDescriptionAr =
+            service.description_ar?.toLowerCase() ?? '';
 
         // Search in both current language and fallback languages for better results
-        return serviceName.contains(query) ||
+        final matches =
+            serviceName.contains(query) ||
             serviceDescription.contains(query) ||
             serviceNameEn.contains(query) ||
             serviceNameAr.contains(query) ||
             serviceDescriptionEn.contains(query) ||
             serviceDescriptionAr.contains(query);
+
+        if (matches) {
+          print('✅ SearchPage: Service "${serviceName}" matches search');
+        }
+
+        return matches;
       }).toList();
+      print('🔍 SearchPage: After search filter: ${filtered.length} services');
     }
 
-    // Apply additional filters
     if (_hasActiveFilters) {
+      print('🎯 SearchPage: Applying custom filters...');
       filtered = filtered.where((service) {
-        // Ensure service has valid data for filtering
-        if (service.id == null) return false;
-
         final ratingCount = service.ratingCount ?? 0;
         final totalRating = service.totalRating ?? 0.0;
         final avgRating = ratingCount == 0 ? 0.0 : totalRating / ratingCount;
 
         final matchesDistrict =
             (selectedDistricts?.isEmpty ?? true) ||
-            (service.locations?.isNotEmpty == true &&
-                service.locations!.any(
+            (service.locations?.any(
                   (id) => selectedDistricts?.contains(id) ?? false,
-                ));
+                ) ??
+                false);
 
         final matchesRating =
             (selectedRatings?.isEmpty ?? true) ||
@@ -234,7 +230,8 @@ class _SearchPageState extends State<SearchPage> {
         final matchesPrice =
             (selectedPriceRanges?.isEmpty ?? true) ||
             (selectedPriceRanges?.any(
-                  (index) => _isInPriceRange(index, service.price?.toDouble()),
+                  (index) =>
+                      _isInPriceRange(index, service.price?.toDouble() ?? 0.0),
                 ) ??
                 false);
 
@@ -242,105 +239,76 @@ class _SearchPageState extends State<SearchPage> {
             service.category?.toString().trim().toLowerCase() ?? '';
         final matchesCategory =
             (selectedCategories?.isEmpty ?? true) ||
-            (serviceCategory.isNotEmpty &&
-                selectedCategories
-                        ?.map((e) => e.toLowerCase().trim())
-                        .contains(serviceCategory) ==
-                    true);
+            (selectedCategories
+                    ?.map((e) => e.toLowerCase().trim())
+                    .contains(serviceCategory) ??
+                false);
 
-        return matchesRating &&
-            matchesPrice &&
-            matchesCategory &&
-            matchesDistrict;
+        final matches =
+            matchesRating && matchesPrice && matchesCategory && matchesDistrict;
+
+        return matches;
       }).toList();
+      print('🎯 SearchPage: After custom filters: ${filtered.length} services');
     }
 
-    if (mounted) {
-      setState(() {
-        filteredServices = filtered;
-      });
-    }
+    filteredServices = filtered;
+    print('✅ SearchPage: Final filtered services: ${filteredServices.length}');
   }
 
   void _onSearchChanged(String query) {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        setState(() {
-          searchQuery = query.trim().isEmpty ? null : query.trim();
-          _applyFilters();
-        });
-      }
+      setState(() {
+        searchQuery = query;
+        _applyFilters();
+      });
     });
   }
 
   void _openFilter() async {
-    try {
-      final result = await showFilterBottomSheet(
-        context,
-        selectedDistricts: selectedDistricts,
-        selectedRatings: selectedRatings,
-        selectedPriceRanges: selectedPriceRanges,
-        selectedCategories: selectedCategories,
-        isFromSearchPage: true,
-      );
+    final result = await showFilterBottomSheet(
+      context,
+      selectedDistricts: selectedDistricts,
+      selectedRatings: selectedRatings,
+      selectedPriceRanges: selectedPriceRanges,
+      selectedCategories: selectedCategories,
+      isFromSearchPage: true,
+    );
 
-      if (result != null) {
-        setState(() {
-          selectedDistricts = result['districts'] as Set<String>? ?? {};
-          selectedRatings = result['ratings'] as Set<int>? ?? {};
-          selectedPriceRanges = result['prices'] as Set<int>? ?? {};
-          selectedCategories = result['categories'] as Set<String>? ?? {};
-          _hasActiveFilters = result['isFiltered'] as bool? ?? false;
-        });
-        _applyFilters();
-      }
-    } catch (e) {
-      // Handle any errors when showing the filter
-      debugPrint('Filter error: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Unable to open filter. Please try again.'),
-            backgroundColor: Colors.red,
-            action: SnackBarAction(
-              label: 'Retry',
-              textColor: Colors.white,
-              onPressed: _openFilter,
-            ),
-          ),
-        );
-      }
+    if (result != null) {
+      selectedDistricts = result['districts'] as Set<String>? ?? {};
+      selectedRatings = result['ratings'] as Set<int>? ?? {};
+      selectedPriceRanges = result['prices'] as Set<int>? ?? {};
+      selectedCategories = result['categories'] as Set<String>? ?? {};
+      _hasActiveFilters = result['isFiltered'] as bool? ?? false;
+      _applyFilters();
+      setState(() {});
     }
   }
 
   Future<void> _setFavorite(ServiceModel service) async {
-    if (isGuestUser) {
-      SignUpAlertForGuestUsers().showSignUpAlert(context);
-      return;
-    }
-
-    // Check if service ID is valid
-    if (service.id == null || service.id!.isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)?.error ?? 'Service ID is missing',
+    if (!isGuestUser) {
+      final accountState = context.read<AccountBloc>().state;
+      if (accountState is CustomerDataLoaded) {
+        // Check if service ID is not null
+        if (service.id == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)?.error ?? 'Service ID is missing',
+              ),
+              backgroundColor: Colors.red,
             ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-      return;
-    }
+          );
+          return;
+        }
 
-    final accountState = context.read<AccountBloc>().state;
-    if (accountState is CustomerDataLoaded) {
-      context.read<AccountBloc>().add(ToggleFavoriteService(service: service));
-    } else {
-      // User data not loaded, show error
-      if (mounted) {
+        context.read<AccountBloc>().add(
+          ToggleFavoriteService(service: service),
+        );
+      } else {
+        // User data not loaded, show error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -350,12 +318,13 @@ class _SearchPageState extends State<SearchPage> {
           ),
         );
       }
+    } else {
+      SignUpAlertForGuestUsers().showSignUpAlert(context);
     }
   }
 
   bool _isInPriceRange(int index, double? price) {
-    if (price == null || price < 0) return false;
-
+    if (price == null) return false;
     switch (index) {
       case 0:
         return price < 50;
@@ -422,16 +391,14 @@ class _SearchPageState extends State<SearchPage> {
               if (_hasActiveFilters)
                 ElevatedButton.icon(
                   onPressed: () {
-                    if (mounted) {
-                      setState(() {
-                        selectedDistricts = null;
-                        selectedRatings = null;
-                        selectedPriceRanges = null;
-                        selectedCategories = null;
-                        _hasActiveFilters = false;
-                      });
+                    setState(() {
+                      selectedDistricts = null;
+                      selectedRatings = null;
+                      selectedPriceRanges = null;
+                      selectedCategories = null;
+                      _hasActiveFilters = false;
                       _applyFilters();
-                    }
+                    });
                   },
                   icon: const Icon(Icons.clear),
                   label: Text(
@@ -450,21 +417,10 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildServicesList() {
-    if (filteredServices.isEmpty) {
-      return _buildNoResultsState();
-    }
-
     return ListView.builder(
       itemCount: filteredServices.length,
-      physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         final service = filteredServices[index];
-
-        // Additional safety check
-        if (service.id == null) {
-          return const SizedBox.shrink();
-        }
-
         return ServiceTile(
           isGuestUser: isGuestUser,
           service: service,
@@ -597,10 +553,6 @@ class _SearchPageState extends State<SearchPage> {
             ),
           Expanded(
             child: BlocListener<AccountBloc, AccountState>(
-              listenWhen: (previous, current) {
-                // Only listen to actual errors, not updating states
-                return current is FavoriteServiceError;
-              },
               listener: (context, state) {
                 if (state is FavoriteServiceError) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -611,15 +563,23 @@ class _SearchPageState extends State<SearchPage> {
                       backgroundColor: Colors.red,
                     ),
                   );
+                } else if (state is FavoriteServiceUpdating) {
+                  // Optional: Show loading indicator for the specific service
+                  // Could be used to disable the favorite button temporarily
+                } else if (state is CustomerDataLoaded) {
+                  // Favorite operation completed successfully
+                  // The UI will automatically update due to the BlocBuilder in ServiceTile
                 }
               },
               child: RefreshIndicator(
                 onRefresh: _fetchServices,
                 child: isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : (searchQuery == null || searchQuery!.trim().isEmpty) &&
+                    : (searchQuery == null || searchQuery!.isEmpty) &&
                           !_hasActiveFilters
                     ? _buildEmptySearchState()
+                    : filteredServices.isEmpty
+                    ? _buildNoResultsState()
                     : _buildServicesList(),
               ),
             ),

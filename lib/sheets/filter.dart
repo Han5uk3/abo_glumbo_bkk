@@ -142,6 +142,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Future loadLocations() async {
+    if (!mounted) return;
+
     setState(() => isLoading = true);
 
     try {
@@ -153,6 +155,22 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       }
     } catch (e) {
       debugPrint('Failed to load locations: $e');
+      if (mounted) {
+        // Set empty locations list to prevent further errors
+        setState(() {
+          locations = [];
+        });
+
+        // Show error message to user
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to load locations. Location filters may not be available.',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     }
 
     if (mounted) {
@@ -161,10 +179,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Future loadCategories() async {
+    if (!mounted) return;
+
     setState(() => isLoading = true);
 
     try {
-      final categories = await AppFirestore.categoriesCollectionRef.get();
+      final categories = await AppFirestore.categoriesCollectionRef
+          .where('isActive', isEqualTo: true)
+          .get();
+
       if (mounted) {
         setState(() {
           this.categories = categories.docs
@@ -174,6 +197,22 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       }
     } catch (e) {
       debugPrint('Failed to load categories: $e');
+      if (mounted) {
+        // Set empty categories list to prevent further errors
+        setState(() {
+          this.categories = [];
+        });
+
+        // Show error message to user
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to load categories. Some filters may not be available.',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     }
 
     if (mounted) {

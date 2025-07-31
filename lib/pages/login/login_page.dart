@@ -52,6 +52,17 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    setState(() {
+      _isLoading = true;
+    });
+
+    if (_isRememberMeChecked &&
+        (phoneNumber != LocalStoreHelper.getPhoneNumber())) {
+      LocalStoreHelper.putPhoneNumber(phoneNumber);
+    } else if (!_isRememberMeChecked) {
+      LocalStoreHelper.clearPhoneNumber();
+    }
+
     await AuthServices().sendOTP(
       context,
       forceResendingToken: _resendToken,
@@ -112,7 +123,6 @@ class _LoginPageState extends State<LoginPage> {
 
   void _byPassUsingBioAuth(BuildContext context) async {
     final auth = LocalAuthentication();
-
     try {
       bool canCheckBiometrics = await auth.canCheckBiometrics;
       bool isDeviceSupported = await auth.isDeviceSupported();

@@ -252,16 +252,10 @@ class _CategoryDetailState extends State<CategoryDetail> {
                             previous is! CustomerDataLoaded;
                       },
                       builder: (context, accountState) {
-                        bool isFavorite = false;
-                        if (accountState is CustomerDataLoaded) {
-                          isFavorite = accountState.customerData.favourites
-                              .contains(service.id);
-                        }
                         return ServiceTile(
                           key: ValueKey('service_tile_${service.id}'),
                           isGuestUser: LocalStoreHelper.getGuestUser(),
                           service: service,
-                          isFavorite: isFavorite,
                           onFavPressed: () {
                             if (LocalStoreHelper.getGuestUser()) {
                               SignUpAlertForGuestUsers().showSignUpAlert(

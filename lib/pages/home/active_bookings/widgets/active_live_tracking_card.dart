@@ -94,7 +94,7 @@ class TrackingCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'ETA: $etaMinutes ',
+                'ETA: $etaMinutes mins',
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
@@ -124,13 +124,11 @@ class TrackingCard extends StatelessWidget {
           location: fromLocation.isEmpty ? 'Pickup Location' : fromLocation,
           isStart: true,
         ),
-
         _buildConnectingLine(),
-
         _buildLocationPoint(
           icon: Icons.location_on,
           iconColor: Colors.red,
-          location: toLocation.isEmpty ? 'Drop Location' : toLocation,
+          location: toLocation.isEmpty ? 'N/A' : toLocation,
           isStart: false,
         ),
       ],
@@ -154,9 +152,7 @@ class TrackingCard extends StatelessWidget {
           ),
           child: Icon(icon, color: iconColor, size: 18),
         ),
-
         const SizedBox(width: 16),
-
         Expanded(
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -172,7 +168,6 @@ class TrackingCard extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 color: Colors.black87,
               ),
-              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -187,7 +182,7 @@ class TrackingCard extends StatelessWidget {
       child: Row(
         children: [
           const SizedBox(width: 15),
-          Container(
+          SizedBox(
             width: 2,
             height: 24,
             child: CustomPaint(painter: DottedLinePainter()),

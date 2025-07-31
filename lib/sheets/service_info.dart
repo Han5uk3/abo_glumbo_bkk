@@ -85,17 +85,9 @@ class _ServiceInfoSheetState extends State<ServiceInfoSheet> {
                 previous is! CustomerDataLoaded;
           },
           builder: (context, accountState) {
-            bool isFavorite = false;
-            if (accountState is CustomerDataLoaded) {
-              isFavorite = accountState.customerData.favourites.contains(
-                widget.service.id,
-              );
-            }
-
             return ServiceTile(
               key: ValueKey('service_info_tile_${widget.service.id}'),
               service: widget.service,
-              isFavorite: isFavorite,
               isGuestUser: LocalStoreHelper.getGuestUser(),
               onFavPressed: () {
                 if (LocalStoreHelper.getGuestUser()) {

@@ -16,12 +16,16 @@ class LocationShowingWidget extends StatefulWidget {
 class _LocationShowingWidgetState extends State<LocationShowingWidget> {
   String? _location;
   bool _hasAttemptedFetch = false;
+  static bool _hasSuccessfullyFetched =
+      false; // Make it static to persist across widget rebuilds
 
   @override
   void initState() {
-    _fetchLocation();
     super.initState();
-    // Removed _fetchLocation() from here - now only loads on manual refresh
+    // Fetch location automatically only on the very first time
+    if (!_hasSuccessfullyFetched) {
+      _fetchLocation();
+    }
   }
 
   Future<void> _fetchLocation() async {
@@ -65,6 +69,7 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
       builder: (context, state) {
         if (state is UpdateCustomerLocationSuccess) {
           _location = state.locationName;
+          _hasSuccessfullyFetched = true; // Mark as successfully fetched
         } else if (state is UpdateCustomerLocationError) {
           _location = state.error;
         }
@@ -95,34 +100,34 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
                 size: 20,
               ),
               const SizedBox(width: 8),
-              state is UpdateCustomerLocationLoading
-                  ? const SizedBox(
-                      width: 12,
-                      height: 12,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Flexible(
-                      child: Text(
-                        displayText,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ),
+              Flexible(
+                child: Text(
+                  displayText,
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
               const SizedBox(width: 8),
               InkWell(
-                onTap: _fetchLocation,
-                child: const Icon(
-                  Icons.refresh,
-                  color: Colors.white70,
-                  size: 16,
-                ),
+                onTap: () {
+                  // Only fetch when user manually clicks refresh
+                  _fetchLocation();
+                },
+                child: state is UpdateCustomerLocationLoading
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          color: Colors.white70,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.refresh,
+                        color: Colors.white70,
+                        size: 16,
+                      ),
               ),
             ],
           ),

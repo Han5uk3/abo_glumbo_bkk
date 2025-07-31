@@ -58,7 +58,9 @@ class _WishListPageState extends State<WishListPage> {
           stream: AppServices.listenToWishlist(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: Loader(size: 32, color: Theme.of(context).primaryColor));
+              return Center(
+                child: Loader(size: 32, color: Theme.of(context).primaryColor),
+              );
             }
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
@@ -98,18 +100,9 @@ class _WishListPageState extends State<WishListPage> {
                         previous is! CustomerDataLoaded;
                   },
                   builder: (context, accountState) {
-                    // In wishlist, services should always show as favorites since they're fetched from user's favorites
-                    bool isFavorite = true;
-                    if (accountState is CustomerDataLoaded) {
-                      // Double-check against the actual favorites list to handle any sync issues
-                      isFavorite = accountState.customerData.favourites
-                          .contains(service.id);
-                    }
-
                     return ServiceTile(
                       key: ValueKey('wishlist_service_tile_${service.id}'),
                       service: service,
-                      isFavorite: isFavorite,
                       isGuestUser: LocalStoreHelper.getGuestUser(),
                       onFavPressed: () {
                         if (LocalStoreHelper.getGuestUser()) {
