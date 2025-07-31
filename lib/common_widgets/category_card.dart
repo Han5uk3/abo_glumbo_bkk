@@ -7,15 +7,10 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-class CategoryCard extends StatefulWidget {
+class CategoryCard extends StatelessWidget {
   final CategoryModel category;
   const CategoryCard({super.key, required this.category});
 
-  @override
-  State<CategoryCard> createState() => _CategoryCardState();
-}
-
-class _CategoryCardState extends State<CategoryCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -24,7 +19,7 @@ class _CategoryCardState extends State<CategoryCard> {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return CategoryDetail(category: widget.category);
+              return CategoryDetail(category: category);
             },
           ),
         );
@@ -47,12 +42,12 @@ class _CategoryCardState extends State<CategoryCard> {
               width: 50,
               height: 50,
               child:
-                  (widget.category.svg != null &&
-                      widget.category.svg!.isNotEmpty &&
-                      Uri.tryParse(widget.category.svg!) != null &&
-                      Uri.tryParse(widget.category.svg!)!.hasAbsolutePath)
+                  (category.svg != null &&
+                      category.svg!.isNotEmpty &&
+                      Uri.tryParse(category.svg!) != null &&
+                      Uri.tryParse(category.svg!)!.hasAbsolutePath)
                   ? CachedNetworkImage(
-                      imageUrl: widget.category.svg!,
+                      imageUrl: category.svg!,
                       fit: BoxFit.cover,
                       placeholder: (context, url) =>
                           Loader(size: 20, color: Colors.white),
@@ -67,7 +62,7 @@ class _CategoryCardState extends State<CategoryCard> {
             ),
             const SizedBox(height: 5),
             Text(
-              widget.category.nameLocalized(
+              category.nameLocalized(
                     languageCode:
                         AppLocalizations.of(context)?.localeName ?? '',
                   ) ??

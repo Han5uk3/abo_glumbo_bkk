@@ -10,6 +10,7 @@
 analyzer:
   errors:
     depend_on_referenced_packages: ignore
+    deprecated_member_use: ignore
     must_be_immutable: ignore
     unreachable_switch_default: ignore
     unused_field: ignore

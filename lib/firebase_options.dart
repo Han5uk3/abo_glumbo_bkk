@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'worker-app-tnext.appspot.com',
     iosBundleId: 'com.aboglumbo',
   );
+
 }

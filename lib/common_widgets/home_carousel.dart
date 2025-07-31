@@ -28,12 +28,6 @@ class _HomeCarouselWidgetState extends State<HomeCarouselWidget> {
   }
 
   @override
-  void dispose() {
-    // Dispose the controller to prevent memory leaks and null reference errors
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (widget.banners.isEmpty) {
       return const SizedBox.shrink();

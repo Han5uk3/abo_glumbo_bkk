@@ -1,5 +1,4 @@
 import 'package:abo_glumbo_bbk/main.dart';
-import 'package:flutter/foundation.dart';
 
 class LocalStoreHelper {
   static Future<void> putUID(String uid) {
@@ -66,28 +65,22 @@ class LocalStoreHelper {
   }
 
   static Future<String> putUserlanguage(String lang) async {
-    debugPrint('💾 Saving user language to Hive: $lang');
     await MyApp.box.put('user_language', lang);
     await MyApp.box.flush();
-    debugPrint('✅ Language saved and flushed successfully');
     return lang;
   }
 
   static String getUserlanguage() {
     try {
       final language = MyApp.box.get('user_language', defaultValue: 'en');
-      debugPrint('📖 Reading user language from Hive: $language');
       if (language == null) {
-        debugPrint('⚠️ Language was null, defaulting to en');
         return 'en';
       }
       if (language != 'en' && language != 'ar') {
-        debugPrint('⚠️ Invalid language ($language), defaulting to en');
         return 'en';
       }
       return language;
     } catch (e) {
-      debugPrint('❌ Error reading language from Hive: $e, defaulting to en');
       return 'en';
     }
   }

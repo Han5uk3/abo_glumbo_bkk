@@ -9,6 +9,7 @@ import 'package:abo_glumbo_bbk/models/categories.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/location.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
+import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -131,11 +132,15 @@ class AppServices {
 
   static Future<CustomerModel> updateCustomerProfile({
     required CustomerModel customerData,
+    required CustomerModel previousCustomerData,
   }) async {
     try {
-      await AppFirestore.customersCollectionRef
-          .doc(uid)
-          .update(customerData.toJson());
+      final updateData = customerData.toEditJson(
+        previous: previousCustomerData,
+      );
+      if (updateData.isNotEmpty) {
+        await AppFirestore.customersCollectionRef.doc(uid).update(updateData);
+      }
       return customerData;
     } catch (e) {
       debugPrint('❌ Error updating customer profile: $e');
@@ -426,6 +431,37 @@ class AppServices {
       await LocalStoreHelper.clearLogoutStatus();
     } catch (e) {
       debugPrint('❌ Error deleting account: $e');
+    }
+  }
+
+  Stream<UserModel> getAgentLiveLocationStream(String agentId) {
+    return AppFirestore.usersCollectionRef.doc(agentId).snapshots().map((
+      snapshot,
+    ) {
+      if (snapshot.exists) {
+        return UserModel.fromJson(snapshot.data() as Map<String, dynamic>);
+      } else {
+        throw Exception('Agent document does not exist');
+      }
+    });
+  }
+
+  static Future<List<BookingModel>> getActiveBookings() async {
+    try {
+      final snapshot = await AppFirestore.bookingsCollectionRef
+          .where('customer.uid', isEqualTo: uid)
+          .where('bookingStatusCode', isEqualTo: 'A')
+          .where('isStarted', isEqualTo: true)
+          .orderBy('createdAt', descending: true)
+          .get();
+      return snapshot.docs
+          .map(
+            (doc) => BookingModel.fromJson(doc.data() as Map<String, dynamic>),
+          )
+          .toList();
+    } catch (e) {
+      debugPrint('❌ Error getting active bookings: $e');
+      return [];
     }
   }
 }

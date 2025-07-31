@@ -207,9 +207,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _onLoginPressed() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
       await _sendOTP();
     }
   }
@@ -219,6 +216,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _isRememberMeChecked = value ?? false;
       if (_isRememberMeChecked) {
+        LocalStoreHelper.clearPhoneNumber();
         LocalStoreHelper.putPhoneNumber(_phoneController.text.trim());
       } else {
         LocalStoreHelper.clearPhoneNumber();

@@ -17,8 +17,12 @@ class ListenCustomerData extends AccountEvent {
 
 class UpdateCustomerProfile extends AccountEvent {
   final CustomerModel customerData;
-  UpdateCustomerProfile({required this.customerData});
-  List<Object> get props => [customerData];
+  final CustomerModel previousCustomerData;
+  UpdateCustomerProfile({
+    required this.customerData,
+    required this.previousCustomerData,
+  });
+  List<Object> get props => [customerData, previousCustomerData];
 }
 
 class UpdateCustomerLocation extends AccountEvent {}

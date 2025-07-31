@@ -1,12 +1,15 @@
 import 'package:abo_glumbo_bbk/common_widgets/category_card.dart';
 import 'package:abo_glumbo_bbk/common_widgets/highlighted_service.dart';
 import 'package:abo_glumbo_bbk/common_widgets/home_carousel.dart';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/banner.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
 import 'package:abo_glumbo_bbk/models/highlighted_services.dart';
+import 'package:abo_glumbo_bbk/pages/home/active_bookings/active_bookings.dart';
+import 'package:abo_glumbo_bbk/pages/home/bloc/home_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/home/search/search_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/widgets/location_showing_widget.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
@@ -15,6 +18,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
@@ -55,6 +59,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     try {
       await Future.wait([
         _fetchMainBanners(),
+        if (!_isGuest) _fetchActiveBookings(),
         if (!_isGuest) _initializeAuthenticatedUser(),
       ]);
       if (!_isDisposed) {
@@ -63,6 +68,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     } catch (e) {
       debugPrint('❌ Error during async initialization: $e');
     }
+  }
+
+  Future<void> _fetchActiveBookings() async {
+    context.read<HomeBloc>().add(FetchActiveBookings());
   }
 
   Future<void> _initializeAuthenticatedUser() async {
@@ -318,6 +327,37 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 padding: const EdgeInsets.only(top: 16),
                 child: HomeCarouselWidget(banners: secondaryBanners),
               ),
+            ),
+          if (!_isGuest)
+            BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                if (state is FetchActiveBookingLoading) {
+                  return const SliverToBoxAdapter(
+                    child: Center(child: Loader()),
+                  );
+                }
+                if (state is FetchActiveBookingSuccess &&
+                    state.activeBookings.isNotEmpty) {
+                  return SliverToBoxAdapter(
+                    child: ActiveBookingsSection(
+                      activeBookings: state.activeBookings,
+                    ),
+                  );
+                }
+                if (state is FetchActiveBookingError) {
+                  return SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Error loading active bookings: ${state.error}',
+                        style: GoogleFonts.dmSans(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
+                return const SliverToBoxAdapter(child: SizedBox.shrink());
+              },
             ),
           _buildHighlightedServices(),
         ],

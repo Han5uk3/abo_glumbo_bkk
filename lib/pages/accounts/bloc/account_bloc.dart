@@ -57,8 +57,38 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   ) async {
     emit(UpdateCustomerProfileLoading(locale: state.locale));
     try {
-      await AppServices.updateCustomerProfile(customerData: event.customerData);
-      emit(UpdateCustomerProfileSucess(locale: state.locale));
+      await AppServices.updateCustomerProfile(
+        customerData: event.customerData,
+        previousCustomerData: event.previousCustomerData,
+      );
+
+      // Emit updated customer data if current state contains customer data
+      if (state is CustomerDataLoaded) {
+        // Ensure uid is not null before fetching fresh data
+        final uid = event.customerData.uid;
+        if (uid != null) {
+          // Fetch fresh customer data from the server to ensure we have the latest updates
+          final updatedCustomerData = await AppServices.fetchCustomerData(
+            uid: uid,
+          );
+          emit(
+            CustomerDataLoaded(
+              customerData: updatedCustomerData,
+              locale: state.locale,
+            ),
+          );
+        } else {
+          // If uid is null, just emit the event customer data
+          emit(
+            CustomerDataLoaded(
+              customerData: event.customerData,
+              locale: state.locale,
+            ),
+          );
+        }
+      } else {
+        emit(UpdateCustomerProfileSucess(locale: state.locale));
+      }
     } catch (e) {
       emit(
         UpdateCustomerProfileError(error: e.toString(), locale: state.locale),

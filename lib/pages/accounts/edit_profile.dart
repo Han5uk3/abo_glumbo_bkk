@@ -9,6 +9,7 @@ import 'package:abo_glumbo_bbk/pages/login/otp.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/auth_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -82,15 +83,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   void _updateProfile() {
     if (_formKey.currentState?.validate() ?? false) {
-      final updatedCustomer = CustomerModel(
+      final updatedCustomer = widget.customer.copyWith(
         name: nameController.text.trim(),
         email: emailController.text.trim(),
-        phone: phoneController.text.trim(),
         districtName: districtNameController.text.trim(),
+        updatedAt: Timestamp.now(),
       );
 
       context.read<AccountBloc>().add(
-        UpdateCustomerProfile(customerData: updatedCustomer),
+        UpdateCustomerProfile(
+          customerData: updatedCustomer,
+          previousCustomerData: widget.customer,
+        ),
       );
     }
   }

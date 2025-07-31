@@ -1,10 +1,7 @@
-import 'dart:developer';
-
 import 'package:abo_glumbo_bbk/common_widgets/category_card.dart';
-import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/services/app_services.dart';
-import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/models/categories.dart';
 import 'package:flutter/material.dart';
 
 class CategoriesPage extends StatelessWidget {
@@ -12,40 +9,56 @@ class CategoriesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)?.categories ?? ''),
-        titleSpacing: 16,
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 30.0),
-        child: StreamBuilder(
-          stream: AppServices.listenToCategories(),
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          titleSpacing: 16,
+          title: Text(AppLocalizations.of(context)?.categories ?? ''),
+          pinned: true,
+          primary: true,
+          centerTitle: true,
+        ),
+        const SliverPadding(padding: EdgeInsets.only(top: 30)),
+        StreamBuilder(
+          stream: AppFirestore.categoriesCollectionRef
+              .where('isActive', isEqualTo: true)
+              .snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Loader(size: 34, color: AppColors.primary);
-            }
             if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return SliverToBoxAdapter(
+                child: Center(
+                  child: Text(
+                    '${AppLocalizations.of(context)?.error ?? ''}: ${snapshot.error}',
+                  ),
+                ),
+              );
             }
-            final categories = snapshot.data ?? [];
-            return GridView.builder(
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            final categories = snapshot.data?.docs ?? [];
+
+            return SliverGrid(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 1,
                 mainAxisSpacing: 20,
                 mainAxisExtent: 130,
               ),
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                log('Category ID: ${categories[index].id}');
-                return CategoryCard(category: categories[index]);
-              },
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final category = CategoryModel.fromQuerySnapshot(
+                  categories[index],
+                );
+                return Center(child: CategoryCard(category: category));
+              }, childCount: categories.length),
             );
           },
         ),
-      ),
+      ],
     );
   }
 }

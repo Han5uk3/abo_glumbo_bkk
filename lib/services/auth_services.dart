@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/signup_page.dart';
@@ -69,6 +71,11 @@ class AuthServices {
     try {
       AuthServices.phoneNumber = sanitizedPhoneNumber;
       _verificationId = null; // Reset verification ID before sending OTP
+      if (Platform.isIOS) {
+        await FirebaseAuth.instance.setSettings(
+          appVerificationDisabledForTesting: true,
+        );
+      }
       await _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: forceResendingToken,

@@ -88,7 +88,7 @@ class _OtpPageState extends State<OtpPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('OTP resent successfully'),
+            content: Text(AppLocalizations.of(context)!.otpSent),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
