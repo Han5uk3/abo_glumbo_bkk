@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -111,17 +110,17 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   void _onDaySelect(DateTime day, DateTime focusedDay) {
     setState(() {
       selectedDate = day;
-      // Reset time selection when date changes
+      
       selectedTimeCategory = 0;
       selectedTimeSlot = 0;
     });
   }
 
-  // Check if a time slot is in the past for today
+  
   bool _isTimeSlotPast(int categoryIndex, int slotIndex) {
     if (selectedDate == null) return false;
 
-    // Only check for today's date
+    
     final now = DateTime.now();
     if (!isSameDay(selectedDate!, now)) return false;
 
@@ -135,13 +134,13 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
       timeOfDay.minute,
     );
 
-    // Add 30 minutes buffer to current time to prevent very close bookings
+    
     final currentTimeWithBuffer = now.add(const Duration(minutes: 30));
 
     return selectedDateTime.isBefore(currentTimeWithBuffer);
   }
 
-  // Check if entire time category should be disabled
+  
   bool _isTimeCategoryDisabled(int categoryIndex) {
     if (selectedDate == null) return false;
 
@@ -150,17 +149,17 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
 
     final timeSlotsList = timeSlots[categoryIndex]["values"] as List<Map>;
 
-    // Check if all slots in this category are in the past
+    
     for (int i = 0; i < timeSlotsList.length; i++) {
       if (!_isTimeSlotPast(categoryIndex, i)) {
-        return false; // At least one slot is available
+        return false; 
       }
     }
 
-    return true; // All slots are in the past
+    return true; 
   }
 
-  // Get the first available time slot for a category
+  
   int _getFirstAvailableTimeSlot(int categoryIndex) {
     if (selectedDate == null) return 0;
 
@@ -181,8 +180,9 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   Future<void> fetchCustomerAddresses() async {
     try {
       _customerAddresses = await AppServices.getCustomerAddress();
+      setState(() {}); 
     } catch (e) {
-      // Handle error
+      
       debugPrint("Error fetching addresses: $e");
     }
   }
@@ -194,6 +194,13 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    fetchCustomerAddresses();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final safePadding = MediaQuery.of(context).padding;
     return StreamBuilder<CustomerModel>(
@@ -201,7 +208,31 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           customerData = snapshot.data;
-          log(customerData!.toJson().toString());
+          
+          _customerAddresses = customerData?.addresses ?? [];
+
+          
+          if (_customerAddresses.isNotEmpty) {
+            try {
+              final selected = _customerAddresses.firstWhere(
+                (address) => address.isSelected == true,
+              );
+              if (_selectedAddress?.id != selected.id) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    setState(() {
+                      _selectedAddress = selected;
+                    });
+                    debugPrint(
+                      "📍 BookServiceBottomSheet: Updated selected address from stream: ${selected.fullName}",
+                    );
+                  }
+                });
+              }
+            } catch (e) {
+              
+            }
+          }
         }
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.8,
@@ -519,10 +550,15 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                   ) {
                                     if (mounted) {
                                       setState(() => _selectedAddress = value);
+                                      debugPrint(
+                                        "📍 BookServiceBottomSheet: Address selected: ${value?.fullName}",
+                                      );
+                                      
                                     }
                                   });
                                 },
-                                savedAddresses: _customerAddresses,
+                                savedAddresses:
+                                    _customerAddresses, 
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -615,7 +651,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                     return;
                                   }
 
-                                  // Check if selected time is in the past
+                                  
                                   if (_isTimeSlotPast(
                                     selectedTimeCategory,
                                     selectedTimeSlot,

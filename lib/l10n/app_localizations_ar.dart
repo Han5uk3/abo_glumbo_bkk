@@ -163,10 +163,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get streetNameIsRequired => 'اسم الشارع مطلوب';
 
   @override
-  String get districtName => 'اسم الحي';
+  String get districtName => 'اسم المنطقة';
 
   @override
-  String get districtNameIsRequired => 'اسم الحي مطلوب';
+  String get districtNameIsRequired => 'اسم المنطقة مطلوب';
 
   @override
   String get cityName => 'اسم المدينة';
@@ -181,10 +181,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get postcodeIsRequired => 'الرمز البريدي مطلوب';
 
   @override
-  String get extensionNumber => 'رقم التوسيع';
+  String get extensionNumber => 'رقم التحويلة';
 
   @override
-  String get extensionNumberIsRequired => 'رقم التوسيع مطلوب';
+  String get extensionNumberIsRequired => 'رقم التحويلة مطلوب';
 
   @override
   String get update => 'تحديث';
@@ -193,36 +193,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountCreatedSuccessfully => 'تم إنشاء الحساب بنجاح';
 
   @override
-  String get failedToCreateAccount => 'فشل في إنشاء الحساب';
+  String get failedToCreateAccount => 'فشل إنشاء الحساب';
 
   @override
   String get createAccount => 'إنشاء حساب';
 
   @override
   String get pleaseFillTheInputBelowHereToContinue =>
-      'يرجى ملء المعلومات أدناه للمتابعة';
+      'يرجى ملء المدخلات أدناه هنا للمتابعة';
 
   @override
-  String get failedToLoadContent => 'فشل في تحميل المحتوى';
+  String get failedToLoadContent => 'فشل تحميل المحتوى';
 
   @override
   String get noAddress => 'لا يوجد عنوان';
 
   @override
-  String get searchForAService => 'ابحث عن خدمة';
+  String get searchForAService => 'البحث عن خدمة';
 
   @override
   String get jobCategories => 'فئات الوظائف';
 
   @override
   String get failedToLoadDataPleaseTryAgainLater =>
-      'فشل في تحميل البيانات. يرجى المحاولة مرة أخرى لاحقًا.';
+      'فشل تحميل البيانات. يرجى المحاولة مرة أخرى لاحقا.';
 
   @override
   String get noBookingsFound => 'لم يتم العثور على حجوزات.';
 
   @override
-  String get searchServices => 'ابحث عن الخدمات';
+  String get searchServices => 'البحث في الخدمات';
 
   @override
   String get noServicesInYourWishlist =>
@@ -232,13 +232,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failedToSaveBooking => 'فشل في حفظ الحجز';
 
   @override
-  String get morning => 'صباحا';
+  String get morning => 'الصباح';
 
   @override
-  String get afterNoon => 'بعد ظهر';
+  String get afterNoon => 'بعد الظهر';
 
   @override
-  String get evening => 'مساء';
+  String get evening => 'المساء';
 
   @override
   String get serviceBookedSuccessfully => 'تم حجز الخدمة بنجاح';
@@ -247,19 +247,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checkForBookingStatus => 'تحقق من حالة الحجز في قسم \'حجوزاتي\'';
 
   @override
-  String get selectDateTime => 'حدد التاريخ والوقت';
+  String get selectDateTime => 'اختر التاريخ والوقت';
 
   @override
   String get completeYourBooking => 'أكمل حجزك';
 
   @override
-  String get selectDate => 'حدد التاريخ';
+  String get selectDate => 'اختر التاريخ';
 
   @override
-  String get availableTimeSlot => 'فترة زمنية متاحة';
+  String get availableTimeSlot => 'الوقت المتاح';
 
   @override
-  String get addNotes => 'إضافة ملاحظات';
+  String get addNotes => 'أضف ملاحظات';
 
   @override
   String get paymentMode => 'طريقة الدفع';
@@ -268,19 +268,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cashInHand => 'نقداً';
 
   @override
-  String get netBankingUpiCard => 'التحويل البنكي الالكتروني / UPI / بطاقة';
+  String get netBankingUpiCard => 'التحويل المصرفي / يو بي آي / البطاقة';
 
   @override
-  String get pleaseSelectADate => 'الرجاء تحديد تاريخ';
+  String get pleaseSelectADate => 'يرجى اختيار تاريخ';
 
   @override
-  String get back => 'رجوع';
+  String get back => 'العودة';
 
   @override
   String get bookAppointment => 'حجز موعد';
 
   @override
-  String get filter => 'تصفية';
+  String get filter => 'فلترة';
 
   @override
   String get rating => 'التقييم';
@@ -292,476 +292,478 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clear => 'مسح';
 
   @override
-  String get reviewSubmittedSuccessfully => 'تم تقديم المراجعة بنجاح';
+  String get reviewSubmittedSuccessfully => 'تم إرسال المراجعة بنجاح.';
 
   @override
-  String get anErrorOccurred => 'حدث خطأ';
+  String get anErrorOccurred => 'حدث خطأ.';
 
   @override
-  String get submitAReview => 'تقديم مراجعة';
+  String get submitAReview => 'قدم مراجعة';
 
   @override
   String get overallRating => 'التقييم العام';
 
   @override
-  String get writeYourReviewHere => 'اكتب مراجعتك هنا';
+  String get writeYourReviewHere => 'Write your review here';
 
   @override
-  String get pleaseWriteAReview => 'الرجاء كتابة مراجعة';
+  String get pleaseWriteAReview => 'Please write a review';
 
   @override
-  String get bookingCancelled => 'تم إلغاء الحجز';
+  String get bookingCancelled => 'Booking cancelled';
 
   @override
-  String get failedToCancelBooking => 'فشل في إلغاء الحجز';
+  String get failedToCancelBooking => 'Failed to cancel booking';
 
   @override
   String get areYouSureToWantCancelBooking =>
-      'هل أنت متأكد أنك تريد إلغاء الحجز؟';
+      'Are you sure to want cancel booking?';
 
   @override
-  String get youWillBeRefundedTheFullAmount => 'سيتم استرداد المبلغ بالكامل';
+  String get youWillBeRefundedTheFullAmount =>
+      'You will be refunded the full amount';
 
   @override
-  String get no => 'لا';
+  String get no => 'No';
 
   @override
-  String get yesCancel => 'نعم، قم بالإلغاء';
+  String get yesCancel => 'Yes, cancel';
 
   @override
-  String get writeAReview => 'اكتب مراجعة';
+  String get writeAReview => 'Write a review';
 
   @override
-  String get reviewSubmitted => 'تم تقديم المراجعة';
+  String get reviewSubmitted => 'Review Submitted';
 
   @override
-  String get canceled => 'ملغى';
+  String get canceled => 'Canceled';
 
   @override
-  String get requestService => 'طلب خدمة';
+  String get requestService => 'Request service';
 
   @override
-  String get submit => 'إرسال';
+  String get submit => 'Submit';
 
   @override
-  String get completed => 'مُكتمل';
+  String get completed => 'Completed';
 
   @override
-  String get contactUs => 'اتصل بنا';
+  String get contactUs => 'Contact us';
 
   @override
-  String get deleteAccount => 'حذف الحساب';
+  String get deleteAccount => 'Delete account';
 
   @override
   String get areYouSureYouWantToDeleteAccount =>
-      'هل أنت متأكد أنك تريد حذف الحساب نهائيًا؟';
+      'Are you sure you want to delete the account permenantly';
 
   @override
-  String get signUpLater => 'التسجيل لاحقاً';
+  String get signUpLater => 'Sign up later';
 
   @override
-  String get signUp => 'تسجيل';
+  String get signUp => 'Sign up';
 
   @override
   String get visualizeYourIssue => 'تصور مشكلتك';
 
   @override
-  String get upload => 'رفع';
+  String get upload => 'Upload';
 
   @override
-  String get addImageOrVideoOfIssue => 'أضف صورة أو فيديو لمشكلتك';
+  String get addImageOrVideoOfIssue => 'أضف صورة أو فيديو للمشكلة';
 
   @override
-  String get completePayment => 'الدفع الكامل';
+  String get completePayment => 'Complete Payment';
 
   @override
-  String get payment => 'قسط';
+  String get payment => 'Payment';
 
   @override
-  String get cards => 'الدفع بالبطاقه';
+  String get cards => 'Payment by card';
 
   @override
-  String get applePay => 'الدفع بواسطة ابل باي';
+  String get applePay => 'Payment by Apple Pay';
 
   @override
-  String get cashOnHands => 'الدفع نقدي';
+  String get cashOnHands => 'Payment in cash';
 
   @override
-  String get processingPayment => 'معالجة الدفع';
+  String get processingPayment => 'Processing Payment';
 
   @override
   String get processingPaymentDesc =>
-      'يرجى الانتظار بينما نقوم بمعالجة معاملتك بشكل آمن';
+      'Please wait while we securely process your transaction';
 
   @override
-  String get transactionError => 'خطأ في المعاملة';
+  String get transactionError => 'Transaction Error';
 
   @override
   String get transactionErrorDesc =>
-      'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقًا.';
+      'An unexpected error occurred. Please try again later.';
 
   @override
-  String get paymentSuccessful => 'تم الدفع بنجاح';
+  String get paymentSuccessful => 'Payment Successful';
 
   @override
-  String get paymentSuccessfulDesc => 'لقد تمت معالجة حجزك بنجاح.';
+  String get paymentSuccessfulDesc =>
+      'Your booking has been processed successfully.';
 
   @override
-  String get paymentFailed => 'فشل الدفع';
+  String get paymentFailed => 'Payment Failed';
 
   @override
-  String get paymentFailedDesc => 'لم يتم حفظ الحجز. يرجى المحاولة مرة أخرى.';
+  String get paymentFailedDesc =>
+      'Booking could not be saved. Please try again.';
 
   @override
-  String get paymentPending => 'الدفع النقدي معلق';
+  String get paymentPending => 'Cash Payment Pending';
 
   @override
   String get paymentPendingDesc =>
-      'تم تأكيد حجزك، يرجى دفع المبلغ نقدًا للعامل عند تقديم الخدمة.';
+      'Your booking is confirmed. Please pay the worker in cash at the time of service.';
 
   @override
-  String get ok => 'نعم';
+  String get ok => 'Ok';
 
   @override
-  String get signupRequired => 'التسجيل مطلوب';
+  String get signupRequired => 'Signup Required';
 
   @override
   String get signUpRequiredDes =>
-      'أنت تستخدم التطبيق حاليًا كضيف. للوصول إلى المزيد من الميزات، يرجى التسجيل أو تسجيل الدخول.';
+      'You\'re currently using the app as a guest. To access more features, please sign up or log in.';
 
   @override
-  String get contactSupportOptions => 'خيارات الاتصال بالدعم';
+  String get contactSupportOptions => 'Contact Support Options';
 
   @override
-  String get contactByEmail => 'الاتصال عن طريق البريد الإلكتروني';
+  String get contactByEmail => 'Contact By Email';
 
   @override
-  String get contactByWhatsApp => 'التواصل عبر الواتساب';
+  String get contactByWhatsApp => 'Contact By WhatsApp';
 
   @override
-  String get invalidVerificationCode => 'كود التحقق غير صالح';
+  String get invalidVerificationCode => 'Invalid verification code';
 
   @override
   String get invalidVerificationId =>
-      'معرف التحقق غير صالح. يُرجى طلب رمز تحقق جديد.';
+      'Invalid verification ID. Please request a new OTP.';
 
   @override
-  String get otpExpired => 'انتهت صلاحية رمز. يرجى طلب رمز جديد.';
+  String get otpExpired => 'OTP expired. Please request a new OTP.';
 
   @override
-  String get quotaExceeded =>
-      'تم تجاوز الحد الأقصى للرسائل القصيرة. حاول مرة أخرى لاحقًا.';
+  String get quotaExceeded => 'SMS quota exceeded. Try again later.';
 
   @override
-  String get tooManyAttempts =>
-      'عدد المحاولات كبير جدًا. يرجى الانتظار والمحاولة مرة أخرى.';
+  String get tooManyAttempts => 'Too many attempts. Please wait and try again.';
 
   @override
-  String get networkError => 'خطأ في الشبكة. يرجى التحقق من اتصالك.';
+  String get networkError => 'Network error. Please check your connection.';
 
   @override
-  String get verificationFailed => 'فشل التحقق. يرجى المحاولة مرة أخرى.';
+  String get verificationFailed => 'Verification failed. Try again.';
 
   @override
-  String get pending => 'قيد الانتظار';
+  String get pending => 'PENDING';
 
   @override
-  String get confirmed => 'مؤكد';
+  String get confirmed => 'CONFIRMED';
 
   @override
-  String get pastBookings => 'الحجوزات السابقة';
+  String get pastBookings => 'PAST BOOKINGS';
 
   @override
-  String get startTyping => 'ابدأ الكتابة للبحث عن الخدمات';
+  String get startTyping => 'Start typing to search services';
 
   @override
-  String get noServicesFound => 'لم يتم العثور على خدمات';
+  String get noServicesFound => 'No services found';
 
   @override
-  String get rememberMe => 'تذكرني';
+  String get rememberMe => 'Remember me';
 
   @override
-  String get sar => 'ر.س';
+  String get sar => 'SAR';
 
   @override
-  String get am => 'ص';
+  String get am => 'AM';
 
   @override
-  String get pm => 'م';
+  String get pm => 'PM';
 
   @override
-  String get night => 'ليلا';
+  String get night => 'Night';
 
   @override
-  String get bookingDetails => 'تفاصيل الحجز';
+  String get bookingDetails => 'Booking Details';
 
   @override
-  String get serviceInformation => 'معلومات الخدمة';
+  String get serviceInformation => 'Service Information';
 
   @override
-  String get description => 'وصف';
+  String get description => 'Description';
 
   @override
-  String get servicePrice => 'سعر الخدمة';
+  String get servicePrice => 'Service Price';
 
   @override
-  String get schedule => 'الجدول';
+  String get schedule => 'Schedule';
 
   @override
-  String get dateAndTime => 'التاريخ والوقت';
+  String get dateAndTime => 'Date & Time';
 
   @override
-  String get address => 'العنوان';
+  String get address => 'Address';
 
   @override
-  String get pricingAndPayment => 'التسعيرة والدفع';
+  String get pricingAndPayment => 'Pricing & Payment';
 
   @override
-  String get additionalNotes => 'ملاحظات اضافية';
+  String get additionalNotes => 'Additional Notes';
 
   @override
-  String get paymentMethod => 'طريقة الدفع';
+  String get paymentMethod => 'Payment Method';
 
   @override
-  String get customerReview => 'مراجعة العميل';
+  String get customerReview => 'Customer Review';
 
   @override
-  String get review => 'مراجعة';
+  String get review => 'Review';
 
   @override
-  String get reviewedOn => 'تمت المراجعة في';
+  String get reviewedOn => 'Reviewed on';
 
   @override
-  String get accepted => 'مقبول';
+  String get accepted => 'Accepted';
 
   @override
-  String get rejected => 'مرفوض';
+  String get rejected => 'Rejected';
 
   @override
-  String get cancelled => 'ملغى';
+  String get cancelled => 'Canceled';
 
   @override
-  String get unknown => 'غير معروف';
+  String get unknown => 'Unknown';
 
   @override
-  String get service => 'خدمة';
+  String get service => 'Service';
 
   @override
   String get permissionLocation =>
-      'لا يمكن استرداد الموقع. يرجى التحقق من الصلاحيات.';
+      'Could not fetch location. Please check permissions.';
 
   @override
   String get enterServiceLocation =>
-      'ادخل موقع الخدمة او اضغط للحصول على الموقع الحالي';
+      'Enter service location or tap to fetch current location';
 
   @override
-  String get yourLocation => 'موقعك';
+  String get yourLocation => 'Your location';
 
   @override
-  String get paymentCancelled => 'تم الغاء الدفع';
+  String get paymentCancelled => 'Payment Cancelled';
 
   @override
-  String get paymentCancelledDesc => 'لقد قمت بالغاء الدفع.';
+  String get paymentCancelledDesc => 'You have cancelled the payment.';
 
   @override
-  String get lessthan50SAR => 'اقل من 50 ر.س';
+  String get lessthan50SAR => 'Less than 50 SAR';
 
   @override
-  String get fiftySARto100SAR => '50 ر.س إلى 100 ر.س';
+  String get fiftySARto100SAR => '50 SAR to 100 SAR';
 
   @override
-  String get hundredSARto150SAR => '100 ر.س إلى 150 ر.س';
+  String get hundredSARto150SAR => '100 SAR to 150 SAR';
 
   @override
-  String get onefiftySARto200SAR => '150 ر.س إلى 200 ر.س';
+  String get onefiftySARto200SAR => '150 SAR to 200 SAR';
 
   @override
-  String get morethan200SAR => 'اكثر من 200 ر.س';
+  String get morethan200SAR => 'More than 200 SAR';
 
   @override
-  String get filterBy => 'تصفية بواسطة';
+  String get filterBy => 'Filter by';
 
   @override
-  String get applyFilter => 'تطبيق التصفية';
+  String get applyFilter => 'Apply Filter';
 
   @override
-  String get initializingPayment => 'تحميل الدفع...';
+  String get initializingPayment => 'Initializing Payment...';
 
   @override
-  String get paymentWasDeclined => 'تم رفض الدفعة';
+  String get paymentWasDeclined => 'Payment was declined';
 
   @override
-  String get paymentWasCancelledByUser => 'تم الغاء الدفعة بواسطة المستخدم';
+  String get paymentWasCancelledByUser => 'Payment was cancelled by user';
 
   @override
-  String get errorInitializingPayment => 'خطاء في تحميل الدفعة';
+  String get errorInitializingPayment => 'Error initializing payment';
 
   @override
   String get telrNotConfigured =>
-      'اعدادات Telr غير مكونة. يرجى تحديث قسم TelrConfig.';
+      'Telr credentials not configured. Please update TelrConfig class.';
 
   @override
-  String get paymentError => 'خطاء في الدفع';
+  String get paymentError => 'Payment Error';
 
   @override
-  String get paymentFailedDesc2 => 'لا تقلق، سيتم حفظ المبلغ في حسابك.';
+  String get paymentFailedDesc2 => 'Don\'t worry, your money is safe';
 
   @override
-  String get errorDetails => 'تفاصيل الخطاء';
+  String get errorDetails => 'Error details';
 
   @override
-  String get orderId => 'رقم الطلب';
+  String get orderId => 'Order ID';
 
   @override
-  String get tryAgain => 'حاول مرة اخرى';
+  String get tryAgain => 'Try Again';
 
   @override
-  String get goToHome => 'الذهاب إلى الرئيسية';
+  String get goToHome => 'Go to Home';
 
   @override
-  String get bookingCompleted => 'تم الحجز';
+  String get bookingCompleted => 'Booking completed!';
 
   @override
   String get bookingCompletedDesc =>
-      'لقد تم تاكيد الحجز. سيتم التواصل معك قريبا.';
+      'Transaction completed successfully. Your booking has been confirmed.';
 
   @override
-  String get date => 'التاريخ';
+  String get date => 'Date';
 
   @override
-  String get time => 'الوقت';
+  String get time => 'Time';
 
   @override
-  String get backToHome => 'العودة للريسية';
+  String get backToHome => 'Back to Home';
 
   @override
-  String get resend => 'اعادة الارسال';
+  String get resend => 'Resend';
 
   @override
-  String get copyOrderId => 'نسخ رقم الطلب';
+  String get copyOrderId => 'Copy Order ID';
 
   @override
-  String get orderIdCopied => 'تم نسخ رقم الطلب';
+  String get orderIdCopied => 'Order ID copied to clipboard';
 
   @override
-  String get didntreciveCode => 'لم تستلم الكود؟';
+  String get didntreciveCode => 'Didn\'t receive code?';
 
   @override
-  String get filtered => 'تصفية';
+  String get filtered => 'Filtered';
 
   @override
-  String get paymentStatus => 'حالة الدفع';
+  String get paymentStatus => 'Payment Status';
 
   @override
   String get pendingPayment =>
-      'الدفعة قيد التحميل. يرجى الدفع عندما يكون العميل قد اكمل الخدمة.';
+      'Payment pending. Please pay when the worker completes the work.';
 
   @override
-  String get notifications => 'الاشعارات';
+  String get notifications => 'Notifications';
 
   @override
-  String get noNotificationsYet => 'لا يوجد اشعارات حتى الان';
+  String get noNotificationsYet => 'No notifications yet';
 
   @override
-  String get noNotificationsMessage => 'لا يوجد اشعارات حتى الان';
+  String get noNotificationsMessage => 'You don\'t have any notifications yet';
 
   @override
-  String get markAllAsRead => 'تحديث كل الاشعارات كمقروءة';
+  String get markAllAsRead => 'Mark all as read';
 
   @override
-  String get unexpectedErrorOccurred => 'حدث خطأ غير متوقع';
+  String get unexpectedErrorOccurred => 'An unexpected error occurred';
 
   @override
-  String get filtersApplied => 'تم تطبيق التصفية';
+  String get filtersApplied => 'Filters applied';
 
   @override
-  String get filtersAppliedText => 'تم تطبيق التصفية';
+  String get filtersAppliedText => 'Filters Applied';
 
   @override
-  String get filterServices => 'تصفية الخدمات';
+  String get filterServices => 'Filter Services';
 
   @override
-  String get reset => 'إعادة تعيين';
+  String get reset => 'Reset';
 
   @override
-  String get priceRange => 'نطاق الأسعار';
+  String get priceRange => 'Price Range';
 
   @override
-  String get noCategoriesAvailable => 'لا توجد فئات متاحة';
+  String get noCategoriesAvailable => 'No categories available';
 
   @override
-  String get minimumRating => 'الحد الأدنى للتقييم';
+  String get minimumRating => 'Minimum Rating';
 
   @override
-  String get applyFilters => 'تطبيق التصفية';
+  String get applyFilters => 'Apply Filters';
 
   @override
-  String get under50 => 'أقل من 50 ر.س';
+  String get under50 => 'Under SAR 50';
 
   @override
-  String get from50to100 => '50 - 100 ر.س';
+  String get from50to100 => 'SAR 50 - SAR 100';
 
   @override
-  String get from100to200 => '100 - 200 ر.س';
+  String get from100to200 => 'SAR 100 - SAR 200';
 
   @override
-  String get from200to500 => '200 - 500 ر.س';
+  String get from200to500 => 'SAR 200 - SAR 500';
 
   @override
-  String get from500to1000 => '500 - 1000 ر.س';
+  String get from500to1000 => 'SAR 500 - SAR 1000';
 
   @override
-  String get above1000 => 'أكثر من 1000 ر.س';
+  String get above1000 => 'Above SAR 1000';
 
   @override
-  String get phoneNumberAlreadyUpdated => 'رقم الجوال محدث بالفعل';
+  String get phoneNumberAlreadyUpdated => 'Phone number already updated';
 
   @override
-  String get pleaseAddCountryCode => 'يرجى ادخال رمز الدولة +966';
+  String get pleaseAddCountryCode => 'Please add country code +966';
 
   @override
-  String get district => 'منطقة';
+  String get district => 'District';
 
   @override
-  String get phoneNumberAlreadyExists => 'رقم الجوال موجود بالفعل';
+  String get phoneNumberAlreadyExists => 'Phone number already exists';
 
   @override
-  String get selectFilter => 'حدد تصفية للفئة';
+  String get selectFilter => 'Select a filter to category';
 
   @override
-  String get migratingData => 'جارٍ ترحيل بياناتك';
+  String get migratingData => 'Migrating your data';
 
   @override
   String get weAreMigratingYourData =>
-      'نقوم بنقل جميع بياناتك بأمان إلى رقمك الجديد. قد تستغرق هذه العملية بضع دقائق.';
+      'We\'re securely transferring all your data to your new number. This process may take a few minutes.';
 
   @override
   String get pleaseDontCloseTheApp =>
-      '.يرجى عدم إغلاق التطبيق أثناء هذه العملية، فقد يؤدي ذلك إلى فقدان بياناتك';
+      'Please do not close the application during this process, as it may lead to loss of your data.';
 
   @override
-  String get transferringData => 'الحالة: جاري نقل البيانات...';
+  String get transferringData => 'Status: Transferring data...';
 
   @override
-  String get pleaseSelectAValidTime => 'يرجى تحديد وقت صحيح';
+  String get pleaseSelectAValidTime => 'Please select a valid time';
 
   @override
-  String get sendingOTP => 'جاري ارسال OTP...';
+  String get sendingOTP => 'Sending OTP...';
 
   @override
-  String get useCurrentLocation => 'استخدام الموقع الحالي';
+  String get useCurrentLocation => 'Use current location';
 
   @override
-  String get searchLocations => 'بحث عن الموقع';
+  String get searchLocations => 'Search locations';
 
   @override
-  String get selectDistrict => 'حدد المنطقة';
+  String get selectDistrict => 'Select District';
 
   @override
-  String get deleteAccoundSnack => 'حذف الحساب..., سيتم تسجيل الخروج';
+  String get deleteAccoundSnack =>
+      'Deleting Account..., you will be logged out';
 
   @override
-  String get bioMetricAuthentication => 'تصفية الخدمات';
+  String get bioMetricAuthentication => 'Biometric Authentication';
 
   @override
   String get chooseServiceAddress => 'اختر عنوان الخدمة';
@@ -779,41 +781,41 @@ class AppLocalizationsAr extends AppLocalizations {
   String get savedAddresses => 'العناوين المحفوظة';
 
   @override
-  String get addNew => 'اضافة جديد';
+  String get addNew => 'إضافة جديد';
 
   @override
-  String get selected => 'محدد';
+  String get selected => 'Selected';
 
   @override
-  String get pleaseAddANewAddress => 'يرجى اضافة عنوان جديد';
+  String get pleaseAddANewAddress => 'يرجى إضافة عنوان جديد.';
 
   @override
   String get locationServicesDisabled =>
-      'خدمات الموقع معطلة. يرجى تمكين خدمات الموقع في اعدادات الجهاز الخاص بك.';
+      'Location services are disabled. Please enable location services in your device settings.';
 
   @override
   String get locationPermissionDenied =>
-      'اذن الموقع مرفوض. يرجى تمكين اذن الموقع في اعدادات الجهاز الخاص بك.';
+      'Location permissions are denied. Please enable location permissions in your device settings.';
 
   @override
   String get locationPermissionDeniedForever =>
-      'اذن الموقع مرفوض دائما. يرجى تمكين اذن الموقع في اعدادات الجهاز الخاص بك.';
+      'Location permissions are permanently denied. Please enable location permissions in your device settings.';
 
   @override
   String get couldNotGetCurrentLocation =>
-      'لا يمكن استخراج الموقع. يرجى التحقق من الاذونات.';
+      'Could not fetch location. Please check permissions.';
 
   @override
   String get selectedLocation => 'الموقع المحدد';
 
   @override
-  String get unableToGetAddress => 'لا يمكن استخراج العنوان';
+  String get unableToGetAddress => 'Unable to get address';
 
   @override
-  String get couldNotFindLocation => 'لا يمكن العثور على الموقع';
+  String get couldNotFindLocation => 'Could not find location';
 
   @override
-  String get gettingAddress => 'جاري استخراج العنوان...';
+  String get gettingAddress => 'Getting address...';
 
   @override
   String get buildingName => 'اسم المبنى';
@@ -828,142 +830,142 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fullName => 'الاسم الكامل';
 
   @override
-  String get phoneNumberRequired => 'رقم الجوال مطلوب';
+  String get phoneNumberRequired => 'رقم الهاتف مطلوب';
 
   @override
-  String get invalidPhoneNumberFormat => 'تنسيق رقم الجوال غير صحيح';
+  String get invalidPhoneNumberFormat => 'Invalid phone number format';
 
   @override
-  String get saveAddress => 'حفظ العنوان';
+  String get saveAddress => 'Save Address';
 
   @override
-  String get chooseLocation => 'اختر الموقع';
+  String get chooseLocation => 'Choose Location';
 
   @override
-  String get useMyCurrentLocation => 'استخدام الموقع الحالي';
+  String get useMyCurrentLocation => 'Use my current location';
 
   @override
-  String get addAddressDetails => 'اضافة تفاصيل العنوان';
+  String get addAddressDetails => 'Add address details';
 
   @override
   String get pleaseSelectServiceAddress => 'يرجى تحديد عنوان الخدمة';
 
   @override
-  String get paymentDeclined => 'الدفع مرفوض';
+  String get paymentDeclined => 'Payment Declined';
 
   @override
-  String get tipAmount => 'مبلغ الاكرامية';
+  String get tipAmount => 'Tip Amount';
 
   @override
-  String get failedToSaveReview => 'فشل حفظ التقييم';
+  String get failedToSaveReview => 'Failed to save review';
 
   @override
-  String get thankTheTechnician => 'شكرا للفني';
+  String get thankTheTechnician => 'Thank the Technician';
 
   @override
-  String get showAppreciationWithTip => 'اظهار التقدير مع الاكرامية';
+  String get showAppreciationWithTip => 'Show appreciation with tip';
 
   @override
-  String get enterCustomTipAmount => 'ادخل مبلغ الاكرامية المخصصة';
+  String get enterCustomTipAmount => 'Enter Custom Tip Amount';
 
   @override
-  String get selectPaymentMethod => 'حدد طريقة الدفع';
+  String get selectPaymentMethod => 'Select Payment Method';
 
   @override
-  String get payInCash => 'ادفع بالنقد';
+  String get payInCash => 'Pay in Cash';
 
   @override
-  String get tip => 'اكرامية:';
+  String get tip => 'Tip:';
 
   @override
-  String get card => 'بطاقة';
+  String get card => 'Card';
 
   @override
-  String get cash => 'نقدا';
+  String get cash => 'Cash';
 
   @override
-  String get custom => 'مخصص';
+  String get custom => 'Custom';
 
   @override
-  String get writeYourReview => 'اكتب تقييمك';
+  String get writeYourReview => 'Write your review';
 
   @override
   String get processing => 'Processing...';
 
   @override
-  String get submitting => 'جاري الارسال...';
+  String get submitting => 'Submitting...';
 
   @override
-  String get submitTip => 'ارسل & اكرامية';
+  String get submitTip => 'Submit & Tip';
 
   @override
-  String get payWithCard => 'ادفع بالبطاقة';
+  String get payWithCard => 'Pay with Card';
 
   @override
-  String get pleaseSelectRating => 'يرجى تحديد التقييم';
+  String get pleaseSelectRating => 'Please select rating';
 
   @override
-  String get pleaseSelectPaymentMethod => 'يرجى تحديد طريقة الدفع';
+  String get pleaseSelectPaymentMethod => 'Please select payment method';
 
   @override
-  String get pleaseEnterValidTipAmount => 'يرجى ادخال مبلغ اكرامية صحيحة';
+  String get pleaseEnterValidTipAmount => 'Please enter valid tip amount';
 
   @override
-  String get minimumTipAmount => 'الحد الادنى مبلغ الاكرامية هو SAR 5';
+  String get minimumTipAmount => 'Minimum tip amount is SAR 5';
 
   @override
-  String get pleaseEnterTipAmount => 'يرجى ادخال مبلغ الاكرامية';
+  String get pleaseEnterTipAmount => 'Please enter tip amount';
 
   @override
-  String get submitReviewAndTip => 'ارسل التقييم إكرامية';
+  String get submitReviewAndTip => 'Submit Review & Tip';
 
   @override
-  String get submitReview => 'ارسل التقييم';
+  String get submitReview => 'Submit Review';
 
   @override
-  String get liveTracking => 'تتبع مباشر';
+  String get liveTracking => 'Live Tracking';
 
   @override
-  String get loadingLocation => 'جاري تحميل الموقع...';
+  String get loadingLocation => 'Loading location...';
 
   @override
-  String get trackWorker => 'تتبع العامل';
+  String get trackWorker => 'Track Worker';
 
   @override
-  String get phoneNumberInvalid => 'رقم الجوال غير صحيح';
+  String get phoneNumberInvalid => 'Phone number is invalid';
 
   @override
-  String get notificationLanguage => 'لغة الاشعارات';
+  String get notificationLanguage => 'Notification Language';
 
   @override
-  String get removeAddress => 'حذف العنوان';
+  String get removeAddress => 'Remove Address';
 
   @override
-  String get enableBiometricAuthentication => 'تمكين تصفية البصمة';
+  String get enableBiometricAuthentication => 'Enable Biometric Authentication';
 
   @override
-  String get loading => 'جاري التحميل...';
+  String get loading => 'Loading...';
 
   @override
-  String get call => 'اتصال';
+  String get call => 'Call';
 
   @override
   String get biometricNotSupported =>
-      'التصفية البصمة غير مدعومة على هذا الجهاز';
+      'Biometric authentication is not supported on this device';
 
   @override
-  String get pleaseAuthenticateToContinue => 'يرجى تصفية البصمة للمتابعة';
+  String get pleaseAuthenticateToContinue => 'Please authenticate to continue';
 
   @override
-  String get authenticationFailed => 'فشل التصفية البصمة';
+  String get authenticationFailed => 'Authentication failed';
 
   @override
   String get biometricNotAvailable =>
-      'التصفية البصمة غير متوفرة على هذا الجهاز';
+      'Biometric authentication is not available on this device';
 
   @override
   String get biometricTemporarilyLocked =>
-      'التصفية البصمة مقفلة مؤقتا على هذا الجهاز';
+      'Biometric authentication is temporarily locked on this device';
 
   @override
   String get notificationLanguageChanged => 'تم تغيير لغة الاشعارات';
@@ -972,7 +974,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noWishlistItems => 'لا توجد عناصر المفضلة';
 
   @override
-  String get errorFillingProfile => 'خطاء في تعبئة الملف الشخصي';
+  String get errorFillingProfile => 'خطاء في تعبئة الملف الشخصي';
 
   @override
   String get errorFetchingLocations => 'خطاء في جلب المواقع';
@@ -984,8 +986,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingFailed => 'فشل الحجز';
 
   @override
-  String get bookingCancelError => 'خطاء في إلغاء الحجز';
+  String get bookingCancelError => 'خطاء في إلغاء الحجز';
 
   @override
   String get category => 'فئة';
+
+  @override
+  String get selectFromSavedAddresses =>
+      'حدد من عناوينك المحفوظة أو أضف عنوانًا جديدًا.';
+
+  @override
+  String get failedToSaveAddress =>
+      'فشل في حفظ العنوان. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get errorSavingAddress => 'خطأ في حفظ العنوان';
 }

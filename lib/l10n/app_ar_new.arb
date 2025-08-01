@@ -114,16 +114,5 @@
   "bookingSuccess": "نجاح الحجز",
   "bookingFailed": "فشل الحجز",
   "bookingCancelError": "خطاء في إلغاء الحجز",
-  "category": "فئة",
-  "selectedLocation": "الموقع المحدد",
-  "buildingName": "اسم المبنى",
-  "buildingNameRequired": "اسم المبنى مطلوب",
-  "fullName": "الاسم الكامل",
-  "fullNameRequired": "الاسم الكامل مطلوب",
-  "phoneNumberRequired": "رقم الهاتف مطلوب",
-  "failedToSaveAddress": "فشل في حفظ العنوان. يرجى المحاولة مرة أخرى.",
-  "errorSavingAddress": "خطأ في حفظ العنوان",
-    "notifications":"الاشعارات",
-  "noNotificationsYet":"لا يوجد اشعارات حتى الان",
-  "noNotificationsMessage":"لا يوجد اشعارات حتى الان"
+  "category": "فئة"
 }

@@ -115,4 +115,8 @@ class LocalStoreHelper {
     }
     return null;
   }
+  // Clear cache
+  static Future<void> clearCache() async {
+    await MyApp.box.clear();
+  }
 }

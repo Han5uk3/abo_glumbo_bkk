@@ -426,13 +426,12 @@ class AppServices {
   static Future<void> deleteAccount() async {
     try {
       await AppFirestore.customersCollectionRef.doc(uid).delete();
-      await LocalStoreHelper.clearUID();
-      await LocalStoreHelper.clearGuestUser();
-      await LocalStoreHelper.clearLogoutStatus();
+      LocalStoreHelper.clearCache();
     } catch (e) {
       debugPrint('❌ Error deleting account: $e');
     }
   }
+
 
   Stream<UserModel> getAgentLiveLocationStream(String agentId) {
     return AppFirestore.usersCollectionRef.doc(agentId).snapshots().map((

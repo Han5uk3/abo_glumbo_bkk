@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:abo_glumbo_bbk/common_widgets/location_map_picker.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
@@ -50,14 +48,14 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
     await AppServices.removeAddress(address.id);
 
     setState(() {
-      _localAddressList.remove(address);
+      _localAddressList.removeWhere((addr) => addr.id == address.id);
     });
 
-    Navigator.pop(context);
+    Navigator.pop(context); // Close loading dialog
 
     Navigator.pop(context, {
       'selectedAddress': null,
-      'addressList': _localAddressList,
+      'addressList': List<AddressModel>.from(_localAddressList),
     });
   }
 
@@ -71,6 +69,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
     try {
       bool success = await AppServices.selectLocation(address.id);
       if (success) {
+        // Update local state first
         setState(() {
           for (var addr in _localAddressList) {
             addr.isSelected = false;
@@ -82,10 +81,13 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
             _localAddressList[index].isSelected = true;
           }
         });
-        Navigator.pop(context);
+
+        Navigator.pop(context); // Close loading dialog
+
+        // Return the selected address and updated list
         Navigator.pop(context, {
-          'selectedAddress': address,
-          'addressList': _localAddressList,
+          'selectedAddress': address.copyWith(isSelected: true),
+          'addressList': List<AddressModel>.from(_localAddressList),
         });
       } else {
         Navigator.pop(context);
@@ -128,6 +130,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
+              textDirection: Directionality.of(context),
               children: [
                 Expanded(
                   child: Text(
@@ -136,6 +139,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
+                    textDirection: Directionality.of(context),
                   ),
                 ),
                 IconButton(
@@ -156,9 +160,19 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    textDirection: Directionality.of(context),
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 16, right: 16),
+                        padding: EdgeInsets.only(
+                          left: Directionality.of(context) == TextDirection.rtl
+                              ? 0
+                              : 16,
+                          right: Directionality.of(context) == TextDirection.rtl
+                              ? 16
+                              : 0,
+                          top: 0,
+                          bottom: 0,
+                        ),
                         child: Text(
                           AppLocalizations.of(context)?.savedAddresses ??
                               'Pick the address where you need the service.',
@@ -166,13 +180,11 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
                           ),
+                          textDirection: Directionality.of(context),
                         ),
                       ),
                       TextButton.icon(
                         onPressed: () async {
-                          log(
-                            "📤 AddressSaveSheet: Opening LocationMapPicker...",
-                          );
                           final newAddress = await Navigator.push<AddressModel>(
                             context,
                             MaterialPageRoute(
@@ -184,21 +196,19 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                           );
 
                           if (newAddress != null) {
-                            // Optional: deselect others
                             for (var addr in _localAddressList) {
                               addr.isSelected = false;
                             }
                             newAddress.isSelected = true;
-                            _localAddressList.add(newAddress);
-
+                            setState(() {
+                              _localAddressList.add(newAddress);
+                            });
                             Navigator.pop(context, {
                               'selectedAddress': newAddress,
-                              'addressList': _localAddressList,
-                            }); // ✅ Pass new address to AddIssueImageAndVideo
-                          } else {
-                            log(
-                              "❌ AddressSaveSheet: No address received from LocationMapPicker.",
-                            );
+                              'addressList': List<AddressModel>.from(
+                                _localAddressList,
+                              ),
+                            });
                           }
                         },
                         label: Text(

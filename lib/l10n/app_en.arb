@@ -326,5 +326,9 @@
   "bookingSuccess":"Booking Success",
   "bookingFailed":"Booking Failed",
   "bookingCancelError":"Booking Cancel Error",
-  "category":"Category"
+  "category":"Category",
+  "selectFromSavedAddresses":"Select from your saved addresses or add a new one.",
+  "phoneNumberRequired":"Phone number is required",
+  "failedToSaveAddress":"Failed to save address. Please try again.",
+  "errorSavingAddress":"Error saving address"
 }

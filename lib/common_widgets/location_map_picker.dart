@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:abo_glumbo_bbk/apis/place_suggestion_api.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/location_card.dart';
@@ -8,7 +7,6 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -20,13 +18,14 @@ class LocationMapPicker extends StatefulWidget {
   final Function(AddressModel)? onAddressSelected;
   final Function(Map<String, dynamic>)? onLocationSelected;
   final bool isFromHomeAddress;
-  const LocationMapPicker(
-      {super.key,
-      this.userLatitude,
-      this.userLongitude,
-      this.onAddressSelected,
-      this.onLocationSelected,
-      this.isFromHomeAddress = false});
+  const LocationMapPicker({
+    super.key,
+    this.userLatitude,
+    this.userLongitude,
+    this.onAddressSelected,
+    this.onLocationSelected,
+    this.isFromHomeAddress = false,
+  });
 
   @override
   State<LocationMapPicker> createState() => _LocationMapPickerState();
@@ -92,8 +91,9 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         throw Exception(
-            AppLocalizations.of(context)?.locationServicesDisabled ??
-                'Location services are disabled');
+          AppLocalizations.of(context)?.locationServicesDisabled ??
+              'Location services are disabled',
+        );
       }
 
       LocationPermission permission = await Geolocator.checkPermission();
@@ -101,15 +101,17 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           throw Exception(
-              AppLocalizations.of(context)?.locationPermissionDenied ??
-                  'Location permissions are denied');
+            AppLocalizations.of(context)?.locationPermissionDenied ??
+                'Location permissions are denied',
+          );
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
         throw Exception(
-            AppLocalizations.of(context)?.locationPermissionDeniedForever ??
-                'Location permissions are permanently denied');
+          AppLocalizations.of(context)?.locationPermissionDeniedForever ??
+              'Location permissions are permanently denied',
+        );
       }
 
       Position position = await Geolocator.getCurrentPosition(
@@ -130,8 +132,9 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                AppLocalizations.of(context)?.couldNotGetCurrentLocation ??
-                    'Could not get current location: ${e.toString()}'),
+              AppLocalizations.of(context)?.couldNotGetCurrentLocation ??
+                  'Could not get current location: ${e.toString()}',
+            ),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -187,7 +190,8 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
       }
 
       if (title.isEmpty) {
-        title = AppLocalizations.of(context)?.selectedLocation ??
+        title =
+            AppLocalizations.of(context)?.selectedLocation ??
             'Selected Location';
       }
     }
@@ -250,23 +254,26 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     _locationSubtitle = uniqueSubtitleParts.join(', ');
   }
 
-  Future<void> _getAddressFromLatLng(LatLng latLng,
-      {bool showLoader = false}) async {
+  Future<void> _getAddressFromLatLng(
+    LatLng latLng, {
+    bool showLoader = false,
+  }) async {
     try {
       if (showLoader) {
         setState(() {
           _isLoading = true;
         });
       }
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        latLng.latitude,
-        latLng.longitude,
-      ).timeout(
-        Duration(seconds: 10),
-        onTimeout: () {
-          throw TimeoutException('Address lookup timed out');
-        },
-      );
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(
+            latLng.latitude,
+            latLng.longitude,
+          ).timeout(
+            Duration(seconds: 10),
+            onTimeout: () {
+              throw TimeoutException('Address lookup timed out');
+            },
+          );
       if (placemarks.isNotEmpty && mounted) {
         final placemark = placemarks[0];
         List<String> addressComponents = [];
@@ -302,7 +309,8 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
           setState(() {
             String fallbackAddress =
                 'Lat: ${latLng.latitude.toStringAsFixed(4)}, Lng: ${latLng.longitude.toStringAsFixed(4)}';
-            _locationTitle = AppLocalizations.of(context)?.selectedLocation ??
+            _locationTitle =
+                AppLocalizations.of(context)?.selectedLocation ??
                 'Selected Location';
             _locationSubtitle = fallbackAddress;
           });
@@ -311,17 +319,20 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _locationTitle = AppLocalizations.of(context)?.selectedLocation ??
+          _locationTitle =
+              AppLocalizations.of(context)?.selectedLocation ??
               'Selected Location';
           _locationSubtitle =
               AppLocalizations.of(context)?.unableToGetAddress ??
-                  'Unable to get address - ${e.toString()}';
+              'Unable to get address - ${e.toString()}';
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)?.unableToGetAddress ??
-                'Unable to get address: ${e.toString()}'),
+            content: Text(
+              AppLocalizations.of(context)?.unableToGetAddress ??
+                  'Unable to get address: ${e.toString()}',
+            ),
             duration: Duration(seconds: 2),
           ),
         );
@@ -400,8 +411,10 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)?.couldNotFindLocation ??
-                'Could not find location: ${e.toString()}'),
+            content: Text(
+              AppLocalizations.of(context)?.couldNotFindLocation ??
+                  'Could not find location: ${e.toString()}',
+            ),
             duration: Duration(seconds: 3),
           ),
         );
@@ -415,8 +428,10 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     }
   }
 
-  Future<void> _moveCameraToLocation(LatLng latLng,
-      {bool animate = true}) async {
+  Future<void> _moveCameraToLocation(
+    LatLng latLng, {
+    bool animate = true,
+  }) async {
     if (mapController == null) return;
 
     final cameraUpdate = CameraUpdate.newLatLngZoom(latLng, 15);
@@ -442,6 +457,8 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
   }
 
   void _showAddressDetailsBottomSheet() {
+    bool isRTL = Directionality.of(context) == TextDirection.rtl;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -466,7 +483,9 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: isRTL
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
                 children: [
                   Center(
                     child: Container(
@@ -485,13 +504,16 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    textDirection: isRTL
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
                   ),
                   const SizedBox(height: 20),
                   LocationCard(
                     title: _locationTitle.isNotEmpty
                         ? _locationTitle
                         : AppLocalizations.of(context)?.selectedLocation ??
-                            'Selected Location',
+                              'Selected Location',
                     subtitle: _locationSubtitle,
                   ),
                   const SizedBox(height: 20),
@@ -503,13 +525,16 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     hint: Text(
                       AppLocalizations.of(context)?.buildingName ??
                           'Building Name',
-                      style:
-                          GoogleFonts.poppins(fontSize: 14, color: Colors.grey),
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)
-                                ?.buildingNameRequired ??
+                        return AppLocalizations.of(
+                              context,
+                            )?.buildingNameRequired ??
                             'Building name is required';
                       }
                       return null;
@@ -530,8 +555,10 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     },
                     hint: Text(
                       AppLocalizations.of(context)?.fullName ?? 'Full Name',
-                      style:
-                          GoogleFonts.poppins(fontSize: 14, color: Colors.grey),
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -543,17 +570,21 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     hint: Text(
                       AppLocalizations.of(context)?.phoneNumber ??
                           'Phone Number',
-                      style:
-                          GoogleFonts.poppins(fontSize: 14, color: Colors.grey),
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)
-                                ?.phoneNumberRequired ??
+                        return AppLocalizations.of(
+                              context,
+                            )?.phoneNumberRequired ??
                             'Phone number is required';
                       }
-                      final saudiRegex =
-                          RegExp(r'^(?:\+966|00966|0)?5[0-9]{8}$');
+                      final saudiRegex = RegExp(
+                        r'^(?:\+966|00966|0)?5[0-9]{8}$',
+                      );
 
                       if (!saudiRegex.hasMatch(value)) {
                         return AppLocalizations.of(context)!.phoneNumberInvalid;
@@ -604,19 +635,25 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
   }
 
   void _saveAddressWithDetails() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    setState(() => _isAddingAddress = true);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
-
     try {
       if (_selectedLocation != null) {
         await AppServices.getSelectedAddressAndUpdateIsSelectedToFalse();
-
         final newAddress = AddressModel(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
-          streetName: _locationSubtitle,
+          streetName: _locationSubtitle.isNotEmpty
+              ? _locationSubtitle
+              : (_locationTitle.isNotEmpty
+                    ? _locationTitle
+                    : 'Selected Location'),
           buildingNumber: _buildingNameController.text.trim(),
           fullName: _fullNameController.text.trim(),
           phoneNumber: _phoneNumberController.text.trim(),
@@ -624,34 +661,45 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
           lon: _selectedLocation!.longitude,
           isSelected: true,
         );
-
-        bool isNewAddressAdded =
-            await AppServices.addCustomerAddress(newAddress);
-
-        if (isNewAddressAdded) {
-          if (mounted) {
-            Navigator.pop(context); // ✅ close loading dialog
-            log("📍 LocationMapPicker: New address created: ${newAddress.toJson()}");
-
-            Navigator.pop(context); // ✅ pass result to AddressSaveSheet
-            Navigator.pop(
-                context, newAddress); // ✅ pass result to AddressSaveSheet
-          }
-        } else {
-          if (mounted) {
-            Navigator.pop(context); // ✅ close loading dialog
+        bool isNewAddressAdded = await AppServices.addCustomerAddress(
+          newAddress,
+        );
+        if (mounted) {
+          if (isNewAddressAdded) {
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pop(context, newAddress);
+          } else {
+            Navigator.pop(context);
             setState(() => _isAddingAddress = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)?.failedToSaveAddress ??
+                      'Failed to save address. Please try again.',
+                ),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
           }
         }
       }
     } catch (e) {
       if (mounted) {
-        Navigator.pop(context); // ✅ close loading dialog on error
+        Navigator.pop(context);
         setState(() => _isAddingAddress = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${AppLocalizations.of(context)?.errorSavingAddress ?? 'Error saving address'}: ${e.toString()}',
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     }
-
-    if (mounted) setState(() => _isAddingAddress = false);
   }
 
   Widget _buildSearchResults() {
@@ -720,7 +768,8 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-            AppLocalizations.of(context)?.chooseLocation ?? 'Choose Location'),
+          AppLocalizations.of(context)?.chooseLocation ?? 'Choose Location',
+        ),
         elevation: 0,
         centerTitle: true,
       ),
@@ -730,9 +779,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
             child: Stack(
               children: [
                 if (!_mapReady)
-                  const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  const Center(child: CircularProgressIndicator()),
                 GoogleMap(
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
@@ -748,9 +795,10 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                             infoWindow: InfoWindow(
                               title: _locationTitle.isNotEmpty
                                   ? _locationTitle
-                                  : AppLocalizations.of(context)
-                                          ?.selectedLocation ??
-                                      'Selected Location',
+                                  : AppLocalizations.of(
+                                          context,
+                                        )?.selectedLocation ??
+                                        'Selected Location',
                               snippet: _locationSubtitle.isNotEmpty
                                   ? _locationSubtitle
                                   : null,
@@ -778,8 +826,10 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                           onChanged: _searchPlaces,
                           focusNode: _searchFocusNode,
                           decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context)
-                                    ?.pickServiceAddress ??
+                            hintText:
+                                AppLocalizations.of(
+                                  context,
+                                )?.pickServiceAddress ??
                                 'Pick service address',
                             prefixIcon: const Icon(Icons.search),
                             suffixIcon: _searchController.text.isNotEmpty
@@ -835,8 +885,9 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                             ),
                             SizedBox(width: 4),
                             Text(
-                              AppLocalizations.of(context)
-                                      ?.useMyCurrentLocation ??
+                              AppLocalizations.of(
+                                    context,
+                                  )?.useMyCurrentLocation ??
                                   'Use my current location',
                               style: TextStyle(
                                 fontSize: 12,
@@ -885,33 +936,36 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
           ),
           const SizedBox(height: 8),
           LocationCard(
-              title: _locationTitle.isNotEmpty
-                  ? _locationTitle
-                  : AppLocalizations.of(context)?.selectLocation ??
+            title: _locationTitle.isNotEmpty
+                ? _locationTitle
+                : AppLocalizations.of(context)?.selectLocation ??
                       'Select Location',
-              subtitle: _locationSubtitle),
+            subtitle: _locationSubtitle,
+          ),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  backgroundColor: Colors.blue,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                onPressed: _selectedLocation != null
-                    ? () => _showAddressDetailsBottomSheet()
-                    : null,
-                child: Text(
-                  AppLocalizations.of(context)?.addAddressDetails ??
-                      'Add Address Details',
-                  style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500),
-                )),
+                backgroundColor: Colors.blue,
+              ),
+              onPressed: _selectedLocation != null
+                  ? () => _showAddressDetailsBottomSheet()
+                  : null,
+              child: Text(
+                AppLocalizations.of(context)?.addAddressDetails ??
+                    'Add Address Details',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 16),
         ],

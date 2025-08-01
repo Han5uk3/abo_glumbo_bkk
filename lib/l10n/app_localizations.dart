@@ -2005,6 +2005,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Category'**
   String get category;
+
+  /// No description provided for @selectFromSavedAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'Select from your saved addresses or add a new one.'**
+  String get selectFromSavedAddresses;
+
+  /// No description provided for @failedToSaveAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save address. Please try again.'**
+  String get failedToSaveAddress;
+
+  /// No description provided for @errorSavingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving address'**
+  String get errorSavingAddress;
 }
 
 class _AppLocalizationsDelegate

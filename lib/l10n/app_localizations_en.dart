@@ -993,4 +993,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get category => 'Category';
+
+  @override
+  String get selectFromSavedAddresses =>
+      'Select from your saved addresses or add a new one.';
+
+  @override
+  String get failedToSaveAddress => 'Failed to save address. Please try again.';
+
+  @override
+  String get errorSavingAddress => 'Error saving address';
 }
