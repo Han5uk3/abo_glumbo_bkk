@@ -2018,11 +2018,125 @@ abstract class AppLocalizations {
   /// **'Failed to save address. Please try again.'**
   String get failedToSaveAddress;
 
+  /// No description provided for @unableToGetLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to get location'**
+  String get unableToGetLocation;
+
+  /// No description provided for @tapRefreshToGetLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap refresh to get location'**
+  String get tapRefreshToGetLocation;
+
+  /// No description provided for @serviceFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Service found'**
+  String get serviceFound;
+
+  /// No description provided for @servicesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Services found'**
+  String get servicesFound;
+
+  /// No description provided for @workerArrivesToLocationIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker arrives to location in'**
+  String get workerArrivesToLocationIn;
+
+  /// No description provided for @away.
+  ///
+  /// In en, this message translates to:
+  /// **'away'**
+  String get away;
+
+  /// No description provided for @yourWorkerIsOnTheWay.
+  ///
+  /// In en, this message translates to:
+  /// **'Your worker is on the way'**
+  String get yourWorkerIsOnTheWay;
+
+  /// No description provided for @serviceProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Provider'**
+  String get serviceProvider;
+
+  /// No description provided for @callServiceProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Service Provider'**
+  String get callServiceProvider;
+
+  /// No description provided for @invalidOtpCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid OTP code'**
+  String get invalidOtpCode;
+
   /// No description provided for @errorSavingAddress.
   ///
   /// In en, this message translates to:
   /// **'Error saving address'**
   String get errorSavingAddress;
+
+  /// No description provided for @loadingNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading notifications...'**
+  String get loadingNotifications;
+
+  /// No description provided for @loadingMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading more...'**
+  String get loadingMore;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @errorLoadingNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading notifications'**
+  String get errorLoadingNotifications;
+
+  /// No description provided for @errorRefreshingNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Error refreshing notifications'**
+  String get errorRefreshingNotifications;
+
+  /// No description provided for @exit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exit;
+
+  /// No description provided for @exitAppMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to exit the app?'**
+  String get exitAppMessage;
+
+  /// No description provided for @exitAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit App'**
+  String get exitAppTitle;
+
+  /// No description provided for @errorLoadingMoreNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading more notifications'**
+  String get errorLoadingMoreNotifications;
 }
 
 class _AppLocalizationsDelegate

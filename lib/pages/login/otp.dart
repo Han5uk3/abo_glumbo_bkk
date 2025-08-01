@@ -265,14 +265,17 @@ class _OtpPageState extends State<OtpPage> {
           isLoading = false;
         });
 
-        String errorMessage = 'Invalid OTP. Please try again.';
+        String errorMessage = AppLocalizations.of(context)!
+            .invalidOtpCode; // Localized message for invalid OTP
         if (e is FirebaseAuthException) {
           switch (e.code) {
             case 'invalid-verification-code':
-              errorMessage = 'Invalid OTP. Please enter the correct code.';
+              errorMessage = AppLocalizations.of(context)!
+                  .invalidOtpCode; // Localized message for invalid OTP
               break;
             case 'session-expired':
-              errorMessage = 'OTP has expired. Please request a new one.';
+              errorMessage = AppLocalizations.of(context)!
+                  .otpExpired; // Localized message for expired OTP
               break;
             default:
               errorMessage =

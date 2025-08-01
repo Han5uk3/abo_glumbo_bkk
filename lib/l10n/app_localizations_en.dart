@@ -1002,5 +1002,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failedToSaveAddress => 'Failed to save address. Please try again.';
 
   @override
+  String get unableToGetLocation => 'Unable to get location';
+
+  @override
+  String get tapRefreshToGetLocation => 'Tap refresh to get location';
+
+  @override
+  String get serviceFound => 'Service found';
+
+  @override
+  String get servicesFound => 'Services found';
+
+  @override
+  String get workerArrivesToLocationIn => 'Worker arrives to location in';
+
+  @override
+  String get away => 'away';
+
+  @override
+  String get yourWorkerIsOnTheWay => 'Your worker is on the way';
+
+  @override
+  String get serviceProvider => 'Service Provider';
+
+  @override
+  String get callServiceProvider => 'Call Service Provider';
+
+  @override
+  String get invalidOtpCode => 'Invalid OTP code';
+
+  @override
   String get errorSavingAddress => 'Error saving address';
+
+  @override
+  String get loadingNotifications => 'Loading notifications...';
+
+  @override
+  String get loadingMore => 'Loading more...';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get errorLoadingNotifications => 'Error loading notifications';
+
+  @override
+  String get errorRefreshingNotifications => 'Error refreshing notifications';
+
+  @override
+  String get exit => 'Exit';
+
+  @override
+  String get exitAppMessage => 'Are you sure you want to exit the app?';
+
+  @override
+  String get exitAppTitle => 'Exit App';
+
+  @override
+  String get errorLoadingMoreNotifications =>
+      'Error loading more notifications';
 }

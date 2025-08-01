@@ -407,7 +407,13 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
     try {
       await AppServices.deleteAccount();
       await FirebaseAuth.instance.signOut();
-      SystemNavigator.pop();
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (route) => false,
+        );
+      }
     } catch (e) {
       debugPrint('Error during account deletion: $e');
       if (mounted) {

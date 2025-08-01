@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
@@ -25,22 +26,31 @@ class TrackingData extends StatelessWidget {
         children: [
           SizedBox(height: 10),
           _title(
-            'Worker arrives to location in',
+            AppLocalizations.of(context)?.workerArrivesToLocationIn ??
+                'Worker arrives to location in',
             16,
             fontWeight: FontWeight.normal,
           ),
           SizedBox(height: 5),
           _title('$timeTakenToArrive', 35, fontWeight: FontWeight.bold),
-          _title('$remainingKm away', 12, fontWeight: FontWeight.normal),
+          _title(
+            '$remainingKm ${AppLocalizations.of(context)?.away ?? 'away'}',
+            12,
+            fontWeight: FontWeight.normal,
+          ),
           SizedBox(height: 10),
           _title(
-            'Your Worker is on the way',
+            AppLocalizations.of(context)?.yourWorkerIsOnTheWay ??
+                'Your Worker is on the way',
             16,
             fontWeight: FontWeight.normal,
           ),
           SizedBox(height: 5),
           serviceWorkerCard(
-            name: worker?.name ?? 'Service Provider',
+            name:
+                worker?.name ??
+                AppLocalizations.of(context)?.serviceProvider ??
+                'Service Provider',
             onCall: () => worker?.phone != null
                 ? () {
                     launchUrl(
@@ -49,6 +59,7 @@ class TrackingData extends StatelessWidget {
                     );
                   }
                 : null,
+            context: context,
           ),
         ],
       ),
@@ -83,9 +94,9 @@ class TrackingData extends StatelessWidget {
 
   Widget serviceWorkerCard({
     String name = 'Service Provider',
-    String details = 'Service • Availability',
     VoidCallback? onCall,
     VoidCallback? onTap,
+    required BuildContext context,
   }) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 2, vertical: 5),
@@ -109,16 +120,14 @@ class TrackingData extends StatelessWidget {
             name,
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
           ),
-          subtitle: Text(
-            details,
-            style: TextStyle(color: Colors.grey[700], fontSize: 15),
-          ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
                 icon: Icon(Icons.call, color: AppColors.primary),
-                tooltip: 'Call Service Provider',
+                tooltip:
+                    AppLocalizations.of(context)?.callServiceProvider ??
+                    'Call Service Provider',
                 onPressed: onCall ?? () {},
               ),
             ],

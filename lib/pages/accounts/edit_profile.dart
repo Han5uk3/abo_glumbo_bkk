@@ -184,7 +184,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  bool _isValidPhoneNumber(String phoneNumber) {
+    if (phoneNumber.isEmpty) return false;
+
+    if (!phoneNumber.startsWith('+966')) return false;
+
+    String numberWithoutCode = phoneNumber.substring(4);
+
+    if (numberWithoutCode.length != 9) return false;
+
+    if (!RegExp(r'^[0-9]+$').hasMatch(numberWithoutCode)) return false;
+
+    if (!numberWithoutCode.startsWith('5')) return false;
+
+    return true;
+  }
+
   void _updatePhoneNumber() async {
+    if (!_isValidPhoneNumber(phoneController.text)) {
+      _showSnackBar(
+        AppLocalizations.of(context)?.pleaseEnterAValidPhoneNumber ??
+            'Invalid number',
+        backgroundColor: AppColors.red,
+      );
+      return;
+    }
+
     bool isNumberAlreadyExists =
         await AppServices.checkCustomerPhoneNumberAlredyExist(
           phoneController.text,
@@ -229,70 +254,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
             );
           },
           onError: (FirebaseAuthException e) {
-            showSnackBar(e.message ?? '', context, backgroundColor: Colors.red);
+            if (mounted) setState(() => isLoading = false);
+            _showSnackBar(
+              e.message ??
+                  AppLocalizations.of(context)?.somethingWentWrongTryAgain ??
+                  'Something went wrong. Please try again.',
+              backgroundColor: AppColors.red,
+            );
           },
-          //  onCodeSent: (verificationId, {int? resendToken}) {
-
-          //  }
-          //   (phoneAuthCredential) async {
-          //     if (mounted) {
-          //       _showSnackBar(
-          //         AppLocalizations.of(context)?.otpAutoVerified ??
-          //             'OTP automatically verified',
-          //         backgroundColor: AppColors.green,
-          //       );
-          //     }
-
-          //     try {
-          //       UserCredential result = await FirebaseAuth.instance
-          //           .signInWithCredential(phoneAuthCredential);
-
-          //       if (result.user != null) {
-          //         FirebaseAnalytics.instance.logLogin(loginMethod: "Phone");
-          //       }
-          //     } catch (e) {
-          //       if (mounted) {
-          //         setState(() => isLoading = false);
-          //         _showSnackBar(
-          //           AppLocalizations.of(context)?.somethingWentWrongTryAgain ??
-          //               'Something went wrong. Please try again.',
-          //           backgroundColor: AppColors.yellow,
-          //         );
-          //       }
-          //     }
-          //   },
-          //   (verificationId, forceResendingToken) {
-          //     ref.read(mobileNumberState.notifier).state = phoneController.text;
-          //     ref.read(authVerificationIdState.notifier).state = verificationId;
-          //     setState(() => isLoading = false);
-          //     _showSnackBar(
-          //       AppLocalizations.of(context)?.otpSent ?? 'OTP sent successfully',
-          //       backgroundColor: AppColors.green,
-          //     );
-          //     _resendToken = forceResendingToken;
-          //     AppNavigation.pushOtp(context, isFromEditProfile: true);
-          //   },
-          //   (verificationId) {
-          //     if (mounted) {
-          //       ref.read(authVerificationIdState.notifier).state = verificationId;
-          //       setState(() => isLoading = false);
-          //       if (isLoading) {
-          //         _showSnackBar(
-          //           "OTP request timed out. Please try again.",
-          //           backgroundColor: AppColors.yellow,
-          //         );
-          //       }
-          //     }
-          //   },
-          //   (FirebaseAuthException error) {
-          //     if (mounted) setState(() => isPhoneNumberUpdated = false);
-          //     ScaffoldMessenger.of(context).showSnackBar(
-          //       SnackBar(
-          //         content: Text(error.message ?? ''),
-          //         behavior: SnackBarBehavior.floating,
-          //       ),
-          //     );
-          //   },
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

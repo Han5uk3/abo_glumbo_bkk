@@ -72,74 +72,106 @@ class _HomeState extends State<Home> {
       return _pages[currentIndex];
     }
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      body: getCurrentPage(),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: (index) {
-          if (mounted) setState(() => currentIndex = index);
-        },
-        height: 70,
-        destinations: [
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              AppIcons.homeNav,
-              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (currentIndex == 0) {
+          AlertDialog(
+            title: Text(locale?.exitAppTitle ?? 'Exit App'),
+            content: Text(
+              locale?.exitAppMessage ??
+                  'Are you sure you want to exit the app?',
             ),
-            selectedIcon: SvgPicture.asset(
-              AppIcons.homeNav,
-              colorFilter: ColorFilter.mode(
-                AppColors.secondary,
-                BlendMode.srcIn,
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(locale?.cancel ?? 'Cancel'),
               ),
-            ),
-            label: locale?.home ?? '',
-          ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              AppIcons.categoriesNav,
-              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
-            ),
-            selectedIcon: SvgPicture.asset(
-              AppIcons.categoriesNav,
-              colorFilter: ColorFilter.mode(
-                AppColors.secondary,
-                BlendMode.srcIn,
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(locale?.exit ?? 'Exit'),
               ),
-            ),
-            label: locale?.categories ?? '',
-          ),
-          if (!(_isGuest ?? false))
+            ],
+          );
+        } else {
+          setState(() {
+            currentIndex = 0;
+          });
+        }
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        body: getCurrentPage(),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: currentIndex,
+          onDestinationSelected: (index) {
+            if (mounted) setState(() => currentIndex = index);
+          },
+          height: 70,
+          destinations: [
             NavigationDestination(
               icon: SvgPicture.asset(
-                AppIcons.myBookingNav,
+                AppIcons.homeNav,
                 colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
               ),
               selectedIcon: SvgPicture.asset(
-                AppIcons.myBookingNav,
+                AppIcons.homeNav,
                 colorFilter: ColorFilter.mode(
                   AppColors.secondary,
                   BlendMode.srcIn,
                 ),
               ),
-              label: locale?.myBooking ?? '',
+              label: locale?.home ?? '',
             ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              AppIcons.profileNav,
-              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
-            ),
-            selectedIcon: SvgPicture.asset(
-              AppIcons.profileNav,
-              colorFilter: ColorFilter.mode(
-                AppColors.secondary,
-                BlendMode.srcIn,
+            NavigationDestination(
+              icon: SvgPicture.asset(
+                AppIcons.categoriesNav,
+                colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
               ),
+              selectedIcon: SvgPicture.asset(
+                AppIcons.categoriesNav,
+                colorFilter: ColorFilter.mode(
+                  AppColors.secondary,
+                  BlendMode.srcIn,
+                ),
+              ),
+              label: locale?.categories ?? '',
             ),
-            label: locale?.account ?? '',
-          ),
-        ],
+            if (!(_isGuest ?? false))
+              NavigationDestination(
+                icon: SvgPicture.asset(
+                  AppIcons.myBookingNav,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.grey,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                selectedIcon: SvgPicture.asset(
+                  AppIcons.myBookingNav,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.secondary,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                label: locale?.myBooking ?? '',
+              ),
+            NavigationDestination(
+              icon: SvgPicture.asset(
+                AppIcons.profileNav,
+                colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+              ),
+              selectedIcon: SvgPicture.asset(
+                AppIcons.profileNav,
+                colorFilter: ColorFilter.mode(
+                  AppColors.secondary,
+                  BlendMode.srcIn,
+                ),
+              ),
+              label: locale?.account ?? '',
+            ),
+          ],
+        ),
       ),
     );
   }

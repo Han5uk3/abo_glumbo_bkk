@@ -456,16 +456,19 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  
                   children: [
                     _buildHeaderImage(),
                     const SizedBox(height: 35),
-                    Text(
-                      AppLocalizations.of(context)?.appLoginCaption ?? '',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.dmSans(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        fontSize: 24,
+                    Center(
+                      child: Text(
+                        AppLocalizations.of(context)?.appLoginCaption ?? '',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.dmSans(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          fontSize: 24,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 13),

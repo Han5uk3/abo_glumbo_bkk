@@ -77,13 +77,13 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
         // Determine what text to show
         String displayText;
         if (state is UpdateCustomerLocationLoading) {
-          displayText = 'Loading...';
+          displayText = AppLocalizations.of(context)?.loading ?? 'Loading...';
         } else if (_location != null && _location!.isNotEmpty) {
           displayText = _location!;
         } else if (_hasAttemptedFetch) {
-          displayText = 'Unable to get location';
+          displayText = AppLocalizations.of(context)?.unableToGetLocation ?? 'Unable to get location';
         } else {
-          displayText = 'Tap refresh to get location';
+          displayText = AppLocalizations.of(context)?.tapRefreshToGetLocation ?? 'Tap refresh to get location';
         }
 
         return Container(

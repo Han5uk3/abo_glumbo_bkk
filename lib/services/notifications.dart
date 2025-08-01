@@ -15,7 +15,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class NotificationServices {
-  static bool _fcmPermissionRequested = false;
+  static bool _isInitialized = false;
+  static bool _tokenRefreshListenerSet = false;
   static final FirebaseMessaging _firebaseMessaging =
       FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin
@@ -71,8 +72,11 @@ class NotificationServices {
   }
 
   static Future<void> initializeFCM() async {
-    if (_fcmPermissionRequested) return;
-    _fcmPermissionRequested = true;
+    if (_isInitialized) {
+      debugPrint('FCM already initialized, skipping...');
+      return;
+    }
+
     try {
       await FirebaseMessaging.instance
           .setForegroundNotificationPresentationOptions(
@@ -86,34 +90,154 @@ class NotificationServices {
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized ||
           settings.authorizationStatus == AuthorizationStatus.provisional) {
-        String? token;
-
-        if (Platform.isIOS) {
-          String? apnsToken = await _firebaseMessaging.getAPNSToken();
-          if (apnsToken != null) {
-            token = await _firebaseMessaging.getToken();
-          } else {
-            _firebaseMessaging.onTokenRefresh.listen((fcmToken) {
-              if (fcmToken.isNotEmpty) {
-                AppServices.updateFCMToken(fcmToken);
-              }
-            });
-            return;
-          }
-        } else {
-          token = await _firebaseMessaging.getToken();
-        }
-
-        if (token != null && token.isNotEmpty) {
-          await AppServices.updateFCMToken(token);
-
-          _firebaseMessaging.onTokenRefresh.listen((fcmToken) {
-            AppServices.updateFCMToken(fcmToken);
-          });
-        }
+        await _getFCMTokenAndUpdate();
+        _setupTokenRefreshListener();
+        _isInitialized = true;
       }
     } catch (e) {
-      debugPrint('Error initializing FCM: $e');
+      debugPrint('❌ Error initializing FCM: $e');
+    }
+  }
+
+  static Future<void> _getFCMTokenAndUpdate() async {
+    try {
+      String? token;
+
+      if (Platform.isIOS) {
+        // Wait for APNS token with timeout
+        await _waitForAPNSToken();
+        token = await _firebaseMessaging.getToken();
+      } else {
+        token = await _firebaseMessaging.getToken();
+      }
+
+      if (token != null && token.isNotEmpty) {
+        await AppServices.updateFCMToken(token);
+      }
+    } catch (e) {
+      debugPrint('❌ Error getting FCM token: $e');
+    }
+  }
+
+  static Future<void> _waitForAPNSToken() async {
+    try {
+      String? apnsToken = await _firebaseMessaging.getAPNSToken();
+
+      if (apnsToken != null) {
+        debugPrint('📱 APNS Token already available');
+        return;
+      }
+
+      debugPrint('⏳ Waiting for APNS token...');
+
+      // Wait up to 10 seconds for APNS token
+      int attempts = 0;
+      while (attempts < 20) {
+        // 20 attempts * 500ms = 10 seconds
+        await Future.delayed(const Duration(milliseconds: 500));
+        apnsToken = await _firebaseMessaging.getAPNSToken();
+        if (apnsToken != null) {
+          debugPrint('✅ APNS Token received after ${attempts * 500}ms');
+          return;
+        }
+        attempts++;
+      }
+
+      debugPrint(
+        '⚠️ APNS Token not received within timeout, proceeding anyway',
+      );
+    } catch (e) {
+      debugPrint('❌ Error waiting for APNS token: $e');
+    }
+  }
+
+  static void _setupTokenRefreshListener() {
+    if (_tokenRefreshListenerSet) {
+      debugPrint('🔄 Token refresh listener already set up');
+      return;
+    }
+
+    _firebaseMessaging.onTokenRefresh.listen(
+      (fcmToken) {
+        debugPrint('🔄 FCM Token refreshed: ${fcmToken.substring(0, 20)}...');
+        if (fcmToken.isNotEmpty) {
+          AppServices.updateFCMToken(fcmToken)
+              .then((_) {
+                debugPrint('✅ Refreshed FCM Token updated successfully');
+              })
+              .catchError((error) {
+                debugPrint('❌ Error updating refreshed FCM token: $error');
+              });
+        }
+      },
+      onError: (error) {
+        debugPrint('❌ Error in token refresh listener: $error');
+      },
+    );
+
+    _tokenRefreshListenerSet = true;
+    debugPrint('🔄 Token refresh listener set up successfully');
+  }
+
+  static Future<void> refreshFCMToken() async {
+    try {
+      debugPrint('🔄 Manually refreshing FCM token...');
+      await _getFCMTokenAndUpdate();
+    } catch (e) {
+      debugPrint('❌ Error manually refreshing FCM token: $e');
+    }
+  }
+
+  static Future<String?> getCurrentFCMToken() async {
+    try {
+      String? token = await _firebaseMessaging.getToken();
+      if (token != null) {
+        debugPrint('🔑 Current FCM Token: ${token.substring(0, 20)}...');
+      } else {
+        debugPrint('❌ No FCM token available');
+      }
+      return token;
+    } catch (e) {
+      debugPrint('❌ Error getting current FCM token: $e');
+      return null;
+    }
+  }
+
+  static Future<void> deleteFCMToken() async {
+    try {
+      await _firebaseMessaging.deleteToken();
+      debugPrint('🗑️ FCM token deleted successfully');
+    } catch (e) {
+      debugPrint('❌ Error deleting FCM token: $e');
+    }
+  }
+
+  static Future<void> debugFCMStatus() async {
+    try {
+      debugPrint('🔍 FCM Debug Status:');
+      debugPrint('   - Initialized: $_isInitialized');
+      debugPrint('   - Token refresh listener set: $_tokenRefreshListenerSet');
+
+      String? token = await getCurrentFCMToken();
+      if (token != null) {
+        debugPrint('   - Current token available: Yes');
+        debugPrint('   - Token length: ${token.length}');
+      } else {
+        debugPrint('   - Current token available: No');
+      }
+
+      if (Platform.isIOS) {
+        String? apnsToken = await _firebaseMessaging.getAPNSToken();
+        debugPrint(
+          '   - APNS Token available: ${apnsToken != null ? "Yes" : "No"}',
+        );
+      }
+
+      NotificationSettings settings = await _firebaseMessaging
+          .getNotificationSettings();
+      debugPrint('   - Permission status: ${settings.authorizationStatus}');
+    } catch (e) {
+      debugPrint('❌ Error getting FCM debug status: $e');
     }
   }
 

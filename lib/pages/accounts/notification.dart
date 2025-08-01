@@ -71,7 +71,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
       await _loadInitialNotifications();
     } catch (e) {
       log('Error refreshing notifications: $e');
-      _showErrorSnackBar('Error refreshing notifications');
+      _showErrorSnackBar(
+        AppLocalizations.of(context)!.errorRefreshingNotifications,
+      );
     }
   }
 
@@ -125,7 +127,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
       }
     } catch (e) {
       log('Error loading notifications: $e');
-      _showErrorSnackBar('Error loading notifications');
+      _showErrorSnackBar(
+        AppLocalizations.of(context)!.errorLoadingNotifications,
+      );
       if (mounted) setState(() => isLoading = false);
     }
   }
@@ -167,7 +171,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
       }
     } catch (e) {
       log('Error loading more notifications: $e');
-      _showErrorSnackBar('Error loading more notifications');
+      _showErrorSnackBar(
+        AppLocalizations.of(context)!.errorLoadingMoreNotifications,
+      );
       if (mounted) setState(() => isLoadingMore = false);
     }
   }
@@ -327,7 +333,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       }
     } catch (e) {
       log('Batch translation error: $e');
-      throw e;
+      rethrow;
     }
 
     return texts; // Return original texts on error
@@ -378,7 +384,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentLang = _currentLanguage;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -392,12 +397,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _refreshNotifications,
-            tooltip: 'Refresh',
+            tooltip: AppLocalizations.of(context)!.refresh,
           ),
         ],
       ),
       body: isLoading
-          ? _buildLoadingState(currentLang)
+          ? _buildLoadingState()
           : notifications.isEmpty
           ? _buildEmptyState()
           : RefreshIndicator(
@@ -409,20 +414,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     notifications.length + (hasMore && !isLoading ? 1 : 0),
                 itemBuilder: (context, index) {
                   if (index == notifications.length) {
-                    return _buildLoadMoreIndicator(currentLang);
+                    return _buildLoadMoreIndicator();
                   }
 
-                  return _buildNotificationCard(
-                    notifications[index],
-                    currentLang,
-                  );
+                  return _buildNotificationCard(notifications[index]);
                 },
               ),
             ),
     );
   }
 
-  Widget _buildLoadingState(String currentLang) {
+  Widget _buildLoadingState() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -430,9 +432,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           const CircularProgressIndicator(),
           const SizedBox(height: 16),
           Text(
-            currentLang == 'ar'
-                ? 'جاري تحميل الإشعارات...'
-                : 'Loading notifications...',
+            AppLocalizations.of(context)!.loadingNotifications,
             style: const TextStyle(fontSize: 16),
           ),
         ],
@@ -440,7 +440,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     );
   }
 
-  Widget _buildLoadMoreIndicator(String currentLang) {
+  Widget _buildLoadMoreIndicator() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -448,19 +448,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
           children: [
             const CircularProgressIndicator(),
             const SizedBox(height: 8),
-            Text(
-              currentLang == 'ar' ? 'جاري تحميل المزيد...' : 'Loading more...',
-            ),
+            Text(AppLocalizations.of(context)!.loadingMore),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNotificationCard(
-    Map<String, dynamic> notification,
-    String currentLang,
-  ) {
+  Widget _buildNotificationCard(Map<String, dynamic> notification) {
     try {
       final createdAt = notification['createdAt']?.toDate();
       final title = notification['title']?.toString().trim() ?? '';

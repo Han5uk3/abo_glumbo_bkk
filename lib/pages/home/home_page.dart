@@ -77,7 +77,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<void> _initializeAuthenticatedUser() async {
     if (_isDisposed) return;
     try {
-      await Future.wait([_initializeNotifications()]);
+      // FCM is already initialized in main.dart, just refresh the token
+      await NotificationServices.refreshFCMToken();
       if (!_isDisposed) {
         WidgetsBinding.instance.addObserver(this);
       }
@@ -105,19 +106,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       }
     } catch (e) {
       debugPrint('❌ Error fetching banners: $e');
-    }
-  }
-
-  Future<void> _initializeNotifications() async {
-    try {
-      await Future.wait([
-        NotificationServices.initializeNotifications(),
-        NotificationServices.initializeFCM(),
-      ]);
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ Error initializing notifications: $e');
-      }
     }
   }
 

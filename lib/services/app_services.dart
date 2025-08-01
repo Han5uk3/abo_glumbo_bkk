@@ -41,11 +41,36 @@ class AppServices {
 
   static Future<void> updateFCMToken(String token) async {
     try {
+      if (uid.isEmpty) {
+        uid = LocalStoreHelper.getUID() ?? '';
+        if (uid.isEmpty) {
+          debugPrint('❌ Cannot update FCM token: User ID is empty');
+          return;
+        }
+      }
+
+      debugPrint('📤 Updating FCM token for user: $uid');
+      debugPrint('🔑 Token: ${token.substring(0, 20)}...');
+
       await AppFirestore.customersCollectionRef.doc(uid).update({
         'fcmToken': token,
+        'fcmTokenUpdatedAt': Timestamp.now(),
       });
+
+      debugPrint('✅ FCM token updated successfully in Firestore');
     } catch (e) {
       debugPrint('❌ Error updating FCM token: $e');
+
+      // Try to create the document if it doesn't exist
+      try {
+        await AppFirestore.customersCollectionRef.doc(uid).set({
+          'fcmToken': token,
+          'fcmTokenUpdatedAt': Timestamp.now(),
+        }, SetOptions(merge: true));
+        debugPrint('✅ FCM token set successfully with merge option');
+      } catch (setError) {
+        debugPrint('❌ Error setting FCM token with merge: $setError');
+      }
     }
   }
 
@@ -114,7 +139,7 @@ class AppServices {
             .map((doc) => ServiceModel.fromDocumentSnapshot(doc))
             .toList();
       } catch (e) {
-        print('Error loading wishlist: $e');
+        debugPrint('❌ Error loading wishlist: $e');
         return <ServiceModel>[];
       }
     });
@@ -326,7 +351,7 @@ class AppServices {
     }
   }
 
-  static Future<void> removeAddress(String id) async {
+  static Future<bool> removeAddress(String id) async {
     try {
       final docSnapshot = await AppFirestore.customersCollectionRef
           .doc(uid)
@@ -342,10 +367,12 @@ class AppServices {
         await AppFirestore.customersCollectionRef.doc(uid).update({
           'addresses': updatedAddresses,
         });
+        return true;
       }
     } catch (e) {
       debugPrint('❌ Error removing address: $e');
     }
+    return false;
   }
 
   static Future<bool> selectLocation(String id) async {
@@ -431,7 +458,6 @@ class AppServices {
       debugPrint('❌ Error deleting account: $e');
     }
   }
-
 
   Stream<UserModel> getAgentLiveLocationStream(String agentId) {
     return AppFirestore.usersCollectionRef.doc(agentId).snapshots().map((
