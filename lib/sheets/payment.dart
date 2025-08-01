@@ -80,6 +80,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
   String? selectedImageDownloadUrl;
   String? selectedVideoDownloadUrl;
   bool isUploading = false;
+  bool isCashPaymentProcessing = false;
 
   String generateOrderId(String uid, double amount) {
     String uidSuffix = uid.length > 6 ? uid.substring(uid.length - 6) : uid;
@@ -233,6 +234,14 @@ class _PaymentWindowState extends State<PaymentWindow> {
           }
         }
       } else if (selectedPayment == "Cash On Hands") {
+        // Prevent duplicate cash payments
+        if (isCashPaymentProcessing) {
+          return; // Exit early if cash payment is already being processed
+        }
+
+        // Set the flag to prevent duplicate processing
+        isCashPaymentProcessing = true;
+
         // Cash payment logic
         final isBooked = await saveBooking();
         if (mounted) {
@@ -251,6 +260,8 @@ class _PaymentWindowState extends State<PaymentWindow> {
             );
           } else {
             showSnackBar(AppLocalizations.of(context)!.bookingFailed, context);
+            // Reset the flag if booking failed so user can try again
+            isCashPaymentProcessing = false;
           }
         }
       }
@@ -259,6 +270,10 @@ class _PaymentWindowState extends State<PaymentWindow> {
         setState(() {
           isLoading = false;
         });
+        // Reset cash payment flag in case of any exception
+        if (selectedPayment == "Cash On Hands") {
+          isCashPaymentProcessing = false;
+        }
       }
     }
   }
@@ -528,15 +543,26 @@ class _PaymentWindowState extends State<PaymentWindow> {
                 height: 50,
                 child: FilledButton(
                   style: FilledButton.styleFrom(
-                    backgroundColor: selectedPayment == null
+                    backgroundColor:
+                        (selectedPayment == null ||
+                            (selectedPayment == "Cash On Hands" &&
+                                isCashPaymentProcessing))
                         ? Colors.grey
                         : AppColors.secondary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: selectedPayment == null ? null : processPayment,
-                  child: isLoading
+                  onPressed:
+                      selectedPayment == null ||
+                          (selectedPayment == "Cash On Hands" &&
+                              isCashPaymentProcessing)
+                      ? null
+                      : processPayment,
+                  child:
+                      (isLoading ||
+                          (selectedPayment == "Cash On Hands" &&
+                              isCashPaymentProcessing))
                       ? Loader(size: 24, color: Colors.white)
                       : Text(
                           AppLocalizations.of(context)?.continueText ?? '',

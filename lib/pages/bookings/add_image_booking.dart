@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:abo_glumbo_bbk/helpers/hive_helper.dart' show LocalStoreHelper;
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
+import 'package:abo_glumbo_bbk/models/address_result.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
-import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart'
-    show AccountState, AccountBloc, CustomerDataLoaded;
-import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
 import 'package:abo_glumbo_bbk/services/location_service.dart';
 import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -19,14 +17,12 @@ class AddIssueImageAndVideo extends StatefulWidget {
   final ValueChanged<File?>? onImageSelected;
   final ValueChanged<File?>? onVideoSelected;
   final ValueChanged<AddressModel?>? isAddressSelected;
-  List<AddressModel>? savedAddresses;
 
-  AddIssueImageAndVideo({
+  const AddIssueImageAndVideo({
     super.key,
     this.onImageSelected,
     this.onVideoSelected,
     this.isAddressSelected,
-    required this.savedAddresses,
   });
 
   @override
@@ -48,7 +44,6 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
     "lat": 0.0,
     "userLocation": "",
   };
-  List<AddressModel> _localAddressList = [];
   bool _hasRecentlyUpdatedFromSheet = false;
 
   Timer? _sheetUpdateTimer;
@@ -108,147 +103,44 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
     }
   }
 
-  void _showAddressSheet() async {
-    bool isRTL = Directionality.of(context) == TextDirection.rtl;
-    try {
-      _hasRecentlyUpdatedFromSheet = true;
-
-      final result = await showModalBottomSheet<Map<String, dynamic>>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-        builder: (context) => Directionality(
-          textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
-          child: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: AddressSaveSheet(
-              savedAddresses: _localAddressList,
-              initialPosition: _initialPosition,
-            ),
-          ),
-        ),
-      );
-
-      debugPrint("📍 AddIssueImageAndVideo: Address sheet result: $result");
-
-      if (result != null) {
-        final AddressModel? selectedAddress =
-            result['selectedAddress'] as AddressModel?;
-        final List<AddressModel> updatedAddresses = List<AddressModel>.from(
-          result['addressList'] ?? [],
-        );
-
-        debugPrint(
-          "📍 AddIssueImageAndVideo: Selected address: ${selectedAddress?.fullName}",
-        );
-
-        if (mounted) {
-          setState(() {
-            _localAddressList = [...updatedAddresses];
-            _selectedAddress = selectedAddress;
-          });
-
-          Future.microtask(() {
-            if (widget.isAddressSelected != null && selectedAddress != null) {
-              widget.isAddressSelected!(selectedAddress);
-              debugPrint(
-                "📍 AddIssueImageAndVideo: Notified parent about address: ${selectedAddress.fullName}",
-              );
-            }
-          });
-        }
-      } else {
-        await _refreshAddressesFromDatabase();
-      }
-    } catch (e) {
-      debugPrint("❌ AddIssueImageAndVideo: Error in address sheet: $e");
-    } finally {
-      _sheetUpdateTimer?.cancel();
-      _sheetUpdateTimer = Timer(const Duration(seconds: 2), () {
-        if (mounted) {
-          setState(() {
-            _hasRecentlyUpdatedFromSheet = false;
-          });
-        }
-      });
-    }
-  }
-
-  Future<void> _refreshAddressesFromDatabase() async {
-    try {
-      debugPrint(
-        "📍 AddIssueImageAndVideo: Refreshing addresses from database...",
-      );
-
-      final uid = LocalStoreHelper.getUID();
-      if (uid != null) {
-        final customerData = await AppServices.fetchCustomerData(uid: uid);
-        if (customerData.addresses.isNotEmpty && mounted) {
-          setState(() {
-            _localAddressList = [...customerData.addresses];
-
-            AddressModel? newSelectedAddress;
-            try {
-              newSelectedAddress = _localAddressList.firstWhere(
-                (address) => address.isSelected == true,
-              );
-            } catch (e) {
-              if (_localAddressList.isNotEmpty) {
-                newSelectedAddress = _localAddressList.last;
-              }
-            }
-
-            _selectedAddress = newSelectedAddress;
-          });
-
-          if (widget.isAddressSelected != null && _selectedAddress != null) {
-            widget.isAddressSelected!(_selectedAddress!);
-          }
-
-          debugPrint(
-            "📍 AddIssueImageAndVideo: Refreshed ${_localAddressList.length} addresses, selected: ${_selectedAddress?.fullName}",
-          );
-        }
-      }
-    } catch (e) {
-      debugPrint("❌ AddIssueImageAndVideo: Error refreshing addresses: $e");
-    }
-  }
-
-  AddressModel? _getSelectedAddress() {
-    debugPrint(
-      "📍 AddIssueImageAndVideo: Getting selected address from ${_localAddressList.length} addresses",
+  Future<void> _showAddressSheet(
+    BuildContext context,
+    List<AddressModel> savedAddresses, {
+    bool isChangingAddress = false,
+  }) async {
+    final result = await showModalBottomSheet<AddressSheetResult>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => AddressSaveSheet(
+        initialPosition: _initialPosition,
+        isChangingAddress: isChangingAddress,
+      ),
     );
 
-    if (_localAddressList.isNotEmpty) {
-      try {
-        _selectedAddress = _localAddressList.firstWhere(
-          (address) => address.isSelected == true,
-        );
-        debugPrint(
-          "📍 AddIssueImageAndVideo: Found selected address: ${_selectedAddress?.fullName}",
-        );
-      } catch (e) {
-        debugPrint(
-          "📍 AddIssueImageAndVideo: No selected address found, using first address",
-        );
-        _selectedAddress = _localAddressList.first;
+    context.read<AddressBloc>().add(LoadAddresses());
+
+    if (result != null) {
+      if (result.needsAddressSelection) {
+        setState(() {
+          _selectedAddress = null;
+        });
+        return;
       }
-    } else {
-      _selectedAddress = null;
-    }
 
-    if (widget.isAddressSelected != null) {
-      widget.isAddressSelected!(_selectedAddress);
-    }
+      final selected = result.selectedAddress;
+      if (selected != null) {
+        _hasRecentlyUpdatedFromSheet = true;
 
-    return _selectedAddress;
+        setState(() {
+          _selectedAddress = selected;
+        });
+        widget.isAddressSelected?.call(selected);
+      }
+    }
   }
 
   Widget _addMediaWidget({
@@ -329,7 +221,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
   @override
   void initState() {
     super.initState();
-    _initializeAddresses();
+    context.read<AddressBloc>().add(LoadAddresses());
     _fetchCoordinatesAndGetCustomerAddress();
   }
 
@@ -340,137 +232,88 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
   }
 
   @override
-  void didUpdateWidget(AddIssueImageAndVideo oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.savedAddresses != oldWidget.savedAddresses &&
-        !_hasRecentlyUpdatedFromSheet &&
-        widget.savedAddresses != null) {
-      debugPrint(
-        "📍 AddIssueImageAndVideo: savedAddresses prop updated from ${oldWidget.savedAddresses?.length} to ${widget.savedAddresses?.length}",
-      );
-
-      final newAddresses = widget.savedAddresses!;
-      final hasContentChanged =
-          _localAddressList.length != newAddresses.length ||
-          !_areAddressListsEqual(_localAddressList, newAddresses);
-
-      if (hasContentChanged) {
-        setState(() {
-          _localAddressList = [...newAddresses];
-        });
-        _getSelectedAddress();
-      }
-    }
-  }
-
-  bool _areAddressListsEqual(
-    List<AddressModel> list1,
-    List<AddressModel> list2,
-  ) {
-    if (list1.length != list2.length) return false;
-
-    for (int i = 0; i < list1.length; i++) {
-      if (list1[i].id != list2[i].id ||
-          list1[i].isSelected != list2[i].isSelected) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  void _initializeAddresses() {
-    _localAddressList = [...(widget.savedAddresses ?? [])];
-    _getSelectedAddress();
-    debugPrint(
-      "📍 AddIssueImageAndVideo: Initialized with ${_localAddressList.length} addresses",
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc, AccountState>(
-      builder: (context, state) {
-        if (state is CustomerDataLoaded && !_hasRecentlyUpdatedFromSheet) {
-          final customerData = state.customerData;
-          if (customerData.addresses.isNotEmpty) {
-            debugPrint(
-              "📍 AddIssueImageAndVideo: Customer data loaded with ${customerData.addresses.length} addresses",
-            );
+    return BlocListener<AddressBloc, AddressState>(
+      listener: (context, state) {
+        if (state is AddressLoaded) {
+          final selected = state.selected;
 
-            final hasSignificantChange =
-                _localAddressList.length != customerData.addresses.length ||
-                !_areAddressListsEqual(
-                  _localAddressList,
-                  customerData.addresses,
-                );
-
-            if (hasSignificantChange) {
-              final currentSelectedId = _selectedAddress?.id;
-
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) {
-                  setState(() {
-                    _localAddressList = [...customerData.addresses];
-                  });
-
-                  if (currentSelectedId != null) {
-                    try {
-                      _selectedAddress = _localAddressList.firstWhere(
-                        (addr) => addr.id == currentSelectedId,
-                      );
-                    } catch (e) {
-                      _getSelectedAddress();
-                    }
-                  } else {
-                    _getSelectedAddress();
-                  }
-                }
+          if (_hasRecentlyUpdatedFromSheet) {
+            if (_selectedAddress != null) {
+              widget.isAddressSelected?.call(_selectedAddress);
+            }
+          } else {
+            if (selected != null) {
+              setState(() {
+                _selectedAddress = selected;
               });
+              widget.isAddressSelected?.call(selected);
+            } else if (selected == null && _selectedAddress != null) {
+              setState(() {
+                _selectedAddress = null;
+              });
+              widget.isAddressSelected?.call(null);
             }
           }
-        }
 
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            locationDetection(_localAddressList, _selectedAddress),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 10,
-                left: 16,
-                right: 16,
-                bottom: 8,
-              ),
-              child: heading(
-                AppLocalizations.of(context)?.visualizeYourIssue ?? '',
-                AppLocalizations.of(context)?.addImageOrVideoOfIssue ?? '',
-              ),
-            ),
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _addMediaWidget(
-                  file: _selectedImage,
-                  isImage: true,
-                  onPick: _pickImage,
-                  onRemove: _removeImage,
-                ),
-                _addMediaWidget(
-                  file: _selectedVideo,
-                  isImage: false,
-                  onPick: _pickVideo,
-                  onRemove: _removeVideo,
-                ),
-              ],
-            ),
-          ],
-        );
+          if (_hasRecentlyUpdatedFromSheet) {
+            _sheetUpdateTimer?.cancel();
+            _sheetUpdateTimer = Timer(const Duration(milliseconds: 500), () {
+              _hasRecentlyUpdatedFromSheet = false;
+            });
+          }
+        }
       },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          BlocBuilder<AddressBloc, AddressState>(
+            builder: (context, state) {
+              List<AddressModel> addresses = [];
+              AddressModel? selected = _selectedAddress;
+              if (state is AddressLoaded) {
+                addresses = state.addresses;
+
+                selected ??= state.selected;
+              }
+              return locationDetection(addresses, selected);
+            },
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 10,
+              left: 16,
+              right: 16,
+              bottom: 8,
+            ),
+            child: heading(
+              AppLocalizations.of(context)?.visualizeYourIssue ?? '',
+              AppLocalizations.of(context)?.addImageOrVideoOfIssue ?? '',
+            ),
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _addMediaWidget(
+                file: _selectedImage,
+                isImage: true,
+                onPick: _pickImage,
+                onRemove: _removeImage,
+              ),
+              _addMediaWidget(
+                file: _selectedVideo,
+                isImage: false,
+                onPick: _pickVideo,
+                onRemove: _removeVideo,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -502,24 +345,26 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
     List<AddressModel> savedAddresses,
     AddressModel? selectedAddress,
   ) {
-    bool isRTL = Directionality.of(context) == TextDirection.rtl;
+    final bool isRTL = Directionality.of(context) == TextDirection.rtl;
+
     return GestureDetector(
-      onTap: selectedAddress != null ? null : () => _showAddressSheet(),
+      onTap: selectedAddress != null
+          ? null
+          : () => _showAddressSheet(context, savedAddresses),
       child: Container(
-        padding: EdgeInsets.only(
-          top: 10,
-          bottom: 10,
-          left: isRTL ? 10 : (selectedAddress != null ? 2 : 10),
-          right: isRTL ? (selectedAddress != null ? 2 : 10) : 10,
-        ),
+        padding: const EdgeInsets.all(12),
         margin: EdgeInsets.only(left: isRTL ? 25 : 16, right: isRTL ? 16 : 25),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: const Color.fromARGB(255, 221, 221, 221),
-            width: 1,
-          ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFDDDDDD), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           crossAxisAlignment: selectedAddress != null
@@ -528,11 +373,18 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
           textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
           children: [
             if (selectedAddress == null)
-              const Icon(
-                Icons.location_on_rounded,
-                color: Color.fromARGB(255, 79, 79, 79),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: isRTL ? 8 : 0,
+                  right: isRTL ? 0 : 8,
+                ),
+                child: Icon(
+                  Icons.location_on_rounded,
+                  color: const Color(0xFF4F4F4F),
+                  size: 20,
+                ),
               ),
-            const SizedBox(width: 10),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: isRTL
@@ -552,46 +404,61 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                                 'Service to:',
                             style: GoogleFonts.poppins(
                               color: Colors.black,
-                              fontSize: 11,
+                              fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
                             textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                            textDirection: isRTL
+                                ? TextDirection.rtl
+                                : TextDirection.ltr,
                           ),
                         ),
+                        const SizedBox(width: 8),
                         InkWell(
-                          onTap: () => _showAddressSheet(),
+                          onTap: () => _showAddressSheet(
+                            context,
+                            savedAddresses,
+                            isChangingAddress: true,
+                          ),
+                          borderRadius: BorderRadius.circular(6),
                           child: Container(
-                            width: 70,
-                            height: 25,
-                            decoration: BoxDecoration(
-                              color: Colors.blue[300],
-                              borderRadius: BorderRadius.circular(4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
                             ),
-                            child: Center(
-                              child: Text(
-                                AppLocalizations.of(context)?.change ??
-                                    'Change',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[400],
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)?.change ?? 'Change',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w600,
                               ),
+                              textDirection: isRTL
+                                  ? TextDirection.rtl
+                                  : TextDirection.ltr,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 8),
                     Text(
                       selectedAddress.fullName,
                       style: GoogleFonts.poppins(
-                        color: const Color.fromARGB(255, 149, 149, 149),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF2C2C2C),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
                       textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                      textDirection: isRTL
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       selectedAddress.streetName?.isNotEmpty == true
                           ? selectedAddress.streetName!
@@ -599,11 +466,14 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                           ? selectedAddress.buildingNumber
                           : "Address location",
                       style: GoogleFonts.poppins(
-                        color: const Color.fromARGB(255, 149, 149, 149),
-                        fontSize: 11,
+                        color: const Color(0xFF959595),
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
                       textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                      textDirection: isRTL
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
                     ),
                   ] else ...[
                     Text(
@@ -617,13 +487,16 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                                 )?.chooseServiceAddress ??
                                 'Choose Service Address'),
                       style: GoogleFonts.poppins(
-                        color: const Color.fromARGB(255, 79, 79, 79),
-                        fontSize: 11,
+                        color: const Color(0xFF4F4F4F),
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                       textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                      textDirection: isRTL
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Text(
                       savedAddresses.isNotEmpty
                           ? (AppLocalizations.of(
@@ -633,23 +506,35 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                           : (AppLocalizations.of(context)?.pickServiceAddress ??
                                 'Pick the address where you need the service.'),
                       style: GoogleFonts.poppins(
-                        color: const Color.fromARGB(255, 149, 149, 149),
+                        color: const Color(0xFF959595),
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
+                        height: 1.4,
                       ),
                       textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                      textDirection: isRTL
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
                     ),
                   ],
                 ],
               ),
             ),
+
             if (selectedAddress == null)
-              Icon(
-                isRTL
-                    ? Icons.arrow_back_ios_rounded
-                    : Icons.arrow_forward_ios_rounded,
-                color: const Color.fromARGB(255, 79, 79, 79),
-                size: 16,
+              Padding(
+                padding: EdgeInsets.only(
+                  left: isRTL ? 0 : 8,
+                  right: isRTL ? 8 : 0,
+                ),
+                child: Transform.rotate(
+                  angle: isRTL ? 3.14159 : 0,
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: const Color(0xFF4F4F4F),
+                    size: 16,
+                  ),
+                ),
               ),
           ],
         ),

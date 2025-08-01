@@ -266,8 +266,25 @@ class AppServices {
     double latitude,
   ) async {
     try {
+      // Fetch existing customer data to preserve other location fields
+      final docSnapshot = await AppFirestore.customersCollectionRef
+          .doc(uid)
+          .get();
+      final existingData = docSnapshot.data() as Map<String, dynamic>?;
+      final existingLocation =
+          existingData?['location'] as Map<String, dynamic>?;
+
+      // Merge coordinates with existing location data
+      final updatedLocation = {
+        'name': existingLocation?['name'] ?? '',
+        'name_ar': existingLocation?['name_ar'] ?? '',
+        'lat': latitude,
+        'lon': longitude,
+      };
+
       await AppFirestore.customersCollectionRef.doc(uid).update({
-        'location': {'lon': longitude, 'lat': latitude},
+        'location': updatedLocation,
+        'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
       debugPrint('❌ Error updating customer longitude and latitude: $e');

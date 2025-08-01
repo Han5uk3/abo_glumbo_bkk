@@ -5,7 +5,6 @@ import 'package:abo_glumbo_bbk/common_widgets/location_card.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
-import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -638,15 +637,11 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     setState(() => _isAddingAddress = true);
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+
     try {
       if (_selectedLocation != null) {
-        await AppServices.getSelectedAddressAndUpdateIsSelectedToFalse();
         final newAddress = AddressModel(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           streetName: _locationSubtitle.isNotEmpty
@@ -661,33 +656,25 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
           lon: _selectedLocation!.longitude,
           isSelected: true,
         );
-        bool isNewAddressAdded = await AppServices.addCustomerAddress(
-          newAddress,
-        );
+
         if (mounted) {
-          if (isNewAddressAdded) {
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pop(context, newAddress);
-          } else {
-            Navigator.pop(context);
-            setState(() => _isAddingAddress = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  AppLocalizations.of(context)?.failedToSaveAddress ??
-                      'Failed to save address. Please try again.',
-                ),
-                backgroundColor: Colors.red,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          }
+          setState(() => _isAddingAddress = false);
+
+          // Close the bottom sheet first, then the main screen
+          Navigator.of(context).pop(); // This closes the bottom sheet
+
+          // Schedule the next navigation for the next frame
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && Navigator.of(context).canPop()) {
+              Navigator.of(
+                context,
+              ).pop(newAddress); // This returns to AddressSaveSheet
+            }
+          });
         }
       }
     } catch (e) {
       if (mounted) {
-        Navigator.pop(context);
         setState(() => _isAddingAddress = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -498,6 +498,9 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       } catch (e) {
         debugPrint('❌ Error deleting FCM token: $e');
       }
+      if (!_isBiometricEnabled) {
+        await LocalStoreHelper.clearUID();
+      }
       await FirebaseAuth.instance.signOut();
       if (mounted) {
         Navigator.pushAndRemoveUntil(

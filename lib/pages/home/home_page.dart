@@ -62,6 +62,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         if (!_isGuest) _fetchActiveBookings(),
         if (!_isGuest) _initializeAuthenticatedUser(),
       ]);
+      await NotificationServices.initializeFCM();
       if (!_isDisposed) {
         _isInitialized = true;
       }

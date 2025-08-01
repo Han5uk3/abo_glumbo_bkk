@@ -6,10 +6,13 @@ import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/add_image_booking.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
+import 'package:abo_glumbo_bbk/services/address_services.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/sheets/payment.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -40,7 +43,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   DateTime? selectedDate;
   bool cashInHand = true;
   bool saving = false;
-  List<AddressModel> _customerAddresses = [];
+  // List<AddressModel> _customerAddresses = [];
   final _formKey = GlobalKey<FormState>();
   final TextEditingController notesController = TextEditingController();
   int selectedTimeCategory = 0;
@@ -110,17 +113,15 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   void _onDaySelect(DateTime day, DateTime focusedDay) {
     setState(() {
       selectedDate = day;
-      
+
       selectedTimeCategory = 0;
       selectedTimeSlot = 0;
     });
   }
 
-  
   bool _isTimeSlotPast(int categoryIndex, int slotIndex) {
     if (selectedDate == null) return false;
 
-    
     final now = DateTime.now();
     if (!isSameDay(selectedDate!, now)) return false;
 
@@ -134,13 +135,11 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
       timeOfDay.minute,
     );
 
-    
     final currentTimeWithBuffer = now.add(const Duration(minutes: 30));
 
     return selectedDateTime.isBefore(currentTimeWithBuffer);
   }
 
-  
   bool _isTimeCategoryDisabled(int categoryIndex) {
     if (selectedDate == null) return false;
 
@@ -149,17 +148,15 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
 
     final timeSlotsList = timeSlots[categoryIndex]["values"] as List<Map>;
 
-    
     for (int i = 0; i < timeSlotsList.length; i++) {
       if (!_isTimeSlotPast(categoryIndex, i)) {
-        return false; 
+        return false;
       }
     }
 
-    return true; 
+    return true;
   }
 
-  
   int _getFirstAvailableTimeSlot(int categoryIndex) {
     if (selectedDate == null) return 0;
 
@@ -177,27 +174,26 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
     return 0;
   }
 
-  Future<void> fetchCustomerAddresses() async {
-    try {
-      _customerAddresses = await AppServices.getCustomerAddress();
-      setState(() {}); 
-    } catch (e) {
-      
-      debugPrint("Error fetching addresses: $e");
-    }
-  }
+  // Future<void> fetchCustomerAddresses() async {
+  //   try {
+  //     _customerAddresses = await AppServices.getCustomerAddress();
+  //     setState(() {});
+  //   } catch (e) {
+  //     debugPrint("Error fetching addresses: $e");
+  //   }
+  // }
 
   @override
   void initState() {
-    fetchCustomerAddresses();
+    // fetchCustomerAddresses();
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
-    fetchCustomerAddresses();
+
+    // fetchCustomerAddresses();
   }
 
   @override
@@ -208,31 +204,28 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           customerData = snapshot.data;
-          
-          _customerAddresses = customerData?.addresses ?? [];
 
-          
-          if (_customerAddresses.isNotEmpty) {
-            try {
-              final selected = _customerAddresses.firstWhere(
-                (address) => address.isSelected == true,
-              );
-              if (_selectedAddress?.id != selected.id) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    setState(() {
-                      _selectedAddress = selected;
-                    });
-                    debugPrint(
-                      "📍 BookServiceBottomSheet: Updated selected address from stream: ${selected.fullName}",
-                    );
-                  }
-                });
-              }
-            } catch (e) {
-              
-            }
-          }
+          // _customerAddresses = customerData?.addresses ?? [];
+
+          // if (_customerAddresses.isNotEmpty) {
+          //   try {
+          //     final selected = _customerAddresses.firstWhere(
+          //       (address) => address.isSelected == true,
+          //     );
+          //     if (_selectedAddress?.id != selected.id) {
+          //       WidgetsBinding.instance.addPostFrameCallback((_) {
+          //         if (mounted) {
+          //           setState(() {
+          //             _selectedAddress = selected;
+          //           });
+          //           debugPrint(
+          //             "📍 BookServiceBottomSheet: Updated selected address from stream: ${selected.fullName}",
+          //           );
+          //         }
+          //       });
+          //     }
+          //   } catch (e) {}
+          // }
         }
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.8,
@@ -525,40 +518,43 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                           )
                         : ListView(
                             children: [
-                              AddIssueImageAndVideo(
-                                onImageSelected: (value) {
-                                  WidgetsBinding.instance.addPostFrameCallback((
-                                    _,
-                                  ) {
-                                    if (mounted) {
-                                      setState(() => _selectedImage = value);
-                                    }
-                                  });
-                                },
-                                onVideoSelected: (value) {
-                                  WidgetsBinding.instance.addPostFrameCallback((
-                                    _,
-                                  ) {
-                                    if (mounted) {
-                                      setState(() => _selectedVideo = value);
-                                    }
-                                  });
-                                },
-                                isAddressSelected: (value) {
-                                  WidgetsBinding.instance.addPostFrameCallback((
-                                    _,
-                                  ) {
-                                    if (mounted) {
-                                      setState(() => _selectedAddress = value);
-                                      debugPrint(
-                                        "📍 BookServiceBottomSheet: Address selected: ${value?.fullName}",
-                                      );
-                                      
-                                    }
-                                  });
-                                },
-                                savedAddresses:
-                                    _customerAddresses, 
+                              BlocProvider(
+                                create: (context) =>
+                                    AddressBloc(AppServicesAddressRepository())
+                                      ..add(LoadAddresses()),
+                                child: AddIssueImageAndVideo(
+                                  onImageSelected: (value) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                          if (mounted) {
+                                            setState(
+                                              () => _selectedImage = value,
+                                            );
+                                          }
+                                        });
+                                  },
+                                  onVideoSelected: (value) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                          if (mounted) {
+                                            setState(
+                                              () => _selectedVideo = value,
+                                            );
+                                          }
+                                        });
+                                  },
+                                  isAddressSelected: (value) {
+                                    WidgetsBinding.instance.addPostFrameCallback((
+                                      _,
+                                    ) {
+                                      if (mounted) {
+                                        setState(
+                                          () => _selectedAddress = value,
+                                        );
+                                      }
+                                    });
+                                  },
+                                ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -651,7 +647,6 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                     return;
                                   }
 
-                                  
                                   if (_isTimeSlotPast(
                                     selectedTimeCategory,
                                     selectedTimeSlot,

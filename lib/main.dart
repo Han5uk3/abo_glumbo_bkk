@@ -21,12 +21,9 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Hive.initFlutter();
   await Hive.openBox(hiveBoxName);
-
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
   await NotificationServices.initializeNotifications();
   await NotificationServices.setupFCMListeners();
-  await NotificationServices.initializeFCM();
   await NotificationServices.checkForInitialMessage();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
