@@ -174,7 +174,7 @@ class _OtpPageState extends State<OtpPage> {
         for (final notificationDoc in notificationQuery.docs) {
           await AppFirestore.notificationsCollectionRef
               .doc(notificationDoc.id)
-              .update({'userId': newUid});
+              .delete();
         }
       }
 
@@ -265,17 +265,20 @@ class _OtpPageState extends State<OtpPage> {
           isLoading = false;
         });
 
-        String errorMessage = AppLocalizations.of(context)!
-            .invalidOtpCode; // Localized message for invalid OTP
+        String errorMessage = AppLocalizations.of(
+          context,
+        )!.invalidOtpCode; // Localized message for invalid OTP
         if (e is FirebaseAuthException) {
           switch (e.code) {
             case 'invalid-verification-code':
-              errorMessage = AppLocalizations.of(context)!
-                  .invalidOtpCode; // Localized message for invalid OTP
+              errorMessage = AppLocalizations.of(
+                context,
+              )!.invalidOtpCode; // Localized message for invalid OTP
               break;
             case 'session-expired':
-              errorMessage = AppLocalizations.of(context)!
-                  .otpExpired; // Localized message for expired OTP
+              errorMessage = AppLocalizations.of(
+                context,
+              )!.otpExpired; // Localized message for expired OTP
               break;
             default:
               errorMessage =

@@ -196,8 +196,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
     List<DocumentSnapshot> docs, {
     int startIndex = 0,
   }) async {
-    if (_currentLanguage == 'en') return; // Skip translation for English
-
     try {
       // Collect all texts that need translation
       List<String> textsToTranslate = [];

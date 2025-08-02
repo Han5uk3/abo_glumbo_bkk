@@ -406,6 +406,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   Future<void> _performDeleteAccount() async {
     try {
       await AppServices.deleteAccount();
+      await LocalStoreHelper.clearUID();
       await FirebaseAuth.instance.signOut();
       if (mounted) {
         Navigator.pushAndRemoveUntil(
@@ -499,7 +500,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         debugPrint('❌ Error deleting FCM token: $e');
       }
       if (!_isBiometricEnabled) {
-        await LocalStoreHelper.clearUID();
+        LocalStoreHelper.clearUID();
       }
       await FirebaseAuth.instance.signOut();
       if (mounted) {

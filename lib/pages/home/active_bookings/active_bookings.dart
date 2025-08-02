@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:abo_glumbo_bbk/apis/google_tracking_polylines.dart';
 import 'package:abo_glumbo_bbk/common_widgets/live_tracking.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -140,7 +142,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
               separatorBuilder: (_, __) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
                 final booking = widget.activeBookings[index];
-
+                log('Processing booking: ${booking.toJson()}');
                 AddressModel? customerSelectedAddress;
                 try {
                   customerSelectedAddress = booking.customer.addresses

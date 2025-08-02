@@ -544,15 +544,14 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                         });
                                   },
                                   isAddressSelected: (value) {
-                                    WidgetsBinding.instance.addPostFrameCallback((
-                                      _,
-                                    ) {
-                                      if (mounted) {
-                                        setState(
-                                          () => _selectedAddress = value,
-                                        );
-                                      }
-                                    });
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                          if (mounted) {
+                                            setState(
+                                              () => _selectedAddress = value,
+                                            );
+                                          }
+                                        });
                                   },
                                 ),
                               ),
@@ -722,7 +721,10 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                     tag: 'primary_button',
                                     child: FilledButton(
                                       style: FilledButton.styleFrom(
-                                        backgroundColor: AppColors.secondary,
+                                        backgroundColor:
+                                            _selectedAddress == null
+                                            ? Colors.grey.shade400
+                                            : AppColors.secondary,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                             12,
@@ -741,26 +743,27 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                                 AppLocalizations.of(
                                                       context,
                                                     )?.pleaseSelectServiceAddress ??
-                                                    '',
+                                                    'Please select a service address to continue',
                                               ),
-                                              backgroundColor: Colors.red,
+                                              backgroundColor: Colors.orange,
                                             ),
                                           );
-                                          return;
+                                        } else {
+                                          showPaymentBottomSheet(
+                                            context,
+                                            service: widget.service,
+                                            selectedImage: _selectedImage,
+                                            selectedVideo: _selectedVideo,
+                                            selectedDate: selectedDate,
+                                            timeSlots: timeSlots,
+                                            selectedTimeCategory:
+                                                selectedTimeCategory,
+                                            selectedTimeSlot: selectedTimeSlot,
+                                            notesController: notesController,
+                                            customerData: customerData!,
+                                            selectedAddress: _selectedAddress!,
+                                          );
                                         }
-                                        showPaymentBottomSheet(
-                                          context,
-                                          service: widget.service,
-                                          selectedImage: _selectedImage,
-                                          selectedVideo: _selectedVideo,
-                                          selectedDate: selectedDate,
-                                          timeSlots: timeSlots,
-                                          selectedTimeCategory:
-                                              selectedTimeCategory,
-                                          selectedTimeSlot: selectedTimeSlot,
-                                          notesController: notesController,
-                                          customerData: customerData!,
-                                        );
                                       },
                                       child: saving
                                           ? Loader()

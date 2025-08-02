@@ -125,9 +125,11 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
 
     if (result != null) {
       if (result.needsAddressSelection) {
+        _hasRecentlyUpdatedFromSheet = true;
         setState(() {
           _selectedAddress = null;
         });
+        widget.isAddressSelected?.call(null);
         return;
       }
 
@@ -241,6 +243,8 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
           if (_hasRecentlyUpdatedFromSheet) {
             if (_selectedAddress != null) {
               widget.isAddressSelected?.call(_selectedAddress);
+            } else {
+              widget.isAddressSelected?.call(null);
             }
           } else {
             if (selected != null) {
@@ -248,7 +252,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                 _selectedAddress = selected;
               });
               widget.isAddressSelected?.call(selected);
-            } else if (selected == null && _selectedAddress != null) {
+            } else {
               setState(() {
                 _selectedAddress = null;
               });
@@ -408,9 +412,6 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                               fontWeight: FontWeight.w500,
                             ),
                             textAlign: isRTL ? TextAlign.right : TextAlign.left,
-                            textDirection: isRTL
-                                ? TextDirection.rtl
-                                : TextDirection.ltr,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -437,15 +438,13 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                                 fontSize: 9,
                                 fontWeight: FontWeight.w600,
                               ),
-                              textDirection: isRTL
-                                  ? TextDirection.rtl
-                                  : TextDirection.ltr,
                             ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
+
                     Text(
                       selectedAddress.fullName,
                       style: GoogleFonts.poppins(
@@ -454,11 +453,9 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                         fontWeight: FontWeight.w600,
                       ),
                       textAlign: isRTL ? TextAlign.right : TextAlign.left,
-                      textDirection: isRTL
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
                     ),
                     const SizedBox(height: 2),
+
                     Text(
                       selectedAddress.streetName?.isNotEmpty == true
                           ? selectedAddress.streetName!
@@ -471,9 +468,6 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                         fontWeight: FontWeight.w500,
                       ),
                       textAlign: isRTL ? TextAlign.right : TextAlign.left,
-                      textDirection: isRTL
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
                     ),
                   ] else ...[
                     Text(
@@ -492,9 +486,6 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                         fontWeight: FontWeight.w600,
                       ),
                       textAlign: isRTL ? TextAlign.right : TextAlign.left,
-                      textDirection: isRTL
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -512,9 +503,6 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                         height: 1.4,
                       ),
                       textAlign: isRTL ? TextAlign.right : TextAlign.left,
-                      textDirection: isRTL
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
                     ),
                   ],
                 ],
@@ -530,7 +518,9 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                 child: Transform.rotate(
                   angle: isRTL ? 3.14159 : 0,
                   child: Icon(
-                    Icons.arrow_forward_ios_rounded,
+                    isRTL
+                        ? Icons.arrow_back_ios_rounded
+                        : Icons.arrow_forward_ios_rounded,
                     color: const Color(0xFF4F4F4F),
                     size: 16,
                   ),

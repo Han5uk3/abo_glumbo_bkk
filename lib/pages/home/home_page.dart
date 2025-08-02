@@ -297,6 +297,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<void> _onRefresh() async {
     if (_isDisposed) return;
     await _fetchMainBanners(forceRefresh: true);
+    if (!_isGuest) _fetchActiveBookings();
   }
 
   @override

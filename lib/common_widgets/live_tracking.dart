@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:abo_glumbo_bbk/apis/google_tracking_polylines.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/tracking_data.dart';
+import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LiveTrackingPage extends StatefulWidget {
   final BookingModel? booking;
@@ -26,11 +28,15 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   GoogleMapController? _mapController;
   BitmapDescriptor? _scooterIcon;
   BitmapDescriptor? _customerIcon;
+
   LatLng? _customerLatLng;
   LatLng? _agentLatLng;
+  LatLng? _previousCustomerLatLng;
   LatLng? _previousAgentLatLng;
+
   StreamSubscription<Position>? _locationSubscription;
   StreamSubscription? _agentLocationSubscription;
+
   bool _isLoading = true;
   bool _isMapReady = false;
   bool _hasLocationPermission = false;
@@ -38,6 +44,11 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   bool _isFollowingAgent = true;
   bool _showTrafficLayer = false;
   List<LatLng> routePoints = [];
+  String? eta;
+  String? distance;
+  Timer? _etaDebounce;
+  Timer? _cameraDebounce;
+
   final bool _useMockData = false;
   final LatLng _mockCustomerLocation = const LatLng(19.0760, 72.8777);
   final LatLng _mockAgentLocation = const LatLng(19.0896, 72.8656);
@@ -48,9 +59,10 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     LatLng(19.0850, 72.8690),
     LatLng(19.0896, 72.8656),
   ];
-  String? eta;
-  String? distance;
-  Timer? _etaDebounce;
+
+  static const Duration _markerAnimationDuration = Duration(milliseconds: 500);
+  static const int _markerFrames = 30;
+  Timer? _agentMarkerAnimTimer;
 
   @override
   void initState() {
@@ -65,7 +77,9 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     _locationSubscription?.cancel();
     _agentLocationSubscription?.cancel();
     _etaDebounce?.cancel();
+    _cameraDebounce?.cancel();
     _mapController?.dispose();
+    _agentMarkerAnimTimer?.cancel();
     super.dispose();
   }
 
@@ -73,8 +87,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && _hasLocationPermission) {
       _startLocationTracking();
-    }
-    if (state == AppLifecycleState.detached) {
+    } else if (state == AppLifecycleState.paused) {
       _stopLocationTracking();
     }
   }
@@ -90,8 +103,9 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         await _requestLocationPermission();
         if (_hasLocationPermission) {
           await _loadCustomerLocation();
-          if (widget.booking?.agent?.uid != null) {
-            _listenToAgentLocation();
+          final agentUid = widget.booking?.agent?.uid;
+          if (agentUid != null && agentUid.isNotEmpty) {
+            _listenToAgentLocation(agentUid);
           }
         }
       }
@@ -103,7 +117,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
   Future<void> _setCustomMarkerIcons() async {
     try {
-      _scooterIcon = await _getResizedMarker('assets/images/scooter.png', 100);
+      _scooterIcon = await _getResizedMarker('assets/images/scooter.png', 200);
       _customerIcon = BitmapDescriptor.defaultMarkerWithHue(
         BitmapDescriptor.hueGreen,
       );
@@ -140,6 +154,11 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       }
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
+        // guide user to settings if permanently denied
+        if (permission == LocationPermission.deniedForever) {
+          _showPermissionDialog();
+          throw Exception('Location permission denied forever.');
+        }
         throw Exception('Location permission denied.');
       }
       _hasLocationPermission = true;
@@ -149,11 +168,38 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     }
   }
 
+  void _showPermissionDialog() {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Location Permission Required"),
+        content: const Text(
+          "Please enable location permission from settings to allow tracking.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await openAppSettings();
+            },
+            child: const Text("Open Settings"),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _loadCustomerLocation() async {
     try {
       final position = await Geolocator.getCurrentPosition();
       setState(() {
         _customerLatLng = LatLng(position.latitude, position.longitude);
+        _previousCustomerLatLng = _customerLatLng;
         _isLoading = false;
       });
     } catch (e) {
@@ -162,32 +208,47 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   }
 
   void _startLocationTracking() {
+    _locationSubscription?.cancel();
     const settings = LocationSettings(accuracy: LocationAccuracy.high);
     _locationSubscription =
         Geolocator.getPositionStream(locationSettings: settings).listen((pos) {
-          setState(() {
-            _customerLatLng = LatLng(pos.latitude, pos.longitude);
-          });
           _scheduleFetchETA();
+          _animateCustomerMarker(LatLng(pos.latitude, pos.longitude));
         }, onError: (e) => _handleError('Customer location stream error: $e'));
   }
 
   void _stopLocationTracking() => _locationSubscription?.cancel();
 
-  void _listenToAgentLocation() {
+  void _listenToAgentLocation(String agentUid) {
+    _agentLocationSubscription?.cancel();
     _agentLocationSubscription = AppServices()
-        .getAgentLiveLocationStream(widget.booking?.agent?.uid ?? '')
+        .getAgentLiveLocationStream(agentUid)
         .listen((user) async {
           final liveLocation = user.liveLocation;
           final lat = liveLocation?.latitude;
           final lng = liveLocation?.longitude;
           if (lat != null && lng != null) {
-            setState(() {
-              _previousAgentLatLng = _agentLatLng;
-              _agentLatLng = LatLng(lat, lng);
-            });
+            final newAgentLatLng = LatLng(lat, lng);
+
+            // Debug log to ensure updates are coming
+            debugPrint(
+              'Agent location update: ${newAgentLatLng.latitude}, ${newAgentLatLng.longitude} at ${DateTime.now()}',
+            );
+
             _scheduleFetchETA();
-            if (_isFollowingAgent && _isMapReady) _moveCameraToBounds();
+
+            // Immediate fallback so marker at least jumps to new position if animation laggy
+            if (_agentLatLng == null ||
+                _agentLatLng!.latitude != newAgentLatLng.latitude ||
+                _agentLatLng!.longitude != newAgentLatLng.longitude) {
+              setState(() {
+                _agentLatLng = newAgentLatLng;
+              });
+            }
+
+            _animateAgentMarker(newAgentLatLng);
+
+            if (_isFollowingAgent && _isMapReady) _debouncedCameraUpdate();
           }
         }, onError: (e) => _handleError('Agent location error: $e'));
   }
@@ -209,28 +270,35 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         destinationLng: _customerLatLng!.longitude,
         apiKey: 'AIzaSyBl4RQBYM_v-u2Oik_ENyxcGxnvyZGxL2o',
       );
-      setState(() {
-        eta = result['duration'];
-        distance = result['distance'];
-      });
-      if (result['polyline'] != null) {
-        final polylinePoints = PolylinePoints.decodePolyline(
-          result['polyline'],
-        );
-        setState(() {
-          routePoints = polylinePoints
+
+      String? newEta;
+      String? newDistance;
+      List<LatLng> newRoute = [];
+
+      if (result is Map) {
+        newEta = result['duration'] as String?;
+        newDistance = result['distance'] as String?;
+        final polyline = result['polyline'] as String?;
+        if (polyline != null && polyline.isNotEmpty) {
+          final points = PolylinePoints.decodePolyline(polyline);
+          newRoute = points
               .map((p) => LatLng(p.latitude, p.longitude))
               .toList();
-        });
+        }
       }
-      if ((distance == null || distance!.isEmpty) &&
+
+      if ((newDistance == null || newDistance.isEmpty) &&
           _agentLatLng != null &&
           _customerLatLng != null) {
         final d = _calculateStraightDistanceKm(_agentLatLng!, _customerLatLng!);
-        setState(() {
-          distance = "${d.toStringAsFixed(1)} km";
-        });
+        newDistance = "${d.toStringAsFixed(1)} km";
       }
+
+      setState(() {
+        eta = newEta ?? eta;
+        distance = newDistance ?? distance;
+        if (newRoute.isNotEmpty) routePoints = newRoute;
+      });
     } catch (e) {
       debugPrint("❌ ETA fetch error: $e");
       if (_agentLatLng != null && _customerLatLng != null) {
@@ -260,6 +328,8 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     setState(() {
       _customerLatLng = _mockCustomerLocation;
       _agentLatLng = _mockAgentLocation;
+      _previousCustomerLatLng = _customerLatLng;
+      _previousAgentLatLng = _agentLatLng;
       _isLoading = false;
       routePoints = _mockRoutePoints;
     });
@@ -280,15 +350,20 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       final random = math.Random();
       final latOffset = (random.nextDouble() - 0.5) * 0.001;
       final lngOffset = (random.nextDouble() - 0.5) * 0.001;
-      setState(() {
-        _previousAgentLatLng = _agentLatLng;
-        _agentLatLng = LatLng(
-          _agentLatLng!.latitude + latOffset,
-          _agentLatLng!.longitude + lngOffset,
-        );
-      });
+      final newAgent = LatLng(
+        _agentLatLng!.latitude + latOffset,
+        _agentLatLng!.longitude + lngOffset,
+      );
+      _animateAgentMarker(newAgent);
       _fetchETAAndRoute();
-      if (_isFollowingAgent && _isMapReady) _moveCameraToBounds();
+      if (_isFollowingAgent && _isMapReady) _debouncedCameraUpdate();
+    });
+  }
+
+  void _debouncedCameraUpdate() {
+    _cameraDebounce?.cancel();
+    _cameraDebounce = Timer(const Duration(milliseconds: 300), () {
+      _moveCameraToBounds();
     });
   }
 
@@ -308,6 +383,70 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       );
       _mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
     }
+  }
+
+  void _moveCameraToCustomer() {
+    if (_customerLatLng != null && _mapController != null) {
+      _mapController!.animateCamera(CameraUpdate.newLatLng(_customerLatLng!));
+    }
+  }
+
+  void _animateCustomerMarker(LatLng newLoc) {
+    if (_customerLatLng == null) {
+      setState(() {
+        _customerLatLng = newLoc;
+        _previousCustomerLatLng = newLoc;
+      });
+      return;
+    }
+    final start = _customerLatLng!;
+    int current = 0;
+    final frameInterval = _markerAnimationDuration ~/ _markerFrames;
+    Timer.periodic(frameInterval, (timer) {
+      current++;
+      final t = (current / _markerFrames).clamp(0.0, 1.0);
+      final lat = start.latitude + (newLoc.latitude - start.latitude) * t;
+      final lng = start.longitude + (newLoc.longitude - start.longitude) * t;
+      setState(() {
+        _customerLatLng = LatLng(lat, lng);
+      });
+      if (current >= _markerFrames) {
+        timer.cancel();
+        _previousCustomerLatLng = newLoc;
+      }
+    });
+  }
+
+  void _animateAgentMarker(LatLng newLoc) {
+    // Cancel any in-flight animation to avoid conflicts.
+    _agentMarkerAnimTimer?.cancel();
+
+    if (_agentLatLng == null) {
+      setState(() {
+        _agentLatLng = newLoc;
+        _previousAgentLatLng = newLoc;
+      });
+      return;
+    }
+
+    final start = _agentLatLng!;
+    int current = 0;
+    final frameInterval = _markerAnimationDuration ~/ _markerFrames;
+
+    _agentMarkerAnimTimer = Timer.periodic(frameInterval, (timer) {
+      current++;
+      final t = (current / _markerFrames).clamp(0.0, 1.0);
+      final lat = start.latitude + (newLoc.latitude - start.latitude) * t;
+      final lng = start.longitude + (newLoc.longitude - start.longitude) * t;
+      setState(() {
+        _agentLatLng = LatLng(lat, lng);
+      });
+      if (current >= _markerFrames) {
+        timer.cancel();
+        _previousAgentLatLng = newLoc;
+        _agentMarkerAnimTimer = null;
+      }
+    });
   }
 
   void _handleError(String error) {
@@ -338,10 +477,21 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
   Future<void> _applyMapStyle() async {
     if (_mapController != null) {
-      final style = await rootBundle.loadString(
-        'assets/map_styles/gray_map.json',
-      );
-      _mapController?.setMapStyle(style);
+      try {
+        final style = await rootBundle.loadString(
+          'assets/map_styles/gray_map.json',
+        );
+        _mapController?.setMapStyle(style);
+      } catch (e) {
+        debugPrint("⚠️ Failed to apply map style: $e");
+      }
+    }
+  }
+
+  Future<void> openAppSettings() async {
+    final uri = Uri.parse('app-settings:');
+    if (!await launchUrl(uri)) {
+      debugPrint('Could not open settings');
     }
   }
 
@@ -349,6 +499,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      // floatingActionButton: _buildFloatingButtons(),
       body: _isLoading || _scooterIcon == null || _customerIcon == null
           ? Center(child: Loader(color: AppColors.primary))
           : _errorMessage != null
@@ -416,15 +567,26 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                       ),
                     ),
                     TrackingData(
-                      timeTakenToArrive: eta ?? 'Loading...',
-                      remainingKm: distance ?? 'Loading...',
+                      timeTakenToArrive:
+                          eta ??
+                          AppLocalizations.of(context)?.loading ??
+                          'Loading...',
+                      remainingKm:
+                          distance ??
+                          AppLocalizations.of(context)?.loading ??
+                          'Loading...',
                       worker: widget.booking?.agent,
                     ),
                   ],
                 ),
                 Positioned(
                   top: MediaQuery.of(context).padding.top + 8,
-                  left: 8,
+                  left: Directionality.of(context) == TextDirection.rtl
+                      ? null
+                      : 8,
+                  right: Directionality.of(context) == TextDirection.rtl
+                      ? 8
+                      : null,
                   child: SafeArea(
                     child: ClipOval(
                       child: Material(
@@ -432,8 +594,8 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                         child: InkWell(
                           splashColor: Colors.grey[300],
                           onTap: () => Navigator.pop(context),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
                             child: Icon(Icons.arrow_back, size: 24),
                           ),
                         ),
@@ -445,4 +607,45 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
             ),
     );
   }
+
+  // Widget _buildFloatingButtons() {
+  //   return Column(
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: [
+  //       if (!_isLoading)
+  //         FloatingActionButton.small(
+  //           heroTag: 'follow_toggle',
+  //           onPressed: () {
+  //             setState(() {
+  //               _isFollowingAgent = !_isFollowingAgent;
+  //             });
+  //             if (_isFollowingAgent) {
+  //               _moveCameraToBounds();
+  //             } else {
+  //               _moveCameraToCustomer();
+  //             }
+  //           },
+  //           tooltip: _isFollowingAgent ? 'Follow Customer' : 'Follow Agent',
+  //           child: Icon(
+  //             _isFollowingAgent
+  //                 ? Icons.person_pin_circle
+  //                 : Icons.directions_bike,
+  //           ),
+  //         ),
+  //       const SizedBox(height: 8),
+  //       FloatingActionButton(
+  //         heroTag: 'recenter',
+  //         onPressed: () {
+  //           if (_isFollowingAgent) {
+  //             _moveCameraToBounds();
+  //           } else {
+  //             _moveCameraToCustomer();
+  //           }
+  //         },
+  //         tooltip: 'Recenter',
+  //         child: const Icon(Icons.my_location),
+  //       ),
+  //     ],
+  //   );
+  // }
 }

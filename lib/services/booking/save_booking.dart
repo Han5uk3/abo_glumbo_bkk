@@ -57,7 +57,9 @@ class BookingUtils {
               'users/${customerData.uid}/${DateTime.now().millisecondsSinceEpoch}.mp4';
           final storageRef = FirebaseStorage.instance.ref().child(fileName);
           final uploadTask = storageRef.putFile(
-              selectedVideo, SettableMetadata(contentType: 'video/mp4'));
+            selectedVideo,
+            SettableMetadata(contentType: 'video/mp4'),
+          );
           final snapshot = await uploadTask;
           selectedVideoDownloadUrl = await snapshot.ref.getDownloadURL();
         }
@@ -67,6 +69,23 @@ class BookingUtils {
 
       final bookingId = AppFirestore.bookingsCollectionRef.doc().id;
 
+      // Create customer data with only the selected address marked as selected
+      final updatedCustomerData = CustomerModel(
+        uid: customerData.uid,
+        name: customerData.name,
+        email: customerData.email,
+        phone: customerData.phone,
+        country: customerData.country,
+        fcmToken: customerData.fcmToken,
+        lanCode: customerData.lanCode,
+        location: customerData.location,
+        favourites: customerData.favourites,
+        createdAt: customerData.createdAt,
+        updatedAt: customerData.updatedAt,
+        isAdmin: customerData.isAdmin,
+        districtName: customerData.districtName,
+      );
+
       BookingModel booking = BookingModel(
         id: bookingId,
         service: service,
@@ -75,7 +94,7 @@ class BookingUtils {
         notes: notes.trim(),
         issueImage: selectedImageDownloadUrl ?? "",
         issueVideo: selectedVideoDownloadUrl ?? "",
-        customer: customerData,
+        customer: updatedCustomerData,
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -99,9 +118,7 @@ class BookingUtils {
     required ReviewModel? review,
   }) async {
     try {
-      Map<String, dynamic> updateData = {
-        "review": review?.toJson() ?? {},
-      };
+      Map<String, dynamic> updateData = {"review": review?.toJson() ?? {}};
 
       if ((review?.tipAmount ?? 0) > 0 &&
           review?.paymentType?.isNotEmpty == true) {

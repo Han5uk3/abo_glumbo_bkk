@@ -16,12 +16,24 @@ import 'package:flutter/material.dart';
 
 class AppServices {
   static String uid = LocalStoreHelper.getUID() ?? '';
+
+  // Method to refresh the UID when needed
+  static void refreshUID() {
+    uid = LocalStoreHelper.getUID() ?? '';
+  }
+
   static Future<void> storeNotificationInFirestore(
     RemoteMessage message,
   ) async {
     try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot store notification: User ID is empty');
+        return;
+      }
+
       Map<String, dynamic> notificationData = {
-        'userId': uid,
+        'userId': currentUid,
         'title': message.notification?.title ?? '',
         'body': message.notification?.body ?? '',
         'data': message.data,
@@ -41,18 +53,16 @@ class AppServices {
 
   static Future<void> updateFCMToken(String token) async {
     try {
-      if (uid.isEmpty) {
-        uid = LocalStoreHelper.getUID() ?? '';
-        if (uid.isEmpty) {
-          debugPrint('❌ Cannot update FCM token: User ID is empty');
-          return;
-        }
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot update FCM token: User ID is empty');
+        return;
       }
 
-      debugPrint('📤 Updating FCM token for user: $uid');
+      debugPrint('📤 Updating FCM token for user: $currentUid');
       debugPrint('🔑 Token: ${token.substring(0, 20)}...');
 
-      await AppFirestore.customersCollectionRef.doc(uid).update({
+      await AppFirestore.customersCollectionRef.doc(currentUid).update({
         'fcmToken': token,
         'fcmTokenUpdatedAt': Timestamp.now(),
       });
@@ -63,7 +73,8 @@ class AppServices {
 
       // Try to create the document if it doesn't exist
       try {
-        await AppFirestore.customersCollectionRef.doc(uid).set({
+        String currentUid = LocalStoreHelper.getUID() ?? '';
+        await AppFirestore.customersCollectionRef.doc(currentUid).set({
           'fcmToken': token,
           'fcmTokenUpdatedAt': Timestamp.now(),
         }, SetOptions(merge: true));
@@ -104,7 +115,13 @@ class AppServices {
 
   static Future<void> updateNotificationLanguage(String lanCode) async {
     try {
-      await AppFirestore.customersCollectionRef.doc(uid).update({
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot update notification language: User ID is empty');
+        return;
+      }
+
+      await AppFirestore.customersCollectionRef.doc(currentUid).update({
         'lanCode': lanCode,
       });
     } catch (e) {
@@ -113,41 +130,57 @@ class AppServices {
   }
 
   static Stream<List<ServiceModel>> listenToWishlist() {
-    return AppFirestore.customersCollectionRef.doc(uid).snapshots().asyncMap((
-      customerSnapshot,
-    ) async {
-      try {
-        final customerData = customerSnapshot.data() as Map<String, dynamic>?;
-        log(customerData.toString());
-        final favourites = List<String>.from(customerData?['favourites'] ?? []);
+    String currentUid = LocalStoreHelper.getUID() ?? '';
+    if (currentUid.isEmpty) {
+      debugPrint('❌ Cannot listen to wishlist: User ID is empty');
+      return Stream.value(<ServiceModel>[]);
+    }
 
-        if (favourites.isEmpty) {
-          return <ServiceModel>[];
-        }
+    return AppFirestore.customersCollectionRef
+        .doc(currentUid)
+        .snapshots()
+        .asyncMap((customerSnapshot) async {
+          try {
+            final customerData =
+                customerSnapshot.data() as Map<String, dynamic>?;
+            log(customerData.toString());
+            final favourites = List<String>.from(
+              customerData?['favourites'] ?? [],
+            );
 
-        final requestList = favourites
-            .map(
-              (serviceId) =>
-                  AppFirestore.servicesCollectionRef.doc(serviceId).get(),
-            )
-            .toList();
+            if (favourites.isEmpty) {
+              return <ServiceModel>[];
+            }
 
-        final responses = await Future.wait(requestList);
+            final requestList = favourites
+                .map(
+                  (serviceId) =>
+                      AppFirestore.servicesCollectionRef.doc(serviceId).get(),
+                )
+                .toList();
 
-        return responses
-            .where((doc) => doc.exists)
-            .map((doc) => ServiceModel.fromDocumentSnapshot(doc))
-            .toList();
-      } catch (e) {
-        debugPrint('❌ Error loading wishlist: $e');
-        return <ServiceModel>[];
-      }
-    });
+            final responses = await Future.wait(requestList);
+
+            return responses
+                .where((doc) => doc.exists)
+                .map((doc) => ServiceModel.fromDocumentSnapshot(doc))
+                .toList();
+          } catch (e) {
+            debugPrint('❌ Error loading wishlist: $e');
+            return <ServiceModel>[];
+          }
+        });
   }
 
   static Future<void> removeFromWishlist(String serviceId) async {
     try {
-      await AppFirestore.customersCollectionRef.doc(uid).update({
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot remove from wishlist: User ID is empty');
+        return;
+      }
+
+      await AppFirestore.customersCollectionRef.doc(currentUid).update({
         'favourites': FieldValue.arrayRemove([serviceId]),
       });
     } catch (e) {
@@ -160,11 +193,19 @@ class AppServices {
     required CustomerModel previousCustomerData,
   }) async {
     try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot update customer profile: User ID is empty');
+        throw Exception('User ID is empty');
+      }
+
       final updateData = customerData.toEditJson(
         previous: previousCustomerData,
       );
       if (updateData.isNotEmpty) {
-        await AppFirestore.customersCollectionRef.doc(uid).update(updateData);
+        await AppFirestore.customersCollectionRef
+            .doc(currentUid)
+            .update(updateData);
       }
       return customerData;
     } catch (e) {
@@ -236,14 +277,20 @@ class AppServices {
 
   static Future<void> updateCustomerLocation(String userLocation) async {
     try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot update customer location: User ID is empty');
+        return;
+      }
+
       final docSnapshot = await AppFirestore.customersCollectionRef
-          .doc(uid)
+          .doc(currentUid)
           .get();
       final existingData = docSnapshot.data() as Map<String, dynamic>?;
       final existingLocation =
           existingData?['location'] as Map<String, dynamic>?;
 
-      await AppFirestore.customersCollectionRef.doc(uid).set({
+      await AppFirestore.customersCollectionRef.doc(currentUid).set({
         'location': {
           'name': userLocation.isNotEmpty
               ? userLocation
@@ -266,9 +313,15 @@ class AppServices {
     double latitude,
   ) async {
     try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot update customer coordinates: User ID is empty');
+        return;
+      }
+
       // Fetch existing customer data to preserve other location fields
       final docSnapshot = await AppFirestore.customersCollectionRef
-          .doc(uid)
+          .doc(currentUid)
           .get();
       final existingData = docSnapshot.data() as Map<String, dynamic>?;
       final existingLocation =
@@ -282,7 +335,7 @@ class AppServices {
         'lon': longitude,
       };
 
-      await AppFirestore.customersCollectionRef.doc(uid).update({
+      await AppFirestore.customersCollectionRef.doc(currentUid).update({
         'location': updatedLocation,
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -309,8 +362,14 @@ class AppServices {
 
   static Future<List<AddressModel>> getCustomerAddress() async {
     try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot get customer address: User ID is empty');
+        return [];
+      }
+
       final docSnapshot = await AppFirestore.customersCollectionRef
-          .doc(uid)
+          .doc(currentUid)
           .get();
       final data = docSnapshot.data() as Map<String, dynamic>;
       final addresses = data['addresses'] as List<dynamic>;
@@ -324,7 +383,13 @@ class AppServices {
 
   static Future<bool> addCustomerAddress(AddressModel address) async {
     try {
-      await AppFirestore.customersCollectionRef.doc(uid).update({
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot add customer address: User ID is empty');
+        return false;
+      }
+
+      await AppFirestore.customersCollectionRef.doc(currentUid).update({
         'addresses': FieldValue.arrayUnion([address.toJson()]),
       });
 
@@ -337,8 +402,14 @@ class AppServices {
   static Future<AddressModel?>
   getSelectedAddressAndUpdateIsSelectedToFalse() async {
     try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot get selected address: User ID is empty');
+        return null;
+      }
+
       final docSnapshot = await AppFirestore.customersCollectionRef
-          .doc(uid)
+          .doc(currentUid)
           .get();
       if (docSnapshot.exists) {
         final data = docSnapshot.data() as Map<String, dynamic>;
@@ -353,7 +424,7 @@ class AppServices {
               return addr;
             }).toList();
 
-            await AppFirestore.customersCollectionRef.doc(uid).update({
+            await AppFirestore.customersCollectionRef.doc(currentUid).update({
               'addresses': updatedAddresses,
             });
 
@@ -370,8 +441,14 @@ class AppServices {
 
   static Future<bool> removeAddress(String id) async {
     try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot remove address: User ID is empty');
+        return false;
+      }
+
       final docSnapshot = await AppFirestore.customersCollectionRef
-          .doc(uid)
+          .doc(currentUid)
           .get();
       if (docSnapshot.exists) {
         final data = docSnapshot.data() as Map<String, dynamic>;
@@ -381,7 +458,7 @@ class AppServices {
             .where((a) => (a as Map<String, dynamic>)['id'] != id)
             .toList();
 
-        await AppFirestore.customersCollectionRef.doc(uid).update({
+        await AppFirestore.customersCollectionRef.doc(currentUid).update({
           'addresses': updatedAddresses,
         });
         return true;
@@ -394,8 +471,14 @@ class AppServices {
 
   static Future<bool> selectLocation(String id) async {
     try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot select location: User ID is empty');
+        return false;
+      }
+
       final docSnapshot = await AppFirestore.customersCollectionRef
-          .doc(uid)
+          .doc(currentUid)
           .get();
       if (docSnapshot.exists) {
         final data = docSnapshot.data() as Map<String, dynamic>;
@@ -407,7 +490,7 @@ class AppServices {
           return address;
         }).toList();
 
-        await AppFirestore.customersCollectionRef.doc(uid).update({
+        await AppFirestore.customersCollectionRef.doc(currentUid).update({
           'addresses': updatedAddresses,
         });
       }
@@ -459,7 +542,13 @@ class AppServices {
 
   static Future<void> deleteFCMToken() async {
     try {
-      await AppFirestore.customersCollectionRef.doc(uid).update({
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot delete FCM token: User ID is empty');
+        return;
+      }
+
+      await AppFirestore.customersCollectionRef.doc(currentUid).update({
         'fcmToken': FieldValue.delete(),
       });
     } catch (e) {
@@ -469,8 +558,17 @@ class AppServices {
 
   static Future<void> deleteAccount() async {
     try {
-      await AppFirestore.customersCollectionRef.doc(uid).delete();
-      LocalStoreHelper.clearCache();
+      // Get the current UID dynamically instead of using the static variable
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot delete account: User ID is empty');
+        return;
+      }
+
+      log('🔒 Deleting account for user: $currentUid');
+      await AppFirestore.customersCollectionRef.doc(currentUid).delete();
+      LocalStoreHelper.clearGuestUser();
+      LocalStoreHelper.putlogoutStatus(true);
     } catch (e) {
       debugPrint('❌ Error deleting account: $e');
     }
@@ -490,8 +588,14 @@ class AppServices {
 
   static Future<List<BookingModel>> getActiveBookings() async {
     try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot get active bookings: User ID is empty');
+        return [];
+      }
+
       final snapshot = await AppFirestore.bookingsCollectionRef
-          .where('customer.uid', isEqualTo: uid)
+          .where('customer.uid', isEqualTo: currentUid)
           .where('bookingStatusCode', isEqualTo: 'A')
           .where('isStarted', isEqualTo: true)
           .orderBy('createdAt', descending: true)

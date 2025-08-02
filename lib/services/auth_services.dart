@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
@@ -173,9 +174,11 @@ class AuthServices {
       }
       final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
       if (userDoc.exists) {
-        await LocalStoreHelper.putUID(uid);
-        await LocalStoreHelper.putGuestUser(false);
-        await LocalStoreHelper.putlogoutStatus(false);
+        log('🔒 User exists, navigating to Home');
+        log('User UID: $uid');
+        LocalStoreHelper.putUID(uid);
+        LocalStoreHelper.putGuestUser(false);
+        LocalStoreHelper.putlogoutStatus(false);
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => Home()),
@@ -183,6 +186,7 @@ class AuthServices {
         );
       } else {
         debugPrint("User doesn't exist, navigating to SignUp");
+        log('UID ON SIGNUP: $uid');
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => SignupPage(uid: uid)),

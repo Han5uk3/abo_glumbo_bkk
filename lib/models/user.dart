@@ -96,6 +96,9 @@ class UserModel {
       updatedAt: json['updatedAt'],
       isAdmin: json['isAdmin'] ?? false,
       isVerified: json['isVerified'] ?? false,
+      location: json['location'] != null
+          ? LocationModel.fromJson(json['location'])
+          : null,
       districtName: json['districtName'],
       jobRoles: json['jobRoles'] != null
           ? List<String>.from(json['jobRoles'])
@@ -121,6 +124,7 @@ class UserModel {
       'lanCode': lanCode,
       'country': country,
       'createdAt': createdAt,
+      'location': location?.toJson(),
       'updatedAt': updatedAt,
       'isAdmin': isAdmin ?? false,
       'isVerified': isVerified ?? false,

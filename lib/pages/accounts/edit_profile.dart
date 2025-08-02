@@ -186,17 +186,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   bool _isValidPhoneNumber(String phoneNumber) {
     if (phoneNumber.isEmpty) return false;
-
     if (!phoneNumber.startsWith('+966')) return false;
-
-    String numberWithoutCode = phoneNumber.substring(4);
-
-    if (numberWithoutCode.length != 9) return false;
-
-    if (!RegExp(r'^[0-9]+$').hasMatch(numberWithoutCode)) return false;
-
-    if (!numberWithoutCode.startsWith('5')) return false;
-
+    if (phoneNumber.length < 13 || phoneNumber.length > 13) return false;
     return true;
   }
 

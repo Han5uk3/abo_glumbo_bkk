@@ -3,6 +3,7 @@ import 'package:abo_glumbo_bbk/apis/telr_apple_pay.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/booking_success.dart';
@@ -25,6 +26,7 @@ showPaymentBottomSheet(
   required int selectedTimeSlot,
   required TextEditingController notesController,
   required CustomerModel customerData,
+  required AddressModel selectedAddress,
 }) {
   showModalBottomSheet(
     context: context,
@@ -41,6 +43,7 @@ showPaymentBottomSheet(
         selectedTimeSlot: selectedTimeSlot,
         notesController: notesController,
         customerData: customerData,
+        selectedAddress: selectedAddress,
       );
     },
   );
@@ -56,6 +59,7 @@ class PaymentWindow extends StatefulWidget {
   int selectedTimeSlot;
   TextEditingController notesController;
   CustomerModel customerData;
+  AddressModel selectedAddress;
   PaymentWindow({
     super.key,
     required this.service,
@@ -67,6 +71,7 @@ class PaymentWindow extends StatefulWidget {
     this.selectedTimeSlot = 0,
     required this.notesController,
     required this.customerData,
+    required this.selectedAddress,
   });
 
   @override

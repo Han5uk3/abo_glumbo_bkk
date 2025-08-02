@@ -51,7 +51,7 @@ class TrackingData extends StatelessWidget {
                 worker?.name ??
                 AppLocalizations.of(context)?.serviceProvider ??
                 'Service Provider',
-            onCall: () => worker?.phone != null
+            onCall: worker?.phone != null
                 ? () {
                     launchUrl(
                       Uri.parse('tel:${worker!.phone}'),
@@ -128,7 +128,7 @@ class TrackingData extends StatelessWidget {
                 tooltip:
                     AppLocalizations.of(context)?.callServiceProvider ??
                     'Call Service Provider',
-                onPressed: onCall ?? () {},
+                onPressed: onCall,
               ),
             ],
           ),

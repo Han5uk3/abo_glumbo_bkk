@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:bloc/bloc.dart';
@@ -18,6 +20,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       emit(FetchActiveBookingLoading());
       final activeBookings = await AppServices.getActiveBookings();
+      log('Active bookings fetched: ${activeBookings.length}');
       emit(FetchActiveBookingSuccess(activeBookings));
     } catch (e) {
       emit(FetchActiveBookingError(e.toString()));
