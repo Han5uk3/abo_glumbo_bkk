@@ -84,6 +84,9 @@ class BookingUtils {
         updatedAt: customerData.updatedAt,
         isAdmin: customerData.isAdmin,
         districtName: customerData.districtName,
+        addresses: customerData.addresses.map((address) {
+          return address.copyWith(isSelected: address.isSelected);
+        }).toList(),
       );
 
       BookingModel booking = BookingModel(
