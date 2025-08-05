@@ -31,6 +31,7 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   bool _isBiometricEnabled = false;
   String _currentLanguage = 'English';
+  String _currentNotificationLanguage = 'English';
   bool _isGuest = false;
 
   @override
@@ -45,6 +46,14 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       _currentLanguage = currentLocale.languageCode == 'ar'
           ? 'العربية'
           : 'English';
+
+      // Initialize notification language from customer data
+      if (widget.customerData?.lanCode != null) {
+        _currentNotificationLanguage = widget.customerData!.lanCode == 'ar'
+            ? 'العربية'
+            : 'English';
+      }
+
       debugPrint(
         '🔄 Account Page: Synced language with bloc: $_currentLanguage',
       );
@@ -285,6 +294,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       context: context,
       builder: (context) => LanguageSelectionDialog(
         title: AppLocalizations.of(context)?.selectLanguage ?? '',
+        currentLanguage: _currentLanguage,
         onEnglishSelected: () => _handleLanguageChange('English'),
         onArabicSelected: () => _handleLanguageChange('العربية'),
       ),
@@ -296,6 +306,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       context: context,
       builder: (context) => LanguageSelectionDialog(
         title: AppLocalizations.of(context)?.notificationLanguage ?? '',
+        currentLanguage: _currentNotificationLanguage,
         onEnglishSelected: () => _handleNotificationLanguageChange('English'),
         onArabicSelected: () => _handleNotificationLanguageChange('العربية'),
       ),
@@ -317,6 +328,10 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       await AppServices.updateNotificationLanguage(
         language == 'English' ? 'en' : 'ar',
       );
+      // Update local state
+      setState(() {
+        _currentNotificationLanguage = language;
+      });
     } catch (e) {
       debugPrint('❌ Error changing locale: $e');
       return;
@@ -346,10 +361,18 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   void _showContactOptions() {
     showModalBottomSheet(
       context: context,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => const ContactBottomSheet(),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: const ContactBottomSheet(),
+        ),
+      ),
     );
   }
 

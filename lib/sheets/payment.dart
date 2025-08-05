@@ -31,19 +31,27 @@ showPaymentBottomSheet(
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     clipBehavior: Clip.antiAlias,
     builder: (BuildContext context) {
-      return PaymentWindow(
-        service: service,
-        selectedImage: selectedImage,
-        selectedVideo: selectedVideo,
-        selectedDate: selectedDate,
-        timeSlots: timeSlots,
-        selectedTimeCategory: selectedTimeCategory,
-        selectedTimeSlot: selectedTimeSlot,
-        notesController: notesController,
-        customerData: customerData,
-        selectedAddress: selectedAddress,
+      return SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: PaymentWindow(
+            service: service,
+            selectedImage: selectedImage,
+            selectedVideo: selectedVideo,
+            selectedDate: selectedDate,
+            timeSlots: timeSlots,
+            selectedTimeCategory: selectedTimeCategory,
+            selectedTimeSlot: selectedTimeSlot,
+            notesController: notesController,
+            customerData: customerData,
+            selectedAddress: selectedAddress,
+          ),
+        ),
       );
     },
   );

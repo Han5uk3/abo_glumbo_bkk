@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
@@ -24,15 +25,15 @@ class TrackingCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTrack,
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.9,
-        margin: const EdgeInsets.symmetric(vertical: 8),
+        width: MediaQuery.of(context).size.width,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
-              blurRadius: 20,
+              blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
@@ -70,14 +71,14 @@ class TrackingCard extends StatelessWidget {
               ),
             ),
 
-            _buildBottom(),
+            _buildBottom(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBottom() {
+  Widget _buildBottom(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -94,7 +95,7 @@ class TrackingCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'ETA: $etaMinutes mins',
+                '${AppLocalizations.of(context)?.arrivalTime}: $etaMinutes ${AppLocalizations.of(context)!.min}',
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],

@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'dart:async';
 import 'package:abo_glumbo_bbk/apis/google_tracking_polylines.dart';
 import 'package:abo_glumbo_bbk/common_widgets/live_tracking.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -19,11 +18,24 @@ class ActiveBookingsSection extends StatefulWidget {
 
 class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   Map<String, int> etaCache = {};
+  late final PageController _pageController;
+  Timer? _autoScrollTimer;
+  int _currentPage = 0;
+  static const Duration _autoScrollInterval = Duration(seconds: 4);
+  static const Duration _animationDuration = Duration(milliseconds: 500);
+  static const double _viewportFraction = 1.0;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController(
+      viewportFraction: _viewportFraction,
+      initialPage: 0,
+    );
     _initializeETACalculations();
+    if (widget.activeBookings.length > 1) {
+      _startAutoScroll();
+    }
   }
 
   @override
@@ -31,6 +43,15 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     super.didUpdateWidget(oldWidget);
     if (widget.activeBookings != oldWidget.activeBookings) {
       _initializeETACalculations();
+    }
+    if (widget.activeBookings.length != oldWidget.activeBookings.length) {
+      _currentPage = 0;
+      _pageController.jumpToPage(0);
+      if (widget.activeBookings.length > 1) {
+        _startAutoScroll();
+      } else {
+        _autoScrollTimer?.cancel();
+      }
     }
   }
 
@@ -40,6 +61,27 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         _calculateETA(booking);
       }
     }
+  }
+
+  void _startAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = Timer.periodic(_autoScrollInterval, (_) {
+      if (!mounted) return;
+      final itemCount = widget.activeBookings.length;
+      if (itemCount <= 1) return;
+      _currentPage = (_currentPage + 1) % itemCount;
+      _pageController.animateToPage(
+        _currentPage,
+        duration: _animationDuration,
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  void _resetAutoScrollTimer() {
+    if (widget.activeBookings.length <= 1) return;
+    _autoScrollTimer?.cancel();
+    Future.delayed(const Duration(seconds: 2), _startAutoScroll);
   }
 
   int _extractMinutesFromDuration(String duration) {
@@ -79,7 +121,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
           ? booking.customer.addresses.first
           : null;
     }
-
     if (booking.agent?.liveLocation != null &&
         customerSelectedAddress != null) {
       try {
@@ -90,7 +131,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
           destinationLng: customerSelectedAddress.lon ?? 0.0,
           apiKey: "AIzaSyBl4RQBYM_v-u2Oik_ENyxcGxnvyZGxL2o",
         );
-
         final etaMinutes = _extractMinutesFromDuration(result['duration']);
         if (mounted) {
           setState(() {
@@ -111,6 +151,13 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _autoScrollTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -135,41 +182,62 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
           const SizedBox(height: 12),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.29,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: widget.activeBookings.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final booking = widget.activeBookings[index];
-                log('Processing booking: ${booking.toJson()}');
-                AddressModel? customerSelectedAddress;
-                try {
-                  customerSelectedAddress = booking.customer.addresses
-                      .firstWhere((address) => address.isSelected == true);
-                } catch (e) {
-                  customerSelectedAddress =
-                      booking.customer.addresses.isNotEmpty
-                      ? booking.customer.addresses.first
-                      : null;
-                }
-                final toLocationText =
-                    customerSelectedAddress?.streetName ?? 'Unknown Address';
-                final fromLocationText =
-                    booking.agent?.location?.name ?? 'Unknown Location';
-                return TrackingCard(
-                  etaMinutes: etaCache[booking.id] ?? 15,
-                  fromLocation: fromLocationText,
-                  booking: booking,
-                  onTrack: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LiveTrackingPage(booking: booking),
-                    ),
-                  ),
-                  toLocation: toLocationText,
-                );
-              },
+            child: GestureDetector(
+              onTapDown: (_) => _resetAutoScrollTimer(),
+              onPanDown: (_) => _resetAutoScrollTimer(),
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: widget.activeBookings.length,
+                onPageChanged: (index) {
+                  _currentPage = index;
+                },
+                padEnds: false,
+                itemBuilder: (context, index) {
+                  final booking = widget.activeBookings[index];
+                  AddressModel? customerSelectedAddress;
+                  try {
+                    customerSelectedAddress = booking.customer.addresses
+                        .firstWhere((address) => address.isSelected == true);
+                  } catch (e) {
+                    customerSelectedAddress =
+                        booking.customer.addresses.isNotEmpty
+                        ? booking.customer.addresses.first
+                        : null;
+                  }
+                  final toLocationText =
+                      customerSelectedAddress?.streetName ?? 'Unknown Address';
+                  final fromLocationText =
+                      booking.agent?.districtName ?? 'Unknown Location';
+                  return TrackingCard(
+                    etaMinutes: etaCache[booking.id] ?? 15,
+                    fromLocation: fromLocationText,
+                    booking: booking,
+                    onTrack:
+                        customerSelectedAddress != null && booking.agent != null
+                        ? () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LiveTrackingPage(
+                                booking: booking,
+                                selectedAddress: customerSelectedAddress!,
+                              ),
+                            ),
+                          )
+                        : () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.noLiveTrackingAvailable,
+                                ),
+                              ),
+                            );
+                          },
+                    toLocation: toLocationText,
+                  );
+                },
+              ),
             ),
           ),
         ],

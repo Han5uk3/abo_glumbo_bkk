@@ -29,6 +29,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
   final String _apiKey = 'AIzaSyBl4RQBYM_v-u2Oik_ENyxcGxnvyZGxL2o';
   final Map<String, String> _translationCache = {}; // Cache translations
 
+  // NEW: Set to track unique notifications (title + datetime)
+  final Set<String> _notificationKeys = {};
+
   @override
   void initState() {
     super.initState();
@@ -64,6 +67,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
     try {
       lastDoc = null;
       hasMore = true;
+      // NEW: Clear the unique keys set when refreshing
+      _notificationKeys.clear();
       setState(() {
         notifications = [];
         isLoading = true;
@@ -92,6 +97,46 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
+  // NEW: Create unique key for notification (title + formatted datetime)
+  String _createNotificationKey(Map<String, dynamic> data) {
+    final title = data['title']?.toString().trim() ?? '';
+    final createdAt = data['createdAt']?.toDate();
+
+    if (title.isEmpty || createdAt == null) {
+      // For notifications without title or date, use document ID to avoid false duplicates
+      return data['id']?.toString() ??
+          DateTime.now().millisecondsSinceEpoch.toString();
+    }
+
+    // Create key with title and formatted datetime
+    final dateStr = DateFormat('yyyy-MM-dd HH:mm').format(createdAt);
+    return '${title}_$dateStr';
+  }
+
+  // NEW: Remove duplicates from notifications list
+  List<Map<String, dynamic>> _removeDuplicates(
+    List<Map<String, dynamic>> notificationsList,
+  ) {
+    final List<Map<String, dynamic>> uniqueNotifications = [];
+    final Set<String> seenKeys = Set<String>.from(_notificationKeys);
+
+    for (final notification in notificationsList) {
+      final key = _createNotificationKey(notification);
+
+      if (!seenKeys.contains(key)) {
+        seenKeys.add(key);
+        uniqueNotifications.add(notification);
+      } else {
+        log('Duplicate notification removed: $key');
+      }
+    }
+
+    // Update the global set
+    _notificationKeys.addAll(seenKeys);
+
+    return uniqueNotifications;
+  }
+
   Future<void> _loadInitialNotifications() async {
     if (!mounted) return;
 
@@ -106,9 +151,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
         // OPTIMIZATION 1: Load notifications immediately without translation
         final basicNotifications = _processNotificationsBasic(validDocs);
 
+        // NEW: Remove duplicates before showing
+        final uniqueNotifications = _removeDuplicates(basicNotifications);
+
         if (mounted) {
           setState(() {
-            notifications = basicNotifications;
+            notifications = uniqueNotifications;
             hasMore = query.docs.length == pageSize;
             isLoading = false; // Show content immediately
           });
@@ -148,19 +196,29 @@ class _NotificationsPageState extends State<NotificationsPage> {
         // Load basic notifications first
         final basicNotifications = _processNotificationsBasic(validDocs);
 
-        if (mounted) {
+        // NEW: Remove duplicates before adding to existing list
+        final uniqueNotifications = _removeDuplicates(basicNotifications);
+
+        if (mounted && uniqueNotifications.isNotEmpty) {
           setState(() {
-            notifications.addAll(basicNotifications);
+            notifications.addAll(uniqueNotifications);
             hasMore = query.docs.length == pageSize;
             isLoadingMore = false;
           });
-        }
 
-        // Translate in background
-        _translateNotificationsInBackground(
-          validDocs,
-          startIndex: notifications.length - basicNotifications.length,
-        );
+          // Translate in background
+          _translateNotificationsInBackground(
+            validDocs,
+            startIndex: notifications.length - uniqueNotifications.length,
+          );
+        } else {
+          if (mounted) {
+            setState(() {
+              hasMore = query.docs.length == pageSize;
+              isLoadingMore = false;
+            });
+          }
+        }
       } else {
         if (mounted) {
           setState(() {

@@ -1055,6 +1055,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exitAppTitle => 'خروج من التطبيق';
 
   @override
+  String get arrivalTime => 'وقت الوصول';
+
+  @override
+  String get min => 'دقيقة';
+
+  @override
+  String get thankYouMessage =>
+      'شكرًا لتقييمك ودعمك!\nيسعدنا خدمتك ونتطلع لرؤيتك مرة أخرى قريبًا';
+
+  @override
+  String get noLiveTrackingAvailable => 'لا يوجد تتبع مباشر';
+
+  @override
+  String get calculating => 'جاري التحليل...';
+
+  @override
+  String get waitingForAgentLocation => 'انتظار موقع العامل...';
+
+  @override
   String get errorLoadingMoreNotifications =>
       'خطأ في تحميل المزيد من الإشعارات';
 }

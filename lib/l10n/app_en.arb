@@ -349,5 +349,11 @@
   "exit":"Exit",
   "exitAppMessage":"Are you sure you want to exit the app?",
   "exitAppTitle":"Exit App",
+  "arrivalTime":"Arrival Time",
+  "min":"min",
+ "thankYouMessage": "Thank you for your rating and tip!\nWe’re happy to serve you and hope to see you again soon.",
+ "noLiveTrackingAvailable":"No live tracking available",
+ "calculating":"Calculating...",
+ "waitingForAgentLocation":"Waiting for agent location...",
   "errorLoadingMoreNotifications":"Error loading more notifications"
 }

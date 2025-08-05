@@ -2132,6 +2132,42 @@ abstract class AppLocalizations {
   /// **'Exit App'**
   String get exitAppTitle;
 
+  /// No description provided for @arrivalTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival Time'**
+  String get arrivalTime;
+
+  /// No description provided for @min.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get min;
+
+  /// No description provided for @thankYouMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your rating and tip!\nWe’re happy to serve you and hope to see you again soon.'**
+  String get thankYouMessage;
+
+  /// No description provided for @noLiveTrackingAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No live tracking available'**
+  String get noLiveTrackingAvailable;
+
+  /// No description provided for @calculating.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculating...'**
+  String get calculating;
+
+  /// No description provided for @waitingForAgentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for agent location...'**
+  String get waitingForAgentLocation;
+
   /// No description provided for @errorLoadingMoreNotifications.
   ///
   /// In en, this message translates to:

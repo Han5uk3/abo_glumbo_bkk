@@ -1059,6 +1059,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exitAppTitle => 'Exit App';
 
   @override
+  String get arrivalTime => 'Arrival Time';
+
+  @override
+  String get min => 'min';
+
+  @override
+  String get thankYouMessage =>
+      'Thank you for your rating and tip!\nWe’re happy to serve you and hope to see you again soon.';
+
+  @override
+  String get noLiveTrackingAvailable => 'No live tracking available';
+
+  @override
+  String get calculating => 'Calculating...';
+
+  @override
+  String get waitingForAgentLocation => 'Waiting for agent location...';
+
+  @override
   String get errorLoadingMoreNotifications =>
       'Error loading more notifications';
 }

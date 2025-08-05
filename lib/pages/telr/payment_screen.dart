@@ -229,11 +229,12 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           review: widget.review,
         );
         Navigator.pop(context);
-        Navigator.pop(context, true);
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.reviewSubmitted),
+            content: Text(AppLocalizations.of(context)!.thankYouMessage),
             duration: Duration(seconds: 2),
+            backgroundColor: Colors.green,
           ),
         );
       }

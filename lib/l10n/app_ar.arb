@@ -371,5 +371,11 @@
   "exit":"خروج",
   "exitAppMessage":"هل تريد الخروج من التطبيق؟",
   "exitAppTitle":"خروج من التطبيق",
-  "errorLoadingMoreNotifications":"خطأ في تحميل المزيد من الإشعارات"
+  "arrivalTime":"وقت الوصول",
+  "min":"دقيقة",
+ "thankYouMessage": "شكرًا لتقييمك ودعمك!\nيسعدنا خدمتك ونتطلع لرؤيتك مرة أخرى قريبًا",
+ "noLiveTrackingAvailable":"لا يوجد تتبع مباشر",
+ "calculating":"جاري التحليل...",
+ "waitingForAgentLocation":"انتظار موقع العامل...",
+   "errorLoadingMoreNotifications":"خطأ في تحميل المزيد من الإشعارات"
 }
