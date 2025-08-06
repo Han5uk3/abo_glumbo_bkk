@@ -733,131 +733,50 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                   ),
                 ),
                 // Toggle view button
-                if (_customerLatLng != null && _agentLatLng != null)
-                  Positioned(
-                    bottom: 100,
-                    right: 16,
-                    child: Tooltip(
-                      message: _isFollowingAgent
-                          ? 'Focus on Delivery Address'
-                          : 'Show Both Locations',
-                      child: FloatingActionButton(
-                        mini: true,
-                        backgroundColor: Colors.white,
-                        onPressed: () {
-                          setState(() {
-                            _isFollowingAgent = !_isFollowingAgent;
-                          });
+                // if (_customerLatLng != null && _agentLatLng != null)
+                //   Positioned(
+                //     bottom: 100,
+                //     right: 16,
+                //     child: Tooltip(
+                //       message: _isFollowingAgent
+                //           ? 'Focus on Delivery Address'
+                //           : 'Show Both Locations',
+                //       child: FloatingActionButton(
+                //         mini: true,
+                //         backgroundColor: Colors.white,
+                //         onPressed: () {
+                //           setState(() {
+                //             _isFollowingAgent = !_isFollowingAgent;
+                //           });
 
-                          if (_isFollowingAgent) {
-                            // Show both markers
-                            _moveCameraToBounds(
-                              customerLatLng: _customerLatLng!,
-                              agentLatLng: _agentLatLng!,
-                            );
-                          } else {
-                            // Focus on delivery address
-                            _mapController?.animateCamera(
-                              CameraUpdate.newCameraPosition(
-                                CameraPosition(
-                                  target: _customerLatLng!,
-                                  zoom: 16.0,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        child: Icon(
-                          _isFollowingAgent
-                              ? Icons.location_on
-                              : Icons.zoom_out_map,
-                          color: Colors.blue,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ),
-                // Debug info button (show route info)
-                if (_customerLatLng != null && _agentLatLng != null)
-                  Positioned(
-                    bottom: 150,
-                    right: 16,
-                    child: Tooltip(
-                      message: 'Route Info',
-                      child: FloatingActionButton(
-                        mini: true,
-                        backgroundColor: Colors.orange,
-                        onPressed: () {
-                          final dist = _calculateStraightDistanceKm(
-                            _agentLatLng!,
-                            _customerLatLng!,
-                          );
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Route Information'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Distance: ${dist.toStringAsFixed(2)} km',
-                                  ),
-                                  Text('ETA: ${eta ?? "Not available"}'),
-                                  Text('Route Points: ${routePoints.length}'),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    'Delivery Address:',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${_customerLatLng!.latitude.toStringAsFixed(6)}, ${_customerLatLng!.longitude.toStringAsFixed(6)}',
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    'Agent Location:',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${_agentLatLng!.latitude.toStringAsFixed(6)}, ${_agentLatLng!.longitude.toStringAsFixed(6)}',
-                                  ),
-                                  const SizedBox(height: 8),
-                                  // Text(
-                                  //   'Agent: ${widget.booking?.agent?.name ?? "Unknown"}',
-                                  // ),
-                                  // Text(
-                                  //   'Address: ${widget.selectedAddress.address ?? "No address"}',
-                                  // ),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _fetchETAAndRoute(); // Force refresh
-                                  },
-                                  child: const Text('Refresh Route'),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('Close'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        child: const Icon(
-                          Icons.info_outline,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ),
+                //           if (_isFollowingAgent) {
+                //             // Show both markers
+                //             _moveCameraToBounds(
+                //               customerLatLng: _customerLatLng!,
+                //               agentLatLng: _agentLatLng!,
+                //             );
+                //           } else {
+                //             // Focus on delivery address
+                //             _mapController?.animateCamera(
+                //               CameraUpdate.newCameraPosition(
+                //                 CameraPosition(
+                //                   target: _customerLatLng!,
+                //                   zoom: 16.0,
+                //                 ),
+                //               ),
+                //             );
+                //           }
+                //         },
+                //         child: Icon(
+                //           _isFollowingAgent
+                //               ? Icons.location_on
+                //               : Icons.zoom_out_map,
+                //           color: Colors.blue,
+                //           size: 20,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
               ],
             ),
     );

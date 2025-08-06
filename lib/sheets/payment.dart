@@ -35,22 +35,17 @@ showPaymentBottomSheet(
     clipBehavior: Clip.antiAlias,
     builder: (BuildContext context) {
       return SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: PaymentWindow(
-            service: service,
-            selectedImage: selectedImage,
-            selectedVideo: selectedVideo,
-            selectedDate: selectedDate,
-            timeSlots: timeSlots,
-            selectedTimeCategory: selectedTimeCategory,
-            selectedTimeSlot: selectedTimeSlot,
-            notesController: notesController,
-            customerData: customerData,
-            selectedAddress: selectedAddress,
-          ),
+        child: PaymentWindow(
+          service: service,
+          selectedImage: selectedImage,
+          selectedVideo: selectedVideo,
+          selectedDate: selectedDate,
+          timeSlots: timeSlots,
+          selectedTimeCategory: selectedTimeCategory,
+          selectedTimeSlot: selectedTimeSlot,
+          notesController: notesController,
+          customerData: customerData,
+          selectedAddress: selectedAddress,
         ),
       );
     },
