@@ -154,7 +154,9 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       debugPrint('🏠 [CUSTOMER] Static coordinates from selectedAddress:');
       debugPrint('🏠 [CUSTOMER]   Latitude: $lat');
       debugPrint('🏠 [CUSTOMER]   Longitude: $lon');
-      debugPrint('🏠 [CUSTOMER]   Address: ${widget.selectedAddress.streetName}');
+      debugPrint(
+        '🏠 [CUSTOMER]   Address: ${widget.selectedAddress.streetName}',
+      );
 
       // Validate coordinates
       if (lat == 0.0 && lon == 0.0) {
@@ -709,24 +711,22 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                 ),
                 // Back button
                 Positioned(
-                  top: MediaQuery.of(context).padding.top + 8,
+                  top: 24 + MediaQuery.of(context).viewPadding.top,
                   left: Directionality.of(context) == TextDirection.rtl
                       ? null
-                      : 8,
+                      : 16,
                   right: Directionality.of(context) == TextDirection.rtl
-                      ? 8
+                      ? 16
                       : null,
-                  child: SafeArea(
-                    child: ClipOval(
-                      child: Material(
-                        color: Colors.white.withOpacity(0.9),
-                        child: InkWell(
-                          splashColor: Colors.grey[300],
-                          onTap: () => Navigator.pop(context),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.arrow_back, size: 24),
-                          ),
+                  child: ClipOval(
+                    child: Material(
+                      color: Colors.white.withOpacity(0.9),
+                      child: InkWell(
+                        splashColor: Colors.grey[300],
+                        onTap: () => Navigator.pop(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Icon(Icons.arrow_back, size: 24),
                         ),
                       ),
                     ),

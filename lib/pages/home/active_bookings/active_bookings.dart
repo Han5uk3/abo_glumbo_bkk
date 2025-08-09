@@ -546,7 +546,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
           
           // PageView for active bookings
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.29,
+            height: MediaQuery.of(context).size.height * 0.32,
             child: GestureDetector(
               onTapDown: (_) => _resetAutoScrollTimer(),
               onPanDown: (_) => _resetAutoScrollTimer(),

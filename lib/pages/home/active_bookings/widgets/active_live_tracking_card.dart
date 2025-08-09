@@ -39,6 +39,8 @@ class TrackingCard extends StatelessWidget {
           ],
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Stack(
@@ -82,6 +84,7 @@ class TrackingCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -94,23 +97,13 @@ class TrackingCard extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
-              Text(
-                '${AppLocalizations.of(context)?.arrivalTime}: $etaMinutes ${AppLocalizations.of(context)!.min}',
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
-              ),
             ],
           ),
-          if (booking.agent != null) ...[
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Text(
-                  booking.agent?.name ?? 'N/A',
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-              ],
-            ),
-          ],
+          const SizedBox(height: 8),
+          Text(
+            '${AppLocalizations.of(context)?.arrivalTime}: $etaMinutes ${AppLocalizations.of(context)!.min}',
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
+          ),
         ],
       ),
     );
