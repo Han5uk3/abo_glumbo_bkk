@@ -26,44 +26,55 @@ class TrackingCard extends StatelessWidget {
       onTap: onTrack,
       child: Container(
         width: MediaQuery.of(context).size.width,
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        height: MediaQuery.of(context).size.height * 0.32,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white, Colors.grey[50]!],
+          ),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: AppColors.primary.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+              spreadRadius: 2,
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 2),
             ),
           ],
+          border: Border.all(color: Colors.grey[100]!, width: 1),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
+              flex: 2,
               child: Stack(
                 children: [
+                  // Background pattern
                   Positioned.fill(
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(24),
                       child: SvgPicture.asset(
                         'assets/svg/mapstyle.svg',
                         fit: BoxFit.cover,
-                        colorFilter: ColorFilter.mode(
-                          Colors.white.withOpacity(0.1),
-                          BlendMode.dstATop,
-                        ),
                       ),
                     ),
                   ),
 
+                  // Journey path content
                   Positioned.fill(
                     child: Padding(
                       padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
+                        left: 20,
+                        right: 20,
                         top: 16,
                       ),
                       child: _buildJourneyPath(),
@@ -73,7 +84,7 @@ class TrackingCard extends StatelessWidget {
               ),
             ),
 
-            _buildBottom(context),
+            Flexible(flex: 1, child: _buildBottom(context)),
           ],
         ),
       ),
@@ -82,27 +93,73 @@ class TrackingCard extends StatelessWidget {
 
   Widget _buildBottom(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+        border: Border(top: BorderSide(color: Colors.grey[100]!, width: 1)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                booking.service.name ?? 'Service Name',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.localeName == 'en'
+                      ? booking.service.name ?? 'Service Name'
+                      : booking.service.name_ar ?? 'Service Name',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primary.withOpacity(0.1),
+                      AppColors.primary.withOpacity(0.05),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: AppColors.primary.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.access_time_rounded,
+                      color: AppColors.primary,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$etaMinutes ${AppLocalizations.of(context)!.min}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${AppLocalizations.of(context)?.arrivalTime}: $etaMinutes ${AppLocalizations.of(context)!.min}',
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
         ],
       ),
@@ -113,15 +170,15 @@ class TrackingCard extends StatelessWidget {
     return Column(
       children: [
         _buildLocationPoint(
-          icon: Icons.my_location,
+          icon: Icons.radio_button_checked_rounded,
           iconColor: AppColors.primary,
           location: fromLocation.isEmpty ? 'Pickup Location' : fromLocation,
           isStart: true,
         ),
         _buildConnectingLine(),
         _buildLocationPoint(
-          icon: Icons.location_on,
-          iconColor: Colors.red,
+          icon: Icons.location_on_rounded,
+          iconColor: const Color(0xFFE53E3E),
           location: toLocation.isEmpty ? 'N/A' : toLocation,
           isStart: false,
         ),
@@ -138,31 +195,53 @@ class TrackingCard extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 32,
-          height: 32,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                iconColor.withOpacity(0.15),
+                iconColor.withOpacity(0.08),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: iconColor.withOpacity(0.2), width: 2),
           ),
-          child: Icon(icon, color: iconColor, size: 18),
+          child: Icon(icon, color: iconColor, size: 22),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!, width: 1),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[200]!, width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            child: Text(
-              location,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
-              ),
-              overflow: TextOverflow.ellipsis,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    location,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                      letterSpacing: -0.2,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -172,14 +251,14 @@ class TrackingCard extends StatelessWidget {
 
   Widget _buildConnectingLine() {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
-          const SizedBox(width: 15),
+          const SizedBox(width: 19),
           SizedBox(
             width: 2,
-            height: 24,
-            child: CustomPaint(painter: DottedLinePainter()),
+            height: 15,
+            child: CustomPaint(painter: GradientDottedLinePainter()),
           ),
         ],
       ),
@@ -187,25 +266,36 @@ class TrackingCard extends StatelessWidget {
   }
 }
 
-class DottedLinePainter extends CustomPainter {
+class GradientDottedLinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.grey[400]!
-      ..strokeWidth = 2
+      ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
 
-    const dashHeight = 3.0;
-    const dashSpace = 3.0;
+    const dashHeight = 4.0;
+    const dashSpace = 4.0;
     double startY = 0;
 
+    // Create gradient colors
+    final colors = [
+      AppColors.primary.withOpacity(0.8),
+      AppColors.primary.withOpacity(0.4),
+      Colors.grey[400]!.withOpacity(0.6),
+    ];
+
+    int colorIndex = 0;
     while (startY < size.height) {
+      paint.color = colors[colorIndex % colors.length];
+
       canvas.drawLine(
         Offset(size.width / 2, startY),
         Offset(size.width / 2, startY + dashHeight),
         paint,
       );
+
       startY += dashHeight + dashSpace;
+      colorIndex++;
     }
   }
 

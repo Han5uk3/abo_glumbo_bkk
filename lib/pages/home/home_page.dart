@@ -310,13 +310,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           SliverToBoxAdapter(child: _buildHeader(safePadding)),
           SliverToBoxAdapter(child: _buildCategoriesHeader()),
           _buildCategoriesGrid(),
-          if (secondaryBanners.isNotEmpty)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: HomeCarouselWidget(banners: secondaryBanners),
-              ),
-            ),
+
           if (!_isGuest)
             BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
@@ -347,6 +341,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 }
                 return const SliverToBoxAdapter(child: SizedBox.shrink());
               },
+            ),
+          if (secondaryBanners.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: HomeCarouselWidget(banners: secondaryBanners),
+              ),
             ),
           _buildHighlightedServices(),
         ],

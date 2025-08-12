@@ -111,24 +111,36 @@ class AuthServices {
     String sanitizedPhoneNumber = _formatToE164(
       _sanitizePhoneNumber(phoneNumber),
     );
-    await _auth.verifyPhoneNumber(
-      phoneNumber: sanitizedPhoneNumber,
-      forceResendingToken: resendToken,
-      timeout: const Duration(seconds: 60),
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await _auth.signInWithCredential(credential);
-      },
-      verificationFailed: (FirebaseAuthException e) {
+    try {
+      await _auth.verifyPhoneNumber(
+        phoneNumber: sanitizedPhoneNumber,
+        forceResendingToken: resendToken,
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          await _auth.signInWithCredential(credential);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          debugPrint(
+            "Firebase Auth resend verification failed: ${e.code} - ${e.message}",
+          );
+          onError(e);
+        },
+        codeSent: (String verificationId, int? token) {
+          _verificationId = verificationId;
+          onCodeSent(verificationId, resendToken: token);
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          _verificationId = verificationId;
+        },
+      );
+    } catch (e) {
+      debugPrint("Error resending OTP: $e");
+      if (e is FirebaseAuthException) {
         onError(e);
-      },
-      codeSent: (String verificationId, int? token) {
-        _verificationId = verificationId;
-        onCodeSent(verificationId, resendToken: token);
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        _verificationId = verificationId;
-      },
-    );
+      } else {
+        onError(FirebaseAuthException(code: 'unknown', message: e.toString()));
+      }
+    }
   }
 
   Future<UserCredential> verifyOTP(

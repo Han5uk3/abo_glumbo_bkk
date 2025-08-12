@@ -94,7 +94,38 @@ class _LoginPageState extends State<LoginPage> {
             _isLoading = false;
           });
 
-          _showSnackBar(e.message ?? 'An error occurred', AppColors.red);
+          String errorMessage;
+          switch (e.code) {
+            case 'too-many-requests':
+              errorMessage =
+                  AppLocalizations.of(context)?.tooManyAttempts ??
+                  'Too many attempts. Please wait and try again.';
+              break;
+            case 'quota-exceeded':
+              errorMessage =
+                  AppLocalizations.of(context)?.quotaExceeded ??
+                  'SMS quota exceeded. Try again later.';
+              break;
+            case 'network-request-failed':
+              errorMessage =
+                  AppLocalizations.of(context)?.networkError ??
+                  'Network error. Please check your connection.';
+              break;
+            case 'invalid-phone-number':
+              errorMessage =
+                  AppLocalizations.of(context)?.pleaseEnterAValidPhoneNumber ??
+                  'Please enter a valid phone number';
+              break;
+            case 'internal-error':
+              errorMessage =
+                  AppLocalizations.of(context)?.internalError ??
+                  'An internal error occurred. Please try again later.';
+              break;
+            default:
+              errorMessage = e.message ?? 'An error occurred';
+          }
+
+          _showSnackBar(errorMessage, AppColors.red);
         }
       },
     );
@@ -102,7 +133,14 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _signUpLater() async {
     try {
-      await LocalStoreHelper.clearUID();
+      final currentUid = LocalStoreHelper.getUID();
+      final isBiometricEnabled = currentUid != null
+          ? LocalStoreHelper.getBiometricAuthEnabled(currentUid)
+          : false;
+
+      if (!isBiometricEnabled) {
+        await LocalStoreHelper.clearUID();
+      }
       await LocalStoreHelper.putGuestUser(true);
       if (mounted) {
         Navigator.pushAndRemoveUntil(
@@ -236,9 +274,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildHeaderImage() {
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 60,
-      ), // Add top padding to push banner down
+      padding: const EdgeInsets.only(top: 60),
       child: Center(
         child: Stack(
           alignment: Alignment.center,
@@ -456,7 +492,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  
+
                   children: [
                     _buildHeaderImage(),
                     const SizedBox(height: 35),
@@ -472,11 +508,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 13),
-                    Center(
-                      child: LanguageSelectorCard(
-                        currentLanguageCode: state.locale.languageCode,
-                      ),
-                    ),
+                    LanguageSelectorCard(),
                     const SizedBox(height: 23),
                     Text(
                       AppLocalizations.of(context)?.mobileNumber ?? '',
@@ -503,7 +535,7 @@ class _LoginPageState extends State<LoginPage> {
                     _buildSignUpLaterButton(),
                     const SizedBox(height: 20),
                     _buildTermsAndPrivacyText(),
-                    const SizedBox(height: 30), // Add bottom padding
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),

@@ -968,6 +968,18 @@ abstract class AppLocalizations {
   /// **'Too many attempts. Please wait and try again.'**
   String get tooManyAttempts;
 
+  /// No description provided for @tooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Please wait and try again.'**
+  String get tooManyRequests;
+
+  /// No description provided for @internalError.
+  ///
+  /// In en, this message translates to:
+  /// **'An internal error occurred. Please try again later.'**
+  String get internalError;
+
   /// No description provided for @networkError.
   ///
   /// In en, this message translates to:
@@ -1565,7 +1577,7 @@ abstract class AppLocalizations {
   /// No description provided for @bioMetricAuthentication.
   ///
   /// In en, this message translates to:
-  /// **'Biometric Authentication'**
+  /// **'Enable Biometric'**
   String get bioMetricAuthentication;
 
   /// No description provided for @chooseServiceAddress.

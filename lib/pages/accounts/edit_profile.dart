@@ -186,8 +186,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   bool _isValidPhoneNumber(String phoneNumber) {
     if (phoneNumber.isEmpty) return false;
-    if (!phoneNumber.startsWith('+966')) return false;
-    if (phoneNumber.length < 13 || phoneNumber.length > 13) return false;
+    if (!phoneNumber.startsWith('05')) return false;
+    if (phoneNumber.length < 10 || phoneNumber.length > 10) return false;
     return true;
   }
 
@@ -215,11 +215,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
         );
         return;
       }
-      if (phoneController.text.contains('+966')) {
+      if (phoneController.text.startsWith('05')) {
         if (mounted) setState(() => isPhoneNumberUpdated = true);
+        // Remove the leading '0' and add '+966' before the rest
+        final formattedPhone = '+966${phoneController.text.substring(1)}';
+        print(formattedPhone);
         await AuthServices().sendOTP(
           context,
-          phoneNumber: phoneController.text,
+          phoneNumber: formattedPhone,
           forceResendingToken: _resendToken,
           onCodeSent: (String verificationId, {int? resendToken}) {
             if (mounted) {
@@ -246,19 +249,56 @@ class _EditProfilePageState extends State<EditProfilePage> {
           },
           onError: (FirebaseAuthException e) {
             if (mounted) setState(() => isLoading = false);
-            _showSnackBar(
-              e.message ??
-                  AppLocalizations.of(context)?.somethingWentWrongTryAgain ??
-                  'Something went wrong. Please try again.',
-              backgroundColor: AppColors.red,
-            );
+            String errorMessage;
+            switch (e.code) {
+              case 'too-many-requests':
+                errorMessage =
+                    AppLocalizations.of(context)?.tooManyAttempts ??
+                    'Too many attempts. Please wait and try again.';
+                break;
+              case 'quota-exceeded':
+                errorMessage =
+                    AppLocalizations.of(context)?.quotaExceeded ??
+                    'SMS quota exceeded. Try again later.';
+                break;
+              case 'network-request-failed':
+                errorMessage =
+                    AppLocalizations.of(context)?.networkError ??
+                    'Network error. Please check your connection.';
+                break;
+              case 'session-expired':
+                errorMessage =
+                    AppLocalizations.of(context)?.otpExpired ??
+                    'OTP expired. Please request a new OTP.';
+                break;
+              case 'invalid-phone-number':
+                errorMessage =
+                    AppLocalizations.of(
+                      context,
+                    )?.pleaseEnterAValidPhoneNumber ??
+                    'Please enter a valid phone number';
+                break;
+              case 'internal-error':
+                errorMessage =
+                    AppLocalizations.of(context)?.internalError ??
+                    'An internal error occurred. Please try again later.';
+                break;
+              default:
+                errorMessage =
+                    e.message ??
+                    AppLocalizations.of(context)?.somethingWentWrongTryAgain ??
+                    'Something went wrong. Please try again.';
+            }
+
+            _showSnackBar(errorMessage, backgroundColor: AppColors.red);
           },
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)?.pleaseAddCountryCode ?? '',
+              AppLocalizations.of(context)?.pleaseAddCountryCode ??
+                  'Please enter a valid phone number starting with 05',
             ),
             behavior: SnackBarBehavior.floating,
           ),
@@ -394,8 +434,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 label: locale?.phoneNumber ?? '',
                 keyboardType: TextInputType.phone,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\+?[0-9]*')),
-                  LengthLimitingTextInputFormatter(13),
+                  FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
+                  LengthLimitingTextInputFormatter(10),
                 ],
                 suffixIcon: TextButton(
                   onPressed: _updatePhoneNumber,

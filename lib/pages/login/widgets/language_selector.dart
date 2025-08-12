@@ -4,102 +4,95 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LanguageSelectorCard extends StatelessWidget {
-  final String currentLanguageCode;
-
-  const LanguageSelectorCard({super.key, required this.currentLanguageCode});
+  const LanguageSelectorCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (context, state) {
+        final currentLanguageCode = state.locale.languageCode;
+
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildCardLanguageOption(
+                  context,
+                  'en',
+                  'EN',
+                  isSelected: currentLanguageCode == 'en',
+                ),
+                const SizedBox(width: 1),
+                _buildCardLanguageOption(
+                  context,
+                  'ar',
+                  'AR',
+                  isSelected: currentLanguageCode == 'ar',
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildCardLanguageOption(
-              context,
-              'en',
-              'EN',
-              '🇺🇸',
-              isSelected: currentLanguageCode == 'en',
-            ),
-            _buildCardLanguageOption(
-              context,
-              'ar',
-              'AR',
-              '🇸🇦',
-              isSelected: currentLanguageCode == 'ar',
-            ),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 
   Widget _buildCardLanguageOption(
     BuildContext context,
     String langCode,
-    String langShort,
-    String flag, {
+    String langShort, {
     required bool isSelected,
   }) {
     return GestureDetector(
       onTap: () {
+        final currentState = context.read<AccountBloc>().state;
+        final currentLanguageCode = currentState.locale.languageCode;
         if (langCode != currentLanguageCode) {
-          context.read<AccountBloc>().add(
-            ChangeLocale(languageCode: langCode),
-          );
+          context.read<AccountBloc>().add(ChangeLocale(languageCode: langCode));
         }
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        width: 60,
-        height: 44,
+        width: 56,
+        height: 40,
         decoration: BoxDecoration(
-          color: isSelected 
-              ? Colors.white.withOpacity(0.2) 
+          color: isSelected
+              ? Colors.white.withOpacity(0.25)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
+          border: isSelected
+              ? Border.all(color: Colors.white.withOpacity(0.3), width: 1)
+              : null,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              flag,
-              style: const TextStyle(fontSize: 16),
+        child: Center(
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            style: GoogleFonts.dmSans(
+              color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              letterSpacing: 0.8,
             ),
-            const SizedBox(height: 2),
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 200),
-              style: GoogleFonts.dmSans(
-                color: isSelected 
-                    ? Colors.white 
-                    : Colors.white.withOpacity(0.7),
-                fontSize: 11,
-                fontWeight: isSelected 
-                    ? FontWeight.w700 
-                    : FontWeight.w500,
-                letterSpacing: 0.5,
-              ),
-              child: Text(langShort),
-            ),
-          ],
+            child: Text(langShort),
+          ),
         ),
       ),
     );

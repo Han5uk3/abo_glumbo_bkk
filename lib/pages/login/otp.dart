@@ -106,9 +106,40 @@ class _OtpPageState extends State<OtpPage> {
           isResendingOtp = false;
         });
 
+        String errorMessage;
+        switch (error.code) {
+          case 'too-many-requests':
+            errorMessage =
+                AppLocalizations.of(context)?.tooManyAttempts ??
+                'Too many attempts. Please wait and try again.';
+            break;
+          case 'quota-exceeded':
+            errorMessage =
+                AppLocalizations.of(context)?.quotaExceeded ??
+                'SMS quota exceeded. Try again later.';
+            break;
+          case 'network-request-failed':
+            errorMessage =
+                AppLocalizations.of(context)?.networkError ??
+                'Network error. Please check your connection.';
+            break;
+          case 'session-expired':
+            errorMessage =
+                AppLocalizations.of(context)?.otpExpired ??
+                'OTP expired. Please request a new OTP.';
+            break;
+          case 'internal-error':
+            errorMessage =
+                AppLocalizations.of(context)?.internalError ??
+                'An internal error occurred. Please try again later.';
+            break;
+          default:
+            errorMessage = error.message ?? 'Failed to resend OTP';
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error.message ?? 'Failed to resend OTP'),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,

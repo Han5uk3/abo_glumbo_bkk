@@ -120,12 +120,12 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   void _handleBookingsChanged(List<BookingModel> oldBookings) {
     final oldAgentUids = oldBookings
         .where((b) => b.agent?.uid != null)
-        .map((b) => b.agent!.uid!)
+        .map((b) => b.agent!.uid)
         .toSet();
     
     final newAgentUids = widget.activeBookings
         .where((b) => b.agent?.uid != null)
-        .map((b) => b.agent!.uid!)
+        .map((b) => b.agent!.uid)
         .toSet();
     
     // Cancel subscriptions for agents no longer in the list

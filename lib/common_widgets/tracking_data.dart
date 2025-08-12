@@ -34,7 +34,7 @@ class TrackingData extends StatelessWidget {
           SizedBox(height: 5),
           _title('$timeTakenToArrive', 35, fontWeight: FontWeight.bold),
           _title(
-            '$remainingKm ${AppLocalizations.of(context)?.away ?? 'away'}',
+            '${AppLocalizations.of(context)!.localeName == 'ar' ? 'كم' : ''} $remainingKm ${AppLocalizations.of(context)?.away ?? 'away'}',
             12,
             fontWeight: FontWeight.normal,
           ),

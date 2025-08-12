@@ -457,6 +457,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'عدد المحاولات كبير جدًا. يرجى الانتظار والمحاولة مرة أخرى.';
 
   @override
+  String get tooManyRequests =>
+      'طلبات كثيرة جدًا. يرجى الانتظار والمحاولة مرة أخرى.';
+
+  @override
+  String get internalError => 'حدث خطأ داخلي. يرجى المحاولة مرة أخرى لاحقًا.';
+
+  @override
   String get networkError => 'خطأ في الشبكة. يرجى التحقق من اتصالك.';
 
   @override
@@ -761,7 +768,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteAccoundSnack => 'حذف الحساب..., سيتم تسجيل الخروج';
 
   @override
-  String get bioMetricAuthentication => 'تصفية الخدمات';
+  String get bioMetricAuthentication => 'تفعيل البصمة';
 
   @override
   String get chooseServiceAddress => 'اختر عنوان الخدمة';
@@ -939,7 +946,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removeAddress => 'حذف العنوان';
 
   @override
-  String get enableBiometricAuthentication => 'تمكين تصفية البصمة';
+  String get enableBiometricAuthentication => 'تفعيل البصمة';
 
   @override
   String get loading => 'جاري التحميل...';
@@ -1013,7 +1020,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workerArrivesToLocationIn => 'العامل يوصل للموقع في';
 
   @override
-  String get away => 'منذ';
+  String get away => 'على بعد';
 
   @override
   String get yourWorkerIsOnTheWay => 'العامل في الطريق';

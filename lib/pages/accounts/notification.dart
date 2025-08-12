@@ -24,12 +24,20 @@ class _NotificationsPageState extends State<NotificationsPage> {
   final int pageSize = 10;
   late ScrollController _scrollController;
 
-  // Translation system with caching
+  // Translation system with enhanced caching
   String _currentLanguage = 'en';
   final String _apiKey = 'AIzaSyBl4RQBYM_v-u2Oik_ENyxcGxnvyZGxL2o';
-  final Map<String, String> _translationCache = {}; // Cache translations
 
-  // NEW: Set to track unique notifications (title + datetime)
+  // NEW: Enhanced cache structure
+  // Cache structure: {language: {notificationId: {title: translated, body: translated, timestamp: DateTime}}}
+  static final Map<String, Map<String, Map<String, dynamic>>>
+  _notificationCache = {};
+
+  // NEW: Track cached notification IDs for current language
+  Set<String> get _cachedNotificationIds =>
+      _notificationCache[_currentLanguage]?.keys.toSet() ?? {};
+
+  // Set to track unique notifications (title + datetime)
   final Set<String> _notificationKeys = {};
 
   @override
@@ -46,10 +54,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
     final newLanguage = AppLocalizations.of(context)?.localeName ?? 'en';
     if (newLanguage != _currentLanguage) {
       _currentLanguage = newLanguage;
-      // Clear cache when language changes
-      _translationCache.clear();
+      // Don't clear cache when language changes, just reload from cache
       if (notifications.isNotEmpty) {
-        _refreshNotifications();
+        _loadFromCacheOrRefresh();
       }
     }
   }
@@ -63,16 +70,117 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  Future<void> _refreshNotifications() async {
+  // Simple refresh method that just reloads the page
+  Future<void> _refreshPage() async {
     try {
       lastDoc = null;
       hasMore = true;
-      // NEW: Clear the unique keys set when refreshing
       _notificationKeys.clear();
+
       setState(() {
         notifications = [];
         isLoading = true;
       });
+
+      await _loadInitialNotifications();
+    } catch (e) {
+      log('Error refreshing page: $e');
+      _showErrorSnackBar(
+        AppLocalizations.of(context)!.errorRefreshingNotifications,
+      );
+    }
+  }
+
+  // NEW: Method to load from cache first, then refresh if needed
+  Future<void> _loadFromCacheOrRefresh() async {
+    try {
+      // First, try to load from cache
+      if (_cachedNotificationIds.isNotEmpty) {
+        log('Loading notifications from cache for language: $_currentLanguage');
+        await _loadNotificationsFromCache();
+      } else {
+        log(
+          'No cache found for language: $_currentLanguage, loading fresh data',
+        );
+        await _refreshNotifications();
+      }
+    } catch (e) {
+      log('Error in _loadFromCacheOrRefresh: $e');
+      await _refreshNotifications();
+    }
+  }
+
+  // NEW: Load notifications from cache
+  Future<void> _loadNotificationsFromCache() async {
+    setState(() => isLoading = true);
+
+    try {
+      // Get fresh data from Firestore (without translation)
+      final query = await _getNotificationsQuery().get();
+      final validDocs = _filterValidNotifications(query.docs);
+
+      if (validDocs.isEmpty) {
+        setState(() {
+          notifications = [];
+          hasMore = false;
+          isLoading = false;
+        });
+        return;
+      }
+
+      // Process notifications and apply cached translations
+      final processedNotifications = <Map<String, dynamic>>[];
+
+      for (final doc in validDocs) {
+        final data = Map<String, dynamic>.from(
+          doc.data() as Map<String, dynamic>,
+        );
+        data['id'] = doc.id;
+
+        // Check if translation exists in cache
+        final cachedTranslation = _notificationCache[_currentLanguage]?[doc.id];
+        if (cachedTranslation != null) {
+          // Use cached translation
+          data['title'] = cachedTranslation['title'] ?? data['title'];
+          data['body'] = cachedTranslation['body'] ?? data['body'];
+          log('Using cached translation for notification: ${doc.id}');
+        }
+
+        processedNotifications.add(data);
+      }
+
+      // Remove duplicates and update state
+      final uniqueNotifications = _removeDuplicates(processedNotifications);
+
+      setState(() {
+        notifications = uniqueNotifications;
+        lastDoc = validDocs.isNotEmpty ? validDocs.last : null;
+        hasMore = query.docs.length == pageSize;
+        isLoading = false;
+      });
+    } catch (e) {
+      log('Error loading from cache: $e');
+      setState(() => isLoading = false);
+    }
+  }
+
+  // MODIFIED: Refresh method now forces translation API call
+  Future<void> _refreshNotifications({bool forceTranslation = false}) async {
+    try {
+      lastDoc = null;
+      hasMore = true;
+      _notificationKeys.clear();
+
+      setState(() {
+        notifications = [];
+        isLoading = true;
+      });
+
+      if (forceTranslation) {
+        log('Force refresh: Clearing cache for language: $_currentLanguage');
+        _notificationCache[_currentLanguage]?.clear();
+      }
+
       await _loadInitialNotifications();
     } catch (e) {
       log('Error refreshing notifications: $e');
@@ -97,23 +205,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  // NEW: Create unique key for notification (title + formatted datetime)
   String _createNotificationKey(Map<String, dynamic> data) {
     final title = data['title']?.toString().trim() ?? '';
     final createdAt = data['createdAt']?.toDate();
 
     if (title.isEmpty || createdAt == null) {
-      // For notifications without title or date, use document ID to avoid false duplicates
       return data['id']?.toString() ??
           DateTime.now().millisecondsSinceEpoch.toString();
     }
 
-    // Create key with title and formatted datetime
     final dateStr = DateFormat('yyyy-MM-dd HH:mm').format(createdAt);
     return '${title}_$dateStr';
   }
 
-  // NEW: Remove duplicates from notifications list
   List<Map<String, dynamic>> _removeDuplicates(
     List<Map<String, dynamic>> notificationsList,
   ) {
@@ -131,9 +235,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       }
     }
 
-    // Update the global set
     _notificationKeys.addAll(seenKeys);
-
     return uniqueNotifications;
   }
 
@@ -148,22 +250,20 @@ class _NotificationsPageState extends State<NotificationsPage> {
       if (validDocs.isNotEmpty) {
         lastDoc = validDocs.last;
 
-        // OPTIMIZATION 1: Load notifications immediately without translation
+        // Load notifications immediately without translation
         final basicNotifications = _processNotificationsBasic(validDocs);
-
-        // NEW: Remove duplicates before showing
         final uniqueNotifications = _removeDuplicates(basicNotifications);
 
         if (mounted) {
           setState(() {
             notifications = uniqueNotifications;
             hasMore = query.docs.length == pageSize;
-            isLoading = false; // Show content immediately
+            isLoading = false;
           });
         }
 
-        // OPTIMIZATION 2: Translate in background after showing content
-        _translateNotificationsInBackground(validDocs);
+        // NEW: Check cache and translate only if needed
+        await _handleTranslations(validDocs, 0);
       } else {
         if (mounted) {
           setState(() {
@@ -193,24 +293,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
       if (validDocs.isNotEmpty) {
         lastDoc = validDocs.last;
 
-        // Load basic notifications first
         final basicNotifications = _processNotificationsBasic(validDocs);
-
-        // NEW: Remove duplicates before adding to existing list
         final uniqueNotifications = _removeDuplicates(basicNotifications);
 
         if (mounted && uniqueNotifications.isNotEmpty) {
+          final startIndex = notifications.length;
           setState(() {
             notifications.addAll(uniqueNotifications);
             hasMore = query.docs.length == pageSize;
             isLoadingMore = false;
           });
 
-          // Translate in background
-          _translateNotificationsInBackground(
-            validDocs,
-            startIndex: notifications.length - uniqueNotifications.length,
-          );
+          // Handle translations for new notifications
+          await _handleTranslations(validDocs, startIndex);
         } else {
           if (mounted) {
             setState(() {
@@ -236,7 +331,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  // OPTIMIZATION 3: Process notifications without translation first
   List<Map<String, dynamic>> _processNotificationsBasic(
     List<DocumentSnapshot> docs,
   ) {
@@ -249,13 +343,68 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }).toList();
   }
 
-  // OPTIMIZATION 4: Background translation with batch processing and caching
-  Future<void> _translateNotificationsInBackground(
-    List<DocumentSnapshot> docs, {
-    int startIndex = 0,
-  }) async {
+  // NEW: Handle translations with cache checking
+  Future<void> _handleTranslations(
+    List<DocumentSnapshot> docs,
+    int startIndex,
+  ) async {
     try {
-      // Collect all texts that need translation
+      // Initialize cache for current language if not exists
+      _notificationCache[_currentLanguage] ??= {};
+
+      // Separate cached and non-cached notifications
+      final List<DocumentSnapshot> needTranslation = [];
+      final List<int> needTranslationIndices = [];
+
+      for (int i = 0; i < docs.length; i++) {
+        final doc = docs[i];
+        final notificationIndex = startIndex + i;
+
+        // Check if translation exists in cache
+        final cachedTranslation = _notificationCache[_currentLanguage]![doc.id];
+
+        if (cachedTranslation != null) {
+          // Use cached translation
+          log('Using cached translation for: ${doc.id}');
+          if (mounted && notificationIndex < notifications.length) {
+            setState(() {
+              notifications[notificationIndex]['title'] =
+                  cachedTranslation['title'] ??
+                  notifications[notificationIndex]['title'];
+              notifications[notificationIndex]['body'] =
+                  cachedTranslation['body'] ??
+                  notifications[notificationIndex]['body'];
+            });
+          }
+        } else {
+          // Need to translate
+          needTranslation.add(doc);
+          needTranslationIndices.add(notificationIndex);
+        }
+      }
+
+      // Translate only non-cached notifications
+      if (needTranslation.isNotEmpty) {
+        log(
+          'Translating ${needTranslation.length} notifications to $_currentLanguage',
+        );
+        await _translateAndCacheNotifications(
+          needTranslation,
+          needTranslationIndices,
+        );
+      }
+    } catch (e) {
+      log('Error in _handleTranslations: $e');
+    }
+  }
+
+  // NEW: Translate and cache notifications
+  Future<void> _translateAndCacheNotifications(
+    List<DocumentSnapshot> docs,
+    List<int> notificationIndices,
+  ) async {
+    try {
+      // Collect texts to translate
       List<String> textsToTranslate = [];
       List<Map<String, dynamic>> translationMap = [];
 
@@ -266,35 +415,30 @@ class _NotificationsPageState extends State<NotificationsPage> {
         final body = data['body']?.toString().trim() ?? '';
 
         Map<String, dynamic> itemMap = {
-          'docIndex': i,
+          'docId': doc.id,
+          'notificationIndex': notificationIndices[i],
           'originalTitle': title,
           'originalBody': body,
           'titleIndex': -1,
           'bodyIndex': -1,
         };
 
-        // Add title to translation batch if not cached
+        // Add title to translation batch
         if (title.isNotEmpty) {
-          final cacheKey = '${title}_$_currentLanguage';
-          if (!_translationCache.containsKey(cacheKey)) {
-            itemMap['titleIndex'] = textsToTranslate.length;
-            textsToTranslate.add(title);
-          }
+          itemMap['titleIndex'] = textsToTranslate.length;
+          textsToTranslate.add(title);
         }
 
-        // Add body to translation batch if not cached
+        // Add body to translation batch
         if (body.isNotEmpty) {
-          final cacheKey = '${body}_$_currentLanguage';
-          if (!_translationCache.containsKey(cacheKey)) {
-            itemMap['bodyIndex'] = textsToTranslate.length;
-            textsToTranslate.add(body);
-          }
+          itemMap['bodyIndex'] = textsToTranslate.length;
+          textsToTranslate.add(body);
         }
 
         translationMap.add(itemMap);
       }
 
-      // OPTIMIZATION 5: Batch translate all texts at once
+      // Batch translate all texts
       List<String> translatedTexts = [];
       if (textsToTranslate.isNotEmpty) {
         translatedTexts = await _batchTranslateTexts(
@@ -303,54 +447,53 @@ class _NotificationsPageState extends State<NotificationsPage> {
         );
       }
 
-      // Update notifications with translations
+      // Update notifications and cache
       if (mounted && translatedTexts.isNotEmpty) {
         setState(() {
-          for (int i = 0; i < translationMap.length; i++) {
-            final item = translationMap[i];
-            final notificationIndex = startIndex + (item['docIndex'] as int);
+          for (final item in translationMap) {
+            final notificationIndex = item['notificationIndex'] as int;
+            final docId = item['docId'] as String;
 
             if (notificationIndex < notifications.length) {
+              // Prepare cache entry
+              final cacheEntry = <String, dynamic>{'timestamp': DateTime.now()};
+
               // Update title
               final titleIndex = item['titleIndex'] as int;
-              if (titleIndex != -1) {
+              if (titleIndex != -1 && titleIndex < translatedTexts.length) {
                 final translatedTitle = translatedTexts[titleIndex];
                 notifications[notificationIndex]['title'] = translatedTitle;
-                // Cache the translation
-                _translationCache['${item['originalTitle']}_$_currentLanguage'] =
-                    translatedTitle;
-              } else if ((item['originalTitle'] as String).isNotEmpty) {
-                // Use cached translation
-                final cacheKey = '${item['originalTitle']}_$_currentLanguage';
-                notifications[notificationIndex]['title'] =
-                    _translationCache[cacheKey] ?? item['originalTitle'];
+                cacheEntry['title'] = translatedTitle;
+              } else {
+                cacheEntry['title'] = item['originalTitle'];
               }
 
               // Update body
               final bodyIndex = item['bodyIndex'] as int;
-              if (bodyIndex != -1) {
+              if (bodyIndex != -1 && bodyIndex < translatedTexts.length) {
                 final translatedBody = translatedTexts[bodyIndex];
                 notifications[notificationIndex]['body'] = translatedBody;
-                // Cache the translation
-                _translationCache['${item['originalBody']}_$_currentLanguage'] =
-                    translatedBody;
-              } else if ((item['originalBody'] as String).isNotEmpty) {
-                // Use cached translation
-                final cacheKey = '${item['originalBody']}_$_currentLanguage';
-                notifications[notificationIndex]['body'] =
-                    _translationCache[cacheKey] ?? item['originalBody'];
+                cacheEntry['body'] = translatedBody;
+              } else {
+                cacheEntry['body'] = item['originalBody'];
               }
+
+              // Store in cache
+              _notificationCache[_currentLanguage]![docId] = cacheEntry;
+              log('Cached translation for notification: $docId');
             }
           }
         });
+
+        log(
+          'Successfully cached ${translationMap.length} translations for $_currentLanguage',
+        );
       }
     } catch (e) {
-      log('Error in background translation: $e');
-      // Silently fail - users already see the original content
+      log('Error in _translateAndCacheNotifications: $e');
     }
   }
 
-  // OPTIMIZATION 6: Batch translation API call
   Future<List<String>> _batchTranslateTexts(
     List<String> texts,
     String targetLang,
@@ -358,6 +501,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     if (texts.isEmpty) return [];
 
     try {
+      log('Making translation API call for ${texts.length} texts');
       final response = await http
           .post(
             Uri.parse(
@@ -368,7 +512,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               'User-Agent': 'WorkerApp/1.0',
             },
             body: jsonEncode({
-              'q': texts, // Send all texts at once
+              'q': texts,
               'target': targetLang,
               'format': 'text',
             }),
@@ -392,7 +536,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       rethrow;
     }
 
-    return texts; // Return original texts on error
+    return texts;
   }
 
   Query _getNotificationsQuery({DocumentSnapshot? startAfterDoc}) {
@@ -452,7 +596,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _refreshNotifications,
+            onPressed: _refreshPage,
             tooltip: AppLocalizations.of(context)!.refresh,
           ),
         ],
@@ -462,7 +606,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           : notifications.isEmpty
           ? _buildEmptyState()
           : RefreshIndicator(
-              onRefresh: _refreshNotifications,
+              onRefresh: _refreshPage,
               child: ListView.builder(
                 controller: _scrollController,
                 padding: const EdgeInsets.all(16),
@@ -518,7 +662,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
       final body = notification['body']?.toString().trim() ?? '';
       final category = notification['category']?.toString() ?? 'general';
 
-      // Skip empty notifications
       if (title.isEmpty && body.isEmpty) {
         return const SizedBox.shrink();
       }

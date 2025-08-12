@@ -36,8 +36,8 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   BitmapDescriptor? _scooterIcon;
   BitmapDescriptor? _customerIcon;
 
-  LatLng? _customerLatLng; // Static - from selectedAddress
-  LatLng? _agentLatLng; // Dynamic - from live tracking
+  LatLng? _customerLatLng;
+  LatLng? _agentLatLng;
   LatLng? _previousAgentLatLng;
 
   StreamSubscription? _agentLocationSubscription;
@@ -53,7 +53,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   Timer? _etaDebounce;
   Timer? _cameraDebounce;
 
-  // Mock data for testing
   final bool _useMockData = false;
   final LatLng _mockCustomerLocation = const LatLng(19.0760, 72.8777);
   final LatLng _mockAgentLocation = const LatLng(19.0896, 72.8656);
@@ -88,10 +87,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Since customer location is static, no need to handle app lifecycle changes
-    // Agent location continues to be tracked through the stream
-  }
+  void didChangeAppLifecycleState(AppLifecycleState state) {}
 
   Future<void> _initializeTracking() async {
     try {
@@ -101,10 +97,8 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         _setMockRoute();
         _scheduleMockMovement();
       } else {
-        // Load static customer location from selectedAddress
         await _loadCustomerLocation();
 
-        // Start tracking agent location
         final agentUid = widget.booking?.agent?.uid;
         if (agentUid != null && agentUid.isNotEmpty) {
           _listenToAgentLocation(agentUid);
@@ -158,7 +152,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         '🏠 [CUSTOMER]   Address: ${widget.selectedAddress.streetName}',
       );
 
-      // Validate coordinates
       if (lat == 0.0 && lon == 0.0) {
         throw Exception('Invalid customer address coordinates');
       }
@@ -201,17 +194,13 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
             );
             debugPrint('🚗 [AGENT] Delivery address: $_customerLatLng');
 
-            // Schedule ETA recalculation when agent location changes
             _scheduleFetchETA();
 
-            // Update agent location if it has changed
             if (_agentLatLng == null ||
                 _agentLatLng!.latitude != newAgentLatLng.latitude ||
                 _agentLatLng!.longitude != newAgentLatLng.longitude) {
-              // Animate agent marker to new location
               _animateAgentMarker(newAgentLatLng);
 
-              // Update camera to show both locations if following mode is enabled
               if (_customerLatLng != null &&
                   _mapController != null &&
                   _isFollowingAgent) {
@@ -235,20 +224,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       debugPrint('[LOG] Agent: $_agentLatLng, Customer: $_customerLatLng');
       return;
     }
-
-    final distanceBetween = _calculateStraightDistanceKm(
-      _agentLatLng!,
-      _customerLatLng!,
-    );
-    debugPrint(
-      '[LOG] Fetching ETA for distance: ${distanceBetween.toStringAsFixed(2)} km',
-    );
-    debugPrint(
-      '[LOG] Agent coordinates: ${_agentLatLng!.latitude}, ${_agentLatLng!.longitude}',
-    );
-    debugPrint(
-      '[LOG] Delivery address: ${_customerLatLng!.latitude}, ${_customerLatLng!.longitude}',
-    );
 
     try {
       final result = await getEtaAndDistance(
@@ -288,29 +263,28 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         debugPrint('[LOG] API result is not a Map: $result');
       }
 
-      // Fallback for distance calculation
       if ((newDistance == null || newDistance.isEmpty)) {
         final d = _calculateStraightDistanceKm(_agentLatLng!, _customerLatLng!);
-        newDistance = "${d.toStringAsFixed(1)} km";
+        newDistance = _convertDistanceToArabic("${d.toStringAsFixed(1)} km");
         debugPrint('[LOG] Using fallback distance: $newDistance');
       }
 
       setState(() {
-        eta = newEta ?? eta;
-        distance = newDistance ?? distance;
+        eta = newEta != null ? _convertTimeToArabic(newEta) : eta;
+        distance = newDistance != null
+            ? _convertDistanceToArabic(newDistance)
+            : distance;
         if (newRoute.isNotEmpty) {
           routePoints = newRoute;
           debugPrint(
             '[LOG] Route points updated: ${routePoints.length} points',
           );
         } else {
-          // If no route from API, create a simple straight line
           routePoints = [_agentLatLng!, _customerLatLng!];
           debugPrint('[LOG] Using fallback straight line route');
         }
       });
 
-      // Update camera to show both locations with the new route
       if (_isFollowingAgent && _mapController != null) {
         _moveCameraToBounds(
           customerLatLng: _customerLatLng!,
@@ -321,16 +295,15 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       debugPrint("❌ ETA fetch error: $e");
       final d = _calculateStraightDistanceKm(_agentLatLng!, _customerLatLng!);
       setState(() {
-        distance = "${d.toStringAsFixed(1)} km";
+        distance = _convertDistanceToArabic("${d.toStringAsFixed(1)} km");
         eta ??= '—';
-        // Create fallback route
+
         routePoints = [_agentLatLng!, _customerLatLng!];
         debugPrint(
           '[LOG] Created fallback route with ${routePoints.length} points',
         );
       });
 
-      // Update camera to show both locations
       if (_isFollowingAgent && _mapController != null) {
         _moveCameraToBounds(
           customerLatLng: _customerLatLng!,
@@ -340,8 +313,86 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     }
   }
 
+  String _convertTimeToArabic(String? englishTime) {
+    if (englishTime == null || englishTime.isEmpty) {
+      return '';
+    }
+
+    if (AppLocalizations.of(context)!.localeName != 'ar') {
+      return englishTime;
+    }
+
+    const englishToArabicNums = {
+      '0': '٠',
+      '1': '١',
+      '2': '٢',
+      '3': '٣',
+      '4': '٤',
+      '5': '٥',
+      '6': '٦',
+      '7': '٧',
+      '8': '٨',
+      '9': '٩',
+    };
+
+    String arabicTime = englishTime;
+
+    englishToArabicNums.forEach((english, arabic) {
+      arabicTime = arabicTime.replaceAll(english, arabic);
+    });
+
+    arabicTime = arabicTime.replaceAll(' mins', ' دقيقة');
+    arabicTime = arabicTime.replaceAll(' min', ' دقيقة');
+    arabicTime = arabicTime.replaceAll(' hours', ' ساعة');
+    arabicTime = arabicTime.replaceAll(' hour', ' ساعة');
+    arabicTime = arabicTime.replaceAll(' hrs', ' ساعة');
+    arabicTime = arabicTime.replaceAll(' hr', ' ساعة');
+    arabicTime = arabicTime.replaceAll(' secs', ' ثانية');
+    arabicTime = arabicTime.replaceAll(' sec', ' ثانية');
+    arabicTime = arabicTime.replaceAll(' days', ' يوم');
+    arabicTime = arabicTime.replaceAll(' day', ' يوم');
+
+    return arabicTime;
+  }
+
+  String _convertDistanceToArabic(String? englishDistance) {
+    if (englishDistance == null || englishDistance.isEmpty) {
+      return '';
+    }
+
+    if (AppLocalizations.of(context)!.localeName != 'ar') {
+      return englishDistance;
+    }
+
+    const englishToArabicNums = {
+      '0': '٠',
+      '1': '١',
+      '2': '٢',
+      '3': '٣',
+      '4': '٤',
+      '5': '٥',
+      '6': '٦',
+      '7': '٧',
+      '8': '٨',
+      '9': '٩',
+    };
+
+    String arabicDistance = englishDistance;
+
+    englishToArabicNums.forEach((english, arabic) {
+      arabicDistance = arabicDistance.replaceAll(english, arabic);
+    });
+
+    arabicDistance = arabicDistance.replaceAll(' km', ' كم');
+    arabicDistance = arabicDistance.replaceAll(' m', ' م');
+    arabicDistance = arabicDistance.replaceAll(' mi', ' ميل');
+    arabicDistance = arabicDistance.replaceAll(' ft', ' قدم');
+
+    return arabicDistance;
+  }
+
   double _calculateStraightDistanceKm(LatLng a, LatLng b) {
-    const p = 0.017453292519943295; // π/180
+    const p = 0.017453292519943295;
     final dlat = (b.latitude - a.latitude) * p;
     final dlon = (b.longitude - a.longitude) * p;
     final lat1 = a.latitude * p;
@@ -350,7 +401,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     final hav =
         math.pow(math.sin(dlat / 2), 2) +
         math.cos(lat1) * math.cos(lat2) * math.pow(math.sin(dlon / 2), 2);
-    final distance = 12742 * math.asin(math.sqrt(hav)); // 2 * R * asin(...)
+    final distance = 12742 * math.asin(math.sqrt(hav));
 
     debugPrint('[DISTANCE] 🧮 Calculation Details:');
     debugPrint('[DISTANCE]   Agent: ${a.latitude}, ${a.longitude}');
@@ -367,7 +418,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
   double _getInitialZoom() {
     if (_agentLatLng == null || _customerLatLng == null) {
-      return 16.0; // Default zoom for single location
+      return 16.0;
     }
 
     final distanceBetween = _calculateStraightDistanceKm(
@@ -376,17 +427,17 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     );
 
     if (distanceBetween > 500) {
-      return 5.0; // Continental view
+      return 5.0;
     } else if (distanceBetween > 100) {
-      return 7.0; // Country view
+      return 7.0;
     } else if (distanceBetween > 50) {
-      return 9.0; // Region view
+      return 9.0;
     } else if (distanceBetween > 15) {
-      return 11.0; // City view
+      return 11.0;
     } else if (distanceBetween > 5) {
-      return 13.0; // Local area view
+      return 13.0;
     } else {
-      return 14.0; // Neighborhood view
+      return 14.0;
     }
   }
 
@@ -446,7 +497,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
     if (_mapController == null) return;
 
-    // Calculate distance between the two points
     final distanceBetween = _calculateStraightDistanceKm(
       customerLatLng,
       agentLatLng,
@@ -461,16 +511,14 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     log('[LOG] Agent: ${agentLatLng.latitude}, ${agentLatLng.longitude}');
 
     try {
-      // For very long distances, use bounds-based approach
       if (distanceBetween > 50.0) {
         final swLat = math.min(customerLatLng.latitude, agentLatLng.latitude);
         final swLng = math.min(customerLatLng.longitude, agentLatLng.longitude);
         final neLat = math.max(customerLatLng.latitude, agentLatLng.latitude);
         final neLng = math.max(customerLatLng.longitude, agentLatLng.longitude);
 
-        // Add some padding to the bounds
-        final latPadding = (neLat - swLat) * 0.1; // 10% padding
-        final lngPadding = (neLng - swLng) * 0.1; // 10% padding
+        final latPadding = (neLat - swLat) * 0.1;
+        final lngPadding = (neLng - swLng) * 0.1;
 
         final bounds = LatLngBounds(
           southwest: LatLng(swLat - latPadding, swLng - lngPadding),
@@ -483,28 +531,26 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           CameraUpdate.newLatLngBounds(bounds, 50),
         );
       } else {
-        // For shorter distances, use center-based approach with smart zoom
         final centerLat = (customerLatLng.latitude + agentLatLng.latitude) / 2;
         final centerLng =
             (customerLatLng.longitude + agentLatLng.longitude) / 2;
         final center = LatLng(centerLat, centerLng);
 
-        // Adjust zoom level based on distance
         double zoom;
         if (distanceBetween < 0.5) {
-          zoom = 17.0; // Very close
+          zoom = 17.0;
         } else if (distanceBetween < 1.0) {
-          zoom = 16.0; // Close
+          zoom = 16.0;
         } else if (distanceBetween < 3.0) {
-          zoom = 15.0; // Medium
+          zoom = 15.0;
         } else if (distanceBetween < 8.0) {
-          zoom = 13.0; // City distance
+          zoom = 13.0;
         } else if (distanceBetween < 15.0) {
-          zoom = 12.0; // Regional
+          zoom = 12.0;
         } else if (distanceBetween < 25.0) {
-          zoom = 11.0; // Very far
+          zoom = 11.0;
         } else {
-          zoom = 10.0; // Extremely far
+          zoom = 10.0;
         }
 
         log('[LOG] Using center approach with zoom: $zoom');
@@ -639,20 +685,13 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                           zoomControlsEnabled: false,
                           compassEnabled: false,
                           markers: {
-                            // Static delivery address marker
                             if (_customerLatLng != null)
                               Marker(
                                 markerId: const MarkerId('customer'),
                                 position: _customerLatLng!,
                                 icon: _customerIcon!,
-                                // infoWindow: InfoWindow(
-                                //   title: 'Delivery Address',
-                                //   snippet:
-                                //       widget.selectedAddress.address ??
-                                //       'Delivery location',
-                                // ),
                               ),
-                            // Dynamic agent location marker
+
                             if (_agentLatLng != null)
                               Marker(
                                 markerId: const MarkerId('agent'),
@@ -670,9 +709,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                             if (routePoints.isNotEmpty)
                               Polyline(
                                 polylineId: const PolylineId("route"),
-                                color: const Color(
-                                  0xFF1976D2,
-                                ), // Darker blue for better visibility
+                                color: const Color(0xFF1976D2),
                                 width:
                                     MediaQuery.of(context).devicePixelRatio < 2
                                     ? 5
@@ -685,8 +722,8 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                                     ? [
                                         PatternItem.dash(20),
                                         PatternItem.gap(10),
-                                      ] // Dashed line for straight route
-                                    : [], // Solid line for API route
+                                      ]
+                                    : [],
                               ),
                           },
                         ),
@@ -709,7 +746,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                     ),
                   ],
                 ),
-                // Back button
+
                 Positioned(
                   top: 24 + MediaQuery.of(context).viewPadding.top,
                   left: Directionality.of(context) == TextDirection.rtl
@@ -732,51 +769,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                     ),
                   ),
                 ),
-                // Toggle view button
-                // if (_customerLatLng != null && _agentLatLng != null)
-                //   Positioned(
-                //     bottom: 100,
-                //     right: 16,
-                //     child: Tooltip(
-                //       message: _isFollowingAgent
-                //           ? 'Focus on Delivery Address'
-                //           : 'Show Both Locations',
-                //       child: FloatingActionButton(
-                //         mini: true,
-                //         backgroundColor: Colors.white,
-                //         onPressed: () {
-                //           setState(() {
-                //             _isFollowingAgent = !_isFollowingAgent;
-                //           });
-
-                //           if (_isFollowingAgent) {
-                //             // Show both markers
-                //             _moveCameraToBounds(
-                //               customerLatLng: _customerLatLng!,
-                //               agentLatLng: _agentLatLng!,
-                //             );
-                //           } else {
-                //             // Focus on delivery address
-                //             _mapController?.animateCamera(
-                //               CameraUpdate.newCameraPosition(
-                //                 CameraPosition(
-                //                   target: _customerLatLng!,
-                //                   zoom: 16.0,
-                //                 ),
-                //               ),
-                //             );
-                //           }
-                //         },
-                //         child: Icon(
-                //           _isFollowingAgent
-                //               ? Icons.location_on
-                //               : Icons.zoom_out_map,
-                //           color: Colors.blue,
-                //           size: 20,
-                //         ),
-                //       ),
-                //     ),
-                //   ),
               ],
             ),
     );

@@ -1,4 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
@@ -38,10 +37,19 @@ class SignUpAlertForGuestUsers {
                   child: _SignUpAlertContent(
                     onCancel: () => Navigator.of(context).pop(),
                     onSignUp: () async {
-                      LocalStoreHelper.putGuestUser(false);
-                      LocalStoreHelper.clearUID();
-                      Navigator.popUntil(context, (route) => route.isFirst);
+                      final currentUid = LocalStoreHelper.getUID();
+                      final isBiometricEnabled = currentUid != null
+                          ? LocalStoreHelper.getBiometricAuthEnabled(currentUid)
+                          : false;
 
+                      await LocalStoreHelper.putGuestUser(false);
+                      await LocalStoreHelper.putlogoutStatus(true);
+
+                      if (!isBiometricEnabled) {
+                        await LocalStoreHelper.clearUID();
+                      }
+
+                      Navigator.popUntil(context, (route) => route.isFirst);
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => LoginPage()),
@@ -112,7 +120,6 @@ class _SignUpAlertContentState extends State<_SignUpAlertContent>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Animated Icon
           AnimatedBuilder(
             animation: _pulseAnimation,
             builder: (context, child) {
@@ -151,7 +158,6 @@ class _SignUpAlertContentState extends State<_SignUpAlertContent>
 
           const SizedBox(height: 24),
 
-          // Title
           Text(
             localizations?.signupRequired ?? 'Sign Up Required',
             style: theme.textTheme.headlineSmall?.copyWith(
@@ -163,7 +169,6 @@ class _SignUpAlertContentState extends State<_SignUpAlertContent>
 
           const SizedBox(height: 16),
 
-          // Description
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -187,10 +192,8 @@ class _SignUpAlertContentState extends State<_SignUpAlertContent>
 
           const SizedBox(height: 32),
 
-          // Action Buttons
           Row(
             children: [
-              // Cancel Button
               Expanded(
                 child: OutlinedButton(
                   onPressed: widget.onCancel,
@@ -216,7 +219,6 @@ class _SignUpAlertContentState extends State<_SignUpAlertContent>
 
               const SizedBox(width: 16),
 
-              // Sign Up Button
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(

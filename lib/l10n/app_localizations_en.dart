@@ -460,6 +460,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tooManyAttempts => 'Too many attempts. Please wait and try again.';
 
   @override
+  String get tooManyRequests => 'Too many requests. Please wait and try again.';
+
+  @override
+  String get internalError =>
+      'An internal error occurred. Please try again later.';
+
+  @override
   String get networkError => 'Network error. Please check your connection.';
 
   @override
@@ -765,7 +772,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Deleting Account..., you will be logged out';
 
   @override
-  String get bioMetricAuthentication => 'Biometric Authentication';
+  String get bioMetricAuthentication => 'Enable Biometric';
 
   @override
   String get chooseServiceAddress => 'Choose Service Address';

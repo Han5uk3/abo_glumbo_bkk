@@ -159,6 +159,8 @@
   "otpExpired":"انتهت صلاحية رمز. يرجى طلب رمز جديد.",
   "quotaExceeded":"تم تجاوز الحد الأقصى للرسائل القصيرة. حاول مرة أخرى لاحقًا.",
   "tooManyAttempts":"عدد المحاولات كبير جدًا. يرجى الانتظار والمحاولة مرة أخرى.",
+  "tooManyRequests":"طلبات كثيرة جدًا. يرجى الانتظار والمحاولة مرة أخرى.",
+  "internalError":"حدث خطأ داخلي. يرجى المحاولة مرة أخرى لاحقًا.",
   "networkError":"خطأ في الشبكة. يرجى التحقق من اتصالك.",
   "verificationFailed":"فشل التحقق. يرجى المحاولة مرة أخرى.",
   "pending":"قيد الانتظار",
@@ -261,7 +263,7 @@
   "searchLocations": "بحث عن الموقع",
   "selectDistrict": "حدد المنطقة",
   "deleteAccoundSnack": "حذف الحساب..., سيتم تسجيل الخروج",
-  "bioMetricAuthentication": "تصفية الخدمات",
+  "bioMetricAuthentication": "تفعيل البصمة",
   "chooseServiceAddress": "اختر عنوان الخدمة",
   "pickServiceAddress": "حدد العنوان الذي تحتاجه للخدمة.",
   "serviceto":"الخدمة ل:",
@@ -351,7 +353,7 @@
   "serviceFound":"تم العثور على الخدمة",
   "servicesFound":"تم العثور على الخدمات",
   "workerArrivesToLocationIn":"العامل يوصل للموقع في",
-  "away":"منذ",
+  "away":"على بعد",
   "yourWorkerIsOnTheWay":"العامل في الطريق",
   "serviceProvider":"مزود الخدمة",
   "callServiceProvider":"اتصل بمزود الخدمة",
@@ -377,5 +379,6 @@
  "noLiveTrackingAvailable":"لا يوجد تتبع مباشر",
  "calculating":"جاري التحليل...",
  "waitingForAgentLocation":"انتظار موقع العامل...",
-   "errorLoadingMoreNotifications":"خطأ في تحميل المزيد من الإشعارات"
+ "enableBiometricAuthentication": "تفعيل البصمة",
+"errorLoadingMoreNotifications":"خطأ في تحميل المزيد من الإشعارات"
 }
