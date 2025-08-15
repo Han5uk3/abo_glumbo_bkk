@@ -71,12 +71,15 @@ class AuthServices {
     );
     try {
       AuthServices.phoneNumber = sanitizedPhoneNumber;
-      _verificationId = null; // Reset verification ID before sending OTP
+      _verificationId = null; 
+      
+      // Configure Firebase Auth for iOS simulator
       if (Platform.isIOS) {
         await FirebaseAuth.instance.setSettings(
           appVerificationDisabledForTesting: true,
         );
       }
+      
       await _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: forceResendingToken,
@@ -87,6 +90,9 @@ class AuthServices {
         },
         verificationFailed: (FirebaseAuthException e) {
           onError(e);
+          debugPrint(
+            "Firebase Auth verification failed: ${e.code} - ${e.message}",
+          );
         },
         codeSent: (String verificationId, int? resendToken) {
           onCodeSent(verificationId, resendToken: resendToken);
@@ -95,6 +101,7 @@ class AuthServices {
       );
     } catch (e) {
       if (e is FirebaseAuthException) {
+        log("Firebase Auth error: ${e.code} - ${e.message}");
         onError(e);
       } else {
         onError(FirebaseAuthException(code: 'unknown', message: e.toString()));

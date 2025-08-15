@@ -353,7 +353,6 @@
   "serviceFound":"تم العثور على الخدمة",
   "servicesFound":"تم العثور على الخدمات",
   "workerArrivesToLocationIn":"العامل يوصل للموقع في",
-  "away":"على بعد",
   "yourWorkerIsOnTheWay":"العامل في الطريق",
   "serviceProvider":"مزود الخدمة",
   "callServiceProvider":"اتصل بمزود الخدمة",
@@ -380,5 +379,7 @@
  "calculating":"جاري التحليل...",
  "waitingForAgentLocation":"انتظار موقع العامل...",
  "enableBiometricAuthentication": "تفعيل البصمة",
+ "workerInfo":"معلومات العامل",
+ "name":"الاسم",
 "errorLoadingMoreNotifications":"خطأ في تحميل المزيد من الإشعارات"
 }

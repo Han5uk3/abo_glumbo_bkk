@@ -2180,6 +2180,18 @@ abstract class AppLocalizations {
   /// **'Waiting for agent location...'**
   String get waitingForAgentLocation;
 
+  /// No description provided for @workerInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Info'**
+  String get workerInfo;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
   /// No description provided for @errorLoadingMoreNotifications.
   ///
   /// In en, this message translates to:

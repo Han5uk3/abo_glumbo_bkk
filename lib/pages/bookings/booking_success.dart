@@ -213,13 +213,17 @@ class _BookingSuccessPageState extends State<BookingSuccessPage>
               _buildDetailRow(
                 icon: Icons.calendar_today,
                 label: AppLocalizations.of(context)!.date,
-                value: DateFormat.yMMMMd().format(DateTime.now()),
+                value: DateFormat.yMMMMd(
+                  AppLocalizations.of(context)?.localeName ?? 'en',
+                ).format(DateTime.now()),
               ),
               const SizedBox(height: 16),
               _buildDetailRow(
                 icon: Icons.access_time,
                 label: AppLocalizations.of(context)!.time,
-                value: DateFormat.jm().format(DateTime.now()),
+                value: DateFormat.jm(
+                  AppLocalizations.of(context)?.localeName ?? 'en',
+                ).format(DateTime.now()),
               ),
               if (widget.isFromCashOnDelivery) ...[
                 const SizedBox(height: 16),

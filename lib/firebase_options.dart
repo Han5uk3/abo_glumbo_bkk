@@ -63,6 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '629201660527',
     projectId: 'worker-app-tnext',
     storageBucket: 'worker-app-tnext.appspot.com',
+    androidClientId: '629201660527-06j03rhhajgm12puud6vc878ipr5ebh2.apps.googleusercontent.com',
+    iosClientId: '629201660527-spqt88udkg6prv5ov2p90na7rgkft7hc.apps.googleusercontent.com',
     iosBundleId: 'com.aboglumbo',
   );
 

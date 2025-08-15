@@ -290,56 +290,59 @@ class _PaymentWebViewState extends State<PaymentWebView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.payment),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-      ),
-      body: _isLoading
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text(AppLocalizations.of(context)!.initializingPayment),
-                ],
-              ),
-            )
-          : _errorMessage != null
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.payment),
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          centerTitle: true,
+        ),
+        body: _isLoading
+            ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error, color: Colors.red, size: 64),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppLocalizations.of(context)!.paymentError,
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(_errorMessage!, textAlign: TextAlign.center),
-                    TextButton(
-                      onPressed: () {
-                        if (mounted) {
-                          setState(() {
-                            _isLoading = true;
-                            _errorMessage = null;
-                          });
-                          _initializePayment();
-                        }
-                      },
-                      child: Text(AppLocalizations.of(context)!.retry),
-                    ),
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text(AppLocalizations.of(context)!.initializingPayment),
                   ],
                 ),
-              ),
-            )
-          : WebViewWidget(controller: _controller),
+              )
+            : _errorMessage != null
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error, color: Colors.red, size: 64),
+                      const SizedBox(height: 16),
+                      Text(
+                        AppLocalizations.of(context)!.paymentError,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(_errorMessage!, textAlign: TextAlign.center),
+                      TextButton(
+                        onPressed: () {
+                          if (mounted) {
+                            setState(() {
+                              _isLoading = true;
+                              _errorMessage = null;
+                            });
+                            _initializePayment();
+                          }
+                        },
+                        child: Text(AppLocalizations.of(context)!.retry),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : WebViewWidget(controller: _controller),
+      ),
     );
   }
 }

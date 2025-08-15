@@ -382,13 +382,13 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     englishToArabicNums.forEach((english, arabic) {
       arabicDistance = arabicDistance.replaceAll(english, arabic);
     });
-
     arabicDistance = arabicDistance.replaceAll(' km', ' كم');
     arabicDistance = arabicDistance.replaceAll(' m', ' م');
     arabicDistance = arabicDistance.replaceAll(' mi', ' ميل');
     arabicDistance = arabicDistance.replaceAll(' ft', ' قدم');
 
-    return arabicDistance;
+    // Add Arabic prefix "على بعد" (at a distance of)
+    return 'على بعد $arabicDistance';
   }
 
   double _calculateStraightDistanceKm(LatLng a, LatLng b) {

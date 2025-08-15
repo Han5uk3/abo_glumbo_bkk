@@ -126,6 +126,7 @@ class BookingModel {
       'bookingStatusCode': bookingStatusCode,
       'notes': notes,
       'issueImage': issueImage,
+      'issueVideo': issueVideo,
       'customer': customer.toJson(),
       'paymentModeCode': paymentModeCode,
       'isStarted': isStartTracking ?? false,

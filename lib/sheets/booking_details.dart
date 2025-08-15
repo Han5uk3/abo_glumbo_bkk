@@ -6,6 +6,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<void> showBookingDetailsBottomSheet(
   BuildContext context, {
@@ -150,6 +151,35 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                           localization.streetName,
                           customerSelectedAddress.streetName ?? 'N/A',
                         ),
+                      ],
+                    ),
+                  const SizedBox(height: 16),
+                  if (booking.agent != null)
+                    _buildSectionCard(
+                      title: localization.workerInfo,
+                      icon: Icons.person_rounded,
+                      children: [
+                        if (booking.agent!.name?.isNotEmpty == true)
+                          _buildInfoRow(
+                            localization.name,
+                            booking.agent!.name!,
+                          ),
+                        if (booking.agent!.phone?.isNotEmpty == true)
+                          _buildClickableInfoRow(
+                            localization.phoneNumber,
+                            booking.agent!.phone!,
+                            onTap: () =>
+                                _launchUrl('tel:${booking.agent!.phone}'),
+                            icon: Icons.phone,
+                          ),
+                        if (booking.agent!.email?.isNotEmpty == true)
+                          _buildClickableInfoRow(
+                            localization.emailAddress,
+                            booking.agent!.email!,
+                            onTap: () =>
+                                _launchUrl('mailto:${booking.agent!.email}'),
+                            icon: Icons.email,
+                          ),
                       ],
                     ),
                   const SizedBox(height: 16),
@@ -452,5 +482,80 @@ class BookingDetailsBottomSheet extends StatelessWidget {
     final dateFormat = DateFormat.yMMMMd(locale); // e.g., ١٩ يونيو، ٢٠٢٥
     final timeFormat = DateFormat.jm(locale); // e.g., ٢:٣٠ م or 2:30 PM
     return '${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}';
+  }
+
+  Widget _buildClickableInfoRow(
+    String label,
+    String value, {
+    required VoidCallback onTap,
+    required IconData icon,
+    bool isHighlighted = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: GoogleFonts.dmSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.transparent,
+                ),
+                child: Row(
+                  children: [
+                    Icon(icon, color: AppColors.blue1, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        value,
+                        style: GoogleFonts.dmSans(
+                          fontSize: 14,
+                          fontWeight: isHighlighted
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          color: AppColors.blue1,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    try {
+      final Uri uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      } else {
+        // Handle the case where the URL can't be launched
+        debugPrint('Could not launch $url');
+      }
+    } catch (e) {
+      debugPrint('Error launching URL: $e');
+    }
   }
 }

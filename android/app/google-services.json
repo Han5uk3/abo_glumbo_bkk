@@ -12,7 +12,28 @@
           "package_name": "com.aboglumbo"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "629201660527-06j03rhhajgm12puud6vc878ipr5ebh2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aboglumbo",
+            "certificate_hash": "029969ec40c83beca96a5a64b81f0fd7657b05c5"
+          }
+        },
+        {
+          "client_id": "629201660527-o8r6b9ht1ktmc92nr91iennntqkj18jj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aboglumbo",
+            "certificate_hash": "67d4dcc016da563be28d004810813e56246f60bb"
+          }
+        },
+        {
+          "client_id": "629201660527-r2m2bc5phmuh0h3pa1codqc0hfgl1597.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBk_ntYzCiL1uhCfuNBS9jqdK_Pmmzm0V8"
@@ -20,7 +41,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "629201660527-r2m2bc5phmuh0h3pa1codqc0hfgl1597.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "629201660527-g3q673rcg9087klcj1hevmaolktfapsb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.aboglumbo.cPanel"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +64,28 @@
           "package_name": "com.aboglumbo.cPanel"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "629201660527-evll86fp24bad640optrj8mmob390som.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aboglumbo.cPanel",
+            "certificate_hash": "bc58188d3103dfc6dc937d75dd682955854a0ffb"
+          }
+        },
+        {
+          "client_id": "629201660527-rf61ij2p943l2hgmen7ng1229t1i05vt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aboglumbo.cPanel",
+            "certificate_hash": "e92d1a421ba021715ebc3f4e67bc61709af4434f"
+          }
+        },
+        {
+          "client_id": "629201660527-r2m2bc5phmuh0h3pa1codqc0hfgl1597.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBk_ntYzCiL1uhCfuNBS9jqdK_Pmmzm0V8"
@@ -39,7 +93,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "629201660527-r2m2bc5phmuh0h3pa1codqc0hfgl1597.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "629201660527-g3q673rcg9087klcj1hevmaolktfapsb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.aboglumbo.cPanel"
+              }
+            }
+          ]
         }
       }
     }

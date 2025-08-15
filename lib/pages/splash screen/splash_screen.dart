@@ -244,13 +244,13 @@ class _SplashScreenState extends State<SplashScreen>
                                 const SizedBox(height: 32),
                                 Text(
                                   state.locale.languageCode == "ar"
-                                      ? "أبو غمبو"
+                                      ? "ابو جلمبو"
                                       : "Abo Glumbo",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 32,
                                     fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.2,
+  
                                     shadows: [
                                       Shadow(
                                         color: Colors.black.withOpacity(0.3),

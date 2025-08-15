@@ -1020,7 +1020,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workerArrivesToLocationIn => 'العامل يوصل للموقع في';
 
   @override
-  String get away => 'على بعد';
+  String get away => 'away';
 
   @override
   String get yourWorkerIsOnTheWay => 'العامل في الطريق';
@@ -1079,6 +1079,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get waitingForAgentLocation => 'انتظار موقع العامل...';
+
+  @override
+  String get workerInfo => 'معلومات العامل';
+
+  @override
+  String get name => 'الاسم';
 
   @override
   String get errorLoadingMoreNotifications =>

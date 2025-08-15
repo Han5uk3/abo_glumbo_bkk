@@ -1085,6 +1085,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get waitingForAgentLocation => 'Waiting for agent location...';
 
   @override
+  String get workerInfo => 'Worker Info';
+
+  @override
+  String get name => 'Name';
+
+  @override
   String get errorLoadingMoreNotifications =>
       'Error loading more notifications';
 }

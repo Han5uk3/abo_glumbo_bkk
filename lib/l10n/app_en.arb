@@ -357,5 +357,7 @@
  "noLiveTrackingAvailable":"No live tracking available",
  "calculating":"Calculating...",
  "waitingForAgentLocation":"Waiting for agent location...",
+ "workerInfo":"Worker Info",
+ "name":"Name",
   "errorLoadingMoreNotifications":"Error loading more notifications"
 }
