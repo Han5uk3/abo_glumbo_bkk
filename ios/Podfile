@@ -1,7 +1,5 @@
-# Uncomment this line to define a global platform for your project
 platform :ios, '15.0'
 
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -28,14 +26,17 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  # ✅ Use static linking to avoid Firebase symbol conflicts
+  # ✅ Static frameworks fix Firebase duplicate symbols
   use_frameworks! :linkage => :static
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
-  pod 'FirebaseAuth'
-  pod 'RecaptchaInterop'
+  # ✅ Firebase dependencies
+  pod 'Firebase/Auth'
+  pod 'Firebase/Core'
+  pod 'GoogleUtilities'  # Required for reCAPTCHA
+  pod 'RecaptchaEnterprise'  # Required for iOS reCAPTCHA
 
   target 'RunnerTests' do
     inherit! :search_paths
@@ -45,5 +46,10 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    
+    # ✅ Ensure iOS 15+ minimum deployment target
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+    end
   end
 end

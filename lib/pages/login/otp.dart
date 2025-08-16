@@ -311,6 +311,26 @@ class _OtpPageState extends State<OtpPage> {
                 context,
               )!.otpExpired; // Localized message for expired OTP
               break;
+            case 'too-many-requests':
+              errorMessage =
+                  AppLocalizations.of(context)?.tooManyAttempts ??
+                  'Too many attempts. Please wait and try again.';
+              break;
+            case 'network-request-failed':
+              errorMessage =
+                  AppLocalizations.of(context)?.networkError ??
+                  'Network error. Please check your connection.';
+              break;
+            case 'quota-exceeded':
+              errorMessage =
+                  AppLocalizations.of(context)?.quotaExceeded ??
+                  'SMS quota exceeded. Try again later.';
+              break;
+            case 'internal-error':
+              errorMessage =
+                  AppLocalizations.of(context)?.internalError ??
+                  'An internal error occurred. Please try again later.';
+              break;
             default:
               errorMessage =
                   e.message ?? 'Verification failed. Please try again.';

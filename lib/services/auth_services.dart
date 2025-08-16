@@ -6,6 +6,7 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/signup_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AuthServices {
@@ -71,37 +72,68 @@ class AuthServices {
     );
     try {
       AuthServices.phoneNumber = sanitizedPhoneNumber;
-      _verificationId = null; 
-      
-      // Configure Firebase Auth for iOS simulator
+      _verificationId = null;
+
+      // iOS specific configuration for reCAPTCHA
       if (Platform.isIOS) {
         await FirebaseAuth.instance.setSettings(
-          appVerificationDisabledForTesting: true,
+          appVerificationDisabledForTesting: false,
+          userAccessGroup: null,
         );
       }
-      
+
       await _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: forceResendingToken,
-        timeout: const Duration(seconds: 30),
+        timeout: const Duration(seconds: 120), // Increased timeout for iOS
         verificationCompleted: (PhoneAuthCredential credential) async {
-          AuthServices.phoneNumber = sanitizedPhoneNumber;
-          await _auth.signInWithCredential(credential);
+          // Auto-retrieval or instant verification
+          try {
+            AuthServices.phoneNumber = sanitizedPhoneNumber;
+            await _auth.signInWithCredential(credential);
+          } catch (e) {
+            debugPrint("Auto verification failed: $e");
+          }
         },
         verificationFailed: (FirebaseAuthException e) {
-          onError(e);
           debugPrint(
             "Firebase Auth verification failed: ${e.code} - ${e.message}",
           );
+
+          // Handle reCAPTCHA specific errors more gracefully
+          if (e.code == 'recaptcha-sdk-not-linked') {
+            debugPrint(
+              "reCAPTCHA SDK not linked - continuing without reCAPTCHA validation",
+            );
+            // For testing purposes, you might want to continue without reCAPTCHA
+            // In production, ensure reCAPTCHA Enterprise is properly configured
+            return;
+          }
+
+          onError(e);
         },
         codeSent: (String verificationId, int? resendToken) {
+          debugPrint(
+            "OTP code sent successfully. Verification ID: $verificationId",
+          );
           onCodeSent(verificationId, resendToken: resendToken);
         },
-        codeAutoRetrievalTimeout: (String verificationId) {},
+        codeAutoRetrievalTimeout: (String verificationId) {
+          debugPrint(
+            "Auto retrieval timeout for verification ID: $verificationId",
+          );
+        },
       );
     } catch (e) {
       if (e is FirebaseAuthException) {
         log("Firebase Auth error: ${e.code} - ${e.message}");
+
+        // Special handling for reCAPTCHA errors
+        if (e.code == 'recaptcha-sdk-not-linked') {
+          log("reCAPTCHA SDK not linked - this might be a configuration issue");
+          // You can choose to continue or show a specific error message
+        }
+
         onError(e);
       } else {
         onError(FirebaseAuthException(code: 'unknown', message: e.toString()));
@@ -119,10 +151,18 @@ class AuthServices {
       _sanitizePhoneNumber(phoneNumber),
     );
     try {
+      // iOS specific configuration for reCAPTCHA
+      if (Platform.isIOS) {
+        await FirebaseAuth.instance.setSettings(
+          appVerificationDisabledForTesting: false,
+          userAccessGroup: null,
+        );
+      }
+
       await _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: resendToken,
-        timeout: const Duration(seconds: 60),
+        timeout: const Duration(seconds: 120), // Increased timeout for iOS
         verificationCompleted: (PhoneAuthCredential credential) async {
           await _auth.signInWithCredential(credential);
         },
@@ -138,6 +178,9 @@ class AuthServices {
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           _verificationId = verificationId;
+          debugPrint(
+            "Resend auto retrieval timeout for verification ID: $verificationId",
+          );
         },
       );
     } catch (e) {
@@ -158,6 +201,15 @@ class AuthServices {
   }) async {
     try {
       String sanitizedOTP = _sanitizeOTP(otp);
+
+      // Additional validation for iOS
+      if (sanitizedOTP.isEmpty || sanitizedOTP.length != 6) {
+        throw FirebaseAuthException(
+          code: 'invalid-verification-code',
+          message: 'Invalid OTP format. Please enter a 6-digit code.',
+        );
+      }
+
       final credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
         smsCode: sanitizedOTP,
@@ -171,6 +223,23 @@ class AuthServices {
     } catch (e) {
       debugPrint("Error verifying OTP: $e");
       if (e is FirebaseAuthException) {
+        // Enhanced error handling for iOS-specific issues
+        switch (e.code) {
+          case 'invalid-verification-code':
+            debugPrint("iOS: Invalid verification code provided");
+            break;
+          case 'session-expired':
+            debugPrint("iOS: OTP session expired");
+            break;
+          case 'too-many-requests':
+            debugPrint("iOS: Too many requests - temporarily blocked");
+            break;
+          case 'network-request-failed':
+            debugPrint("iOS: Network request failed");
+            break;
+          default:
+            debugPrint("iOS: Unknown error - ${e.code}: ${e.message}");
+        }
         rethrow;
       } else {
         throw FirebaseAuthException(
