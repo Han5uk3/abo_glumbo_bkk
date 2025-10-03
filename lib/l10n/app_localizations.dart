@@ -218,23 +218,11 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to logout?'**
   String get areYouSureYouWantToLogout;
 
-  /// No description provided for @cancel.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get cancel;
-
   /// No description provided for @account.
   ///
   /// In en, this message translates to:
   /// **'Account'**
   String get account;
-
-  /// No description provided for @profileManagement.
-  ///
-  /// In en, this message translates to:
-  /// **'Profile Management'**
-  String get profileManagement;
 
   /// No description provided for @wishlist.
   ///
@@ -284,12 +272,6 @@ abstract class AppLocalizations {
   /// **'Search here'**
   String get searchHere;
 
-  /// No description provided for @failedToLoadServices.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to load services'**
-  String get failedToLoadServices;
-
   /// No description provided for @availableServices.
   ///
   /// In en, this message translates to:
@@ -325,6 +307,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to update profile'**
   String get failedToUpdateProfile;
+
+  /// No description provided for @profileManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Management'**
+  String get profileManagement;
 
   /// No description provided for @yourName.
   ///
@@ -367,12 +355,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Phone Number'**
   String get phoneNumber;
-
-  /// No description provided for @location.
-  ///
-  /// In en, this message translates to:
-  /// **'Location'**
-  String get location;
 
   /// No description provided for @locationIsRequired.
   ///
@@ -473,7 +455,7 @@ abstract class AppLocalizations {
   /// No description provided for @createAccount.
   ///
   /// In en, this message translates to:
-  /// **'Create account'**
+  /// **'Create Account'**
   String get createAccount;
 
   /// No description provided for @pleaseFillTheInputBelowHereToContinue.
@@ -632,12 +614,6 @@ abstract class AppLocalizations {
   /// **'Book appointment'**
   String get bookAppointment;
 
-  /// No description provided for @filter.
-  ///
-  /// In en, this message translates to:
-  /// **'Filter'**
-  String get filter;
-
   /// No description provided for @rating.
   ///
   /// In en, this message translates to:
@@ -649,12 +625,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Price'**
   String get price;
-
-  /// No description provided for @clear.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear'**
-  String get clear;
 
   /// No description provided for @reviewSubmittedSuccessfully.
   ///
@@ -692,6 +662,12 @@ abstract class AppLocalizations {
   /// **'Please write a review'**
   String get pleaseWriteAReview;
 
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
   /// No description provided for @bookingCancelled.
   ///
   /// In en, this message translates to:
@@ -727,6 +703,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes, cancel'**
   String get yesCancel;
+
+  /// No description provided for @failedToLoadServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load services'**
+  String get failedToLoadServices;
 
   /// No description provided for @writeAReview.
   ///
@@ -1166,6 +1148,12 @@ abstract class AppLocalizations {
   /// **'Could not fetch location. Please check permissions.'**
   String get permissionLocation;
 
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
   /// No description provided for @enterServiceLocation.
   ///
   /// In en, this message translates to:
@@ -1405,6 +1393,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Filters applied'**
   String get filtersApplied;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get filter;
 
   /// No description provided for @filtersAppliedText.
   ///
@@ -1699,12 +1699,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Full Name'**
   String get fullName;
-
-  /// No description provided for @phoneNumberRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Phone number is required'**
-  String get phoneNumberRequired;
 
   /// No description provided for @invalidPhoneNumberFormat.
   ///
@@ -2024,6 +2018,12 @@ abstract class AppLocalizations {
   /// **'Select from your saved addresses or add a new one.'**
   String get selectFromSavedAddresses;
 
+  /// No description provided for @phoneNumberRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is required'**
+  String get phoneNumberRequired;
+
   /// No description provided for @failedToSaveAddress.
   ///
   /// In en, this message translates to:
@@ -2197,6 +2197,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error loading more notifications'**
   String get errorLoadingMoreNotifications;
+
+  /// No description provided for @neighbourhood.
+  ///
+  /// In en, this message translates to:
+  /// **'Neighbourhood'**
+  String get neighbourhood;
+
+  /// No description provided for @neighbourhoodIsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Neighbourhood is required'**
+  String get neighbourhoodIsRequired;
+
+  /// No description provided for @termsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and Conditions'**
+  String get termsAndConditions;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @doYouAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you accept the Terms and Conditions?'**
+  String get doYouAccept;
+
+  /// No description provided for @byCreatingAnAccountYouAgreeToOur.
+  ///
+  /// In en, this message translates to:
+  /// **'By creating an account, you agree to our Terms and Conditions. Please read them carefully before proceeding.'**
+  String get byCreatingAnAccountYouAgreeToOur;
 }
 
 class _AppLocalizationsDelegate

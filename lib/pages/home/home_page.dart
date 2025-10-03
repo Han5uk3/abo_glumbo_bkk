@@ -308,9 +308,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       child: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: _buildHeader(safePadding)),
-          SliverToBoxAdapter(child: _buildCategoriesHeader()),
-          _buildCategoriesGrid(),
-
           if (!_isGuest)
             BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
@@ -342,6 +339,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 return const SliverToBoxAdapter(child: SizedBox.shrink());
               },
             ),
+          SliverToBoxAdapter(child: _buildCategoriesHeader()),
+          _buildCategoriesGrid(),
+
           if (secondaryBanners.isNotEmpty)
             SliverToBoxAdapter(
               child: Padding(

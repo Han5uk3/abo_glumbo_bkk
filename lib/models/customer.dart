@@ -16,6 +16,7 @@ class CustomerModel {
   final Timestamp? createdAt;
   final Timestamp? updatedAt;
   final bool? isAdmin;
+  final String? neighbourhood;
   final String? districtName;
 
   CustomerModel({
@@ -32,6 +33,7 @@ class CustomerModel {
     this.createdAt,
     this.updatedAt,
     this.isAdmin,
+    this.neighbourhood,
     this.districtName,
   });
 
@@ -60,6 +62,7 @@ class CustomerModel {
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       isAdmin: json['isAdmin'],
+      neighbourhood: json['neighbourhood'],
       districtName: json['districtName'],
     );
   }
@@ -79,6 +82,7 @@ class CustomerModel {
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'isAdmin': isAdmin,
+      'neighbourhood': neighbourhood,
       'districtName': districtName,
     };
   }
@@ -97,6 +101,7 @@ class CustomerModel {
     Timestamp? createdAt,
     Timestamp? updatedAt,
     bool? isAdmin,
+    String? neighbourhood,
     String? districtName,
   }) {
     return CustomerModel(
@@ -113,6 +118,7 @@ class CustomerModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isAdmin: isAdmin ?? this.isAdmin,
+      neighbourhood: neighbourhood ?? this.neighbourhood,
       districtName: districtName ?? this.districtName,
     );
   }
@@ -144,6 +150,7 @@ class CustomerModel {
     checkAndSet('createdAt', createdAt, previous.createdAt);
     checkAndSet('isAdmin', isAdmin, previous.isAdmin);
     checkAndSet('districtName', districtName, previous.districtName);
+    checkAndSet('neighbourhood', neighbourhood, previous.neighbourhood);
 
     return json;
   }

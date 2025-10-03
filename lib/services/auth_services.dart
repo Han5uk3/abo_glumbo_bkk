@@ -6,7 +6,7 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/signup_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 
 class AuthServices {
@@ -284,7 +284,7 @@ class AuthServices {
     } catch (e) {
       debugPrint("Error in checkUser: $e");
       if (e is FirebaseAuthException) {
-        throw e;
+        rethrow;
       } else {
         throw FirebaseAuthException(
           code: 'check-user-failed',

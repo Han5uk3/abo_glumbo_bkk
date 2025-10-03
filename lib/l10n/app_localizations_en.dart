@@ -72,13 +72,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get areYouSureYouWantToLogout => 'Are you sure you want to logout?';
 
   @override
-  String get cancel => 'Cancel';
-
-  @override
   String get account => 'Account';
-
-  @override
-  String get profileManagement => 'Profile Management';
 
   @override
   String get wishlist => 'Wishlist';
@@ -105,9 +99,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchHere => 'Search here';
 
   @override
-  String get failedToLoadServices => 'Failed to load services';
-
-  @override
   String get availableServices => 'Available services';
 
   @override
@@ -124,6 +115,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get failedToUpdateProfile => 'Failed to update profile';
+
+  @override
+  String get profileManagement => 'Profile Management';
 
   @override
   String get yourName => 'Your Name';
@@ -145,9 +139,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phoneNumber => 'Phone Number';
-
-  @override
-  String get location => 'Location';
 
   @override
   String get locationIsRequired => 'Location is required';
@@ -198,7 +189,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failedToCreateAccount => 'Failed to create account';
 
   @override
-  String get createAccount => 'Create account';
+  String get createAccount => 'Create Account';
 
   @override
   String get pleaseFillTheInputBelowHereToContinue =>
@@ -282,16 +273,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookAppointment => 'Book appointment';
 
   @override
-  String get filter => 'Filter';
-
-  @override
   String get rating => 'Rating';
 
   @override
   String get price => 'Price';
-
-  @override
-  String get clear => 'Clear';
 
   @override
   String get reviewSubmittedSuccessfully => 'Review submitted successfully.';
@@ -312,6 +297,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseWriteAReview => 'Please write a review';
 
   @override
+  String get cancel => 'Cancel';
+
+  @override
   String get bookingCancelled => 'Booking cancelled';
 
   @override
@@ -330,6 +318,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get yesCancel => 'Yes, cancel';
+
+  @override
+  String get failedToLoadServices => 'Failed to load services';
 
   @override
   String get writeAReview => 'Write a review';
@@ -561,6 +552,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not fetch location. Please check permissions.';
 
   @override
+  String get location => 'Location';
+
+  @override
   String get enterServiceLocation =>
       'Enter service location or tap to fetch current location';
 
@@ -683,6 +677,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filtersApplied => 'Filters applied';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get filter => 'Filter';
 
   @override
   String get filtersAppliedText => 'Filters Applied';
@@ -838,9 +838,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fullName => 'Full Name';
-
-  @override
-  String get phoneNumberRequired => 'Phone number is required';
 
   @override
   String get invalidPhoneNumberFormat => 'Invalid phone number format';
@@ -1006,6 +1003,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select from your saved addresses or add a new one.';
 
   @override
+  String get phoneNumberRequired => 'Phone number is required';
+
+  @override
   String get failedToSaveAddress => 'Failed to save address. Please try again.';
 
   @override
@@ -1093,4 +1093,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorLoadingMoreNotifications =>
       'Error loading more notifications';
+
+  @override
+  String get neighbourhood => 'Neighbourhood';
+
+  @override
+  String get neighbourhoodIsRequired => 'Neighbourhood is required';
+
+  @override
+  String get termsAndConditions => 'Terms and Conditions';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get doYouAccept => 'Do you accept the Terms and Conditions?';
+
+  @override
+  String get byCreatingAnAccountYouAgreeToOur =>
+      'By creating an account, you agree to our Terms and Conditions. Please read them carefully before proceeding.';
 }

@@ -13,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignupPage extends StatefulWidget {
   final String uid;
@@ -29,6 +30,7 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController districtNameController = TextEditingController();
+  final TextEditingController neighbourhoodController = TextEditingController();
   List<LocationModel> locations = [];
 
   Future signup() async {
@@ -45,6 +47,7 @@ class _SignupPageState extends State<SignupPage> {
         email: emailController.text.trim(),
         phone: phoneNumber,
         country: "SA",
+        neighbourhood: neighbourhoodController.text.trim(),
         districtName: districtNameController.text.trim(),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -95,6 +98,86 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     setState(() => isCreatingAccount = false);
+  }
+
+  Future<bool?> showTermsAndConditionsDialog() async {
+    final locale = AppLocalizations.of(context);
+
+    // Use available localization keys: `byContinuingYouAgreeToOur` and `termsOfUseAndPrivacyPolicy`.
+    // Use `ok`/`cancel` as action labels to avoid missing getters.
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text(
+            locale!.termsAndConditions,
+            style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(
+                  locale.byCreatingAnAccountYouAgreeToOur,
+                  style: GoogleFonts.dmSans(),
+                ),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () async {
+                    // Fallback URL; replace with real terms URL if available
+                    final url = 'https://example.com/terms';
+                    final uri = Uri.tryParse(url);
+                    if (uri != null && await canLaunchUrl(uri)) {
+                      await launchUrl(
+                        uri,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
+                  },
+                  child: Text(
+                    'https://example.com/terms',
+                    style: GoogleFonts.dmSans(
+                      color: AppColors.secondary,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  locale.doYouAccept,
+                  style: GoogleFonts.dmSans(fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                locale.cancel,
+                style: GoogleFonts.dmSans(color: Colors.black54),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.secondary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(
+                locale.accept,
+                style: GoogleFonts.dmSans(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -282,6 +365,21 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 16),
             TextFormWidget(
+              controller: neighbourhoodController,
+              label: locale?.neighbourhood ?? '',
+              keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.done,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return locale?.neighbourhoodIsRequired ?? '';
+                }
+                return null;
+              },
+            ),
+
+            const SizedBox(height: 16),
+
+            TextFormWidget(
               controller: districtNameController,
               label: locale?.districtName ?? '',
               onTap: selectLocationBottomSheet,
@@ -297,7 +395,15 @@ class _SignupPageState extends State<SignupPage> {
               width: double.maxFinite,
               height: 55,
               child: ElevatedButton(
-                onPressed: isCreatingAccount ? () {} : signup,
+                onPressed: isCreatingAccount
+                    ? () {}
+                    : () async {
+                        // Show terms dialog and proceed only if accepted
+                        final accepted = await showTermsAndConditionsDialog();
+                        if (accepted == true) {
+                          await signup();
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.secondary,
                   shape: RoundedRectangleBorder(

@@ -37,16 +37,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get anErrorOccurredPleaseTryAgainLater =>
-      'حدث خطأ، يرجى المحاولة مرة أخرى لاحقًا';
+      'حدث خطأ ما. يرجى المحاولة مرة أخرى لاحقًا.';
 
   @override
-  String get pleaseEnterAValidPhoneNumber => 'يرجى إدخال رقم الهاتف الصالح';
+  String get pleaseEnterAValidPhoneNumber => 'يرجى إدخال رقم هاتف صالح';
 
   @override
-  String get invalidOtp => 'رمز التحقق غير صالح';
+  String get invalidOtp => 'رمز التحقق غير صالح. يرجى المحاولة مرة أخرى.';
 
   @override
-  String get otpVerification => 'تحقق من الرمز';
+  String get otpVerification => 'التحقق من رمز التحقق';
 
   @override
   String get enterTheOtpSentToTheNumber => 'أدخل رمز التحقق المرسل إلى الرقم';
@@ -70,13 +70,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get areYouSureYouWantToLogout => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
 
   @override
-  String get cancel => 'إلغاء';
-
-  @override
   String get account => 'الحساب';
-
-  @override
-  String get profileManagement => 'إدارة الملف الشخصي';
 
   @override
   String get wishlist => 'قائمة الرغبات';
@@ -103,9 +97,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchHere => 'ابحث هنا';
 
   @override
-  String get failedToLoadServices => 'فشل في تحميل الخدمات';
-
-  @override
   String get availableServices => 'الخدمات المتاحة';
 
   @override
@@ -122,6 +113,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get failedToUpdateProfile => 'فشل تحديث الملف الشخصي';
+
+  @override
+  String get profileManagement => 'إدارة الملف الشخصي';
 
   @override
   String get yourName => 'اسمك';
@@ -143,9 +137,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get phoneNumber => 'رقم الهاتف';
-
-  @override
-  String get location => 'الموقع';
 
   @override
   String get locationIsRequired => 'الموقع مطلوب';
@@ -280,16 +271,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookAppointment => 'حجز موعد';
 
   @override
-  String get filter => 'تصفية';
-
-  @override
   String get rating => 'التقييم';
 
   @override
   String get price => 'السعر';
-
-  @override
-  String get clear => 'مسح';
 
   @override
   String get reviewSubmittedSuccessfully => 'تم تقديم المراجعة بنجاح';
@@ -310,6 +295,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseWriteAReview => 'الرجاء كتابة مراجعة';
 
   @override
+  String get cancel => 'إلغاء';
+
+  @override
   String get bookingCancelled => 'تم إلغاء الحجز';
 
   @override
@@ -327,6 +315,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get yesCancel => 'نعم، قم بالإلغاء';
+
+  @override
+  String get failedToLoadServices => 'فشل في تحميل الخدمات';
 
   @override
   String get writeAReview => 'اكتب مراجعة';
@@ -558,6 +549,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'لا يمكن استرداد الموقع. يرجى التحقق من الصلاحيات.';
 
   @override
+  String get location => 'الموقع';
+
+  @override
   String get enterServiceLocation =>
       'ادخل موقع الخدمة او اضغط للحصول على الموقع الحالي';
 
@@ -680,6 +674,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get filtersApplied => 'تم تطبيق التصفية';
+
+  @override
+  String get clear => 'مسح';
+
+  @override
+  String get filter => 'تصفية';
 
   @override
   String get filtersAppliedText => 'تم تطبيق التصفية';
@@ -833,9 +833,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fullName => 'الاسم الكامل';
-
-  @override
-  String get phoneNumberRequired => 'رقم الهاتف مطلوب';
 
   @override
   String get invalidPhoneNumberFormat => 'تنسيق رقم الجوال غير صحيح';
@@ -1001,6 +998,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'حدد من عناوينك المحفوظة أو أضف عنوانًا جديدًا.';
 
   @override
+  String get phoneNumberRequired => 'رقم الهاتف مطلوب';
+
+  @override
   String get failedToSaveAddress =>
       'فشل في حفظ العنوان. يرجى المحاولة مرة أخرى.';
 
@@ -1020,7 +1020,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workerArrivesToLocationIn => 'العامل يوصل للموقع في';
 
   @override
-  String get away => 'away';
+  String get away => 'بعيد';
 
   @override
   String get yourWorkerIsOnTheWay => 'العامل في الطريق';
@@ -1089,4 +1089,23 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get errorLoadingMoreNotifications =>
       'خطأ في تحميل المزيد من الإشعارات';
+
+  @override
+  String get neighbourhood => 'الحي';
+
+  @override
+  String get neighbourhoodIsRequired => 'الحي مطلوب';
+
+  @override
+  String get termsAndConditions => 'الشروط والأحكام';
+
+  @override
+  String get accept => 'أوافق';
+
+  @override
+  String get doYouAccept => 'هل توافق على الشروط والأحكام؟';
+
+  @override
+  String get byCreatingAnAccountYouAgreeToOur =>
+      'من خلال إنشاء حساب، فإنك توافق على';
 }
