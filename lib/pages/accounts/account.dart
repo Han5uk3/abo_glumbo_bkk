@@ -8,6 +8,7 @@ import 'package:abo_glumbo_bbk/pages/accounts/edit_profile.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/notification.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/account_list_tile.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/contact_bottom_sheet.dart';
+import 'package:abo_glumbo_bbk/pages/accounts/widgets/faq_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/language_dialog.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/wishlist.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
@@ -16,7 +17,6 @@ import 'package:abo_glumbo_bbk/services/biometric_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -98,10 +98,28 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           if (!_isGuest) ...[_buildAccountSection()],
           _buildGeneralSettings(),
           _buildSupportSection(),
-          if (!_isGuest) _buildDangerZone(),
+          if (!_isGuest) ...[
+            _buildTermsAndConditions(),
+            _buildFAQSection(),
+            _buildDangerZone(),
+          ], // Add this line (if not guest)
           _buildAuthSection(),
         ],
       ),
+    );
+  }
+
+  Widget _buildFAQSection() {
+    return AccountListTile.withArrow(
+      title: AppLocalizations.of(context)?.faq ?? '',
+      onTap: _handleFAQPage,
+    );
+  }
+
+  Widget _buildTermsAndConditions() {
+    return AccountListTile.withArrow(
+      title: AppLocalizations.of(context)?.termsAndConditions ?? '',
+      onTap: () {},
     );
   }
 
@@ -271,6 +289,22 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       context,
       MaterialPageRoute(
         builder: (context) => EditProfilePage(customer: widget.customerData!),
+      ),
+    );
+  }
+
+   void _handleFAQPage() {
+    if (widget.customerData == null) {
+      showSnackBar(
+        AppLocalizations.of(context)?.errorFillingProfile ?? '',
+        context,
+      );
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FAQPage(),
       ),
     );
   }

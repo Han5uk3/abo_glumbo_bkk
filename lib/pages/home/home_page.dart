@@ -171,19 +171,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _buildSearchBar() {
-    return SearchBar(
-      hintText: AppLocalizations.of(context)?.searchForAService ?? '',
-      onTap: () {
-        FocusScope.of(context).unfocus();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => SearchPage()),
-        );
-      },
-      onSubmitted: (value) {
-        FocusScope.of(context).unfocus();
-      },
-      leading: const Icon(Icons.search, color: Colors.black45),
+    return Column(
+      children: [
+        SearchBar(
+          hintText: AppLocalizations.of(context)?.searchForAService ?? '',
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SearchPage()),
+            );
+          },
+          onSubmitted: (value) {
+            FocusScope.of(context).unfocus();
+          },
+          leading: const Icon(Icons.search, color: Colors.black45),
+        ),
+      ],
     );
   }
 
@@ -312,9 +316,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
                 if (state is FetchActiveBookingLoading) {
-                  return const SliverToBoxAdapter(
-                    child: Center(child: Loader()),
-                  );
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
                 }
                 if (state is FetchActiveBookingSuccess &&
                     state.activeBookings.isNotEmpty) {

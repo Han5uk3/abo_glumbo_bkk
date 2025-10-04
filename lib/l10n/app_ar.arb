@@ -46,7 +46,6 @@
   "streetNameIsRequired": "اسم الشارع مطلوب",
   "districtName": "اسم الحي",
   "districtNameIsRequired": "اسم الحي مطلوب",
-  "cityName": "اسم المدينة",
   "cityNameIsRequired": "اسم المدينة مطلوب",
   "postcode": "الرمز البريدي",
   "postcodeIsRequired": "الرمز البريدي مطلوب",
@@ -356,5 +355,8 @@
   "termsAndConditions": "الشروط والأحكام",
   "accept": "أوافق",
   "doYouAccept": "هل توافق على الشروط والأحكام؟",
+  "city": "المدينة",
+  "faq": "الأسئلة الشائعة",
+  "noFaqsAvailable": "لا توجد أسئلة شائعة حالياً.",
   "byCreatingAnAccountYouAgreeToOur": "من خلال إنشاء حساب، فإنك توافق على"
 }

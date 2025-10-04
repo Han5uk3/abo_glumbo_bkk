@@ -36,6 +36,10 @@ class AppFirestore {
   static CollectionReference notificationsCollectionRef = FirebaseFirestore
       .instance
       .collection('notifications');
+
+  // faq collection
+  static CollectionReference faqCollectionRef = FirebaseFirestore.instance
+      .collection('faq');
 }
 
 class AppFireStorage {

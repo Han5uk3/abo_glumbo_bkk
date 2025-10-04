@@ -572,7 +572,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                   // Get ETA data
                   final bookingEtaData = etaData[booking.id];
                   final etaMinutes = bookingEtaData?['minutes'] as int? ?? 15;
-                  final arrivalTime = bookingEtaData?['arrivalTime'] as String? ?? _calculateArrivalTime(15);
+                  // final arrivalTime = bookingEtaData?['arrivalTime'] as String? ?? _calculateArrivalTime(15);
                   
                   // Check tracking status
                   final agentUid = booking.agent?.uid;

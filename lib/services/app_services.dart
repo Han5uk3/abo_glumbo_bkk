@@ -7,6 +7,7 @@ import 'package:abo_glumbo_bbk/models/banner.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
+import 'package:abo_glumbo_bbk/models/faq.dart';
 import 'package:abo_glumbo_bbk/models/location.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
@@ -609,5 +610,15 @@ class AppServices {
       debugPrint('❌ Error getting active bookings: $e');
       return [];
     }
+  }
+
+  static Stream<List<FaqModel>> getFaq() {
+    return AppFirestore.faqCollectionRef.snapshots().map((snapshot) {
+      List<FaqModel> faqList = snapshot.docs
+          .map((doc) => FaqModel.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+      faqList.sort((a, b) => a.stand?.compareTo(b.stand ?? 0) ?? 0);
+      return faqList;
+    });
   }
 }

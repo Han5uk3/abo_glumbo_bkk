@@ -17,6 +17,7 @@ class CustomerModel {
   final Timestamp? updatedAt;
   final bool? isAdmin;
   final String? neighbourhood;
+  final String? cityName;
   final String? districtName;
 
   CustomerModel({
@@ -35,6 +36,7 @@ class CustomerModel {
     this.isAdmin,
     this.neighbourhood,
     this.districtName,
+    this.cityName,
   });
 
   factory CustomerModel.fromJson(Map<String, dynamic> json) {
@@ -64,6 +66,7 @@ class CustomerModel {
       isAdmin: json['isAdmin'],
       neighbourhood: json['neighbourhood'],
       districtName: json['districtName'],
+      cityName: json['cityName'],
     );
   }
 
@@ -84,6 +87,7 @@ class CustomerModel {
       'isAdmin': isAdmin,
       'neighbourhood': neighbourhood,
       'districtName': districtName,
+      'cityName': cityName,
     };
   }
 
@@ -103,6 +107,7 @@ class CustomerModel {
     bool? isAdmin,
     String? neighbourhood,
     String? districtName,
+    String? cityName,
   }) {
     return CustomerModel(
       uid: uid ?? this.uid,
@@ -120,6 +125,7 @@ class CustomerModel {
       isAdmin: isAdmin ?? this.isAdmin,
       neighbourhood: neighbourhood ?? this.neighbourhood,
       districtName: districtName ?? this.districtName,
+      cityName: cityName ?? this.cityName,
     );
   }
 
@@ -151,6 +157,7 @@ class CustomerModel {
     checkAndSet('isAdmin', isAdmin, previous.isAdmin);
     checkAndSet('districtName', districtName, previous.districtName);
     checkAndSet('neighbourhood', neighbourhood, previous.neighbourhood);
+    checkAndSet('cityName', cityName, previous.cityName);
 
     return json;
   }

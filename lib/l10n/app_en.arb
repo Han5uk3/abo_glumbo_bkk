@@ -49,7 +49,6 @@
   "streetNameIsRequired": "Street name is required",
   "districtName": "District Name",
   "districtNameIsRequired": "District name is required",
-  "cityName": "City Name",
   "cityNameIsRequired": "City name is required",
   "postcode": "Postcode",
   "postcodeIsRequired": "Postcode is required",
@@ -353,6 +352,9 @@
   "neighbourhoodIsRequired": "Neighbourhood is required",
   "termsAndConditions": "Terms and Conditions",
   "accept": "Accept",
+  "city": "City",
+  "faq": "FAQ",
+  "noFaqsAvailable": "No FAQs available.",
   "doYouAccept":"Do you accept the Terms and Conditions?",
   "byCreatingAnAccountYouAgreeToOur": "By creating an account, you agree to our Terms and Conditions. Please read them carefully before proceeding."
 }

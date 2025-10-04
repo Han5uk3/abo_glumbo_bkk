@@ -31,6 +31,7 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController districtNameController = TextEditingController();
   final TextEditingController neighbourhoodController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
   List<LocationModel> locations = [];
 
   Future signup() async {
@@ -47,6 +48,7 @@ class _SignupPageState extends State<SignupPage> {
         email: emailController.text.trim(),
         phone: phoneNumber,
         country: "SA",
+        cityName: cityController.text.trim(),
         neighbourhood: neighbourhoodController.text.trim(),
         districtName: districtNameController.text.trim(),
         createdAt: Timestamp.now(),
@@ -119,12 +121,13 @@ class _SignupPageState extends State<SignupPage> {
           ),
           content: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   locale.byCreatingAnAccountYouAgreeToOur,
                   style: GoogleFonts.dmSans(),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 GestureDetector(
                   onTap: () async {
                     // Fallback URL; replace with real terms URL if available
@@ -145,7 +148,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 16),
                 Text(
                   locale.doYouAccept,
                   style: GoogleFonts.dmSans(fontWeight: FontWeight.w500),
@@ -372,6 +375,19 @@ class _SignupPageState extends State<SignupPage> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return locale?.neighbourhoodIsRequired ?? '';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormWidget(
+              controller: cityController,
+              label: locale?.city ?? '',
+              keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.done,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return locale?.cityNameIsRequired ?? '';
                 }
                 return null;
               },

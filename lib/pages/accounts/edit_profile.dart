@@ -35,6 +35,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final TextEditingController cityNameController = TextEditingController();
+  final TextEditingController neighborhoodController = TextEditingController();
   final TextEditingController districtNameController = TextEditingController();
 
   @override
@@ -49,6 +51,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       nameController.text = widget.customer.name ?? '';
       emailController.text = widget.customer.email ?? '';
       phoneController.text = widget.customer.phone ?? '';
+      neighborhoodController.text = widget.customer.neighbourhood ?? '';
+      cityNameController.text = widget.customer.cityName ?? '';
       districtNameController.text = widget.customer.districtName ?? '';
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -86,7 +90,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final updatedCustomer = widget.customer.copyWith(
         name: nameController.text.trim(),
         email: emailController.text.trim(),
+        cityName: cityNameController.text.trim(),
         districtName: districtNameController.text.trim(),
+        neighbourhood: neighborhoodController.text.trim(),
         updatedAt: Timestamp.now(),
       );
 
@@ -445,6 +451,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return locale?.pleaseEnterAValidPhoneNumber ?? '';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormWidget(
+                controller: neighborhoodController,
+                label: locale?.neighbourhood ?? '',
+                keyboardType: TextInputType.streetAddress,
+                textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return locale?.neighbourhoodIsRequired ?? '';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormWidget(
+                controller: cityNameController,
+                label: locale?.city ?? '',
+                keyboardType: TextInputType.streetAddress,
+                textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return locale?.cityNameIsRequired ?? '';
                   }
                   return null;
                 },

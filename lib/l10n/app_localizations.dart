@@ -398,12 +398,6 @@ abstract class AppLocalizations {
   /// **'District name is required'**
   String get districtNameIsRequired;
 
-  /// No description provided for @cityName.
-  ///
-  /// In en, this message translates to:
-  /// **'City Name'**
-  String get cityName;
-
   /// No description provided for @cityNameIsRequired.
   ///
   /// In en, this message translates to:
@@ -2221,6 +2215,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Accept'**
   String get accept;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @faq.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get faq;
+
+  /// No description provided for @noFaqsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No FAQs available.'**
+  String get noFaqsAvailable;
 
   /// No description provided for @doYouAccept.
   ///

@@ -160,9 +160,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get districtNameIsRequired => 'اسم الحي مطلوب';
 
   @override
-  String get cityName => 'اسم المدينة';
-
-  @override
   String get cityNameIsRequired => 'اسم المدينة مطلوب';
 
   @override
@@ -1101,6 +1098,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get accept => 'أوافق';
+
+  @override
+  String get city => 'المدينة';
+
+  @override
+  String get faq => 'الأسئلة الشائعة';
+
+  @override
+  String get noFaqsAvailable => 'لا توجد أسئلة شائعة حالياً.';
 
   @override
   String get doYouAccept => 'هل توافق على الشروط والأحكام؟';

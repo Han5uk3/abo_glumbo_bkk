@@ -162,9 +162,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get districtNameIsRequired => 'District name is required';
 
   @override
-  String get cityName => 'City Name';
-
-  @override
   String get cityNameIsRequired => 'City name is required';
 
   @override
@@ -1105,6 +1102,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accept => 'Accept';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get faq => 'FAQ';
+
+  @override
+  String get noFaqsAvailable => 'No FAQs available.';
 
   @override
   String get doYouAccept => 'Do you accept the Terms and Conditions?';
