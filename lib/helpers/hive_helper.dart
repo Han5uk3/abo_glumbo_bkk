@@ -119,4 +119,14 @@ class LocalStoreHelper {
   static Future<void> clearCache() async {
     await MyApp.box.clear();
   }
+
+static bool? getBlockStatus() {
+    return MyApp.box.get('block_status');
+  }
+static Future<void> putBlockStatus(bool status) async {
+    await MyApp.box.put('block_status', status);
+  }
+
 }
+
+

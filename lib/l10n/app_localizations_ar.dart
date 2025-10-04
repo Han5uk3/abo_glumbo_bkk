@@ -1112,6 +1112,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get doYouAccept => 'هل توافق على الشروط والأحكام؟';
 
   @override
+  String get accountBlocked => 'الحساب محظور';
+
+  @override
+  String get fraudOrRelatedActivities => 'احتيال أو أنشطة ذات صلة';
+
+  @override
+  String get improperConduct => 'سلوك غير لائق';
+
+  @override
+  String get violationOfTermsAndConditions => 'انتهاك الشروط والأحكام';
+
+  @override
+  String get pleaseContactAdmin =>
+      'يرجى الاتصال بالمسؤول لمزيد من المعلومات حول سبب حظر حسابك وما هي الخطوات التي يمكنك اتخاذها لفتحه.';
+
+  @override
+  String get exitApp => 'خروج من التطبيق';
+
+  @override
+  String get accountBlockedMessage =>
+      'تم حظر حسابك من قبل المسؤول بسبب سبب واحد أو أكثر من الأسباب التالية:';
+
+  @override
   String get byCreatingAnAccountYouAgreeToOur =>
       'من خلال إنشاء حساب، فإنك توافق على';
 }

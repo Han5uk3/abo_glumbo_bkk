@@ -356,5 +356,12 @@
   "faq": "FAQ",
   "noFaqsAvailable": "No FAQs available.",
   "doYouAccept":"Do you accept the Terms and Conditions?",
+  "accountBlocked": "Account Blocked",
+  "fraudOrRelatedActivities": "Fraud or related activities",
+  "improperConduct": "Improper Conduct",
+  "violationOfTermsAndConditions": "Violation of Terms and Conditions",
+  "pleaseContactAdmin":"Please contact the administrator for more information on why your account was blocked and what steps you may take to unlock it.",
+  "exitApp": "Exit App",
+  "accountBlockedMessage": "Your account has been blocked by the admin due to one or more of the following reasons:",
   "byCreatingAnAccountYouAgreeToOur": "By creating an account, you agree to our Terms and Conditions. Please read them carefully before proceeding."
 }

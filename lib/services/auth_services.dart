@@ -262,8 +262,6 @@ class AuthServices {
       }
       final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
       if (userDoc.exists) {
-        log('🔒 User exists, navigating to Home');
-        log('User UID: $uid');
         LocalStoreHelper.putUID(uid);
         LocalStoreHelper.putGuestUser(false);
         LocalStoreHelper.putlogoutStatus(false);
@@ -273,8 +271,6 @@ class AuthServices {
           (route) => false,
         );
       } else {
-        debugPrint("User doesn't exist, navigating to SignUp");
-        log('UID ON SIGNUP: $uid');
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => SignupPage(uid: uid)),

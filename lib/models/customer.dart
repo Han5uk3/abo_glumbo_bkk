@@ -19,6 +19,7 @@ class CustomerModel {
   final String? neighbourhood;
   final String? cityName;
   final String? districtName;
+  final bool? isBlocked;
 
   CustomerModel({
     this.uid,
@@ -37,6 +38,7 @@ class CustomerModel {
     this.neighbourhood,
     this.districtName,
     this.cityName,
+    this.isBlocked
   });
 
   factory CustomerModel.fromJson(Map<String, dynamic> json) {
@@ -67,6 +69,7 @@ class CustomerModel {
       neighbourhood: json['neighbourhood'],
       districtName: json['districtName'],
       cityName: json['cityName'],
+      isBlocked: json['isBlocked'] as bool? ?? false,
     );
   }
 
@@ -88,6 +91,7 @@ class CustomerModel {
       'neighbourhood': neighbourhood,
       'districtName': districtName,
       'cityName': cityName,
+      'isBlocked': isBlocked ?? false
     };
   }
 
@@ -108,6 +112,7 @@ class CustomerModel {
     String? neighbourhood,
     String? districtName,
     String? cityName,
+    bool? isBlocked
   }) {
     return CustomerModel(
       uid: uid ?? this.uid,
@@ -126,6 +131,7 @@ class CustomerModel {
       neighbourhood: neighbourhood ?? this.neighbourhood,
       districtName: districtName ?? this.districtName,
       cityName: cityName ?? this.cityName,
+      isBlocked: isBlocked ?? this.isBlocked
     );
   }
 
@@ -158,6 +164,7 @@ class CustomerModel {
     checkAndSet('districtName', districtName, previous.districtName);
     checkAndSet('neighbourhood', neighbourhood, previous.neighbourhood);
     checkAndSet('cityName', cityName, previous.cityName);
+    checkAndSet('isBlocked', isBlocked, previous.isBlocked);
 
     return json;
   }

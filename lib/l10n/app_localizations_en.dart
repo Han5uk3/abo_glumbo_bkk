@@ -1116,6 +1116,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get doYouAccept => 'Do you accept the Terms and Conditions?';
 
   @override
+  String get accountBlocked => 'Account Blocked';
+
+  @override
+  String get fraudOrRelatedActivities => 'Fraud or related activities';
+
+  @override
+  String get improperConduct => 'Improper Conduct';
+
+  @override
+  String get violationOfTermsAndConditions =>
+      'Violation of Terms and Conditions';
+
+  @override
+  String get pleaseContactAdmin =>
+      'Please contact the administrator for more information on why your account was blocked and what steps you may take to unlock it.';
+
+  @override
+  String get exitApp => 'Exit App';
+
+  @override
+  String get accountBlockedMessage =>
+      'Your account has been blocked by the admin due to one or more of the following reasons:';
+
+  @override
   String get byCreatingAnAccountYouAgreeToOur =>
       'By creating an account, you agree to our Terms and Conditions. Please read them carefully before proceeding.';
 }

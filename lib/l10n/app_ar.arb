@@ -358,5 +358,12 @@
   "city": "المدينة",
   "faq": "الأسئلة الشائعة",
   "noFaqsAvailable": "لا توجد أسئلة شائعة حالياً.",
+  "accountBlocked": "الحساب محظور",
+  "improperConduct": "سلوك غير لائق",
+  "fraudOrRelatedActivities": "احتيال أو أنشطة ذات صلة",
+  "violationOfTermsAndConditions": "انتهاك الشروط والأحكام",
+  "exitApp": "خروج من التطبيق",
+  "pleaseContactAdmin": "يرجى الاتصال بالمسؤول لمزيد من المعلومات حول سبب حظر حسابك وما هي الخطوات التي يمكنك اتخاذها لفتحه.",
+  "accountBlockedMessage": "تم حظر حسابك من قبل المسؤول بسبب سبب واحد أو أكثر من الأسباب التالية:",
   "byCreatingAnAccountYouAgreeToOur": "من خلال إنشاء حساب، فإنك توافق على"
 }

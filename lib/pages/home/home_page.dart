@@ -1,7 +1,6 @@
 import 'package:abo_glumbo_bbk/common_widgets/category_card.dart';
 import 'package:abo_glumbo_bbk/common_widgets/highlighted_service.dart';
 import 'package:abo_glumbo_bbk/common_widgets/home_carousel.dart';
-import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';

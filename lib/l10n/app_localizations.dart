@@ -2240,6 +2240,48 @@ abstract class AppLocalizations {
   /// **'Do you accept the Terms and Conditions?'**
   String get doYouAccept;
 
+  /// No description provided for @accountBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Blocked'**
+  String get accountBlocked;
+
+  /// No description provided for @fraudOrRelatedActivities.
+  ///
+  /// In en, this message translates to:
+  /// **'Fraud or related activities'**
+  String get fraudOrRelatedActivities;
+
+  /// No description provided for @improperConduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Improper Conduct'**
+  String get improperConduct;
+
+  /// No description provided for @violationOfTermsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Violation of Terms and Conditions'**
+  String get violationOfTermsAndConditions;
+
+  /// No description provided for @pleaseContactAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Please contact the administrator for more information on why your account was blocked and what steps you may take to unlock it.'**
+  String get pleaseContactAdmin;
+
+  /// No description provided for @exitApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit App'**
+  String get exitApp;
+
+  /// No description provided for @accountBlockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been blocked by the admin due to one or more of the following reasons:'**
+  String get accountBlockedMessage;
+
   /// No description provided for @byCreatingAnAccountYouAgreeToOur.
   ///
   /// In en, this message translates to:
