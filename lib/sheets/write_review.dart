@@ -595,8 +595,9 @@ class _WriteReviewBottomSheetWidgetState
                               return GestureDetector(
                                 onTap: () {
                                   HapticFeedback.lightImpact();
-                                  if (mounted)
+                                  if (mounted) {
                                     setState(() => rating = index + 1);
+                                  }
                                 },
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 150),
