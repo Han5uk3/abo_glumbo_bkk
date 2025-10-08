@@ -19,6 +19,7 @@ class UserModel {
   String? docUrl;
   String? profileUrl;
   String? fcmToken;
+  String? rating;
 
   UserModel({
     required this.uid,
@@ -38,6 +39,7 @@ class UserModel {
     this.docUrl,
     this.profileUrl,
     this.fcmToken,
+    this.rating,
   });
 
   UserModel copyWith({
@@ -59,6 +61,7 @@ class UserModel {
     String? docUrl,
     String? profileUrl,
     String? fcmToken,
+    String? rating,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -78,6 +81,7 @@ class UserModel {
       docUrl: docUrl ?? this.docUrl,
       profileUrl: profileUrl ?? this.profileUrl,
       fcmToken: fcmToken ?? this.fcmToken,
+      rating: rating ?? this.rating,
     );
   }
 
@@ -106,6 +110,7 @@ class UserModel {
       docUrl: json['docUrl'],
       profileUrl: json['profileUrl'],
       fcmToken: json['fcmToken'],
+      rating: json['rating'],
     );
   }
 
@@ -138,9 +143,7 @@ class UserModel {
 
   // to edit json
   Map<String, dynamic> toEditJson({required UserModel previous}) {
-    Map<String, dynamic> json = {
-      'updatedAt': FieldValue.serverTimestamp(),
-    };
+    Map<String, dynamic> json = {'updatedAt': FieldValue.serverTimestamp()};
 
     if (name != previous.name && name != null) {
       json['name'] = name;
@@ -184,6 +187,9 @@ class UserModel {
     if (fcmToken != previous.fcmToken && fcmToken != null) {
       json['fcmToken'] = fcmToken;
     }
+    if (rating != previous.rating && rating != null) {
+      json['rating'] = rating;
+    }
     return json;
   }
 }
@@ -197,10 +203,7 @@ class LiveLocation {
     longitude = json['longitude'];
   }
   Map<String, dynamic> toJson() {
-    return {
-      'latitude': latitude,
-      'longitude': longitude,
-    };
+    return {'latitude': latitude, 'longitude': longitude};
   }
 
   @override

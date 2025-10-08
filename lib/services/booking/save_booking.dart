@@ -135,6 +135,17 @@ class BookingUtils {
       await AppFirestore.bookingsCollectionRef
           .doc(booking.id)
           .update(updateData);
+
+      final userDoc = AppFirestore.usersCollectionRef.doc(booking.customer.uid);
+      final userSnapshot = await userDoc.get();
+      if (userSnapshot.exists) {
+        final userData = userSnapshot.data() as Map<String, dynamic>;
+        final newRating = userData["rating"] + booking.service.rating;
+        await userDoc.update({"rating": newRating});
+      }
+      await AppFirestore.usersCollectionRef.doc(booking.customer.uid).update({
+        "rating": booking.service.rating,
+      });
       return true;
     } catch (e) {
       debugPrint("Error saving review: $e");
