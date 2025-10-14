@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/sheets/book_service.dart';
@@ -52,8 +53,11 @@ class ServiceTile extends StatelessWidget {
                     height: 85,
                     width: 85,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        Container(color: Colors.grey[200]),
+                    placeholder: (context, url) => SizedBox(
+                      height: 85,
+                      width: 85,
+                      child: Loader(color: AppColors.primary),
+                    ),
                     errorWidget: (context, url, error) =>
                         const Icon(Icons.error, color: Colors.red, size: 30),
                   )

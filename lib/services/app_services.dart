@@ -145,7 +145,7 @@ class AppServices {
           try {
             final customerData =
                 customerSnapshot.data() as Map<String, dynamic>?;
-            log(customerData.toString());
+           
             final favourites = List<String>.from(
               customerData?['favourites'] ?? [],
             );

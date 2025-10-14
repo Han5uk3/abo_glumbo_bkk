@@ -50,7 +50,7 @@ class CategoryCard extends StatelessWidget {
                       imageUrl: category.svg!,
                       fit: BoxFit.cover,
                       placeholder: (context, url) =>
-                          Loader(size: 20, color: Colors.white),
+                          Loader(size: 20, color: AppColors.primary),
                       errorWidget: (context, url, error) =>
                           const Icon(Icons.broken_image_outlined),
                     )

@@ -1,6 +1,7 @@
 import 'package:abo_glumbo_bbk/common_widgets/category_card.dart';
 import 'package:abo_glumbo_bbk/common_widgets/highlighted_service.dart';
 import 'package:abo_glumbo_bbk/common_widgets/home_carousel.dart';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -224,8 +225,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           );
         }
         if (!snapshot.hasData) {
-          return const SliverToBoxAdapter(
-            child: Center(child: CircularProgressIndicator()),
+          return SliverToBoxAdapter(
+            child: Center(child: Loader(color: AppColors.primary)),
           );
         }
         final categories = snapshot.data!.docs;

@@ -77,6 +77,9 @@ class ContactBottomSheet extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final type = data[index].type;
                     final content = data[index].detail;
+                    if (data[index].isActive == false) {
+                      return const SizedBox.shrink();
+                    }
                     return _ContactOption(
                       icon: getIcon(type),
                       iconColor: getColor(type),

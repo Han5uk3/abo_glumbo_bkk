@@ -2,6 +2,7 @@ import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/sheets/service_info.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -103,8 +104,10 @@ class HighlightedServiceWidget extends StatelessWidget {
                                 ? CachedNetworkImage(
                                     imageUrl: service.image!,
                                     fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        Loader(size: 20, color: Colors.white),
+                                    placeholder: (context, url) => Loader(
+                                      size: 20,
+                                      color: AppColors.primary,
+                                    ),
                                     errorWidget: (context, url, error) =>
                                         const Icon(
                                           Icons.error,
