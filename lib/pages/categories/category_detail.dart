@@ -7,6 +7,7 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/sheets/filter.dart';
 import 'package:abo_glumbo_bbk/sheets/sign_up_alert.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -177,53 +178,89 @@ class _CategoryDetailState extends State<CategoryDetail> {
                   child: Padding(
                     padding: const EdgeInsets.only(
                       bottom: 11,
-                      top: 31,
+                      top: 15,
                       left: 16,
                       right: 16,
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          '${AppLocalizations.of(context)?.availableServices ?? ''} (${filteredServices.length})',
-                          style: GoogleFonts.dmSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        if (hasActiveFilter) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
+                        Row(
+                          children: [
+                            Text(
+                              '${AppLocalizations.of(context)?.availableServices ?? ''} (${filteredServices.length})',
+                              style: GoogleFonts.dmSans(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                color: Colors.black87,
+                              ),
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.blue.shade50,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.blue.shade200),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.filter_alt,
-                                  size: 14,
-                                  color: Colors.blue.shade700,
+                            if (hasActiveFilter) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
                                 ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  AppLocalizations.of(context)?.filtered ?? '',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 12,
-                                    color: Colors.blue.shade700,
-                                    fontWeight: FontWeight.w500,
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.shade50,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: Colors.blue.shade200,
                                   ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.filter_alt,
+                                      size: 14,
+                                      color: Colors.blue.shade700,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      AppLocalizations.of(context)?.filtered ??
+                                          '',
+                                      style: GoogleFonts.dmSans(
+                                        fontSize: 12,
+                                        color: Colors.blue.shade700,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Column(
+                              children: [
+                                SizedBox(height: 4),
+                                Icon(
+                                  Icons.info_outline_rounded,
+                                  color: AppColors.secondary,
+                                  size: 18,
                                 ),
                               ],
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 2),
+                            Flexible(
+                              child: Text(
+                                AppLocalizations.of(context)!.costDisclaimer,
+                                style: GoogleFonts.dmSans(
+                                  color: AppColors.secondary,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -253,6 +290,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                       },
                       builder: (context, accountState) {
                         return ServiceTile(
+                          isfromHome: false,
                           key: ValueKey('service_tile_${service.id}'),
                           isGuestUser: LocalStoreHelper.getGuestUser(),
                           service: service,

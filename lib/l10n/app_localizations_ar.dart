@@ -1131,10 +1131,51 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exitApp => 'خروج من التطبيق';
 
   @override
+  String get pleaseSelectaWorker => 'يرجى الحدد عاملاً';
+
+  @override
+  String get chooseWorker => 'اختر العامل';
+
+  @override
+  String get within => 'في';
+
+  @override
+  String get km => 'كم';
+
+  @override
+  String get completeBooking => 'تكميل الحجز';
+
+  @override
   String get accountBlockedMessage =>
       'تم حظر حسابك من قبل المسؤول بسبب سبب واحد أو أكثر من الأسباب التالية:';
 
   @override
   String get byCreatingAnAccountYouAgreeToOur =>
       'من خلال إنشاء حساب، فإنك توافق على';
+
+  @override
+  String get bookingConfirmed => 'تم تأكيد الحجز!';
+
+  @override
+  String get bookingSuccessMessage => 'تم تأكيد الحجز بنجاح';
+
+  @override
+  String get bookingId => 'رقم الحجز';
+
+  @override
+  String get serviceDetails => 'تفاصيل الخدمة';
+
+  @override
+  String get workerDetails => 'تفاصيل العامل';
+
+  @override
+  String get inspectionDisclaimer =>
+      'هذا يغطي موقع الفحص. سيتم حساب التكلفة الكلية بعد انتهاء الخدمة.';
+
+  @override
+  String get costDisclaimer =>
+      'التكلفة المعروضة هي رسوم الفحص. سيتم حساب التكلفة الكلية بعد انتهاء الخدمة.';
+
+  @override
+  String get serviceLocation => 'موقع الخدمة';
 }

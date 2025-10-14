@@ -363,7 +363,20 @@
   "fraudOrRelatedActivities": "احتيال أو أنشطة ذات صلة",
   "violationOfTermsAndConditions": "انتهاك الشروط والأحكام",
   "exitApp": "خروج من التطبيق",
+  "pleaseSelectaWorker": "يرجى الحدد عاملاً",
+  "chooseWorker": "اختر العامل",
+  "within": "في",
+  "km": "كم",
+  "completeBooking": "تكميل الحجز",
   "pleaseContactAdmin": "يرجى الاتصال بالمسؤول لمزيد من المعلومات حول سبب حظر حسابك وما هي الخطوات التي يمكنك اتخاذها لفتحه.",
   "accountBlockedMessage": "تم حظر حسابك من قبل المسؤول بسبب سبب واحد أو أكثر من الأسباب التالية:",
-  "byCreatingAnAccountYouAgreeToOur": "من خلال إنشاء حساب، فإنك توافق على"
+  "byCreatingAnAccountYouAgreeToOur": "من خلال إنشاء حساب، فإنك توافق على",
+  "bookingConfirmed": "تم تأكيد الحجز!",
+  "bookingSuccessMessage": "تم تأكيد الحجز بنجاح",
+  "bookingId": "رقم الحجز",
+  "serviceDetails": "تفاصيل الخدمة",
+  "workerDetails": "تفاصيل العامل",
+  "inspectionDisclaimer": "هذا يغطي موقع الفحص. سيتم حساب التكلفة الكلية بعد انتهاء الخدمة.",
+  "costDisclaimer":"التكلفة المعروضة هي رسوم الفحص. سيتم حساب التكلفة الكلية بعد انتهاء الخدمة.",
+  "serviceLocation": "موقع الخدمة"
 }

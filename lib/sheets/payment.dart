@@ -6,6 +6,7 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
+import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/booking_success.dart';
 import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
@@ -17,6 +18,7 @@ import 'package:pay/pay.dart';
 
 showPaymentBottomSheet(
   BuildContext context, {
+    required UserModel agent,
   required ServiceModel service,
   required File? selectedImage,
   required File? selectedVideo,
@@ -36,6 +38,7 @@ showPaymentBottomSheet(
     builder: (BuildContext context) {
       return SafeArea(
         child: PaymentWindow(
+          agent: agent,
           service: service,
           selectedImage: selectedImage,
           selectedVideo: selectedVideo,
@@ -63,9 +66,12 @@ class PaymentWindow extends StatefulWidget {
   TextEditingController notesController;
   CustomerModel customerData;
   AddressModel selectedAddress;
+  
+  UserModel agent;
   PaymentWindow({
     super.key,
     required this.service,
+    required this.agent,
     this.selectedImage,
     this.selectedVideo,
     this.selectedDate,
@@ -100,6 +106,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
   Future<bool> saveBooking() async {
     return await BookingUtils.saveBooking(
       service: widget.service,
+      agent:widget.agent,
       selectedDate: widget.selectedDate!,
       paymentMode: selectedPayment ?? "",
       customerData: widget.customerData,

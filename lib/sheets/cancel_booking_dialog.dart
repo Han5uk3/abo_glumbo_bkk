@@ -75,18 +75,6 @@ class _CancelBookingDialogWidgetState extends State<CancelBookingDialogWidget> {
                           ),
                         ),
                         const SizedBox(height: 9),
-                        Text(
-                          AppLocalizations.of(
-                                context,
-                              )?.youWillBeRefundedTheFullAmount ??
-                              '',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.dmSans(
-                            color: Colors.black38,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
                       ],
                     ),
                   ),

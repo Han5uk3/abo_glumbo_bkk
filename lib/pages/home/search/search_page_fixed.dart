@@ -422,6 +422,7 @@ class _SearchPageState extends State<SearchPage> {
       itemBuilder: (context, index) {
         final service = filteredServices[index];
         return ServiceTile(
+          isfromHome: false,
           isGuestUser: isGuestUser,
           service: service,
           onFavPressed: () => _setFavorite(service),

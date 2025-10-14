@@ -621,4 +621,89 @@ class AppServices {
       return faqList;
     });
   }
+
+  static Stream<List<UserModel>> getWorkersByRoles(
+    String categoryDocId,
+  ) async* {
+    // Step 1: Get the category name from its document
+    final categorySnapshot = await AppFirestore.categoriesCollectionRef
+        .doc(categoryDocId)
+        .get();
+
+    if (!categorySnapshot.exists) {
+      // Return empty stream if the document doesn’t exist
+      yield [];
+      return;
+    }
+
+    final categoryData = categorySnapshot.data() as Map<String, dynamic>;
+    final categoryName = categoryData['name'];
+
+    // Step 2: Query users whose jobRoles includes that category name
+    yield* AppFirestore.usersCollectionRef
+        .where('jobRoles', arrayContains: categoryName)
+        .where('isAdmin', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map(
+                (doc) => UserModel.fromJson(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
+        });
+  }
+
+  static Future<AddressModel> getCustomerSelectedAddress() async {
+    try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot get customer address: User ID is empty');
+        return AddressModel(
+          id: '',
+          fullName: '',
+          buildingNumber: '',
+          phoneNumber: '',
+        );
+      }
+
+      final docSnapshot = await AppFirestore.customersCollectionRef
+          .doc(currentUid)
+          .get();
+      final data = docSnapshot.data() as Map<String, dynamic>?;
+      if (data == null) {
+        return AddressModel(
+          id: '',
+          fullName: '',
+          buildingNumber: '',
+          phoneNumber: '',
+        );
+      }
+
+      final addresses = data['addresses'] as List<dynamic>?;
+      if (addresses == null || addresses.isEmpty) {
+        return AddressModel(
+          id: '',
+          fullName: '',
+          buildingNumber: '',
+          phoneNumber: '',
+        );
+      }
+
+      final selectedAddress =
+          addresses.firstWhere(
+                (a) => (a as Map<String, dynamic>)['isSelected'] == true,
+                orElse: () => null,
+              )
+              as Map<String, dynamic>?;
+
+      return AddressModel.fromJson(selectedAddress ?? {});
+    } catch (e) {
+      return AddressModel(
+        id: '',
+        fullName: '',
+        buildingNumber: '',
+        phoneNumber: '',
+      );
+    }
+  }
 }

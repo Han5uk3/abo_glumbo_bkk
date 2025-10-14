@@ -1136,10 +1136,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exitApp => 'Exit App';
 
   @override
+  String get pleaseSelectaWorker => 'Please select a worker';
+
+  @override
+  String get chooseWorker => 'Choose Worker';
+
+  @override
+  String get within => 'Within';
+
+  @override
+  String get km => 'km';
+
+  @override
+  String get completeBooking => 'Complete Booking';
+
+  @override
   String get accountBlockedMessage =>
       'Your account has been blocked by the admin due to one or more of the following reasons:';
 
   @override
   String get byCreatingAnAccountYouAgreeToOur =>
       'By creating an account, you agree to our Terms and Conditions. Please read them carefully before proceeding.';
+
+  @override
+  String get bookingConfirmed => 'Booking Confirmed!';
+
+  @override
+  String get bookingSuccessMessage =>
+      'Your booking has been successfully placed';
+
+  @override
+  String get bookingId => 'Booking ID';
+
+  @override
+  String get serviceDetails => 'Service Details';
+
+  @override
+  String get workerDetails => 'Worker Details';
+
+  @override
+  String get inspectionDisclaimer =>
+      'This covers the inspection visit. Total service cost calculated after work is completed.';
+
+  @override
+  String get costDisclaimer =>
+      'Amount shown is inspection fee. Total service cost determined after completion.';
+
+  @override
+  String get serviceLocation => 'Service Location';
 }

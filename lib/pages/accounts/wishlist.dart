@@ -100,7 +100,7 @@ class _WishListPageState extends State<WishListPage> {
                         previous is! CustomerDataLoaded;
                   },
                   builder: (context, accountState) {
-                    return ServiceTile(
+                    return ServiceTile(isfromHome: false,
                       key: ValueKey('wishlist_service_tile_${service.id}'),
                       service: service,
                       isGuestUser: LocalStoreHelper.getGuestUser(),

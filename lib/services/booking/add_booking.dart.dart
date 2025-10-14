@@ -8,31 +8,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-class BookingUtils {
-  static String getPaymentModeCode(String paymentMode) {
-    switch (paymentMode) {
-      case "Cards":
-        return "C";
-      case "Apple Pay":
-        return "A";
-      case "Cash On Hands":
-        return "O";
-      default:
-        return "U"; // Unknown
-    }
-  }
 
 
-
-  static Future<bool> saveBooking({
+class NewBookingUtils {
+  static Future<bool> addBooking({
     required ServiceModel service,
     required DateTime selectedDate,
-    required String paymentMode,
+
     required CustomerModel customerData,
     required String notes,
     File? selectedImage,
     File? selectedVideo,
-    required Map timeSlot,
+    required Map<dynamic, dynamic> timeSlot,
     required UserModel agent,
   }) async {
     try {
@@ -103,7 +90,7 @@ class BookingUtils {
         issueVideo: selectedVideoDownloadUrl ?? "",
         customer: updatedCustomerData,
         agent: agent,
-        paymentModeCode: getPaymentModeCode(paymentMode),
+        paymentModeCode: "U",
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       );
@@ -113,7 +100,6 @@ class BookingUtils {
           .doc(bookingId)
           .set(booking.toJson());
 
-      // If we reach here, the booking was created successfully
       return true;
     } catch (e) {
       debugPrint("Error during booking process: $e");

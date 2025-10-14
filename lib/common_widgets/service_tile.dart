@@ -17,11 +17,14 @@ class ServiceTile extends StatelessWidget {
     required this.service,
     this.isGuestUser,
     this.onFavPressed,
+    required this.isfromHome,
   });
 
   final ServiceModel service;
   final VoidCallback? onFavPressed;
   final bool? isGuestUser;
+
+  final bool isfromHome;
 
   @override
   Widget build(BuildContext context) {
@@ -165,9 +168,40 @@ class ServiceTile extends StatelessWidget {
                     color: Colors.black45,
                     fontSize: 12,
                   ),
-                  maxLines: 3,
+                  maxLines: 5,
                   overflow: TextOverflow.ellipsis,
                 ),
+
+                if (isfromHome == true) ...[
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        children: [
+                          SizedBox(height: 2),
+                          Icon(
+                            Icons.info_outline_rounded,
+                            color: AppColors.secondary,
+                            size: 15,
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 2),
+                      Flexible(
+                        child: Text(
+                          AppLocalizations.of(context)?.inspectionDisclaimer ??
+                              '',
+                          style: GoogleFonts.dmSans(
+                            color: AppColors.secondary,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 10),
                 Row(
                   children: [

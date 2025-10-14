@@ -2,6 +2,7 @@ import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/faq.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 
 class FAQPage extends StatelessWidget {
@@ -43,7 +44,7 @@ class FAQPage extends StatelessWidget {
           return ListView.separated(
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemCount: faqs.length,
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 24, top: 20),
             itemBuilder: (context, index) {
               final faq = faqs[index];
               final question = isArabic ? faq.questionAr : faq.questionEn;
@@ -53,9 +54,10 @@ class FAQPage extends StatelessWidget {
                 elevation: 3,
                 margin: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
+                  side: BorderSide(color: AppColors.primary, width: 0.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                color: theme.colorScheme.surfaceVariant,
+                color: Colors.white.withAlpha(225),
                 child: Theme(
                   data: Theme.of(context).copyWith(
                     dividerColor: Colors.transparent,

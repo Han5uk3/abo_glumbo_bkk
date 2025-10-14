@@ -466,6 +466,7 @@ class _SearchPageState extends State<SearchPage> {
         }
 
         return ServiceTile(
+          isfromHome: false,
           isGuestUser: isGuestUser,
           service: service,
           onFavPressed: () => _setFavorite(service),

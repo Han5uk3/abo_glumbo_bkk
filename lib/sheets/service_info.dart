@@ -86,6 +86,7 @@ class _ServiceInfoSheetState extends State<ServiceInfoSheet> {
           },
           builder: (context, accountState) {
             return ServiceTile(
+              isfromHome: true,
               key: ValueKey('service_info_tile_${widget.service.id}'),
               service: widget.service,
               isGuestUser: LocalStoreHelper.getGuestUser(),

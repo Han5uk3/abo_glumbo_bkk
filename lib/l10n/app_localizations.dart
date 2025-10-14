@@ -2276,6 +2276,36 @@ abstract class AppLocalizations {
   /// **'Exit App'**
   String get exitApp;
 
+  /// No description provided for @pleaseSelectaWorker.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a worker'**
+  String get pleaseSelectaWorker;
+
+  /// No description provided for @chooseWorker.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Worker'**
+  String get chooseWorker;
+
+  /// No description provided for @within.
+  ///
+  /// In en, this message translates to:
+  /// **'Within'**
+  String get within;
+
+  /// No description provided for @km.
+  ///
+  /// In en, this message translates to:
+  /// **'km'**
+  String get km;
+
+  /// No description provided for @completeBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Booking'**
+  String get completeBooking;
+
   /// No description provided for @accountBlockedMessage.
   ///
   /// In en, this message translates to:
@@ -2287,6 +2317,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'By creating an account, you agree to our Terms and Conditions. Please read them carefully before proceeding.'**
   String get byCreatingAnAccountYouAgreeToOur;
+
+  /// No description provided for @bookingConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Confirmed!'**
+  String get bookingConfirmed;
+
+  /// No description provided for @bookingSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your booking has been successfully placed'**
+  String get bookingSuccessMessage;
+
+  /// No description provided for @bookingId.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking ID'**
+  String get bookingId;
+
+  /// No description provided for @serviceDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Details'**
+  String get serviceDetails;
+
+  /// No description provided for @workerDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Details'**
+  String get workerDetails;
+
+  /// No description provided for @inspectionDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'This covers the inspection visit. Total service cost calculated after work is completed.'**
+  String get inspectionDisclaimer;
+
+  /// No description provided for @costDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount shown is inspection fee. Total service cost determined after completion.'**
+  String get costDisclaimer;
+
+  /// No description provided for @serviceLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Location'**
+  String get serviceLocation;
 }
 
 class _AppLocalizationsDelegate

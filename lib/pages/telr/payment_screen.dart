@@ -6,6 +6,7 @@ import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/telr/request_model.dart';
+import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/booking_success.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/payment_failed.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
@@ -25,6 +26,7 @@ class PaymentWebView extends StatefulWidget {
   ServiceModel? service;
   ReviewModel? review;
   BookingModel? booking;
+  UserModel? agent;
   TextEditingController? notesController;
   PaymentWebView({
     super.key,
@@ -40,6 +42,7 @@ class PaymentWebView extends StatefulWidget {
     this.selectedTimeSlot,
     this.notesController,
     this.booking,
+    this.agent,
   });
 
   @override
@@ -79,6 +82,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
 
   Future<bool> saveBooking() async {
     return await BookingUtils.saveBooking(
+      agent: widget.agent ?? UserModel(uid: ''),
       service: widget.service ?? ServiceModel(),
       selectedDate: widget.selectedDate!,
       paymentMode: "Cards",

@@ -1,15 +1,21 @@
 import 'dart:io';
+import 'dart:math' show sin, cos, sqrt, atan2, pi;
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
+import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/add_image_booking.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/worker_card.dart';
 import 'package:abo_glumbo_bbk/services/address_services.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
-import 'package:abo_glumbo_bbk/sheets/payment.dart';
+import 'package:abo_glumbo_bbk/services/booking/bloc/booking_bloc.dart';
+import 'package:abo_glumbo_bbk/services/booking/bloc/booking_event.dart';
+import 'package:abo_glumbo_bbk/services/booking/bloc/booking_state.dart';
+import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,11 +45,15 @@ class BookServiceBottomSheet extends StatefulWidget {
 }
 
 class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
+  final ValueNotifier<int?> selectedIndexNotifier = ValueNotifier<int?>(null);
+  UserModel selectedWorker = UserModel(uid: "");
   bool isFirstStep = true;
+  bool isSecondStep = false;
+  bool isThirdStep = false;
   DateTime? selectedDate;
   bool cashInHand = true;
   bool saving = false;
-  // List<AddressModel> _customerAddresses = [];
+  AddressModel? selectedAddress;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController notesController = TextEditingController();
   int selectedTimeCategory = 0;
@@ -110,6 +120,25 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   String? selectedVideoDownloadUrl;
   CustomerModel? customerData;
 
+  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    const R = 6371; // Earth radius in km
+    final dLat = _toRadians(lat2 - lat1);
+    final dLon = _toRadians(lon2 - lon1);
+    final a =
+        sin(dLat / 2) * sin(dLat / 2) +
+        cos(_toRadians(lat1)) *
+            cos(_toRadians(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+    final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    final distance = R * c;
+    return distance;
+  }
+
+  double _toRadians(double degree) {
+    return degree * pi / 180;
+  }
+
   void _onDaySelect(DateTime day, DateTime focusedDay) {
     setState(() {
       selectedDate = day;
@@ -174,440 +203,132 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
     return 0;
   }
 
-  // Future<void> fetchCustomerAddresses() async {
-  //   try {
-  //     _customerAddresses = await AppServices.getCustomerAddress();
-  //     setState(() {});
-  //   } catch (e) {
-  //     debugPrint("Error fetching addresses: $e");
-  //   }
-  // }
+  Future<void> fetchCustomerAddresses() async {
+    try {
+      selectedAddress = await AppServices.getCustomerSelectedAddress();
+      setState(() {});
+    } catch (e) {
+      debugPrint("Error fetching addresses: $e");
+    }
+  }
 
   @override
   void initState() {
-    // fetchCustomerAddresses();
+    fetchCustomerAddresses();
+
     super.initState();
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    // fetchCustomerAddresses();
+  void dispose() {
+    selectedIndexNotifier.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final safePadding = MediaQuery.of(context).padding;
-    return StreamBuilder<CustomerModel>(
+  final safePadding = MediaQuery.of(context).padding;
+  return BlocListener<NewBookingBloc, BookingState>(
+    listener: (context, state) {
+      if (state is BookingSuccess) {
+        // Navigate only after successful booking
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => BookingCompletedPage(
+              service: widget.service,
+              worker: selectedWorker,
+              selectedDate: selectedDate!,
+              selectedTime:
+                  timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+              address: _selectedAddress ??
+                  AddressModel(
+                    id: '',
+                    fullName: '',
+                    buildingNumber: '',
+                    phoneNumber: '',
+                  ),
+            ),
+          ),
+        );
+      } else if (state is BookingError) {
+        // Show error message
+        if (mounted) {
+          setState(() {
+            saving = false;
+          });
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text(state.message),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else if (state is BookingLoading) {
+        // Update saving state when loading
+        if (mounted && !saving) {
+          setState(() {
+            saving = true;
+          });
+        }
+      }
+    },
+    child: StreamBuilder<CustomerModel>(
       stream: AppServices.listenToCustomerData(LocalStoreHelper.getUID() ?? ''),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           customerData = snapshot.data;
-
-          // _customerAddresses = customerData?.addresses ?? [];
-
-          // if (_customerAddresses.isNotEmpty) {
-          //   try {
-          //     final selected = _customerAddresses.firstWhere(
-          //       (address) => address.isSelected == true,
-          //     );
-          //     if (_selectedAddress?.id != selected.id) {
-          //       WidgetsBinding.instance.addPostFrameCallback((_) {
-          //         if (mounted) {
-          //           setState(() {
-          //             _selectedAddress = selected;
-          //           });
-          //           debugPrint(
-          //             "📍 BookServiceBottomSheet: Updated selected address from stream: ${selected.fullName}",
-          //           );
-          //         }
-          //       });
-          //     }
-          //   } catch (e) {}
-          // }
         }
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.8,
           child: Scaffold(
-            appBar: AppBar(),
             body: Form(
               key: _formKey,
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 16,
-                      left: 16,
-                      right: 16,
-                      bottom: 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          isFirstStep
-                              ? AppLocalizations.of(context)?.selectDateTime ??
+                  Container(
+                    decoration: BoxDecoration(color: AppColors.primary),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8,
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            isFirstStep
+                                ? AppLocalizations.of(context)?.selectDateTime ??
                                     ''
-                              : AppLocalizations.of(
-                                      context,
-                                    )?.completeYourBooking ??
-                                    '',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
+                                : isSecondStep
+                                    ? AppLocalizations.of(context)
+                                            ?.completeYourBooking ??
+                                        ''
+                                    : AppLocalizations.of(context)
+                                            ?.chooseWorker ??
+                                        '',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Expanded(
                     child: isFirstStep
-                        ? ListView(
-                            padding: const EdgeInsets.only(bottom: 16, top: 5),
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                  bottom: 18,
-                                ),
-                                child: Text(
-                                  AppLocalizations.of(context)?.selectDate ??
-                                      '',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 13,
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: const Color(0XFFEAEAEA),
-                                  ),
-                                  borderRadius: BorderRadius.circular(9),
-                                ),
-                                child: TableCalendar(
-                                  locale: AppLocalizations.of(
-                                    context,
-                                  )?.localeName,
-                                  availableGestures: AvailableGestures.all,
-                                  headerStyle: HeaderStyle(
-                                    formatButtonVisible: false,
-                                    titleCentered: true,
-                                    titleTextStyle: GoogleFonts.poppins(
-                                      color: AppColors.black4,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  calendarStyle: CalendarStyle(
-                                    selectedDecoration: BoxDecoration(
-                                      color: AppColors.blue2,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    todayDecoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: AppColors.blue2,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    selectedTextStyle: GoogleFonts.mulish(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 11,
-                                    ),
-                                    todayTextStyle: GoogleFonts.mulish(
-                                      color: AppColors.blue2,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                  rowHeight: 38,
-                                  selectedDayPredicate: (day) =>
-                                      isSameDay(day, selectedDate),
-                                  focusedDay: selectedDate ?? DateTime.now(),
-                                  firstDay: DateTime.now(),
-                                  lastDay: DateTime.utc(2050, 01, 16),
-                                  onDaySelected: _onDaySelect,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 17,
-                                ),
-                                child: Text(
-                                  AppLocalizations.of(
-                                        context,
-                                      )?.availableTimeSlot ??
-                                      '',
-                                  style: GoogleFonts.dmSans(
-                                    color: Colors.black87,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 31,
-                                child: ListView.builder(
-                                  padding: const EdgeInsets.only(left: 16.0),
-                                  scrollDirection: Axis.horizontal,
-                                  shrinkWrap: true,
-                                  itemCount: 4,
-                                  itemBuilder: (context, index) {
-                                    final isDisabled = _isTimeCategoryDisabled(
-                                      index,
-                                    );
-
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 8.0,
-                                      ),
-                                      child: InkWell(
-                                        onTap: isDisabled
-                                            ? null
-                                            : () {
-                                                setState(() {
-                                                  selectedTimeCategory = index;
-                                                  selectedTimeSlot =
-                                                      _getFirstAvailableTimeSlot(
-                                                        index,
-                                                      );
-                                                });
-                                              },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: isDisabled
-                                                ? Colors.grey.shade300
-                                                : selectedTimeCategory == index
-                                                ? AppColors.secondary
-                                                : Colors.white,
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
-                                            border: Border.all(
-                                              color: isDisabled
-                                                  ? Colors.grey.shade400
-                                                  : selectedTimeCategory ==
-                                                        index
-                                                  ? AppColors.secondary
-                                                  : Colors.black,
-                                              width: 1,
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                _getLocalizedTimeCategory(
-                                                  timeSlots[index]["label"],
-                                                ),
-                                                style: GoogleFonts.dmSans(
-                                                  color: isDisabled
-                                                      ? Colors.grey.shade600
-                                                      : selectedTimeCategory ==
-                                                            index
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 13,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  top: 16,
-                                  right: 5,
-                                ),
-                                child: Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children: [
-                                    for (
-                                      int i = 0;
-                                      i <
-                                          (timeSlots[selectedTimeCategory]["values"]
-                                                  as List<Map>)
-                                              .length;
-                                      i++
-                                    )
-                                      Builder(
-                                        builder: (context) {
-                                          final isPast = _isTimeSlotPast(
-                                            selectedTimeCategory,
-                                            i,
-                                          );
-
-                                          return InkWell(
-                                            onTap: isPast
-                                                ? null
-                                                : () {
-                                                    setState(
-                                                      () =>
-                                                          selectedTimeSlot = i,
-                                                    );
-                                                  },
-                                            child: Container(
-                                              height: 30,
-                                              width: 80,
-                                              alignment: Alignment.center,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 8,
-                                                  ),
-                                              decoration: BoxDecoration(
-                                                color: isPast
-                                                    ? Colors.grey.shade200
-                                                    : selectedTimeSlot == i
-                                                    ? Colors.transparent
-                                                    : AppColors.grey4,
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
-                                                border: Border.all(
-                                                  color: isPast
-                                                      ? Colors.grey.shade400
-                                                      : selectedTimeSlot == i
-                                                      ? AppColors.secondary
-                                                      : Colors.transparent,
-                                                  width: 1,
-                                                ),
-                                              ),
-                                              child: Text(
-                                                "${(timeSlots[selectedTimeCategory]["values"] as List<Map>)[i]["label"].toString().substring(0, 5)} ${_getLocalizedTimeSlots((timeSlots[selectedTimeCategory]["values"] as List<Map>)[i]["label"])}",
-                                                style: GoogleFonts.dmSans(
-                                                  color: isPast
-                                                      ? Colors.grey.shade500
-                                                      : selectedTimeSlot == i
-                                                      ? AppColors.secondary
-                                                      : Colors.black87,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          )
-                        : ListView(
-                            children: [
-                              BlocProvider(
-                                create: (context) =>
-                                    AddressBloc(AppServicesAddressRepository())
-                                      ..add(LoadAddresses()),
-                                child: AddIssueImageAndVideo(
-                                  onImageSelected: (value) {
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                          if (mounted) {
-                                            setState(
-                                              () => _selectedImage = value,
-                                            );
-                                          }
-                                        });
-                                  },
-                                  onVideoSelected: (value) {
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                          if (mounted) {
-                                            setState(
-                                              () => _selectedVideo = value,
-                                            );
-                                          }
-                                        });
-                                  },
-                                  isAddressSelected: (value) {
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                          if (mounted) {
-                                            setState(
-                                              () => _selectedAddress = value,
-                                            );
-                                          }
-                                        });
-                                  },
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 10,
-                                  left: 16,
-                                  right: 16,
-                                  bottom: 0,
-                                ),
-                                child: Text(
-                                  AppLocalizations.of(context)?.addNotes ?? '',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 13,
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 10,
-                                  left: 16,
-                                  right: 16,
-                                  bottom: 8,
-                                ),
-                                child: TextFormField(
-                                  controller: notesController,
-                                  maxLines: null,
-                                  minLines: 4,
-                                  keyboardType: TextInputType.multiline,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.black12,
-                                        width: 2.0,
-                                      ),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(8.0),
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.black12,
-                                        width: 2.0,
-                                      ),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(8.0),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                        ? _buildFirstStepContent()
+                        : isSecondStep
+                            ? _buildSecondStepContent()
+                            : _buildThirdStepContent(),
                   ),
                   Padding(
                     padding: EdgeInsets.only(
@@ -617,173 +338,10 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                       right: 16,
                     ),
                     child: isFirstStep
-                        ? SizedBox(
-                            width: double.maxFinite,
-                            height: 50,
-                            child: Hero(
-                              tag: 'primary_button',
-                              child: FilledButton(
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: AppColors.secondary,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  if (selectedDate == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        behavior: SnackBarBehavior.floating,
-                                        content: Text(
-                                          AppLocalizations.of(
-                                                context,
-                                              )?.pleaseSelectADate ??
-                                              '',
-                                        ),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  if (_isTimeSlotPast(
-                                    selectedTimeCategory,
-                                    selectedTimeSlot,
-                                  )) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        behavior: SnackBarBehavior.floating,
-                                        content: Text(
-                                          AppLocalizations.of(
-                                                context,
-                                              )?.pleaseSelectAValidTime ??
-                                              'Please select a valid time',
-                                        ),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  setState(() => isFirstStep = false);
-                                },
-                                child: Text(
-                                  AppLocalizations.of(context)?.continueText ??
-                                      '',
-                                  style: GoogleFonts.dmSans(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Row(
-                            children: [
-                              if (!saving)
-                                Expanded(
-                                  flex: 2,
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: OutlinedButton(
-                                      style: OutlinedButton.styleFrom(
-                                        side: const BorderSide(
-                                          color: Colors.black87,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        setState(() => isFirstStep = true);
-                                      },
-                                      child: Text(
-                                        AppLocalizations.of(context)?.back ??
-                                            '',
-                                        style: GoogleFonts.dmSans(
-                                          color: Colors.black87,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              if (!saving) const SizedBox(width: 16),
-                              Expanded(
-                                flex: 3,
-                                child: SizedBox(
-                                  height: 50,
-                                  child: Hero(
-                                    tag: 'primary_button',
-                                    child: FilledButton(
-                                      style: FilledButton.styleFrom(
-                                        backgroundColor:
-                                            _selectedAddress == null
-                                            ? Colors.grey.shade400
-                                            : AppColors.secondary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        if (_selectedAddress == null) {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              behavior:
-                                                  SnackBarBehavior.floating,
-                                              content: Text(
-                                                AppLocalizations.of(
-                                                      context,
-                                                    )?.pleaseSelectServiceAddress ??
-                                                    'Please select a service address to continue',
-                                              ),
-                                              backgroundColor: Colors.orange,
-                                            ),
-                                          );
-                                        } else {
-                                          showPaymentBottomSheet(
-                                            context,
-                                            service: widget.service,
-                                            selectedImage: _selectedImage,
-                                            selectedVideo: _selectedVideo,
-                                            selectedDate: selectedDate,
-                                            timeSlots: timeSlots,
-                                            selectedTimeCategory:
-                                                selectedTimeCategory,
-                                            selectedTimeSlot: selectedTimeSlot,
-                                            notesController: notesController,
-                                            customerData: customerData!,
-                                            selectedAddress: _selectedAddress!,
-                                          );
-                                        }
-                                      },
-                                      child: saving
-                                          ? Loader()
-                                          : Text(
-                                              AppLocalizations.of(
-                                                    context,
-                                                  )?.completePayment ??
-                                                  '',
-                                              style: GoogleFonts.dmSans(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                        ? _buildFirstStepBottom()
+                        : isSecondStep
+                            ? _buildSecondStepBottom()
+                            : _buildThirdStepBottom(context),
                   ),
                 ],
               ),
@@ -791,6 +349,590 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
           ),
         );
       },
+    ),
+  );
+}
+
+  _buildThirdStepBottom(BuildContext context) {
+  return Row(
+    children: [
+      if (!saving)
+        Expanded(
+          flex: 2,
+          child: SizedBox(
+            height: 50,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.black87),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  isSecondStep = true;
+                  isThirdStep = false;
+                });
+              },
+              child: Text(
+                AppLocalizations.of(context)?.back ?? '',
+                style: GoogleFonts.dmSans(
+                  color: Colors.black87,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      if (!saving) const SizedBox(width: 16),
+      Expanded(
+        flex: 3,
+        child: SizedBox(
+          height: 50,
+          child: Hero(
+            tag: 'primary_button',
+            child: ValueListenableBuilder<int?>(
+              valueListenable: selectedIndexNotifier,
+              builder: (context, value, child) {
+                return FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: selectedIndexNotifier.value == null
+                        ? Colors.grey.shade400
+                        : AppColors.secondary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: saving
+                      ? null
+                      : () {
+                          if (selectedIndexNotifier.value == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                behavior: SnackBarBehavior.floating,
+                                content: Text(
+                                  AppLocalizations.of(context)
+                                          ?.pleaseSelectaWorker ??
+                                      'Please select a worker',
+                                ),
+                                backgroundColor: Colors.orange,
+                              ),
+                            );
+                          } else {
+                            context.read<NewBookingBloc>().add(
+                                  CreateBookingEvent(
+                                    service: widget.service,
+                                    selectedDate: selectedDate!,
+                                    customerData: customerData!,
+                                    notes: notesController.text,
+                                    selectedImage: _selectedImage,
+                                    selectedVideo: _selectedVideo,
+                                    timeSlot: timeSlots[selectedTimeCategory]
+                                        ["values"][selectedTimeSlot],
+                                    agent: selectedWorker,
+                                  ),
+                                );
+                          }
+                        },
+                  child: saving
+                      ? Loader()
+                      : Text(
+                          AppLocalizations.of(context)?.completeBooking ?? '',
+                          style: GoogleFonts.dmSans(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+
+  _buildSecondStepBottom() {
+    return Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: SizedBox(
+            height: 50,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.black87),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  isSecondStep = false;
+                  isFirstStep = true;
+                  isThirdStep = false;
+                });
+              },
+              child: Text(
+                AppLocalizations.of(context)?.back ?? '',
+                style: GoogleFonts.dmSans(
+                  color: Colors.black87,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          flex: 3,
+          child: SizedBox(
+            height: 50,
+            child: Hero(
+              tag: 'primary_button',
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.secondary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  if (_selectedAddress == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text(
+                          AppLocalizations.of(
+                                context,
+                              )?.pleaseSelectServiceAddress ??
+                              '',
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  } else {
+                    setState(() {
+                      isSecondStep = false;
+                    });
+                  }
+                },
+                child: Text(
+                  AppLocalizations.of(context)?.continueText ?? '',
+                  style: GoogleFonts.dmSans(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  _buildFirstStepBottom() {
+    return SizedBox(
+      width: double.maxFinite,
+      height: 50,
+      child: Hero(
+        tag: 'primary_button',
+        child: FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.secondary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onPressed: () {
+            if (selectedDate == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text(
+                    AppLocalizations.of(context)?.pleaseSelectADate ?? '',
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+
+            if (_isTimeSlotPast(selectedTimeCategory, selectedTimeSlot)) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text(
+                    AppLocalizations.of(context)?.pleaseSelectAValidTime ??
+                        'Please select a valid time',
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+
+            setState(() {
+              isFirstStep = false;
+              isSecondStep = true;
+            });
+          },
+          child: Text(
+            AppLocalizations.of(context)?.continueText ?? '',
+            style: GoogleFonts.dmSans(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _buildThirdStepContent() {
+    return StreamBuilder<List<UserModel>>(
+      stream: AppServices.getWorkersByRoles(widget.service.category ?? ""),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: Loader(color: AppColors.primary));
+        }
+        final data = snapshot.data ?? [];
+        if (selectedAddress != null) {
+          data.sort((a, b) {
+            final distanceA = calculateDistance(
+              a.liveLocation?.latitude ?? 0.0,
+              a.liveLocation?.longitude ?? 0.0,
+              selectedAddress!.lat ?? 0.0,
+              selectedAddress!.lon ?? 0.0,
+            );
+            final distanceB = calculateDistance(
+              b.liveLocation?.latitude ?? 0.0,
+              b.liveLocation?.longitude ?? 0.0,
+              selectedAddress!.lat ?? 0.0,
+              selectedAddress!.lon ?? 0.0,
+            );
+            return distanceA.compareTo(distanceB);
+          });
+        }
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            final worker = data[index];
+
+            return ValueListenableBuilder(
+              valueListenable: selectedIndexNotifier,
+              builder: (context, selectedIndex, child) {
+                final isSelected = selectedIndex == index;
+                return GestureDetector(
+                  onTap: () {
+                    selectedIndexNotifier.value = index;
+                    selectedWorker = worker;
+                  },
+                  child: WorkerCard(
+                    worker: worker,
+                    customerAddress:
+                        selectedAddress ??
+                        AddressModel(
+                          id: '',
+                          fullName: '',
+                          buildingNumber: '',
+                          phoneNumber: '',
+                        ),
+                    isSelected: isSelected,
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  _buildSecondStepContent() {
+    return ListView(
+      children: [
+        BlocProvider(
+          create: (context) =>
+              AddressBloc(AppServicesAddressRepository())..add(LoadAddresses()),
+          child: AddIssueImageAndVideo(
+            onImageSelected: (value) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  setState(() => _selectedImage = value);
+                }
+              });
+            },
+            onVideoSelected: (value) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  setState(() => _selectedVideo = value);
+                }
+              });
+            },
+            isAddressSelected: (value) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  setState(() => _selectedAddress = value);
+                }
+              });
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 10,
+            left: 16,
+            right: 16,
+            bottom: 0,
+          ),
+          child: Text(
+            AppLocalizations.of(context)?.addNotes ?? '',
+            style: GoogleFonts.dmSans(
+              fontSize: 13,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 10,
+            left: 16,
+            right: 16,
+            bottom: 8,
+          ),
+          child: TextFormField(
+            controller: notesController,
+            maxLines: null,
+            minLines: 4,
+            keyboardType: TextInputType.multiline,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black12, width: 2.0),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black12, width: 2.0),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  _buildFirstStepContent() {
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 16, top: 5),
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 18),
+          child: Text(
+            AppLocalizations.of(context)?.selectDate ?? '',
+            style: GoogleFonts.dmSans(
+              fontSize: 13,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0XFFEAEAEA)),
+            borderRadius: BorderRadius.circular(9),
+          ),
+          child: TableCalendar(
+            locale: AppLocalizations.of(context)?.localeName,
+            availableGestures: AvailableGestures.all,
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true,
+              titleTextStyle: GoogleFonts.poppins(
+                color: AppColors.black4,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            calendarStyle: CalendarStyle(
+              selectedDecoration: BoxDecoration(
+                color: AppColors.blue2,
+                shape: BoxShape.circle,
+              ),
+              todayDecoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.blue2, width: 2),
+              ),
+              selectedTextStyle: GoogleFonts.mulish(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
+              ),
+              todayTextStyle: GoogleFonts.mulish(
+                color: AppColors.blue2,
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
+              ),
+            ),
+            rowHeight: 38,
+            selectedDayPredicate: (day) => isSameDay(day, selectedDate),
+            focusedDay: selectedDate ?? DateTime.now(),
+            firstDay: DateTime.now(),
+            lastDay: DateTime.utc(2050, 01, 16),
+            onDaySelected: _onDaySelect,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+          child: Text(
+            AppLocalizations.of(context)?.availableTimeSlot ?? '',
+            style: GoogleFonts.dmSans(
+              color: Colors.black87,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 31,
+          child: ListView.builder(
+            padding: const EdgeInsets.only(left: 16.0),
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            itemCount: 4,
+            itemBuilder: (context, index) {
+              final isDisabled = _isTimeCategoryDisabled(index);
+
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: InkWell(
+                  onTap: isDisabled
+                      ? null
+                      : () {
+                          setState(() {
+                            selectedTimeCategory = index;
+                            selectedTimeSlot = _getFirstAvailableTimeSlot(
+                              index,
+                            );
+                          });
+                        },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDisabled
+                          ? Colors.grey.shade300
+                          : selectedTimeCategory == index
+                          ? AppColors.secondary
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: isDisabled
+                            ? Colors.grey.shade400
+                            : selectedTimeCategory == index
+                            ? AppColors.secondary
+                            : Colors.black,
+                        width: 1,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Center(
+                        child: Text(
+                          _getLocalizedTimeCategory(timeSlots[index]["label"]),
+                          style: GoogleFonts.dmSans(
+                            color: isDisabled
+                                ? Colors.grey.shade600
+                                : selectedTimeCategory == index
+                                ? Colors.white
+                                : Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, top: 16, right: 5),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (
+                int i = 0;
+                i <
+                    (timeSlots[selectedTimeCategory]["values"] as List<Map>)
+                        .length;
+                i++
+              )
+                Builder(
+                  builder: (context) {
+                    final isPast = _isTimeSlotPast(selectedTimeCategory, i);
+
+                    return InkWell(
+                      onTap: isPast
+                          ? null
+                          : () {
+                              setState(() => selectedTimeSlot = i);
+                            },
+                      child: Container(
+                        height: 30,
+                        width: 80,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: isPast
+                              ? Colors.grey.shade200
+                              : selectedTimeSlot == i
+                              ? Colors.transparent
+                              : AppColors.grey4,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: isPast
+                                ? Colors.grey.shade400
+                                : selectedTimeSlot == i
+                                ? AppColors.secondary
+                                : Colors.transparent,
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          "${(timeSlots[selectedTimeCategory]["values"] as List<Map>)[i]["label"].toString().substring(0, 5)} ${_getLocalizedTimeSlots((timeSlots[selectedTimeCategory]["values"] as List<Map>)[i]["label"])}",
+                          style: GoogleFonts.dmSans(
+                            color: isPast
+                                ? Colors.grey.shade500
+                                : selectedTimeSlot == i
+                                ? AppColors.secondary
+                                : Colors.black87,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
