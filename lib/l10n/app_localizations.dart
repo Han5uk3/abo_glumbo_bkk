@@ -2372,6 +2372,18 @@ abstract class AppLocalizations {
   /// **'Contact by phone'**
   String get contactByPhone;
 
+  /// No description provided for @pleaseContactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Please contact support for more information on why your account was blocked and what steps you may take to unlock it.'**
+  String get pleaseContactSupport;
+
+  /// No description provided for @yourAccountHasBeenBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been blocked by the admin due to one or more of the following reasons:'**
+  String get yourAccountHasBeenBlocked;
+
   /// No description provided for @serviceLocation.
   ///
   /// In en, this message translates to:

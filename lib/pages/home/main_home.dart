@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
@@ -10,6 +9,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/bookings_page.dart';
 import 'package:abo_glumbo_bbk/pages/categories/categories_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/home_page.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
+import 'package:abo_glumbo_bbk/pages/login/widgets/language_selector.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/biometric_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -18,6 +18,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Home extends StatefulWidget {
   final int? initialIndex;
@@ -32,6 +34,9 @@ class _HomeState extends State<Home> {
   bool? _isGuest;
   int currentIndex = 0;
 
+  String whatsapp = "";
+  String phone = "";
+  String email = "";
   late final List<Widget> _pages;
 
   @override
@@ -54,6 +59,23 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
+  static Future<void> launchEmail(String email) async {
+    await launchUrlString("mailto:$email");
+  }
+
+  static Future<void> launchWhatsApp(String phoneNumber) async {
+    final whatsappUrl = 'https://wa.me/$phoneNumber';
+    await launchUrlString(whatsappUrl);
+  }
+
+  static Future<void> launchPhone(String phoneNumber) async {
+    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
+
+    if (!await launchUrl(launchUri, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $launchUri');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context);
@@ -73,7 +95,7 @@ class _HomeState extends State<Home> {
         }
         final customerData = snapshot.data;
         final isBlocked = customerData?.isBlocked ?? false;
-     
+
         if (isBlocked) {
           LocalStoreHelper.putBlockStatus(true);
         } else {
@@ -213,107 +235,227 @@ class _HomeState extends State<Home> {
         automaticallyImplyLeading: false, // No back button
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(Icons.block, size: 100, color: Colors.redAccent),
-              const SizedBox(height: 24),
-              Text(
-                AppLocalizations.of(context)?.accountBlocked ??
-                    'Account Blocked',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: LanguageSelectorCard(isInLoginPage: false),
+            ),
+            const SizedBox(height: 30),
+            const Icon(Icons.block, size: 100, color: Colors.redAccent),
+            const SizedBox(height: 24),
+            Text(
+              AppLocalizations.of(context)?.accountBlocked ?? 'Account Blocked',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
-              const SizedBox(height: 16),
-              Text(
-                AppLocalizations.of(context)?.accountBlockedMessage ??
-                    'Your account has been temporarily blocked by the administrator for one or more of the following reasons:',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                  height: 1.5,
-                ),
-                textAlign: TextAlign.center,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              AppLocalizations.of(context)?.yourAccountHasBeenBlocked ??
+                  'Your account has been temporarily blocked by the administrator for one or more of the following reasons:',
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+                height: 1.5,
               ),
-              const SizedBox(height: 20),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Text(
-                  '- ${AppLocalizations.of(context)?.violationOfTermsAndConditions ?? 'Violation of Terms and Conditions'}\n'
-                  '- ${AppLocalizations.of(context)?.improperConduct ?? 'Improper Conduct'}\n'
-                  '- ${AppLocalizations.of(context)?.fraudOrRelatedActivities ?? 'Fraud or Related Activities'}',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.black87,
-                    height: 1.6,
-                  ),
-                ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
               ),
-              const SizedBox(height: 20),
-              Text(
-                AppLocalizations.of(context)?.pleaseContactAdmin ??
-                    'Please contact the administrator for more information and possible steps to restore your account.',
+              child: Text(
+                '- ${AppLocalizations.of(context)?.violationOfTermsAndConditions ?? 'Violation of Terms and Conditions'}\n'
+                '- ${AppLocalizations.of(context)?.improperConduct ?? 'Improper Conduct'}\n'
+                '- ${AppLocalizations.of(context)?.fraudOrRelatedActivities ?? 'Fraud or Related Activities'}',
                 style: const TextStyle(
                   fontSize: 15,
                   color: Colors.black87,
-                  height: 1.5,
+                  height: 1.6,
                 ),
-                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _showLogoutConfirmationDialog,
-                  icon: const Icon(Icons.logout, color: Colors.white),
-                  label: Text(
-                    AppLocalizations.of(context)?.logout ?? 'Logout',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    backgroundColor: Colors.redAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              AppLocalizations.of(context)!.pleaseContactSupport ,
+              style: const TextStyle(
+                fontSize: 15,
+                color: Colors.black87,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            StreamBuilder(
+              stream: AppServices.getCustomerSupportdata(),
+              builder: (context, asyncSnapshot) {
+                if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                  return SizedBox(height: 50);
+                }
+                if (asyncSnapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      '${AppLocalizations.of(context)?.error ?? "Error"}: ${asyncSnapshot.error}',
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: _exitApp,
-                  icon: Icon(Icons.close, color: AppColors.primary),
-                  label: Text(
-                    AppLocalizations.of(context)?.exitApp ?? 'Exit App',
-                    style: TextStyle(fontSize: 16, color: AppColors.primary),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: BorderSide(color: AppColors.primary.withAlpha(100)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  );
+                }
+                if (!asyncSnapshot.hasData || asyncSnapshot.data!.isEmpty) {
+                  return Center(
+                    child: Text(
+                      AppLocalizations.of(context)?.noSupportAvailable ??
+                          "No support available",
                     ),
+                  );
+                }
+
+                final data = asyncSnapshot.data!;
+                for (int i = 0; i < data.length; i++) {
+                  final item = data[i];
+                  if (item.type == 'Phone') {
+                    phone = item.detail;
+                  }
+                  if (item.type == 'WhatsApp') {
+                    whatsapp = item.detail;
+                  }
+                  if (item.type == 'Email') {
+                    email = item.detail;
+                  }
+                }
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                  children: [
+                    if (whatsapp.isNotEmpty) ...{
+                      GestureDetector(
+                        onTap: () async {
+                          launchWhatsApp(whatsapp);
+                        },
+                        child: Material(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          elevation: 5,
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Image.asset('assets/images/whatsapp.png'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    },
+                    if (phone.isNotEmpty) ...{
+                      GestureDetector(
+                        onTap: () async {
+                          launchPhone(phone);
+                        },
+                        child: Material(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          elevation: 5,
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Image.asset('assets/images/phone.png'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    },
+                    if (email.isNotEmpty) ...{
+                      GestureDetector(
+                        onTap: () async {
+                          launchEmail(email);
+                        },
+                        child: Material(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          elevation: 5,
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Image.asset(
+                                'assets/images/email.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    },
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 40),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _showLogoutConfirmationDialog,
+                icon: const Icon(Icons.logout, color: Colors.white),
+                label: Text(
+                  AppLocalizations.of(context)?.logout ?? 'Logout',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _exitApp,
+                icon: Icon(Icons.close, color: AppColors.primary),
+                label: Text(
+                  AppLocalizations.of(context)?.exitApp ?? 'Exit App',
+                  style: TextStyle(fontSize: 16, color: AppColors.primary),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: BorderSide(color: AppColors.primary.withAlpha(100)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

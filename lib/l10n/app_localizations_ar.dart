@@ -1183,5 +1183,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contactByPhone => 'اتصال بواسطة الهاتف';
 
   @override
+  String get pleaseContactSupport =>
+      'يرجى الاتصال بالدعم لمزيد من المعلومات حول سبب حظر حسابك وما هي الخطوات التي يمكنك اتخاذها لفتحه.';
+
+  @override
+  String get yourAccountHasBeenBlocked =>
+      'تم حظر حسابك من قبل المسؤول لسبب واحد أو أكثر من الأسباب التالية:';
+
+  @override
   String get serviceLocation => 'موقع الخدمة';
 }

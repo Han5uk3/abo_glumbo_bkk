@@ -10,6 +10,7 @@ class AccountPageConstants {
   static const String whatsappNumber = "+966555724363";
   static const String whatsappUrl = "https://wa.me/+966555724363";
 
+
   // Spacing constants
   static const double defaultPadding = 16.0;
   static const double sectionSpacing = 20.0;

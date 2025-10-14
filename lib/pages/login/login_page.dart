@@ -508,7 +508,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 13),
-                    LanguageSelectorCard(),
+                    LanguageSelectorCard(isInLoginPage: true),
                     const SizedBox(height: 23),
                     Text(
                       AppLocalizations.of(context)?.mobileNumber ?? '',

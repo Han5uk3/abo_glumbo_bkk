@@ -1189,5 +1189,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contactByPhone => 'Contact by phone';
 
   @override
+  String get pleaseContactSupport =>
+      'Please contact support for more information on why your account was blocked and what steps you may take to unlock it.';
+
+  @override
+  String get yourAccountHasBeenBlocked =>
+      'Your account has been blocked by the admin due to one or more of the following reasons:';
+
+  @override
   String get serviceLocation => 'Service Location';
 }

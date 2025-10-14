@@ -378,5 +378,7 @@
   "costDisclaimer":"Amount shown is inspection fee. Total service cost determined after completion.",
   "noSupportAvailable": "No support available at this time.",
   "contactByPhone": "Contact by phone",
+  "pleaseContactSupport":"Please contact support for more information on why your account was blocked and what steps you may take to unlock it.",
+  "yourAccountHasBeenBlocked":"Your account has been blocked by the admin due to one or more of the following reasons:",
   "serviceLocation": "Service Location"
 }
