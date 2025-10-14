@@ -7,6 +7,7 @@ import 'package:abo_glumbo_bbk/models/banner.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
+import 'package:abo_glumbo_bbk/models/customer_support.dart';
 import 'package:abo_glumbo_bbk/models/faq.dart';
 import 'package:abo_glumbo_bbk/models/location.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
@@ -705,5 +706,21 @@ class AppServices {
         phoneNumber: '',
       );
     }
+  }
+
+  static Stream<List<CustomerSupportModel>> getCustomerSupportdata() {
+    return AppFirestore.customerSupportCollectionRef
+        .where('isActive', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+          List<CustomerSupportModel> customerSupportList = snapshot.docs
+              .map(
+                (doc) => CustomerSupportModel.fromJson(
+                  doc.data() as Map<String, dynamic>,
+                ),
+              )
+              .toList();
+          return customerSupportList;
+        });
   }
 }

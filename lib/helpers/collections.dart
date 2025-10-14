@@ -40,6 +40,10 @@ class AppFirestore {
   // faq collection
   static CollectionReference faqCollectionRef = FirebaseFirestore.instance
       .collection('faq');
+
+  static CollectionReference customerSupportCollectionRef = FirebaseFirestore
+      .instance
+      .collection('customer_service_contacts');
 }
 
 class AppFireStorage {

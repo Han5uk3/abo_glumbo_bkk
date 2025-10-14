@@ -376,5 +376,7 @@
   "workerDetails": "Worker Details",
   "inspectionDisclaimer": "This covers the inspection visit. Total service cost calculated after work is completed.",
   "costDisclaimer":"Amount shown is inspection fee. Total service cost determined after completion.",
+  "noSupportAvailable": "No support available at this time.",
+  "contactByPhone": "Contact by phone",
   "serviceLocation": "Service Location"
 }

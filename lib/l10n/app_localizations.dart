@@ -2360,6 +2360,18 @@ abstract class AppLocalizations {
   /// **'Amount shown is inspection fee. Total service cost determined after completion.'**
   String get costDisclaimer;
 
+  /// No description provided for @noSupportAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No support available at this time.'**
+  String get noSupportAvailable;
+
+  /// No description provided for @contactByPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact by phone'**
+  String get contactByPhone;
+
   /// No description provided for @serviceLocation.
   ///
   /// In en, this message translates to:

@@ -1177,5 +1177,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'التكلفة المعروضة هي رسوم الفحص. سيتم حساب التكلفة الكلية بعد انتهاء الخدمة.';
 
   @override
+  String get noSupportAvailable => 'لا يوجد دعم متاح حالياً.';
+
+  @override
+  String get contactByPhone => 'اتصال بواسطة الهاتف';
+
+  @override
   String get serviceLocation => 'موقع الخدمة';
 }

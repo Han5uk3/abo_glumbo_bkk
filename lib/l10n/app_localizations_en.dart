@@ -1183,5 +1183,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Amount shown is inspection fee. Total service cost determined after completion.';
 
   @override
+  String get noSupportAvailable => 'No support available at this time.';
+
+  @override
+  String get contactByPhone => 'Contact by phone';
+
+  @override
   String get serviceLocation => 'Service Location';
 }
