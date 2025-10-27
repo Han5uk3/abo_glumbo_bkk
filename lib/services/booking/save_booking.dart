@@ -3,6 +3,7 @@ import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
+import 'package:abo_glumbo_bbk/models/transaction.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -21,8 +22,6 @@ class BookingUtils {
         return "U"; // Unknown
     }
   }
-
-
 
   static Future<bool> saveBooking({
     required ServiceModel service,
@@ -155,4 +154,36 @@ class BookingUtils {
       return false;
     }
   }
+
+  static Future<bool> updateBookingStatus({
+    required BookingModel booking,
+    required bool isCompleted,
+    required String paymentModeCode,
+  }) async {
+    try {
+      await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+        "paymentCompleted": isCompleted,
+        "paymentModeCode": paymentModeCode,
+        "updatedAt": Timestamp.now(),
+      });
+      return true;
+    } catch (e) {
+      debugPrint("Error updating booking status: $e");
+      return false;
+    }
+  }
+
+  static Future<bool> saveTransaction({
+   required TransactionModel transaction,
+  }) async {
+    try {
+      await AppFirestore.transactionRecordsCollectionRef.doc(transaction.orderId).set(transaction.toMap());
+      return true;
+    } catch (e) {
+      debugPrint("Error saving transaction: $e");
+      return false;
+    }
+  }
+      
+   
 }

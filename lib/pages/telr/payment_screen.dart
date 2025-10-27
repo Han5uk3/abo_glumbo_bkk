@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:abo_glumbo_bbk/apis/telr_services.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -6,9 +7,11 @@ import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/telr/request_model.dart';
+import 'package:abo_glumbo_bbk/models/transaction.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
-import 'package:abo_glumbo_bbk/pages/bookings/booking_success.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/payment_failed.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
+import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/telr_config.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +31,7 @@ class PaymentWebView extends StatefulWidget {
   BookingModel? booking;
   UserModel? agent;
   TextEditingController? notesController;
+  String? selectedPayment;
   PaymentWebView({
     super.key,
     this.service,
@@ -43,6 +47,7 @@ class PaymentWebView extends StatefulWidget {
     this.notesController,
     this.booking,
     this.agent,
+    this.selectedPayment,
   });
 
   @override
@@ -53,7 +58,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   late WebViewController _controller;
   bool _isLoading = true;
   String? _errorMessage;
-  String? selectedPayment;
+
   bool isLoading = false;
   String? selectedImageDownloadUrl;
   String? selectedVideoDownloadUrl;
@@ -78,22 +83,6 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       return;
     }
     _initializePayment();
-  }
-
-  Future<bool> saveBooking() async {
-    return await BookingUtils.saveBooking(
-      agent: widget.agent ?? UserModel(uid: ''),
-      service: widget.service ?? ServiceModel(),
-      selectedDate: widget.selectedDate!,
-      paymentMode: "Cards",
-      customerData: widget.customerData,
-      notes: widget.notesController?.text.trim() ?? '',
-      timeSlot:
-          widget.timeSlots?[(widget.selectedTimeCategory ??
-              0)]["values"][widget.selectedTimeSlot],
-      selectedImage: widget.selectedImage,
-      selectedVideo: widget.selectedVideo,
-    );
   }
 
   Future<void> _initializePayment() async {
@@ -136,7 +125,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           ivp_ref: widget.customerData.uid ?? '',
           ivp_amount: widget.isFromBooking
               ? double.tryParse(
-                      widget.service?.price.toString() ?? '0.00',
+                      widget.booking?.completionData?.totalCost.toString() ??
+                          '0.00',
                     )?.toStringAsFixed(2) ??
                     '0.00'
               : widget.review?.tipAmount?.toStringAsFixed(2) ?? '0.00',
@@ -164,6 +154,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             : null,
         ivp_lang: 'en',
         bill_custref: widget.customerData.uid,
+        bill_city: widget.customerData.cityName,
       );
       final paymentService = TelrPaymentService();
       final response = await paymentService.createPayment(paymentRequest);
@@ -173,6 +164,11 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           ..setNavigationDelegate(
             NavigationDelegate(
               onNavigationRequest: (NavigationRequest request) {
+                if (request.url.contains('success') ||
+                    request.url.contains('payment/success')) {
+                  saveBooking();
+                  saveTransaction();
+                }
                 return _handleNavigation(request.url);
               },
               onPageStarted: (String url) {
@@ -216,32 +212,83 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     }
   }
 
+  Future<bool> saveTransaction() async {
+    final amount = widget.isFromBooking
+        ? double.tryParse(
+                widget.booking?.completionData?.totalCost.toString() ?? '0.00',
+              ) ??
+              0.00
+        : widget.review?.tipAmount ?? 0.00;
+    TransactionModel transaction = TransactionModel(
+      DateTime.now(),
+      amount: amount,
+      paymentStatus: "completed",
+      paymentMethod: widget.selectedPayment ?? "Cards",
+      createdAt: DateTime.now(),
+      orderId: orderId ?? "",
+      customerId: widget.customerData.uid ?? "",
+      workerId: widget.booking?.agent?.uid ?? "",
+      bookingId: widget.booking?.id ?? "",
+    );
+    return await BookingUtils.saveTransaction(transaction: transaction);
+  }
+
+  Future<bool> saveBooking() async {
+    return await BookingUtils.updateBookingStatus(
+      booking: widget.booking!,
+      paymentModeCode: widget.selectedPayment == "Cards" ? "C" : "O",
+      isCompleted: true,
+    );
+  }
+
   NavigationDecision _handleNavigation(String url) {
     if (url.contains('success') || url.contains('payment/success')) {
-      if (widget.isFromBooking) {
-        saveBooking();
-        Navigator.pushReplacement(
+      if (widget.booking == null) {
+        // Handle the case where there's no booking
+        Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder: (context) =>
-                BookingSuccessPage(orderId: orderId ?? 'NO ORDER ID'),
-          ),
+          MaterialPageRoute(builder: (context) => const Home()),
+          (Route<dynamic> route) => false,
         );
-      } else {
-        BookingUtils.saveReview(
-          booking: widget.booking!,
-          review: widget.review,
-        );
-        Navigator.pop(context);
-        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.thankYouMessage),
-            duration: Duration(seconds: 2),
+            content: Text(
+              AppLocalizations.of(context)!.paymentProcessedSuccessfully,
+            ),
             backgroundColor: Colors.green,
           ),
         );
+      } else {
+        // If we have a booking, proceed to the success page
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PaymentSuccessPage(
+              amount: widget.isFromBooking
+                  ? double.tryParse(
+                          widget.booking?.completionData?.totalCost
+                                  .toString() ??
+                              '0.00',
+                        ) ??
+                        0.00
+                  : widget.review?.tipAmount ?? 0.00,
+              orderId: orderId ?? "",
+              booking: widget.booking!,
+              paymentMethod:
+                  "Cards", // Default to "Cards" as it's a card payment
+            ),
+          ),
+          (Route<dynamic> route) => false,
+        );
       }
+
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text(AppLocalizations.of(context)!.thankYouMessage),
+      //     duration: Duration(seconds: 2),
+      //     backgroundColor: Colors.green,
+      //   ),
+      // );
 
       return NavigationDecision.prevent;
     } else if (url.contains('cancel') || url.contains('payment/cancelled')) {

@@ -11,13 +11,17 @@ import '../models/booking.dart';
 Future<bool?> showBookingCancelDialog(
   BuildContext context, {
   required BookingModel booking,
+  required TextEditingController? controller,
 }) async {
   bool? res = await showDialog(
     barrierDismissible: false,
     useSafeArea: false,
     context: context,
     builder: (BuildContext context) {
-      return CancelBookingDialogWidget(booking: booking);
+      return CancelBookingDialogWidget(
+        booking: booking,
+        reasonController: controller,
+      );
     },
   );
 
@@ -25,8 +29,13 @@ Future<bool?> showBookingCancelDialog(
 }
 
 class CancelBookingDialogWidget extends StatefulWidget {
-  const CancelBookingDialogWidget({super.key, required this.booking});
+  const CancelBookingDialogWidget({
+    super.key,
+    required this.booking,
+    this.reasonController,
+  });
   final BookingModel booking;
+  final TextEditingController? reasonController;
 
   @override
   State<CancelBookingDialogWidget> createState() =>
@@ -74,7 +83,24 @@ class _CancelBookingDialogWidgetState extends State<CancelBookingDialogWidget> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: 9),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: widget.reasonController,
+                          decoration: InputDecoration(
+                            hintText:
+                                AppLocalizations.of(
+                                  context,
+                                )?.reasonForCancellation ??
+                                'Reason for cancellation',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 12,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -109,6 +135,7 @@ class _CancelBookingDialogWidgetState extends State<CancelBookingDialogWidget> {
                               ),
                             ),
                           ),
+
                         if (!isCanceling) const SizedBox(width: 15),
                         Expanded(
                           flex: 2,
@@ -121,10 +148,14 @@ class _CancelBookingDialogWidgetState extends State<CancelBookingDialogWidget> {
                                 ),
                                 backgroundColor: AppColors.secondary,
                               ),
-                              onPressed: isCanceling
+                              onPressed:
+                                  (isCanceling &&
+                                      widget.reasonController!.text.isNotEmpty)
                                   ? () {}
                                   : () => Navigator.pop(context, true),
-                              child: isCanceling
+                              child:
+                                  (isCanceling &&
+                                      widget.reasonController!.text.isNotEmpty)
                                   ? Loader()
                                   : Text(
                                       AppLocalizations.of(context)?.yesCancel ??

@@ -30,8 +30,9 @@ class RefreshBookingsEvent extends BookingEvent {
 
 class CancelBookingEvent extends BookingEvent {
   final BookingModel booking;
-  const CancelBookingEvent(this.booking);
+  final String reason;
+  const CancelBookingEvent(this.booking, this.reason);
 
   @override
-  List<Object> get props => [booking];
+  List<Object> get props => [booking, reason];
 }

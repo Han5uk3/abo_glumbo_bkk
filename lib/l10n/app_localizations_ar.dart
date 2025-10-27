@@ -372,10 +372,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String get applePay => 'الدفع بواسطة ابل باي';
 
   @override
+  String get completedBold => 'مُكتمل';
+
+  @override
+  String get paymentProcessedSuccessfully =>
+      'Your payment has been processed successfully.';
+
+  @override
   String get cashOnHands => 'الدفع نقدي';
 
   @override
+  String get amount => 'المبلغ';
+
+  @override
   String get processingPayment => 'معالجة الدفع';
+
+  @override
+  String get amountPaid => 'Amount paid';
+
+  @override
+  String get reviewNow => 'Review Now';
+
+  @override
+  String get mode => 'Mode';
+
+  @override
+  String get inspectionOnly => 'Inspection Only';
+
+  @override
+  String get fullService => 'Full Service';
 
   @override
   String get processingPaymentDesc =>
@@ -401,7 +426,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get paymentFailedDesc => 'لم يتم حفظ الحجز. يرجى المحاولة مرة أخرى.';
 
   @override
-  String get paymentPending => 'الدفع النقدي معلق';
+  String get paymentPending => 'الدفع معلق';
 
   @override
   String get paymentPendingDesc =>
@@ -506,7 +531,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dateAndTime => 'التاريخ والوقت';
 
   @override
+  String get cancelledBy => 'تم الإلغاء بواسطة';
+
+  @override
+  String get customer => 'العميل';
+
+  @override
   String get address => 'العنوان';
+
+  @override
+  String get cancellationReason => 'سبب الإلغاء';
+
+  @override
+  String get cancelledOn => 'تم الإلغاء في';
+
+  @override
+  String get cancellationDetails => 'تفاصيل الإلغاء';
+
+  @override
+  String get pleaseEnterCancellationReason => 'يرجى إدخال سبب الإلغاء.';
+
+  @override
+  String get reasonForCancellation => 'سبب الإلغاء';
 
   @override
   String get pricingAndPayment => 'التسعيرة والدفع';
@@ -1164,6 +1210,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get serviceDetails => 'تفاصيل الخدمة';
+
+  @override
+  String get inspectionFee => 'رسوم الفحص';
 
   @override
   String get workerDetails => 'تفاصيل العامل';

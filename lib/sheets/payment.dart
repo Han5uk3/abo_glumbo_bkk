@@ -3,11 +3,13 @@ import 'package:abo_glumbo_bbk/apis/telr_apple_pay.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/models/address.dart';
+import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
+import 'package:abo_glumbo_bbk/models/transaction.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
-import 'package:abo_glumbo_bbk/pages/bookings/booking_success.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
+import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -18,17 +20,18 @@ import 'package:pay/pay.dart';
 
 showPaymentBottomSheet(
   BuildContext context, {
-    required UserModel agent,
+  required UserModel agent,
   required ServiceModel service,
-  required File? selectedImage,
-  required File? selectedVideo,
-  required DateTime? selectedDate,
-  required List<Map> timeSlots,
-  required int selectedTimeCategory,
-  required int selectedTimeSlot,
-  required TextEditingController notesController,
+  // required File? selectedImage,
+  // required File? selectedVideo,
+  // required DateTime? selectedDate,
+  // required List<Map> timeSlots,
+  // required int selectedTimeCategory,
+  // required int selectedTimeSlot,
+  // required TextEditingController notesController,
   required CustomerModel customerData,
-  required AddressModel selectedAddress,
+  required BookingModel booking,
+  // required AddressModel selectedAddress,
 }) {
   showModalBottomSheet(
     context: context,
@@ -40,15 +43,16 @@ showPaymentBottomSheet(
         child: PaymentWindow(
           agent: agent,
           service: service,
-          selectedImage: selectedImage,
-          selectedVideo: selectedVideo,
-          selectedDate: selectedDate,
-          timeSlots: timeSlots,
-          selectedTimeCategory: selectedTimeCategory,
-          selectedTimeSlot: selectedTimeSlot,
-          notesController: notesController,
+          // selectedImage: selectedImage,
+          // selectedVideo: selectedVideo,
+          // selectedDate: selectedDate,
+          // timeSlots: timeSlots,
+          // selectedTimeCategory: selectedTimeCategory,
+          // selectedTimeSlot: selectedTimeSlot,
+          // notesController: notesController,
           customerData: customerData,
-          selectedAddress: selectedAddress,
+          booking: booking,
+          // selectedAddress: selectedAddress,
         ),
       );
     },
@@ -57,30 +61,32 @@ showPaymentBottomSheet(
 
 class PaymentWindow extends StatefulWidget {
   final ServiceModel service;
-  File? selectedImage;
-  File? selectedVideo;
-  DateTime? selectedDate;
-  List<Map> timeSlots;
-  int selectedTimeCategory;
-  int selectedTimeSlot;
-  TextEditingController notesController;
+  // File? selectedImage;
+  // File? selectedVideo;
+  // DateTime? selectedDate;
+  // List<Map> timeSlots;
+  // int selectedTimeCategory;
+  // int selectedTimeSlot;
+  // TextEditingController notesController;
   CustomerModel customerData;
-  AddressModel selectedAddress;
-  
+  final BookingModel booking;
+  // AddressModel selectedAddress;
+
   UserModel agent;
   PaymentWindow({
     super.key,
     required this.service,
     required this.agent,
-    this.selectedImage,
-    this.selectedVideo,
-    this.selectedDate,
-    required this.timeSlots,
-    this.selectedTimeCategory = 0,
-    this.selectedTimeSlot = 0,
-    required this.notesController,
+    // this.selectedImage,
+    // this.selectedVideo,
+    // this.selectedDate,
+    // required this.timeSlots,
+    // this.selectedTimeCategory = 0,
+    // this.selectedTimeSlot = 0,
+    // required this.notesController,
     required this.customerData,
-    required this.selectedAddress,
+    required this.booking,
+    // required this.selectedAddress,
   });
 
   @override
@@ -91,9 +97,9 @@ class _PaymentWindowState extends State<PaymentWindow> {
   final _formKey = GlobalKey<FormState>();
   String? selectedPayment;
   bool isLoading = false;
-  String? selectedImageDownloadUrl;
-  String? selectedVideoDownloadUrl;
-  bool isUploading = false;
+  // String? selectedImageDownloadUrl;
+  // String? selectedVideoDownloadUrl;
+  // bool isUploading = false;
   bool isCashPaymentProcessing = false;
 
   String generateOrderId(String uid, double amount) {
@@ -103,21 +109,21 @@ class _PaymentWindowState extends State<PaymentWindow> {
     return "ORDER$uidSuffix$timestamp$amountString";
   }
 
-  Future<bool> saveBooking() async {
-    return await BookingUtils.saveBooking(
-      service: widget.service,
-      agent:widget.agent,
-      selectedDate: widget.selectedDate!,
-      paymentMode: selectedPayment ?? "",
-      customerData: widget.customerData,
-      notes: widget.notesController.text.trim(),
-      timeSlot:
-          widget.timeSlots[widget.selectedTimeCategory]["values"][widget
-              .selectedTimeSlot],
-      selectedImage: widget.selectedImage,
-      selectedVideo: widget.selectedVideo,
-    );
-  }
+  // Future<bool> saveBooking() async {
+  //   return await BookingUtils.saveBooking(
+  //     service: widget.service,
+  //     agent:widget.agent,
+  //     selectedDate: widget.selectedDate!,
+  //     paymentMode: selectedPayment ?? "",
+  //     customerData: widget.customerData,
+  //     notes: widget.notesController.text.trim(),
+  //     timeSlot:
+  //         widget.timeSlots[widget.selectedTimeCategory]["values"][widget
+  //             .selectedTimeSlot],
+  //     selectedImage: widget.selectedImage,
+  //     selectedVideo: widget.selectedVideo,
+  //   );
+  // }
 
   void processPayment() async {
     if (selectedPayment == null) return;
@@ -143,13 +149,16 @@ class _PaymentWindowState extends State<PaymentWindow> {
               isFromBooking: true,
               customerData: widget.customerData,
               service: widget.service,
-              selectedDate: widget.selectedDate,
-              notesController: widget.notesController,
-              selectedTimeCategory: widget.selectedTimeCategory,
-              selectedTimeSlot: widget.selectedTimeSlot,
-              timeSlots: [...widget.timeSlots],
-              selectedImage: widget.selectedImage,
-              selectedVideo: widget.selectedVideo,
+              booking: widget.booking,
+              selectedPayment: selectedPayment,
+
+              // selectedDate: widget.selectedDate,
+              // notesController: widget.notesController,
+              // selectedTimeCategory: widget.selectedTimeCategory,
+              // selectedTimeSlot: widget.selectedTimeSlot,
+              // timeSlots: [...widget.timeSlots],
+              // selectedImage: widget.selectedImage,
+              // selectedVideo: widget.selectedVideo,
             ),
           ),
           (route) => false,
@@ -220,12 +229,13 @@ class _PaymentWindowState extends State<PaymentWindow> {
           );
 
           if (paymentSuccess) {
-            final isBooked = await saveBooking();
+            // final isBooked = await saveBooking();
             if (mounted) {
               showSnackBar(
-                isBooked
-                    ? AppLocalizations.of(context)!.bookingSuccess
-                    : AppLocalizations.of(context)!.bookingFailed,
+                // isBooked
+                //     ? AppLocalizations.of(context)!.bookingSuccess
+                //     : AppLocalizations.of(context)!.bookingFailed,
+                AppLocalizations.of(context)!.paymentSuccessful,
                 context,
               );
             }
@@ -258,26 +268,36 @@ class _PaymentWindowState extends State<PaymentWindow> {
         isCashPaymentProcessing = true;
 
         // Cash payment logic
-        final isBooked = await saveBooking();
+        // final isBooked = await saveBooking();
         if (mounted) {
           setState(() {
             isLoading = false;
           });
-          if (isBooked) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BookingSuccessPage(
-                  orderId: orderId,
-                  isFromCashOnDelivery: true,
-                ),
-              ),
-            );
-          } else {
-            showSnackBar(AppLocalizations.of(context)!.bookingFailed, context);
-            // Reset the flag if booking failed so user can try again
-            isCashPaymentProcessing = false;
-          }
+          Navigator.pop(context); // Close the payment bottom sheet
+          showCashDetailBottomSheet(
+            booking: widget.booking,
+            context: context,
+            customer: widget.customerData,
+            worker: widget.agent,
+            orderId: orderId,
+            paymentModeCode: selectedPayment == "Cards" ? "C" : "O",
+            amount: widget.booking.completionData?.totalCost.toString() ?? '',
+          );
+          // if (isBooked) {
+          //   Navigator.pushReplacement(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => BookingSuccessPage(
+          //         orderId: orderId,
+          //         isFromCashOnDelivery: true,
+          //       ),
+          //     ),
+          //   );
+          // } else {
+          //   showSnackBar(AppLocalizations.of(context)!.bookingFailed, context);
+          //   // Reset the flag if booking failed so user can try again
+          //   isCashPaymentProcessing = false;
+          // }
         }
       }
     } catch (e) {
@@ -291,6 +311,41 @@ class _PaymentWindowState extends State<PaymentWindow> {
         }
       }
     }
+  }
+
+  showCashDetailBottomSheet({
+    required BookingModel booking,
+    required BuildContext context,
+    required CustomerModel customer,
+    required UserModel worker,
+    required String orderId,
+    required String amount,
+    required String paymentModeCode,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      clipBehavior: Clip.antiAlias,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: CashPaymentDetails(
+            orderId: orderId,
+            amount: double.tryParse(amount) ?? 0.0,
+            paymentModeCode: paymentModeCode,
+            booking: booking,
+            customer: customer,
+            worker: worker,
+          ),
+        );
+      },
+    );
   }
 
   Future<Map<String, dynamic>?> showApplePaySheet() async {
@@ -670,6 +725,308 @@ class _PaymentWindowState extends State<PaymentWindow> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CashPaymentDetails extends StatefulWidget {
+  final String orderId;
+  final double amount;
+  final String paymentModeCode;
+  final BookingModel booking;
+  final CustomerModel customer;
+  final UserModel worker;
+
+  const CashPaymentDetails({
+    super.key,
+    required this.orderId,
+    required this.amount,
+    required this.paymentModeCode,
+    required this.booking,
+    required this.customer,
+    required this.worker,
+  });
+
+  @override
+  State<CashPaymentDetails> createState() => _CashPaymentDetailsState();
+}
+
+class _CashPaymentDetailsState extends State<CashPaymentDetails> {
+  final TextEditingController _amountController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isProcessing = false;
+
+  double get totalAmount => (widget.amount);
+  double get paidAmount => double.tryParse(_amountController.text) ?? 0.0;
+  double get changeAmount => paidAmount - totalAmount;
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  Future<bool> saveTransaction() async {
+    TransactionModel transaction = TransactionModel(
+      DateTime.now(),
+      amount: widget.amount,
+      paymentStatus: "completed",
+      paymentMethod: widget.paymentModeCode == "C" ? "Cards" : "Cash On Hands",
+      createdAt: DateTime.now(),
+      orderId: widget.orderId,
+      customerId: widget.customer.uid ?? "",
+      workerId: widget.worker.uid,
+      bookingId: widget.booking.id,
+    );
+    return await BookingUtils.saveTransaction(transaction: transaction);
+  }
+
+  void _processPayment() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isProcessing = true);
+
+      BookingUtils.updateBookingStatus(
+        booking: widget.booking,
+        isCompleted: true,
+        paymentModeCode: widget.paymentModeCode,
+      );
+      await saveTransaction();
+
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => PaymentSuccessPage(
+              amount: widget.amount,
+              paymentMethod: widget.paymentModeCode,
+              orderId: widget.orderId,
+              booking: widget.booking,
+            ),
+          ),
+          (route) => false,
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Handle bar
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+
+            // Title
+            Row(
+              children: [
+                Icon(
+                  Icons.payments_outlined,
+                  color: Theme.of(context).primaryColor,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Cash Payment',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // Order ID
+            _buildInfoRow('Order ID', widget.orderId, Icons.receipt_long),
+            const SizedBox(height: 16),
+
+            // Amount to be paid
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Amount to be Paid',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.blue.shade900,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '₹${totalAmount.toStringAsFixed(2)}',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade900,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Amount paid input
+            TextFormField(
+              controller: _amountController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              autofocus: true,
+
+              decoration: InputDecoration(
+                labelText: 'Amount Paid',
+                hintText: 'Enter amount',
+
+                prefixIcon: const Icon(Icons.attach_money),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryColor,
+                    width: 2,
+                  ),
+                ),
+                filled: true,
+                fillColor: Colors.grey.shade50,
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the amount paid';
+                }
+                final paid = double.tryParse(value);
+                if (paid == null) {
+                  return 'Please enter a valid amount';
+                }
+                if (paid < totalAmount) {
+                  return 'Amount must be at least ₹${totalAmount.toStringAsFixed(2)}';
+                }
+                return null;
+              },
+              onChanged: (value) {
+                setState(() {}); // Update change amount
+              },
+            ),
+            const SizedBox(height: 20),
+
+            // Change amount (if applicable)
+            if (paidAmount > 0)
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: changeAmount > 0
+                      ? Colors.green.shade50
+                      : Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: changeAmount > 0
+                        ? Colors.green.shade200
+                        : Colors.grey.shade300,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Balance to Receive',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: changeAmount > 0
+                            ? Colors.green.shade900
+                            : Colors.grey.shade700,
+                      ),
+                    ),
+                    Text(
+                      '₹${changeAmount > 0 ? changeAmount.toStringAsFixed(2) : '0.00'}',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: changeAmount > 0
+                            ? Colors.green.shade900
+                            : Colors.grey.shade700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 24),
+
+            // Confirm button
+            ElevatedButton(
+              onPressed: _isProcessing ? null : _processPayment,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                backgroundColor: Theme.of(context).primaryColor,
+              ),
+              child: _isProcessing
+                  ? const SizedBox(height: 20, width: 20, child: Loader())
+                  : const Text(
+                      'Confirm Payment',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: Colors.grey.shade600),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

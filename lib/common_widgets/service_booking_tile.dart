@@ -3,6 +3,7 @@ import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/booking_bloc.dart';
 import 'package:abo_glumbo_bbk/sheets/booking_details.dart';
 import 'package:abo_glumbo_bbk/sheets/cancel_booking_dialog.dart';
+import 'package:abo_glumbo_bbk/sheets/payment.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class ServiceBookingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController reasonController = TextEditingController();
     return GestureDetector(
       onTap: () => showBookingDetailsBottomSheet(
         context,
@@ -105,31 +107,81 @@ class ServiceBookingTile extends StatelessWidget {
                   ),
                   if (booking.bookingStatusCode == "C") ...[
                     const SizedBox(height: 8),
-                    SizedBox(
-                      height: 23,
-                      child: FilledButton(
-                        style: FilledButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
+
+                    Row(
+                      children: [
+                        if (booking.paymentCompleted == false) ...{
+                          GestureDetector(
+                            child: SizedBox(
+                              height: 23,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.orange),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  AppLocalizations.of(
+                                        context,
+                                      )?.completePayment ??
+                                      '',
+                                  style: GoogleFonts.dmSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 10,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              showPaymentBottomSheet(
+                                context,
+                                agent: booking.agent!,
+                                service: booking.service,
+                                customerData: booking.customer,
+                                booking: booking,
+                              );
+                            },
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          backgroundColor: AppColors.yellow,
-                        ),
-                        onPressed: booking.review == null
-                            ? onReviewButtonPressed
-                            : null,
-                        child: Text(
-                          booking.review == null
-                              ? AppLocalizations.of(context)?.writeAReview ?? ''
-                              : AppLocalizations.of(context)?.reviewSubmitted ??
-                                    '',
-                          style: GoogleFonts.dmSans(
-                            color: Colors.black,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
+                          SizedBox(width: 4),
+                        },
+                        SizedBox(
+                          height: 23,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              backgroundColor: AppColors.yellow,
+                            ),
+                            onPressed: booking.review == null
+                                ? onReviewButtonPressed
+                                : null,
+                            child: Text(
+                              booking.review == null
+                                  ? AppLocalizations.of(
+                                          context,
+                                        )?.writeAReview ??
+                                        ''
+                                  : AppLocalizations.of(
+                                          context,
+                                        )?.reviewSubmitted ??
+                                        '',
+                              style: GoogleFonts.dmSans(
+                                color: Colors.black,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ],
@@ -140,7 +192,7 @@ class ServiceBookingTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  "${booking.service.price} ${AppLocalizations.of(context)?.sar}",
+                  "${booking.completionData?.totalCost} ${AppLocalizations.of(context)?.sar}",
                   style: GoogleFonts.dmSans(
                     color: AppColors.green1,
                     fontWeight: FontWeight.bold,
@@ -148,6 +200,7 @@ class ServiceBookingTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
+
                 if (booking.bookingStatusCode == "P")
                   SizedBox(
                     height: 23,
@@ -164,9 +217,40 @@ class ServiceBookingTile extends StatelessWidget {
                         bool? res = await showBookingCancelDialog(
                           context,
                           booking: booking,
+                          controller: reasonController,
                         );
                         if (res == true) {
-                          bookingBloc.add(CancelBookingEvent(booking));
+                          if (reasonController.text.trim().isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: AppColors.red,
+                                content: Text(
+                                  AppLocalizations.of(
+                                        context,
+                                      )?.pleaseEnterCancellationReason ??
+                                      '',
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+                          bookingBloc.add(
+                            CancelBookingEvent(
+                              booking,
+                              reasonController.text.trim(),
+                            ),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: AppColors.green,
+                              content: Text(
+                                AppLocalizations.of(
+                                      context,
+                                    )?.bookingCancelled ??
+                                    '',
+                              ),
+                            ),
+                          );
                           // refresh the page
                           onRefresh.call();
                         }
@@ -185,7 +269,11 @@ class ServiceBookingTile extends StatelessWidget {
                   Container(
                     height: 23,
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.green2),
+                      border: Border.all(
+                        color: booking.paymentCompleted
+                            ? AppColors.green2
+                            : Colors.orange,
+                      ),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -195,11 +283,14 @@ class ServiceBookingTile extends StatelessWidget {
                       style: GoogleFonts.dmSans(
                         fontWeight: FontWeight.w500,
                         fontSize: 10,
-                        color: AppColors.green2,
+                        color: booking.paymentCompleted
+                            ? AppColors.green2
+                            : Colors.orange,
                       ),
                     ),
                   )
-                else if (booking.bookingStatusCode == "X")
+                else if (booking.bookingStatusCode == "X" ||
+                    booking.bookingStatusCode == "XC")
                   Container(
                     height: 23,
                     decoration: BoxDecoration(

@@ -375,10 +375,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applePay => 'Payment by Apple Pay';
 
   @override
+  String get completedBold => 'COMPLETED';
+
+  @override
+  String get paymentProcessedSuccessfully =>
+      'Your payment has been processed successfully.';
+
+  @override
   String get cashOnHands => 'Payment in cash';
 
   @override
+  String get amount => 'Amount';
+
+  @override
   String get processingPayment => 'Processing Payment';
+
+  @override
+  String get amountPaid => 'Amount paid';
+
+  @override
+  String get reviewNow => 'Review Now';
+
+  @override
+  String get mode => 'Mode';
+
+  @override
+  String get inspectionOnly => 'Inspection Only';
+
+  @override
+  String get fullService => 'Full Service';
 
   @override
   String get processingPaymentDesc =>
@@ -406,7 +431,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Booking could not be saved. Please try again.';
 
   @override
-  String get paymentPending => 'Cash Payment Pending';
+  String get paymentPending => 'Payment Pending';
 
   @override
   String get paymentPendingDesc =>
@@ -509,7 +534,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dateAndTime => 'Date & Time';
 
   @override
+  String get cancelledBy => 'Cancelled by';
+
+  @override
+  String get customer => 'Customer';
+
+  @override
   String get address => 'Address';
+
+  @override
+  String get cancellationReason => 'Cancellation Reason';
+
+  @override
+  String get cancelledOn => 'Cancelled on';
+
+  @override
+  String get cancellationDetails => 'Cancellation Details';
+
+  @override
+  String get pleaseEnterCancellationReason =>
+      'Please enter cancellation reason.';
+
+  @override
+  String get reasonForCancellation => 'Reason for Cancellation';
 
   @override
   String get pricingAndPayment => 'Pricing & Payment';
@@ -1170,6 +1217,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get serviceDetails => 'Service Details';
+
+  @override
+  String get inspectionFee => 'Inspection Fee';
 
   @override
   String get workerDetails => 'Worker Details';

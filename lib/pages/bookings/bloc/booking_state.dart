@@ -36,10 +36,20 @@ class BookingsLoaded extends BookingState {
         return allBookings.where((e) => e.bookingStatusCode == 'P').toList();
       case BookingStatusType.confirmed:
         return allBookings.where((e) => e.bookingStatusCode == 'A').toList();
+      case BookingStatusType.completed:
+        return allBookings
+            .where(
+              (e) => e.bookingStatusCode == 'C' && e.review?.rating == null,
+            )
+            .toList();
       case BookingStatusType.pastBookings:
         return allBookings
             .where(
-              (e) => e.bookingStatusCode != 'P' && e.bookingStatusCode != 'A',
+              (e) =>
+                  e.bookingStatusCode != 'P' &&
+                  e.bookingStatusCode != 'A' &&
+                  e.review?.rating != null &&
+                  e.paymentCompleted,
             )
             .toList();
     }

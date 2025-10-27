@@ -145,7 +145,7 @@ class AppServices {
           try {
             final customerData =
                 customerSnapshot.data() as Map<String, dynamic>?;
-           
+
             final favourites = List<String>.from(
               customerData?['favourites'] ?? [],
             );
@@ -502,12 +502,13 @@ class AppServices {
     }
   }
 
-  static Future<bool> cancelBooking(BookingModel booking) async {
+  static Future<bool> cancelBooking(BookingModel booking, String reason) async {
     try {
       await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
-        'bookingStatusCode': 'X',
+        'bookingStatusCode': 'XC',
         'cancelledAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
+        'cancellationReason': reason,
       });
 
       return true;

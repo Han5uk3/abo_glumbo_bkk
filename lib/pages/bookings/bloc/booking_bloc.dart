@@ -44,7 +44,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         },
         onError: (error, stackTrace) {
           return BookingsError(
-            message: 'Failed to load bookings',
+            message: error.toString(),
             selectedStatus: state is BookingsLoaded
                 ? (state as BookingsLoaded).selectedStatus
                 : BookingStatusType.pending,
@@ -54,7 +54,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     } catch (e) {
       emit(
         BookingsError(
-          message: 'Failed to load bookings',
+          message: e.toString(),
           selectedStatus: BookingStatusType.pending,
         ),
       );
@@ -80,7 +80,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     Emitter<BookingState> emit,
   ) async {
     emit(CancelBookingLoading());
-    await AppServices.cancelBooking(event.booking)
+    await AppServices.cancelBooking(event.booking, event.reason)
         .then((success) {
           if (success) {
             emit(CancelBookingSuccess());

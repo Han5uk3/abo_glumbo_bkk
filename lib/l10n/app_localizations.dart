@@ -812,17 +812,65 @@ abstract class AppLocalizations {
   /// **'Payment by Apple Pay'**
   String get applePay;
 
+  /// No description provided for @completedBold.
+  ///
+  /// In en, this message translates to:
+  /// **'COMPLETED'**
+  String get completedBold;
+
+  /// No description provided for @paymentProcessedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment has been processed successfully.'**
+  String get paymentProcessedSuccessfully;
+
   /// No description provided for @cashOnHands.
   ///
   /// In en, this message translates to:
   /// **'Payment in cash'**
   String get cashOnHands;
 
+  /// No description provided for @amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amount;
+
   /// No description provided for @processingPayment.
   ///
   /// In en, this message translates to:
   /// **'Processing Payment'**
   String get processingPayment;
+
+  /// No description provided for @amountPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount paid'**
+  String get amountPaid;
+
+  /// No description provided for @reviewNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Now'**
+  String get reviewNow;
+
+  /// No description provided for @mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Mode'**
+  String get mode;
+
+  /// No description provided for @inspectionOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection Only'**
+  String get inspectionOnly;
+
+  /// No description provided for @fullService.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Service'**
+  String get fullService;
 
   /// No description provided for @processingPaymentDesc.
   ///
@@ -869,7 +917,7 @@ abstract class AppLocalizations {
   /// No description provided for @paymentPending.
   ///
   /// In en, this message translates to:
-  /// **'Cash Payment Pending'**
+  /// **'Payment Pending'**
   String get paymentPending;
 
   /// No description provided for @paymentPendingDesc.
@@ -1064,11 +1112,53 @@ abstract class AppLocalizations {
   /// **'Date & Time'**
   String get dateAndTime;
 
+  /// No description provided for @cancelledBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by'**
+  String get cancelledBy;
+
+  /// No description provided for @customer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get customer;
+
   /// No description provided for @address.
   ///
   /// In en, this message translates to:
   /// **'Address'**
   String get address;
+
+  /// No description provided for @cancellationReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation Reason'**
+  String get cancellationReason;
+
+  /// No description provided for @cancelledOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled on'**
+  String get cancelledOn;
+
+  /// No description provided for @cancellationDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation Details'**
+  String get cancellationDetails;
+
+  /// No description provided for @pleaseEnterCancellationReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter cancellation reason.'**
+  String get pleaseEnterCancellationReason;
+
+  /// No description provided for @reasonForCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for Cancellation'**
+  String get reasonForCancellation;
 
   /// No description provided for @pricingAndPayment.
   ///
@@ -2341,6 +2431,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Service Details'**
   String get serviceDetails;
+
+  /// No description provided for @inspectionFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection Fee'**
+  String get inspectionFee;
 
   /// No description provided for @workerDetails.
   ///

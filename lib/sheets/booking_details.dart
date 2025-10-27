@@ -117,7 +117,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                         ),
                       if (booking.service.price != null)
                         _buildInfoRow(
-                          localization.servicePrice,
+                          localization.inspectionFee,
                           '${localization.sar} ${booking.service.price}',
                         ),
                     ],
@@ -183,25 +183,35 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                       ],
                     ),
                   const SizedBox(height: 16),
-                  _buildSectionCard(
-                    title: localization.pricingAndPayment,
-                    icon: Icons.payments_rounded,
-                    children: [
-                      if (booking.service.price != null)
+
+                  if (booking.bookingStatusCode == 'C')
+                    _buildSectionCard(
+                      title: localization.pricingAndPayment,
+                      icon: Icons.payments_rounded,
+                      children: [
                         _buildInfoRow(
-                          localization.servicePrice,
-                          '${localization.sar} ${booking.service.price}',
-                          isHighlighted: true,
+                          localization.mode,
+                          booking.completionData?.mode == 0
+                              ? localization.inspectionOnly
+                              : localization.fullService,
                         ),
-                      _buildInfoRow(
-                        localization.paymentMethod,
-                        getLocalizedPaymentMode(
-                          booking.paymentModeGen,
-                          localization,
-                        ),
-                      ),
-                    ],
-                  ),
+                        if (booking.completionData?.totalCost != null)
+                          _buildInfoRow(
+                            localization.amount,
+                            '${localization.sar} ${booking.completionData?.totalCost}',
+                            isHighlighted: true,
+                          ),
+
+                        if (booking.paymentCompleted)
+                          _buildInfoRow(
+                            localization.paymentMethod,
+                            getLocalizedPaymentMode(
+                              booking.paymentModeCode,
+                              localization,
+                            ),
+                          ),
+                      ],
+                    ),
                   const SizedBox(height: 16),
                   if (booking.notes.isNotEmpty)
                     _buildSectionCard(
@@ -227,6 +237,48 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                         ),
                       ],
                     ),
+
+                  if (booking.bookingStatusCode == 'X' ||
+                      booking.bookingStatusCode == 'XC') ...[
+                    const SizedBox(height: 16),
+                    _buildSectionCard(
+                      title: localization.cancellationDetails,
+                      icon: Icons.cancel_rounded,
+                      children: [
+                        if (booking.bookingStatusCode != null &&
+                            (booking.bookingStatusCode == 'XC'))
+                          _buildInfoRow(
+                            localization.cancelledBy,
+                            localization.customer,
+                          ),
+                        if (booking.bookingStatusCode != null &&
+                            (booking.bookingStatusCode == 'X'))
+                          _buildInfoRow(
+                            localization.cancelledBy,
+                            localization.serviceProvider,
+                          ),
+
+                        if (booking.cancellationReason != null &&
+                            (booking.cancellationReason ?? "").isNotEmpty)
+                          _buildInfoRow(
+                            localization.cancellationReason,
+                            booking.cancellationReason ?? "",
+                          ),
+
+                        if (booking.cancelledAt != null)
+                          _buildInfoRow(
+                            localization.cancelledOn,
+                            formatDateTime(
+                              booking.cancelledAt!.toDate(),
+                              AppLocalizations.of(context)?.localeName ?? '',
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+
+                  if (booking.bookingStatusCode == 'C')
+                    const SizedBox(height: 16),
                   if (booking.review != null)
                     _buildSectionCard(
                       title: localization.customerReview,
@@ -269,11 +321,11 @@ class BookingDetailsBottomSheet extends StatelessWidget {
 
   getLocalizedPaymentMode(String code, AppLocalizations localization) {
     switch (code) {
-      case 'Cards':
+      case 'C':
         return localization.cards;
-      case 'Apple Pay':
+      case 'A':
         return localization.applePay;
-      case 'Cash On Hands':
+      case 'O':
         return localization.cashOnHands;
       default:
         return localization.unknown;
@@ -307,6 +359,11 @@ class BookingDetailsBottomSheet extends StatelessWidget {
         statusIcon = Icons.check_circle;
         break;
       case 'X':
+        statusColor = Colors.red;
+        statusText = localization.cancelled;
+        statusIcon = Icons.cancel;
+        break;
+      case 'XC':
         statusColor = Colors.red;
         statusText = localization.cancelled;
         statusIcon = Icons.cancel;

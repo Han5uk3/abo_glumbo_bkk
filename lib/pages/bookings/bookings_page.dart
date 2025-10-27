@@ -198,6 +198,8 @@ class _BookingsPageState extends State<BookingsPage> {
         return locn.pending;
       case "confirmed":
         return locn.confirmed;
+      case "completed":
+        return locn.completedBold;
       case "pastBookings":
         return locn.pastBookings;
       default:
