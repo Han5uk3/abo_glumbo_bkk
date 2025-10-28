@@ -854,11 +854,65 @@ abstract class AppLocalizations {
   /// **'Review Now'**
   String get reviewNow;
 
+  /// No description provided for @chooseYourTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your technician'**
+  String get chooseYourTechnician;
+
+  /// No description provided for @chooseSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Source'**
+  String get chooseSource;
+
+  /// No description provided for @noTechniciansFoundMatchingYourSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'No technicians found matching your search'**
+  String get noTechniciansFoundMatchingYourSearch;
+
+  /// No description provided for @searchTechnicians.
+  ///
+  /// In en, this message translates to:
+  /// **'Search technicians...'**
+  String get searchTechnicians;
+
   /// No description provided for @mode.
   ///
   /// In en, this message translates to:
   /// **'Mode'**
   String get mode;
+
+  /// No description provided for @kmaway.
+  ///
+  /// In en, this message translates to:
+  /// **'km away'**
+  String get kmaway;
+
+  /// No description provided for @orders.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get orders;
+
+  /// No description provided for @services.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get services;
+
+  /// No description provided for @completedOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed Orders'**
+  String get completedOrders;
+
+  /// No description provided for @reviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviews;
 
   /// No description provided for @inspectionOnly.
   ///
@@ -871,6 +925,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Full Service'**
   String get fullService;
+
+  /// No description provided for @selectVideoSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Select video source'**
+  String get selectVideoSource;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @noWorkersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No workers found'**
+  String get noWorkersFound;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @selectImageSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Select image source'**
+  String get selectImageSource;
 
   /// No description provided for @confirmPayment.
   ///
@@ -2491,6 +2575,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Service Location'**
   String get serviceLocation;
+
+  /// Message explaining the inspection fee amount and payment terms
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection fee: {fee} SAR — paid only after the technician arrives and inspects the issue.'**
+  String inspectionFeeNote(String fee);
 }
 
 class _AppLocalizationsDelegate

@@ -125,9 +125,23 @@
   "processingPayment": "Processing Payment",
   "amountPaid": "Amount paid",
   "reviewNow": "Review Now",
+  "chooseYourTechnician": "Choose your technician",
+  "chooseSource": "Choose Source",
+  "noTechniciansFoundMatchingYourSearch": "No technicians found matching your search",
+  "searchTechnicians": "Search technicians...",
   "mode": "Mode",
+  "kmaway": "km away",
+  "orders": "Orders",
+  "services": "Services",
+  "completedOrders": "Completed Orders",
+  "reviews": "Reviews",
   "inspectionOnly": "Inspection Only",
   "fullService": "Full Service",
+  "selectVideoSource": "Select video source",
+  "camera": "Camera",
+  "noWorkersFound": "No workers found",
+  "gallery": "Gallery",
+  "selectImageSource": "Select image source",
   "confirmPayment": "Confirm Payment",
   "processingPaymentDesc": "Please wait while we securely process your transaction",
   "transactionError": "Transaction Error",
@@ -397,5 +411,17 @@
   "contactByPhone": "Contact by phone",
   "pleaseContactSupport": "Please contact support for more information on why your account was blocked and what steps you may take to unlock it.",
   "yourAccountHasBeenBlocked": "Your account has been blocked by the admin due to one or more of the following reasons:",
-  "serviceLocation": "Service Location"
+  "serviceLocation": "Service Location",
+  
+  "inspectionFeeNote": "Inspection fee: {fee} SAR — paid only after the technician arrives and inspects the issue.",
+  "@inspectionFeeNote": {
+    "description": "Message explaining the inspection fee amount and payment terms",
+    "placeholders": {
+      "fee": {
+        "type": "String",
+        "example": "5"
+      }
+    }
+  }
+
 }

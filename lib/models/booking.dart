@@ -165,13 +165,14 @@ class BookingModel {
 }
 
 class ReviewModel {
-  int rating;
+  int? rating;
   String review;
   double? tipAmount;
   String? paymentType;
   bool? isTipPaid;
   Timestamp? createdAt;
   String? workerId;
+
   ReviewModel({
     required this.rating,
     required this.review,
@@ -184,14 +185,28 @@ class ReviewModel {
 
   factory ReviewModel.fromMap(Map<String, dynamic> data) {
     return ReviewModel(
-      rating: data['rating'],
-      review: data['review'],
-      tipAmount: data['tipAmount'],
-      paymentType: data['paymentType'],
-      isTipPaid: data['isTipPaid'],
-      createdAt: data['createdAt'],
-      workerId: data['workerId'],
+      rating: data['rating'] != null
+          ? (data['rating'] is int
+                ? data['rating'] as int
+                : (data['rating'] as num).toInt())
+          : null,
+      review: data['review']?.toString() ?? '', // ✅ Fixed: Safe conversion
+      tipAmount:
+          data['tipAmount'] !=
+              null // ✅ Fixed: Check null first
+          ? (data['tipAmount'] is double
+                ? data['tipAmount'] as double
+                : (data['tipAmount'] as num).toDouble())
+          : null,
+      paymentType: data['paymentType'] as String?, // ✅ Make nullable
+      isTipPaid: data['isTipPaid'] as bool?, // ✅ Make nullable
+      createdAt: data['createdAt'] as Timestamp?, // ✅ Make nullable
+      workerId: data['workerId'] as String?, // ✅ Make nullable
     );
+  }
+
+  factory ReviewModel.fromJson(Map<String, dynamic> json) {
+    return ReviewModel.fromMap(json);
   }
 
   Map<String, dynamic> toJson() {
@@ -216,7 +231,7 @@ class ReviewModel {
     String? workerId,
   }) {
     return ReviewModel(
-      rating: rating ?? this.rating,
+      rating: rating ?? rating,
       review: review ?? this.review,
       tipAmount: tipAmount ?? this.tipAmount,
       paymentType: paymentType ?? this.paymentType,
@@ -262,17 +277,21 @@ class CompletionDataModel {
   });
   factory CompletionDataModel.fromMap(Map<String, dynamic> data) {
     return CompletionDataModel(
-      imageUrl: data['imageUrl'],
-      mode: data['mode'],
-      paymentMethod: data['paymentMethod'],
-      serviceCost: data['serviceCost'],
-      totalCost: data['totalCost'],
-      serviceItems: (data['serviceItems'] as List<dynamic>)
+      imageUrl: data['imageUrl'] ?? '',
+      mode: data['mode'] != null ? (data['mode'] as num).toInt() : 0,
+      paymentMethod: data['paymentMethod'] ?? '',
+      serviceCost: data['serviceCost'] != null
+          ? (data['serviceCost'] as num).toDouble()
+          : 0.0,
+      totalCost: data['totalCost'] != null
+          ? (data['totalCost'] as num).toDouble()
+          : 0.0,
+      serviceItems: (data['serviceItems'] as List<dynamic>? ?? [])
           .map(
             (item) => BookingServiceItem(
-              name: item['name'],
-              quantity: item['quantity'],
-              price: item['price'],
+              name: item['name'] ?? '',
+              quantity: (item['quantity'] as num?)?.toDouble() ?? 0.0,
+              price: (item['price'] as num?)?.toDouble() ?? 0.0,
             ),
           )
           .toList(),

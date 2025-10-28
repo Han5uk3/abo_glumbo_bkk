@@ -129,7 +129,7 @@ class NewBookingUtils {
       final userSnapshot = await userDoc.get();
       if (userSnapshot.exists) {
         final userData = userSnapshot.data() as Map<String, dynamic>;
-        final newRating = userData["rating"] + review?.rating.toDouble();
+        final newRating = userData["rating"] + review?.rating?.toDouble();
         await userDoc.update({"rating": newRating});
       }
 

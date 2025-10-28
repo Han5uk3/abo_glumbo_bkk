@@ -15,6 +15,7 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class AppServices {
   static String uid = LocalStoreHelper.getUID() ?? '';
@@ -724,4 +725,140 @@ class AppServices {
           return customerSupportList;
         });
   }
+
+  static Stream<Map<String, dynamic>> getWorkerRating(String workerId) {
+    return AppFirestore.bookingsCollectionRef
+        .where('agent.uid', isEqualTo: workerId)
+        .where('bookingStatusCode', isEqualTo: 'C')
+        .where('review.rating', isNull: false)
+        .snapshots()
+        .map((snapshot) {
+          // ✅ FIXED: Extract the nested 'review' field from each booking document
+          List<ReviewModel> reviewList = snapshot.docs
+              .map((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                // Access the nested 'review' map
+                final reviewData = data['review'] as Map<String, dynamic>?;
+
+                if (reviewData != null) {
+                  return ReviewModel.fromMap(reviewData);
+                }
+                return null;
+              })
+              .where((review) => review != null)
+              .cast<ReviewModel>()
+              .toList();
+
+          double rating = 0;
+
+          // Filter out null ratings before processing
+          final validRatings = reviewList
+              .where((review) => review.rating != null)
+              .map((review) => review.rating!)
+              .toList();
+
+          if (validRatings.isNotEmpty) {
+            final totalRating = validRatings.reduce((a, b) => a + b);
+
+            rating = totalRating / (validRatings.length * 5);
+          }
+
+          return {
+            'count': validRatings.length,
+            'rating': rating,
+          };
+        });
+  }
+
+  static Stream<int> getCompletedJobsByWorkerId(String workerId) {
+    return AppFirestore.bookingsCollectionRef
+        .where('agent.uid', isEqualTo: workerId)
+        .where('bookingStatusCode', isEqualTo: 'C')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
+  // Alternative approach: Using RxDart's combineLatest for real-time updates
+  static Stream<List<WorkerWithStats>> getWorkersByRolesWithStatsRealtime(
+    String categoryDocId,
+  ) async* {
+    // Step 1: Get the category name from its document
+    final categorySnapshot = await AppFirestore.categoriesCollectionRef
+        .doc(categoryDocId)
+        .get();
+
+    if (!categorySnapshot.exists) {
+      yield [];
+      return;
+    }
+
+    final categoryData = categorySnapshot.data() as Map<String, dynamic>;
+    final categoryName = categoryData['name'];
+
+    // Step 2: Get workers stream
+    final workersStream = AppFirestore.usersCollectionRef
+        .where('jobRoles', arrayContains: categoryName)
+        .where('isAdmin', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map(
+                (doc) => UserModel.fromJson(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
+        });
+
+    // Step 3: Switch to the combined streams for each worker
+    yield* workersStream.switchMap((workers) {
+      if (workers.isEmpty) {
+        return Stream.value(<WorkerWithStats>[]);
+      }
+
+      // Create a list of combined streams for each worker
+      final workerStreams = workers.map((worker) {
+        return Rx.combineLatest3<UserModel, Map<String, dynamic>, int, WorkerWithStats>(
+          Stream.value(worker), // Worker data
+          getWorkerRating(worker.uid ?? ""), // Rating stream
+          getCompletedJobsByWorkerId(worker.uid ?? ''), // Completed jobs stream
+          (worker, rating, completedJobs) => WorkerWithStats(
+            worker: worker,
+            rating: rating['rating'] ?? 0,
+            completedJobs: completedJobs,
+            reviewCount: rating['count'] ?? 0,
+          ),
+        );
+      }).toList();
+
+      // Combine all worker streams into one
+      return Rx.combineLatestList(workerStreams);
+    });
+  }
+
+
+  static Future<Map<String, dynamic>>fetchCategory (String categoryDocId) async {
+    final categorySnapshot = await AppFirestore.categoriesCollectionRef
+        .doc(categoryDocId)
+        .get();
+    if (!categorySnapshot.exists) {
+      return {};
+    }
+    final categoryData = categorySnapshot.data() as Map<String, dynamic>;
+    
+    return categoryData;
+    
+  }
+}
+
+class WorkerWithStats {
+  final UserModel worker;
+  final double rating;
+  final int completedJobs;
+  final int reviewCount;
+
+  WorkerWithStats({
+    required this.worker,
+    required this.rating,
+    required this.completedJobs,
+    required this.reviewCount,
+  });
 }

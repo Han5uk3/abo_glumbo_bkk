@@ -3,9 +3,22 @@
     "paymentProcessedSuccessfully",
     "amountPaid",
     "reviewNow",
+    "chooseYourTechnician",
+    "chooseSource",
+    "noTechniciansFoundMatchingYourSearch",
+    "searchTechnicians",
     "mode",
+    "orders",
+    "services",
+    "completedOrders",
+    "reviews",
     "inspectionOnly",
     "fullService",
+    "selectVideoSource",
+    "camera",
+    "noWorkersFound",
+    "gallery",
+    "selectImageSource",
     "confirmPayment"
   ]
 }

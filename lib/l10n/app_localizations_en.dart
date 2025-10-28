@@ -397,13 +397,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewNow => 'Review Now';
 
   @override
+  String get chooseYourTechnician => 'Choose your technician';
+
+  @override
+  String get chooseSource => 'Choose Source';
+
+  @override
+  String get noTechniciansFoundMatchingYourSearch =>
+      'No technicians found matching your search';
+
+  @override
+  String get searchTechnicians => 'Search technicians...';
+
+  @override
   String get mode => 'Mode';
+
+  @override
+  String get kmaway => 'km away';
+
+  @override
+  String get orders => 'Orders';
+
+  @override
+  String get services => 'Services';
+
+  @override
+  String get completedOrders => 'Completed Orders';
+
+  @override
+  String get reviews => 'Reviews';
 
   @override
   String get inspectionOnly => 'Inspection Only';
 
   @override
   String get fullService => 'Full Service';
+
+  @override
+  String get selectVideoSource => 'Select video source';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get noWorkersFound => 'No workers found';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get selectImageSource => 'Select image source';
 
   @override
   String get confirmPayment => 'Confirm Payment';
@@ -1251,4 +1294,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get serviceLocation => 'Service Location';
+
+  @override
+  String inspectionFeeNote(String fee) {
+    return 'Inspection fee: $fee SAR — paid only after the technician arrives and inspects the issue.';
+  }
 }

@@ -7,6 +7,7 @@ import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
 import 'package:abo_glumbo_bbk/services/location_service.dart';
 import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,10 +49,8 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
 
   Timer? _sheetUpdateTimer;
 
-  Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
-    );
+  Future<void> _pickImageFromSource(ImageSource source) async {
+    final XFile? pickedFile = await _picker.pickImage(source: source);
 
     if (pickedFile != null) {
       setState(() {
@@ -63,10 +62,8 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
     }
   }
 
-  Future<void> _pickVideo() async {
-    final XFile? pickedFile = await _picker.pickVideo(
-      source: ImageSource.gallery,
-    );
+  Future<void> _pickVideoFromSource(ImageSource source) async {
+    final XFile? pickedFile = await _picker.pickVideo(source: source);
 
     if (pickedFile != null) {
       setState(() {
@@ -154,7 +151,9 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
     bool isUploaded = isImage ? isUploadedImageSuccess : isUploadedVideoSuccess;
 
     return GestureDetector(
-      onTap: (isUploaded ? null : onPick),
+      onTap: (isUploaded
+          ? null
+          : () => _showMediaSourcePicker(isVideo: !isImage)),
       child: DottedBorder(
         child: Container(
           decoration: BoxDecoration(
@@ -305,13 +304,13 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
               _addMediaWidget(
                 file: _selectedImage,
                 isImage: true,
-                onPick: _pickImage,
+                onPick: () => _showMediaSourcePicker(isVideo: false),
                 onRemove: _removeImage,
               ),
               _addMediaWidget(
                 file: _selectedVideo,
                 isImage: false,
-                onPick: _pickVideo,
+                onPick: () => _showMediaSourcePicker(isVideo: true),
                 onRemove: _removeVideo,
               ),
             ],
@@ -526,6 +525,171 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                   ),
                 ),
               ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showMediaSourcePicker({required bool isVideo}) async {
+    final bool isRTL = Directionality.of(context) == TextDirection.rtl;
+
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 24,
+                offset: const Offset(0, -4),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                height: 4,
+                width: 32,
+                decoration: BoxDecoration(
+                  color: Colors.grey[350],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              // Title with icon
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    isVideo ? Icons.videocam_outlined : Icons.image_outlined,
+                    color: AppColors.primary,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    isVideo
+                        ? (AppLocalizations.of(context)?.selectVideoSource ??
+                              'Select Video Source')
+                        : (AppLocalizations.of(context)?.selectImageSource ??
+                              'Select Image Source'),
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF1A1A1A),
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+
+              // Subtitle
+              Text(
+                AppLocalizations.of(context)?.chooseSource ?? 'Choose a source',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey[600],
+                  letterSpacing: 0.1,
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Options with elevated design
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildElegantSourceOption(
+                    icon: Icons.camera_alt_outlined,
+                    label: AppLocalizations.of(context)?.camera ?? 'Camera',
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (isVideo) {
+                        _pickVideoFromSource(ImageSource.camera);
+                      } else {
+                        _pickImageFromSource(ImageSource.camera);
+                      }
+                    },
+                    isRTL: isRTL,
+                  ),
+                  const SizedBox(width: 16),
+                  _buildElegantSourceOption(
+                    icon: Icons.photo_library_outlined,
+                    label: AppLocalizations.of(context)?.gallery ?? 'Gallery',
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (isVideo) {
+                        _pickVideoFromSource(ImageSource.gallery);
+                      } else {
+                        _pickImageFromSource(ImageSource.gallery);
+                      }
+                    },
+                    isRTL: isRTL,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildElegantSourceOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required bool isRTL,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: 140,
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey[300]!, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 28, color: AppColors.primary),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF2C2C2C),
+                letterSpacing: 0.1,
+              ),
+            ),
           ],
         ),
       ),

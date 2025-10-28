@@ -10,7 +10,6 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/add_image_booking.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
-import 'package:abo_glumbo_bbk/pages/bookings/worker_card.dart';
 import 'package:abo_glumbo_bbk/services/address_services.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/booking/bloc/booking_bloc.dart';
@@ -28,6 +27,11 @@ showBookServiceBottomSheet(
   required ServiceModel service,
 }) async {
   await showModalBottomSheet(
+    enableDrag: true,
+    isDismissible: false,
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.of(context).size.height * 0.95,
+    ),
     context: context,
     isScrollControlled: true,
     clipBehavior: Clip.antiAlias,
@@ -284,7 +288,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
             customerData = snapshot.data;
           }
           return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.8,
+            height: MediaQuery.of(context).size.height * 0.95,
             child: Scaffold(
               body: Form(
                 key: _formKey,
@@ -315,7 +319,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                         ''
                                   : AppLocalizations.of(
                                           context,
-                                        )?.chooseWorker ??
+                                        )?.chooseYourTechnician ??
                                         '',
                               style: GoogleFonts.dmSans(
                                 fontSize: 16,
@@ -334,6 +338,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                         ),
                       ),
                     ),
+
                     Expanded(
                       child: isFirstStep
                           ? _buildFirstStepContent()
@@ -611,6 +616,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
 
   _buildThirdStepContent() {
     return WorkerList(
+      service: widget.service,
       category: widget.service.category ?? "",
       selectedAddress: selectedAddress,
       selectedIndexNotifier: selectedIndexNotifier,

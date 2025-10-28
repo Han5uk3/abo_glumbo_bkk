@@ -286,7 +286,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                       children: [
                         _buildRatingRow(
                           localization.rating,
-                          booking.review!.rating.toDouble(),
+                          (booking.review!.rating?? 0.0).toDouble(),
                         ),
                         if (booking.review!.review.isNotEmpty)
                           _buildInfoRow(

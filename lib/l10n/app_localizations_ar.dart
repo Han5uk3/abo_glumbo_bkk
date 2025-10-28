@@ -394,13 +394,56 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reviewNow => 'Review Now';
 
   @override
+  String get chooseYourTechnician => 'Choose your technician';
+
+  @override
+  String get chooseSource => 'Choose Source';
+
+  @override
+  String get noTechniciansFoundMatchingYourSearch =>
+      'No technicians found matching your search';
+
+  @override
+  String get searchTechnicians => 'Search technicians...';
+
+  @override
   String get mode => 'Mode';
+
+  @override
+  String get kmaway => 'كم منك';
+
+  @override
+  String get orders => 'Orders';
+
+  @override
+  String get services => 'Services';
+
+  @override
+  String get completedOrders => 'Completed Orders';
+
+  @override
+  String get reviews => 'Reviews';
 
   @override
   String get inspectionOnly => 'Inspection Only';
 
   @override
   String get fullService => 'Full Service';
+
+  @override
+  String get selectVideoSource => 'Select video source';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get noWorkersFound => 'No workers found';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get selectImageSource => 'Select image source';
 
   @override
   String get confirmPayment => 'Confirm Payment';
@@ -977,7 +1020,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loadingLocation => 'جاري تحميل الموقع...';
 
   @override
-  String get trackWorker => 'تتبع العامل';
+  String get trackWorker => 'تتبع الفني';
 
   @override
   String get phoneNumberInvalid => 'رقم الجوال غير صحيح';
@@ -1063,13 +1106,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get servicesFound => 'تم العثور على الخدمات';
 
   @override
-  String get workerArrivesToLocationIn => 'العامل يوصل للموقع في';
+  String get workerArrivesToLocationIn => 'الفني يوصل للموقع في';
 
   @override
   String get away => 'بعيد';
 
   @override
-  String get yourWorkerIsOnTheWay => 'العامل في الطريق';
+  String get yourWorkerIsOnTheWay => 'الفني في الطريق';
 
   @override
   String get serviceProvider => 'مزود الخدمة';
@@ -1124,10 +1167,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get calculating => 'جاري التحليل...';
 
   @override
-  String get waitingForAgentLocation => 'انتظار موقع العامل...';
+  String get waitingForAgentLocation => 'انتظار موقع الفني...';
 
   @override
-  String get workerInfo => 'معلومات العامل';
+  String get workerInfo => 'معلومات الفني';
 
   @override
   String get name => 'الاسم';
@@ -1183,7 +1226,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseSelectaWorker => 'يرجى الحدد عاملاً';
 
   @override
-  String get chooseWorker => 'اختر العامل';
+  String get chooseWorker => 'اختر الفني';
 
   @override
   String get within => 'في';
@@ -1192,7 +1235,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get km => 'كم';
 
   @override
-  String get completeBooking => 'تكميل الحجز';
+  String get completeBooking => 'اكمال الحجز';
 
   @override
   String get accountBlockedMessage =>
@@ -1218,7 +1261,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get inspectionFee => 'رسوم الفحص';
 
   @override
-  String get workerDetails => 'تفاصيل العامل';
+  String get workerDetails => 'تفاصيل الفني';
 
   @override
   String get inspectionDisclaimer =>
@@ -1244,4 +1287,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get serviceLocation => 'موقع الخدمة';
+
+  @override
+  String inspectionFeeNote(String fee) {
+    return 'رسوم المعاينة: $fee ر.س — تُدفع فقط بعد وصول الفني ومعاينة المشكلة.';
+  }
 }

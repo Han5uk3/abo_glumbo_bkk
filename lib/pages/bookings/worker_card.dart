@@ -2,12 +2,17 @@ import 'dart:math';
 
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
+import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 
 class WorkerCard extends StatelessWidget {
   final UserModel worker;
+  final double rating;
+  final int reviewCount;
+  final ServiceModel service;
+  final int completedJobs;
   final AddressModel customerAddress;
   final bool isSelected;
 
@@ -16,10 +21,14 @@ class WorkerCard extends StatelessWidget {
     required this.worker,
     required this.isSelected,
     required this.customerAddress,
+    required this.rating,
+    required this.completedJobs,
+    required this.service,
+    required this.reviewCount,
   });
 
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    const R = 6371.00; // Earth radius in km
+    const R = 6371.00;
     final dLat = _toRadians(lat2 - lat1);
     final dLon = _toRadians(lon2 - lon1);
     final a =
@@ -29,9 +38,7 @@ class WorkerCard extends StatelessWidget {
             sin(dLon / 2) *
             sin(dLon / 2);
     final c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    final distance = R * c;
-
-    return distance;
+    return R * c;
   }
 
   double _toRadians(double degree) {
@@ -47,89 +54,145 @@ class WorkerCard extends StatelessWidget {
       customerAddress.lon ?? 0.0,
     );
 
-    return Card(
-      elevation: isSelected ? 8.0 : 2.0,
+    final services = worker.jobRoles ?? [];
+    final inspectionFee = service.price ?? 0.0;
 
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          width: 2,
-          color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : Colors.transparent,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isSelected ? AppColors.primary : Colors.grey.shade300,
+          width: isSelected ? 2 : 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: isSelected
+                ? AppColors.primary.withOpacity(0.1)
+                : Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: worker.profileUrl != null
-                  ? NetworkImage(worker.profileUrl!)
-                  : AssetImage('assets/images/profile_placeholder.jpg')
-                        as ImageProvider,
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
+            // Header: Name and Specialty
+            Row(
+              children: [
+                Text('🧑‍🔧', style: TextStyle(fontSize: 20)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
                     worker.name ?? 'Unknown',
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.onSurface,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade900,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    worker.jobRoles?.join(', ') ?? '',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.location_on_outlined,
-                          size: 14,
-                          color: Colors.white,
-                        ),
+                ),
+                if (isSelected)
+                  Icon(Icons.check_circle, color: AppColors.primary, size: 24),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            // Rating
+            _InfoRow(
+              icon: '⭐',
+              text:
+                  '$rating ($reviewCount ${AppLocalizations.of(context)!.reviews})',
+            ),
+
+            const SizedBox(height: 6),
+
+            // Distance
+            _InfoRow(
+              icon: '📍',
+              text:
+                  '${distance.toStringAsFixed(1)} ${AppLocalizations.of(context)!.kmaway}',
+            ),
+
+            const SizedBox(height: 6),
+
+            // Completed Orders
+            _InfoRow(
+              icon: '📦',
+              text:
+                  '${AppLocalizations.of(context)!.completedOrders}: $completedJobs',
+            ),
+
+            const SizedBox(height: 6),
+
+            // Inspection Fee
+            _InfoRow(
+              icon: '💵',
+              text:
+                  '${AppLocalizations.of(context)!.inspectionFee}: $inspectionFee ${AppLocalizations.of(context)!.sar}',
+            ),
+
+            const SizedBox(height: 6),
+
+            // Services
+            if (services.isNotEmpty)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🪪 ', style: TextStyle(fontSize: 16)),
+                  Expanded(
+                    child: Text(
+                      '${AppLocalizations.of(context)!.services}: ${services.join(' • ')}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade700,
+                        height: 1.4,
                       ),
-                      const SizedBox(width: 6),
-                      Text(
-                        "${AppLocalizations.of(context)!.within} ${distance.toStringAsFixed(1)} ${AppLocalizations.of(context)!.km}",
-                        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-                      ),
-                    ],
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),
-            ),
-            AnimatedOpacity(
-              duration: const Duration(milliseconds: 200),
-              opacity: isSelected ? 1.0 : 0.0,
-              child: Icon(
-                Icons.check_circle,
-                color: Theme.of(context).colorScheme.primary,
-                size: 28,
-              ),
-            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+// Simple info row widget
+class _InfoRow extends StatelessWidget {
+  final String icon;
+  final String text;
+
+  const _InfoRow({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text('$icon ', style: TextStyle(fontSize: 16)),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade700,
+              height: 1.4,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 }
