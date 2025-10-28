@@ -403,6 +403,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fullService => 'Full Service';
 
   @override
+  String get confirmPayment => 'Confirm Payment';
+
+  @override
   String get processingPaymentDesc =>
       'يرجى الانتظار بينما نقوم بمعالجة معاملتك بشكل آمن';
 

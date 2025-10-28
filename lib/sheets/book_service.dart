@@ -3,6 +3,7 @@ import 'dart:math' show sin, cos, sqrt, atan2, pi;
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/worker_list.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
@@ -227,234 +228,244 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-  final safePadding = MediaQuery.of(context).padding;
-  return BlocListener<NewBookingBloc, BookingState>(
-    listener: (context, state) {
-      if (state is BookingSuccess) {
-        // Navigate only after successful booking
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => BookingCompletedPage(
-              service: widget.service,
-              worker: selectedWorker,
-              selectedDate: selectedDate!,
-              selectedTime:
-                  timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
-              address: _selectedAddress ??
-                  AddressModel(
-                    id: '',
-                    fullName: '',
-                    buildingNumber: '',
-                    phoneNumber: '',
-                  ),
+    final safePadding = MediaQuery.of(context).padding;
+    return BlocListener<NewBookingBloc, BookingState>(
+      listener: (context, state) {
+        if (state is BookingSuccess) {
+          // Navigate only after successful booking
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => BookingCompletedPage(
+                service: widget.service,
+                worker: selectedWorker,
+                selectedDate: selectedDate!,
+                selectedTime:
+                    timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+                address:
+                    _selectedAddress ??
+                    AddressModel(
+                      id: '',
+                      fullName: '',
+                      buildingNumber: '',
+                      phoneNumber: '',
+                    ),
+              ),
             ),
-          ),
-        );
-      } else if (state is BookingError) {
-        // Show error message
-        if (mounted) {
-          setState(() {
-            saving = false;
-          });
+          );
+        } else if (state is BookingError) {
+          // Show error message
+          if (mounted) {
+            setState(() {
+              saving = false;
+            });
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (state is BookingLoading) {
+          // Update saving state when loading
+          if (mounted && !saving) {
+            setState(() {
+              saving = true;
+            });
+          }
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text(state.message),
-            backgroundColor: Colors.red,
-          ),
-        );
-      } else if (state is BookingLoading) {
-        // Update saving state when loading
-        if (mounted && !saving) {
-          setState(() {
-            saving = true;
-          });
-        }
-      }
-    },
-    child: StreamBuilder<CustomerModel>(
-      stream: AppServices.listenToCustomerData(LocalStoreHelper.getUID() ?? ''),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          customerData = snapshot.data;
-        }
-        return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.8,
-          child: Scaffold(
-            body: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(color: AppColors.primary),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 8,
+      },
+      child: StreamBuilder<CustomerModel>(
+        stream: AppServices.listenToCustomerData(
+          LocalStoreHelper.getUID() ?? '',
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            customerData = snapshot.data;
+          }
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: Scaffold(
+              body: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(color: AppColors.primary),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8,
+                          left: 16,
+                          right: 16,
+                          bottom: 8,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              isFirstStep
+                                  ? AppLocalizations.of(
+                                          context,
+                                        )?.selectDateTime ??
+                                        ''
+                                  : isSecondStep
+                                  ? AppLocalizations.of(
+                                          context,
+                                        )?.completeYourBooking ??
+                                        ''
+                                  : AppLocalizations.of(
+                                          context,
+                                        )?.chooseWorker ??
+                                        '',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: isFirstStep
+                          ? _buildFirstStepContent()
+                          : isSecondStep
+                          ? _buildSecondStepContent()
+                          : _buildThirdStepContent(),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: safePadding.bottom + 3,
+                        top: 18,
                         left: 16,
                         right: 16,
-                        bottom: 8,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            isFirstStep
-                                ? AppLocalizations.of(context)?.selectDateTime ??
-                                    ''
-                                : isSecondStep
-                                    ? AppLocalizations.of(context)
-                                            ?.completeYourBooking ??
-                                        ''
-                                    : AppLocalizations.of(context)
-                                            ?.chooseWorker ??
-                                        '',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close, color: Colors.white),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ],
-                      ),
+                      child: isFirstStep
+                          ? _buildFirstStepBottom()
+                          : isSecondStep
+                          ? _buildSecondStepBottom()
+                          : _buildThirdStepBottom(context),
                     ),
-                  ),
-                  Expanded(
-                    child: isFirstStep
-                        ? _buildFirstStepContent()
-                        : isSecondStep
-                            ? _buildSecondStepContent()
-                            : _buildThirdStepContent(),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      bottom: safePadding.bottom + 3,
-                      top: 18,
-                      left: 16,
-                      right: 16,
-                    ),
-                    child: isFirstStep
-                        ? _buildFirstStepBottom()
-                        : isSecondStep
-                            ? _buildSecondStepBottom()
-                            : _buildThirdStepBottom(context),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
-    ),
-  );
-}
+          );
+        },
+      ),
+    );
+  }
 
   _buildThirdStepBottom(BuildContext context) {
-  return Row(
-    children: [
-      if (!saving)
+    return Row(
+      children: [
+        if (!saving)
+          Expanded(
+            flex: 2,
+            child: SizedBox(
+              height: 50,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.black87),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
+                    isSecondStep = true;
+                    isThirdStep = false;
+                  });
+                },
+                child: Text(
+                  AppLocalizations.of(context)?.back ?? '',
+                  style: GoogleFonts.dmSans(
+                    color: Colors.black87,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        if (!saving) const SizedBox(width: 16),
         Expanded(
-          flex: 2,
+          flex: 3,
           child: SizedBox(
             height: 50,
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.black87),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () {
-                setState(() {
-                  isSecondStep = true;
-                  isThirdStep = false;
-                });
-              },
-              child: Text(
-                AppLocalizations.of(context)?.back ?? '',
-                style: GoogleFonts.dmSans(
-                  color: Colors.black87,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ),
-      if (!saving) const SizedBox(width: 16),
-      Expanded(
-        flex: 3,
-        child: SizedBox(
-          height: 50,
-          child: Hero(
-            tag: 'primary_button',
-            child: ValueListenableBuilder<int?>(
-              valueListenable: selectedIndexNotifier,
-              builder: (context, value, child) {
-                return FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: selectedIndexNotifier.value == null
-                        ? Colors.grey.shade400
-                        : AppColors.secondary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+            child: Hero(
+              tag: 'primary_button',
+              child: ValueListenableBuilder<int?>(
+                valueListenable: selectedIndexNotifier,
+                builder: (context, value, child) {
+                  return FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: selectedIndexNotifier.value == null
+                          ? Colors.grey.shade400
+                          : AppColors.secondary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ),
-                  onPressed: saving
-                      ? null
-                      : () {
-                          if (selectedIndexNotifier.value == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                content: Text(
-                                  AppLocalizations.of(context)
-                                          ?.pleaseSelectaWorker ??
-                                      'Please select a worker',
-                                ),
-                                backgroundColor: Colors.orange,
-                              ),
-                            );
-                          } else {
-                            context.read<NewBookingBloc>().add(
-                                  CreateBookingEvent(
-                                    service: widget.service,
-                                    selectedDate: selectedDate!,
-                                    customerData: customerData!,
-                                    notes: notesController.text,
-                                    selectedImage: _selectedImage,
-                                    selectedVideo: _selectedVideo,
-                                    timeSlot: timeSlots[selectedTimeCategory]
-                                        ["values"][selectedTimeSlot],
-                                    agent: selectedWorker,
+                    onPressed: saving
+                        ? null
+                        : () {
+                            if (selectedIndexNotifier.value == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  behavior: SnackBarBehavior.floating,
+                                  content: Text(
+                                    AppLocalizations.of(
+                                          context,
+                                        )?.pleaseSelectaWorker ??
+                                        'Please select a worker',
                                   ),
-                                );
-                          }
-                        },
-                  child: saving
-                      ? Loader()
-                      : Text(
-                          AppLocalizations.of(context)?.completeBooking ?? '',
-                          style: GoogleFonts.dmSans(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                                  backgroundColor: Colors.orange,
+                                ),
+                              );
+                            } else {
+                              context.read<NewBookingBloc>().add(
+                                CreateBookingEvent(
+                                  service: widget.service,
+                                  selectedDate: selectedDate!,
+                                  customerData: customerData!,
+                                  notes: notesController.text,
+                                  selectedImage: _selectedImage,
+                                  selectedVideo: _selectedVideo,
+                                  timeSlot:
+                                      timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+                                  agent: selectedWorker,
+                                ),
+                              );
+                            }
+                          },
+                    child: saving
+                        ? Loader()
+                        : Text(
+                            AppLocalizations.of(context)?.completeBooking ?? '',
+                            style: GoogleFonts.dmSans(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),
-      ),
-    ],
-  );
-}
-
+      ],
+    );
+  }
 
   _buildSecondStepBottom() {
     return Row(
@@ -599,62 +610,12 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   }
 
   _buildThirdStepContent() {
-    return StreamBuilder<List<UserModel>>(
-      stream: AppServices.getWorkersByRoles(widget.service.category ?? ""),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: Loader(color: AppColors.primary));
-        }
-        final data = snapshot.data ?? [];
-        if (selectedAddress != null) {
-          data.sort((a, b) {
-            final distanceA = calculateDistance(
-              a.liveLocation?.latitude ?? 0.0,
-              a.liveLocation?.longitude ?? 0.0,
-              selectedAddress!.lat ?? 0.0,
-              selectedAddress!.lon ?? 0.0,
-            );
-            final distanceB = calculateDistance(
-              b.liveLocation?.latitude ?? 0.0,
-              b.liveLocation?.longitude ?? 0.0,
-              selectedAddress!.lat ?? 0.0,
-              selectedAddress!.lon ?? 0.0,
-            );
-            return distanceA.compareTo(distanceB);
-          });
-        }
-        return ListView.builder(
-          shrinkWrap: true,
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            final worker = data[index];
-
-            return ValueListenableBuilder(
-              valueListenable: selectedIndexNotifier,
-              builder: (context, selectedIndex, child) {
-                final isSelected = selectedIndex == index;
-                return GestureDetector(
-                  onTap: () {
-                    selectedIndexNotifier.value = index;
-                    selectedWorker = worker;
-                  },
-                  child: WorkerCard(
-                    worker: worker,
-                    customerAddress:
-                        selectedAddress ??
-                        AddressModel(
-                          id: '',
-                          fullName: '',
-                          buildingNumber: '',
-                          phoneNumber: '',
-                        ),
-                    isSelected: isSelected,
-                  ),
-                );
-              },
-            );
-          },
-        );
+    return WorkerList(
+      category: widget.service.category ?? "",
+      selectedAddress: selectedAddress,
+      selectedIndexNotifier: selectedIndexNotifier,
+      onWorkerSelected: (worker) {
+        selectedWorker = worker;
       },
     );
   }

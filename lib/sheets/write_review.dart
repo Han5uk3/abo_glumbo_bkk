@@ -1,4 +1,5 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -107,6 +108,7 @@ class _WriteReviewBottomSheetWidgetState
       BookingUtils.saveReview(
         booking: widget.booking,
         review: ReviewModel(
+          workerId: widget.booking.agent?.uid,
           rating: rating,
           review: reviewController.text.trim(),
           tipAmount: selectedTip > 0 ? selectedTip : null,
@@ -117,7 +119,22 @@ class _WriteReviewBottomSheetWidgetState
         ),
       ).then((value) {
         if (value) {
-          Navigator.pop(context, true);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => Home()),
+            (route) => false,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!.reviewSubmittedSuccessfully,
+              ),
+              backgroundColor: Colors.green.shade600,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          );
         } else {
           setState(() => saving = false);
           ScaffoldMessenger.of(context).showSnackBar(

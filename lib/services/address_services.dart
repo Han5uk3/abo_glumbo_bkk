@@ -46,7 +46,7 @@ class AppServicesAddressRepository implements AddressRepository {
     await AppServices.removeAddress(address.id);
     await save(address);
   }
-
+@override
   Future<void> remove(AddressModel address) async {
     await AppServices.removeAddress(address.id);
   }

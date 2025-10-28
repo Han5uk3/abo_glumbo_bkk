@@ -128,6 +128,7 @@
   "mode": "Mode",
   "inspectionOnly": "Inspection Only",
   "fullService": "Full Service",
+  "confirmPayment": "Confirm Payment",
   "processingPaymentDesc": "Please wait while we securely process your transaction",
   "transactionError": "Transaction Error",
   "transactionErrorDesc": "An unexpected error occurred. Please try again later.",

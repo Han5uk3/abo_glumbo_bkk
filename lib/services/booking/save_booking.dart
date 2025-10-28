@@ -125,14 +125,15 @@ class BookingUtils {
     required ReviewModel? review,
   }) async {
     try {
-      Map<String, dynamic> updateData = {"review": review?.toJson() ?? {}};
+      final newReview = review?.copyWith(createdAt: Timestamp.now());
+      Map<String, dynamic> updateData = {"review": newReview?.toJson() ?? {}};
 
       if ((review?.tipAmount ?? 0) > 0 &&
           review?.paymentType?.isNotEmpty == true) {
         updateData.addAll({
           'tipAmount': review?.tipAmount,
           'paymentType': review?.paymentType,
-          'createdAt': Timestamp.now(),
+          'updatedAt': Timestamp.now(),
         });
       }
 
@@ -144,7 +145,8 @@ class BookingUtils {
       final userSnapshot = await userDoc.get();
       if (userSnapshot.exists) {
         final userData = userSnapshot.data() as Map<String, dynamic>;
-        final newRating = userData["rating"] + review?.rating.toDouble();
+        final oldRating = userData["rating"] ?? 0;
+        final newRating = oldRating + review?.rating.toDouble();
         await userDoc.update({"rating": newRating});
       }
 
@@ -174,16 +176,39 @@ class BookingUtils {
   }
 
   static Future<bool> saveTransaction({
-   required TransactionModel transaction,
+    required TransactionModel transaction,
   }) async {
     try {
-      await AppFirestore.transactionRecordsCollectionRef.doc(transaction.orderId).set(transaction.toMap());
+      await AppFirestore.transactionRecordsCollectionRef
+          .doc(transaction.orderId)
+          .set(transaction.toMap());
       return true;
     } catch (e) {
       debugPrint("Error saving transaction: $e");
       return false;
     }
   }
-      
-   
+
+  static Future<bool> updateBalance({
+    required String? workerId,
+    required double amount,
+  }) async {
+    try {
+      if (workerId == null) return false;
+      final user = AppFirestore.usersCollectionRef.doc(workerId).get();
+      final balance = (await user).get("availableBalance");
+      balance == null
+          ? await AppFirestore.usersCollectionRef.doc(workerId).update({
+              "availableBalance": amount,
+            })
+          : await AppFirestore.usersCollectionRef.doc(workerId).update({
+              "availableBalance": FieldValue.increment(amount),
+            });
+
+      return true;
+    } catch (e) {
+      debugPrint("Error updating balance: $e");
+      return false;
+    }
+  }
 }

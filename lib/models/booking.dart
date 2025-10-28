@@ -171,6 +171,7 @@ class ReviewModel {
   String? paymentType;
   bool? isTipPaid;
   Timestamp? createdAt;
+  String? workerId;
   ReviewModel({
     required this.rating,
     required this.review,
@@ -178,6 +179,7 @@ class ReviewModel {
     this.tipAmount,
     this.paymentType,
     this.isTipPaid,
+    this.workerId,
   });
 
   factory ReviewModel.fromMap(Map<String, dynamic> data) {
@@ -188,6 +190,7 @@ class ReviewModel {
       paymentType: data['paymentType'],
       isTipPaid: data['isTipPaid'],
       createdAt: data['createdAt'],
+      workerId: data['workerId'],
     );
   }
 
@@ -199,7 +202,28 @@ class ReviewModel {
       'paymentType': paymentType,
       'isTipPaid': isTipPaid,
       'createdAt': createdAt,
+      'workerId': workerId,
     };
+  }
+
+  ReviewModel copyWith({
+    int? rating,
+    String? review,
+    double? tipAmount,
+    String? paymentType,
+    bool? isTipPaid,
+    Timestamp? createdAt,
+    String? workerId,
+  }) {
+    return ReviewModel(
+      rating: rating ?? this.rating,
+      review: review ?? this.review,
+      tipAmount: tipAmount ?? this.tipAmount,
+      paymentType: paymentType ?? this.paymentType,
+      isTipPaid: isTipPaid ?? this.isTipPaid,
+      createdAt: createdAt ?? this.createdAt,
+      workerId: workerId ?? this.workerId,
+    );
   }
 }
 

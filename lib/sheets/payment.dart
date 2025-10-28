@@ -9,7 +9,6 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/transaction.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
-import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -775,7 +774,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
       createdAt: DateTime.now(),
       orderId: widget.orderId,
       customerId: widget.customer.uid ?? "",
-      workerId: widget.worker.uid,
+      workerId: widget.worker.uid ?? "",
       bookingId: widget.booking.id,
     );
     return await BookingUtils.saveTransaction(transaction: transaction);
@@ -986,9 +985,13 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                 backgroundColor: Theme.of(context).primaryColor,
               ),
               child: _isProcessing
-                  ? const SizedBox(height: 20, width: 20, child: Loader())
-                  : const Text(
-                      'Confirm Payment',
+                  ? const SizedBox(
+                      height: 20,
+                      width: 30,
+                      child: Loader(size: 10),
+                    )
+                  : Text(
+                      AppLocalizations.of(context)!.confirmPayment,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

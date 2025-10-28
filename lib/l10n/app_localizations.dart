@@ -872,6 +872,12 @@ abstract class AppLocalizations {
   /// **'Full Service'**
   String get fullService;
 
+  /// No description provided for @confirmPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Payment'**
+  String get confirmPayment;
+
   /// No description provided for @processingPaymentDesc.
   ///
   /// In en, this message translates to:

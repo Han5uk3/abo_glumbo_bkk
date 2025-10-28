@@ -1,6 +1,6 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:abo_glumbo_bbk/apis/telr_services.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
@@ -14,6 +14,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/telr_config.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -166,8 +167,14 @@ class _PaymentWebViewState extends State<PaymentWebView> {
               onNavigationRequest: (NavigationRequest request) {
                 if (request.url.contains('success') ||
                     request.url.contains('payment/success')) {
-                  saveBooking();
-                  saveTransaction();
+                  if (widget.isFromBooking) {
+                    saveBooking();
+                    saveTransaction();
+                    updateBalance();
+                  }
+                  if (widget.isFromBooking == false) {
+                    setTip();
+                  }
                 }
                 return _handleNavigation(request.url);
               },
@@ -212,6 +219,17 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     }
   }
 
+  Future<bool> updateBalance() async {
+    return await BookingUtils.updateBalance(
+      workerId: widget.booking?.agent?.uid,
+      amount:
+          double.tryParse(
+            widget.booking?.completionData?.totalCost.toString() ?? '0.00',
+          ) ??
+          0.00,
+    );
+  }
+
   Future<bool> saveTransaction() async {
     final amount = widget.isFromBooking
         ? double.tryParse(
@@ -239,6 +257,18 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       paymentModeCode: widget.selectedPayment == "Cards" ? "C" : "O",
       isCompleted: true,
     );
+  }
+
+  Future<void> setTip() async {
+    return await AppFirestore.totalTipsCollectionRef
+        .doc(widget.review?.workerId)
+        .set({
+          "id": widget.review?.workerId,
+          "createdAt": DateTime.now(),
+          "updatedAt": DateTime.now(),
+          "totalTips": FieldValue.increment(widget.review?.tipAmount ?? 0.00),
+          "agentId": widget.review?.workerId,
+        });
   }
 
   NavigationDecision _handleNavigation(String url) {

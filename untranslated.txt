@@ -5,6 +5,7 @@
     "reviewNow",
     "mode",
     "inspectionOnly",
-    "fullService"
+    "fullService",
+    "confirmPayment"
   ]
 }
