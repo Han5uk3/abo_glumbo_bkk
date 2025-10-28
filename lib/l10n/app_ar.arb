@@ -394,7 +394,25 @@
   "yourAccountHasBeenBlocked": "تم حظر حسابك من قبل المسؤول لسبب واحد أو أكثر من الأسباب التالية:",
   "pleaseContactSupport": "يرجى الاتصال بالدعم لمزيد من المعلومات حول سبب حظر حسابك وما هي الخطوات التي يمكنك اتخاذها لفتحه.",
   "serviceLocation": "موقع الخدمة",
-  
+  "paymentProcessedSuccessfully": "تمت معالجة الدفعة بنجاح.",
+  "amountPaid": "المبلغ المدفوع",
+  "reviewNow": "تقييم الآن",
+  "chooseYourTechnician": "اختر الفني",
+  "chooseSource": "اختر المصدر",
+  "noTechniciansFoundMatchingYourSearch": "لم يتم العثور على فنيون تطابق البحث الخاص بك",
+  "searchTechnicians": "ابحث عن فنيون",
+  "mode": "الوضع",
+  "orders": "الطلبات",
+  "services": "الخدمات",
+  "completedOrders": "الطلبات المكتملة",
+  "reviews": "التقييمات",
+  "inspectionOnly": "الفحص فقط",
+  "fullService": "خدمة كاملة",
+  "selectVideoSource": "اختر مصدر الفيديو",
+  "camera": "الكاميرا",
+  "noWorkersFound": "لم يتم العثور على عاملين",
+  "gallery": "المعرض",
+  "selectImageSource": "اختر مصدر الصورة",
+  "confirmPayment": "تأكيد الدفعة",
   "inspectionFeeNote": "رسوم المعاينة: {fee} ر.س — تُدفع فقط بعد وصول الفني ومعاينة المشكلة."
-
 }

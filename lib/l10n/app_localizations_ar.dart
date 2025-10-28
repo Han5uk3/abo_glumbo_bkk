@@ -375,8 +375,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get completedBold => 'مُكتمل';
 
   @override
-  String get paymentProcessedSuccessfully =>
-      'Your payment has been processed successfully.';
+  String get paymentProcessedSuccessfully => 'تمت معالجة الدفعة بنجاح.';
 
   @override
   String get cashOnHands => 'الدفع نقدي';
@@ -388,65 +387,65 @@ class AppLocalizationsAr extends AppLocalizations {
   String get processingPayment => 'معالجة الدفع';
 
   @override
-  String get amountPaid => 'Amount paid';
+  String get amountPaid => 'المبلغ المدفوع';
 
   @override
-  String get reviewNow => 'Review Now';
+  String get reviewNow => 'تقييم الآن';
 
   @override
-  String get chooseYourTechnician => 'Choose your technician';
+  String get chooseYourTechnician => 'اختر الفني';
 
   @override
-  String get chooseSource => 'Choose Source';
+  String get chooseSource => 'اختر المصدر';
 
   @override
   String get noTechniciansFoundMatchingYourSearch =>
-      'No technicians found matching your search';
+      'لم يتم العثور على فنيون تطابق البحث الخاص بك';
 
   @override
-  String get searchTechnicians => 'Search technicians...';
+  String get searchTechnicians => 'ابحث عن فنيون';
 
   @override
-  String get mode => 'Mode';
+  String get mode => 'الوضع';
 
   @override
   String get kmaway => 'كم منك';
 
   @override
-  String get orders => 'Orders';
+  String get orders => 'الطلبات';
 
   @override
-  String get services => 'Services';
+  String get services => 'الخدمات';
 
   @override
-  String get completedOrders => 'Completed Orders';
+  String get completedOrders => 'الطلبات المكتملة';
 
   @override
-  String get reviews => 'Reviews';
+  String get reviews => 'التقييمات';
 
   @override
-  String get inspectionOnly => 'Inspection Only';
+  String get inspectionOnly => 'الفحص فقط';
 
   @override
-  String get fullService => 'Full Service';
+  String get fullService => 'خدمة كاملة';
 
   @override
-  String get selectVideoSource => 'Select video source';
+  String get selectVideoSource => 'اختر مصدر الفيديو';
 
   @override
-  String get camera => 'Camera';
+  String get camera => 'الكاميرا';
 
   @override
-  String get noWorkersFound => 'No workers found';
+  String get noWorkersFound => 'لم يتم العثور على عاملين';
 
   @override
-  String get gallery => 'Gallery';
+  String get gallery => 'المعرض';
 
   @override
-  String get selectImageSource => 'Select image source';
+  String get selectImageSource => 'اختر مصدر الصورة';
 
   @override
-  String get confirmPayment => 'Confirm Payment';
+  String get confirmPayment => 'تأكيد الدفعة';
 
   @override
   String get processingPaymentDesc =>
