@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:math';
 
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -569,7 +569,7 @@ class AppServices {
         return;
       }
 
-      log('🔒 Deleting account for user: $currentUid');
+      debugPrint('🔒 Deleting account for user: $currentUid');
       await AppFirestore.customersCollectionRef.doc(currentUid).delete();
       LocalStoreHelper.clearGuestUser();
       LocalStoreHelper.putlogoutStatus(true);
@@ -847,6 +847,104 @@ class AppServices {
     return categoryData;
     
   }
+
+
+  /// Fetch multiple categories by their IDs in batch (handles Firestore's whereIn limit of 10)
+static Future<List<CategoryModel>> getCategoriesByIds(List<String> categoryIds) async {
+  if (categoryIds.isEmpty) return [];
+  
+  try {
+    // Split into chunks of 10 due to Firestore whereIn limit
+    List<List<String>> chunks = [];
+    for (int i = 0; i < categoryIds.length; i += 10) {
+      chunks.add(categoryIds.sublist(i, min(i + 10, categoryIds.length)));
+    }
+
+    // Fetch all chunks in parallel
+    List<Future<QuerySnapshot>> futures = chunks.map((chunk) =>
+      FirebaseFirestore.instance
+          .collection('categories')
+          .where(FieldPath.documentId, whereIn: chunk)
+          .get()
+    ).toList();
+
+    List<QuerySnapshot> snapshots = await Future.wait(futures);
+    
+    List<CategoryModel> categories = [];
+    for (var snapshot in snapshots) {
+      categories.addAll(
+        snapshot.docs.map((doc) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          data['id'] = doc.id; // Add document ID to the data
+          return CategoryModel.fromJson(data);
+        }).toList()
+      );
+    }
+
+    debugPrint('Fetched ${categories.length} categories from ${categoryIds.length} IDs');
+    return categories;
+  } catch (e) {
+    debugPrint('Error fetching categories by IDs: $e');
+    return [];
+  }
+}
+
+/// Fetch a single category by ID (for backward compatibility)
+static Future<CategoryModel?> getCategoryByIdOnce(String categoryId) async {
+  try {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('categories')
+        .doc(categoryId)
+        .get();
+
+    if (doc.exists) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      return CategoryModel.fromJson(data);
+    }
+    return null;
+  } catch (e) {
+    debugPrint('Error fetching category $categoryId: $e');
+    return null;
+  }
+}
+
+/// Fetch category ID by job role name (one-time read)
+static Future<String?> getCategoryIdByJobRoleOnce(String jobRole) async {
+  try {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('categories')
+        .where('name', isEqualTo: jobRole)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      String categoryId = querySnapshot.docs.first.id;
+      debugPrint('JobRole: $jobRole -> CategoryId: $categoryId');
+      return categoryId;
+    }
+
+    // If not found by English name, try Arabic name
+    QuerySnapshot querySnapshotAr = await FirebaseFirestore.instance
+        .collection('categories')
+        .where('name_ar', isEqualTo: jobRole)
+        .limit(1)
+        .get();
+
+    if (querySnapshotAr.docs.isNotEmpty) {
+      String categoryId = querySnapshotAr.docs.first.id;
+      debugPrint('JobRole (AR): $jobRole -> CategoryId: $categoryId');
+      return categoryId;
+    }
+
+    debugPrint('No category found for JobRole: $jobRole');
+    return null;
+  } catch (e) {
+    debugPrint('Error fetching category ID for job role $jobRole: $e');
+    return null;
+  }
+}
+
 }
 
 class WorkerWithStats {

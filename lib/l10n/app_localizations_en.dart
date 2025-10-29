@@ -37,6 +37,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otpSent => 'OTP Sent';
 
   @override
+  String get highestRating => 'Highest Rating';
+
+  @override
+  String get nearest => 'Nearest';
+
+  @override
+  String get mostOrders => 'Most Orders';
+
+  @override
   String get anErrorOccurredPleaseTryAgainLater =>
       'An error occurred, please try again later';
 

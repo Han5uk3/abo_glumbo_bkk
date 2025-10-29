@@ -390,21 +390,16 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
 
             Expanded(
               child: Column(
-                crossAxisAlignment: isRTL
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (selectedAddress != null) ...[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      textDirection: isRTL
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
+
                       children: [
                         Expanded(
                           child: Text(
-                            AppLocalizations.of(context)?.serviceto ??
-                                'Service to:',
+                            AppLocalizations.of(context)!.serviceto,
                             style: GoogleFonts.poppins(
                               color: Colors.black,
                               fontSize: 12,
@@ -451,7 +446,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
-                      textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                      textAlign: TextAlign.start,
                     ),
                     const SizedBox(height: 2),
 
@@ -466,7 +461,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
-                      textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                      textAlign: TextAlign.start,
                     ),
                   ] else ...[
                     Text(
@@ -484,7 +479,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
-                      textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                      textAlign: TextAlign.start,
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -501,7 +496,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                         fontWeight: FontWeight.w500,
                         height: 1.4,
                       ),
-                      textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                      textAlign: TextAlign.start,
                     ),
                   ],
                 ],

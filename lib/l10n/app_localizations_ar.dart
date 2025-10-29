@@ -36,6 +36,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otpSent => 'تم إرسال رمز التحقق';
 
   @override
+  String get highestRating => 'التقييم الاعلى';
+
+  @override
+  String get nearest => 'الاقرب';
+
+  @override
+  String get mostOrders => 'الطلبات الكثيرة';
+
+  @override
   String get anErrorOccurredPleaseTryAgainLater =>
       'حدث خطأ ما. يرجى المحاولة مرة أخرى لاحقًا.';
 

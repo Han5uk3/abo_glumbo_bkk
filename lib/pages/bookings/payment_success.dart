@@ -293,7 +293,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
             ],
           ),
           Text(
-            '${AppLocalizations.of(context)!.sar}${widget.amount.toStringAsFixed(2)} ',
+            '${widget.amount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
             style: const TextStyle(
               fontSize: 20,
               color: successColor,

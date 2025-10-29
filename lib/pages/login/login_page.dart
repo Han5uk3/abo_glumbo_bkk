@@ -336,12 +336,15 @@ class _LoginPageState extends State<LoginPage> {
           prefixIcon: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                "+966",
-                style: GoogleFonts.dmSans(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.black,
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text(
+                  "+966",
+                  style: GoogleFonts.dmSans(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ],
@@ -508,7 +511,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 13),
-                    LanguageSelectorCard(isInLoginPage: true),
+                    Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: LanguageSelectorCard(isInLoginPage: true),
+                    ),
                     const SizedBox(height: 23),
                     Text(
                       AppLocalizations.of(context)?.mobileNumber ?? '',

@@ -210,7 +210,7 @@ class ServiceTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      "${service.price} ${AppLocalizations.of(context)?.sar}",
+                      "${service.price} ${AppLocalizations.of(context)!.sar}",
                       style: GoogleFonts.dmSans(
                         color: AppColors.green1,
                         fontWeight: FontWeight.bold,

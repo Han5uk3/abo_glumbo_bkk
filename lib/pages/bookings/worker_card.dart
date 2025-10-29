@@ -15,6 +15,7 @@ class WorkerCard extends StatelessWidget {
   final int completedJobs;
   final AddressModel customerAddress;
   final bool isSelected;
+  final List<String> localizedJobRoles;
 
   const WorkerCard({
     super.key,
@@ -25,6 +26,7 @@ class WorkerCard extends StatelessWidget {
     required this.completedJobs,
     required this.service,
     required this.reviewCount,
+    required this.localizedJobRoles,
   });
 
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -142,14 +144,14 @@ class WorkerCard extends StatelessWidget {
             const SizedBox(height: 6),
 
             // Services
-            if (services.isNotEmpty)
+            if (localizedJobRoles.isNotEmpty)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('🪪 ', style: TextStyle(fontSize: 16)),
                   Expanded(
                     child: Text(
-                      '${AppLocalizations.of(context)!.services}: ${services.join(' • ')}',
+                      '${AppLocalizations.of(context)!.services}: ${localizedJobRoles.join(' • ')}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey.shade700,

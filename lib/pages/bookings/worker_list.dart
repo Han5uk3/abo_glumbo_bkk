@@ -1,6 +1,7 @@
 import 'dart:math' show sin, cos, sqrt, atan2, pi;
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
+import 'package:abo_glumbo_bbk/models/categories.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/worker_card.dart';
@@ -553,8 +554,15 @@ class _WorkerListView extends StatefulWidget {
 
 class _WorkerListViewState extends State<_WorkerListView>
     with SingleTickerProviderStateMixin {
+  Map<String, Map<String, String>> workerLocalizedRoles =
+      {}; // categoryId -> {name, name_ar}
   late AnimationController _animationController;
   final List<Animation<double>> _itemAnimations = [];
+  bool _isLoadingCategories = true;
+
+  Map<String, String> jobRoleToCategoryId = {}; // jobRole -> categoryId
+  Map<String, Map<String, String>> categoryIdToNames =
+      {}; // categoryId -> {name, name_ar}
 
   @override
   void initState() {
@@ -579,6 +587,107 @@ class _WorkerListViewState extends State<_WorkerListView>
     }
 
     _animationController.forward();
+    _loadCategoryNames();
+  }
+
+  Future<void> _loadCategoryNames() async {
+    // 1. Collect all unique job roles from all workers
+    Set<String> allJobRoles = {};
+    for (var workerStat in widget.workers) {
+      if (workerStat.worker.jobRoles != null) {
+        allJobRoles.addAll(workerStat.worker.jobRoles!);
+      }
+    }
+
+    if (allJobRoles.isEmpty) {
+      setState(() => _isLoadingCategories = false);
+      return;
+    }
+
+    // 2. Get category IDs for all job roles in parallel
+    List<String> jobRolesList = allJobRoles.toList();
+    List<Future<String?>> categoryIdFutures = jobRolesList
+        .map((role) => AppServices.getCategoryIdByJobRoleOnce(role))
+        .toList();
+
+    List<String?> categoryIdResults = await Future.wait(categoryIdFutures);
+
+    // 3. Create jobRole -> categoryId mapping (THIS IS CRITICAL)
+    Map<String, String> roleToIdMap = {};
+    for (int i = 0; i < jobRolesList.length; i++) {
+      if (categoryIdResults[i] != null) {
+        roleToIdMap[jobRolesList[i]] = categoryIdResults[i]!;
+        debugPrint('Mapped: ${jobRolesList[i]} -> ${categoryIdResults[i]}');
+      }
+    }
+
+    // 4. Get unique category IDs
+    Set<String> uniqueCategoryIds = roleToIdMap.values.toSet();
+
+    if (uniqueCategoryIds.isEmpty) {
+      setState(() => _isLoadingCategories = false);
+      return;
+    }
+
+    // 5. Batch fetch all categories
+    List<CategoryModel> categories = await AppServices.getCategoriesByIds(
+      uniqueCategoryIds.toList(),
+    );
+
+    // 6. Create categoryId -> names mapping
+    Map<String, Map<String, String>> idToNamesMap = {};
+    for (var category in categories) {
+      if (category.id != null) {
+        idToNamesMap[category.id!] = {
+          'name': category.name ?? '',
+          'name_ar': category.name_ar ?? category.name ?? '',
+        };
+        debugPrint(
+          'Category ${category.id}: ${category.name} / ${category.name_ar}',
+        );
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        jobRoleToCategoryId = roleToIdMap;
+        categoryIdToNames = idToNamesMap;
+        _isLoadingCategories = false;
+      });
+    }
+
+    debugPrint(
+      'Loaded ${idToNamesMap.length} categories for ${roleToIdMap.length} job roles',
+    );
+  }
+
+  List<String> _getLocalizedRoles(UserModel worker) {
+    bool isArabic = Directionality.of(context) == TextDirection.rtl;
+    List<String> localizedRoles = [];
+
+    for (var role in worker.jobRoles ?? []) {
+      String localizedName = role; // Fallback to original role name
+
+      // Get category ID for THIS SPECIFIC job role
+      String? categoryId = jobRoleToCategoryId[role];
+
+      if (categoryId != null) {
+        // Get localized name from category
+        Map<String, String>? categoryNames = categoryIdToNames[categoryId];
+
+        if (categoryNames != null) {
+          if (isArabic && categoryNames['name_ar']!.isNotEmpty) {
+            localizedName = categoryNames['name_ar']!;
+          } else if (categoryNames['name']!.isNotEmpty) {
+            localizedName = categoryNames['name']!;
+          }
+        }
+      }
+
+      localizedRoles.add(localizedName);
+    }
+
+    return localizedRoles;
   }
 
   @override
@@ -630,6 +739,9 @@ class _WorkerListViewState extends State<_WorkerListView>
                         phoneNumber: '',
                       ),
                   isSelected: isSelected,
+                  localizedJobRoles: _getLocalizedRoles(
+                    statData.worker,
+                  ), // Pass localized names
                 ),
               );
             },
@@ -651,14 +763,14 @@ class FilterChipsSection extends StatelessWidget {
     required this.onFilterChanged,
   });
 
-  String _getFilterLabel(FilterType filter) {
+  String _getFilterLabel(FilterType filter, BuildContext context) {
     switch (filter) {
       case FilterType.rating:
-        return 'Highest Rating';
+        return AppLocalizations.of(context)!.highestRating;
       case FilterType.distance:
-        return 'Nearest';
+        return AppLocalizations.of(context)!.nearest;
       case FilterType.completedOrders:
-        return 'Most Orders';
+        return AppLocalizations.of(context)!.mostOrders;
     }
   }
 
@@ -686,7 +798,7 @@ class FilterChipsSection extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(right: 8),
             child: FilterChip(
-              label: Text(_getFilterLabel(filter)),
+              label: Text(_getFilterLabel(filter, context)),
               selected: isSelected,
               onSelected: (bool selected) {
                 final newFilters = Set<FilterType>.from(selectedFilters);

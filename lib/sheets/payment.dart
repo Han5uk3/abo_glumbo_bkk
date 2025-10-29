@@ -878,7 +878,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${AppLocalizations.of(context)!.sar} ${totalAmount.toStringAsFixed(2)}',
+                    '${totalAmount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.blue.shade900,
@@ -979,7 +979,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                       ),
                     ),
                     Text(
-                      '${AppLocalizations.of(context)!.sar} ${changeAmount > 0 ? changeAmount.toStringAsFixed(2) : '0.00'}',
+                      '${changeAmount > 0 ? changeAmount.toStringAsFixed(2) : '0.00'} ${AppLocalizations.of(context)!.sar}',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: changeAmount > 0

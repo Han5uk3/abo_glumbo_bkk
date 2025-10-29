@@ -152,6 +152,24 @@ abstract class AppLocalizations {
   /// **'OTP Sent'**
   String get otpSent;
 
+  /// No description provided for @highestRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Rating'**
+  String get highestRating;
+
+  /// No description provided for @nearest.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest'**
+  String get nearest;
+
+  /// No description provided for @mostOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Orders'**
+  String get mostOrders;
+
   /// No description provided for @anErrorOccurredPleaseTryAgainLater.
   ///
   /// In en, this message translates to:

@@ -192,7 +192,7 @@ class ServiceBookingTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  "${booking.bookingStatusCode == "C" ? booking.completionData?.totalCost : booking.service.price} ${AppLocalizations.of(context)?.sar}",
+                  "${booking.bookingStatusCode == "C" ? booking.completionData?.totalCost : booking.service.price} ${AppLocalizations.of(context)!.sar}",
                   style: GoogleFonts.dmSans(
                     color: AppColors.green1,
                     fontWeight: FontWeight.bold,
