@@ -228,7 +228,9 @@ class UserModel {
       'profileUrl': profileUrl,
       'fcmToken': fcmToken,
       'rating': rating,
-      'payoutAccounts': payoutAccounts,
+      // FIX: Serialize the list of PayoutAccountModel objects
+      'payoutAccounts':
+          payoutAccounts?.map((account) => account.toJson()).toList() ?? [],
       'availableBalance': availableBalance,
       'paidAmounts': paidAmounts,
       'highestTier': highestTier,
@@ -256,7 +258,9 @@ class UserModel {
       'profileUrl': profileUrl,
       'fcmToken': fcmToken,
       'rating': rating,
-      'payoutAccounts': payoutAccounts,
+      // FIX: Serialize the list of PayoutAccountModel objects
+      'payoutAccounts':
+          payoutAccounts?.map((account) => account.toJson()).toList() ?? [],
       'availableBalance': availableBalance,
       'paidAmounts': paidAmounts,
       'highestTier': highestTier,
@@ -314,7 +318,10 @@ class UserModel {
       json['rating'] = rating;
     }
     if (payoutAccounts != previous.payoutAccounts && payoutAccounts != null) {
-      json['payoutAccounts'] = payoutAccounts;
+      // FIX: Serialize the list properly
+      json['payoutAccounts'] = payoutAccounts!
+          .map((account) => account.toJson())
+          .toList();
     }
     if (availableBalance != previous.availableBalance &&
         availableBalance != null) {

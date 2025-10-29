@@ -1288,6 +1288,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get serviceLocation => 'موقع الخدمة';
 
   @override
+  String get cashPayment => 'الدفع النقدي';
+
+  @override
+  String get amountToBePaid => 'المبلغ المستحق';
+
+  @override
+  String get balanceToReceive => 'الرصيد المستحق';
+
+  @override
+  String get pleaseEnterTheAmountPaid => 'يرجى إدخال المبلغ المدفوع';
+
+  @override
+  String get pleaseEnterAValidAmount => 'يرجى إدخال مبلغ صحيح';
+
+  @override
+  String get amountMustBeAtLeast => 'المبلغ يجب أن يكون على الأقل';
+
+  @override
+  String get amountMustBeEqualTo => 'المبلغ يجب أن يكون مساوياً ل';
+
+  @override
   String inspectionFeeNote(String fee) {
     return 'رسوم المعاينة: $fee ر.س — تُدفع فقط بعد وصول الفني ومعاينة المشكلة.';
   }

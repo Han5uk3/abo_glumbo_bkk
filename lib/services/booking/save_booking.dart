@@ -1,8 +1,11 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
+import 'package:abo_glumbo_bbk/models/tipping.dart';
+import 'package:abo_glumbo_bbk/models/total_tip.dart';
 import 'package:abo_glumbo_bbk/models/transaction.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -87,6 +90,7 @@ class BookingUtils {
         updatedAt: customerData.updatedAt,
         isAdmin: customerData.isAdmin,
         districtName: customerData.districtName,
+
         addresses: customerData.addresses.map((address) {
           return address.copyWith(isSelected: address.isSelected);
         }).toList(),
@@ -102,6 +106,7 @@ class BookingUtils {
         issueVideo: selectedVideoDownloadUrl ?? "",
         customer: updatedCustomerData,
         agent: agent,
+
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -125,6 +130,8 @@ class BookingUtils {
     required ReviewModel? review,
   }) async {
     try {
+      log("Review: ${review?.toJson()}");
+      log("Rating: ${review?.rating}");
       final newReview = review?.copyWith(createdAt: Timestamp.now());
       Map<String, dynamic> updateData = {"review": newReview?.toJson() ?? {}};
 
@@ -208,6 +215,61 @@ class BookingUtils {
       return true;
     } catch (e) {
       debugPrint("Error updating balance: $e");
+      return false;
+    }
+  }
+
+  static Future<bool> saveTipToSubcollection({
+    required String workerId,
+    required AllTipsModel tipData,
+  }) async {
+    try {
+      // Reference to the subcollection document
+      final docRef = AppFirestore.tippingCollectionRef
+          .doc(workerId)
+          .collection('totalTipsCollectionRef')
+          .doc(workerId);
+
+      // Get the document to check if it exists
+      final docSnapshot = await docRef.get();
+
+      if (!docSnapshot.exists) {
+        // First time: Create document with initial data
+        final documentData = {
+          'id': workerId,
+          'workerId': workerId,
+          'createdAt': Timestamp.now(),
+          'tipData': [tipData.toJson()],
+        };
+        await docRef.set(documentData);
+        debugPrint('Tip document created successfully');
+      } else {
+        // Subsequent calls: Update only tipData array
+        await docRef.update({
+          "updatedAt": Timestamp.now(),
+          'tipData': FieldValue.arrayUnion([tipData.toJson()]),
+        });
+        debugPrint('Tip added to existing document');
+      }
+
+      return true;
+    } catch (e) {
+      debugPrint('Error saving tip to subcollection: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> saveToTipping({
+    required String workerId,
+    required TippingModel tipData,
+  }) async {
+    try {
+      await AppFirestore.tippingCollectionRef
+          .doc(workerId)
+          .set(tipData.toJson());
+      return true;
+    } catch (e) {
+      debugPrint('Error saving tip to collection: $e');
       return false;
     }
   }

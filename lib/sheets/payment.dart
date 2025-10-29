@@ -795,6 +795,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => PaymentSuccessPage(
+              isFromBooking: true,
               amount: widget.amount,
               paymentMethod: widget.paymentModeCode,
               orderId: widget.orderId,
@@ -840,7 +841,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Cash Payment',
+                  AppLocalizations.of(context)!.cashPayment,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -850,7 +851,11 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
             const SizedBox(height: 24),
 
             // Order ID
-            _buildInfoRow('Order ID', widget.orderId, Icons.receipt_long),
+            _buildInfoRow(
+              AppLocalizations.of(context)!.orderId,
+              widget.orderId,
+              Icons.receipt_long,
+            ),
             const SizedBox(height: 16),
 
             // Amount to be paid
@@ -865,7 +870,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Amount to be Paid',
+                    AppLocalizations.of(context)!.amountToBePaid,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.blue.shade900,
                       fontWeight: FontWeight.w500,
@@ -873,7 +878,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '₹${totalAmount.toStringAsFixed(2)}',
+                    '${AppLocalizations.of(context)!.sar} ${totalAmount.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.blue.shade900,
@@ -893,10 +898,20 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
               autofocus: true,
 
               decoration: InputDecoration(
-                labelText: 'Amount Paid',
-                hintText: 'Enter amount',
+                labelText: AppLocalizations.of(context)!.amountPaid,
+                hintText: AppLocalizations.of(context)!.amountPaid,
 
-                prefixIcon: const Icon(Icons.attach_money),
+                prefix: Padding(
+                  padding: EdgeInsets.only(
+                    right: Directionality.of(context) == TextDirection.rtl
+                        ? 0
+                        : 5,
+                    left: Directionality.of(context) == TextDirection.rtl
+                        ? 5
+                        : 0,
+                  ),
+                  child: Text(AppLocalizations.of(context)!.sar),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -916,14 +931,17 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter the amount paid';
+                  return AppLocalizations.of(context)!.pleaseEnterTheAmountPaid;
                 }
                 final paid = double.tryParse(value);
                 if (paid == null) {
-                  return 'Please enter a valid amount';
+                  return AppLocalizations.of(context)!.pleaseEnterAValidAmount;
                 }
                 if (paid < totalAmount) {
-                  return 'Amount must be at least ₹${totalAmount.toStringAsFixed(2)}';
+                  return "${AppLocalizations.of(context)!.amountMustBeAtLeast} ${totalAmount.toStringAsFixed(2)}";
+                }
+                if (paid > totalAmount) {
+                  return "${AppLocalizations.of(context)!.amountMustBeEqualTo} ${totalAmount.toStringAsFixed(2)}";
                 }
                 return null;
               },
@@ -952,7 +970,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Balance to Receive',
+                      AppLocalizations.of(context)!.balanceToReceive,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: changeAmount > 0
@@ -961,7 +979,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                       ),
                     ),
                     Text(
-                      '₹${changeAmount > 0 ? changeAmount.toStringAsFixed(2) : '0.00'}',
+                      '${AppLocalizations.of(context)!.sar} ${changeAmount > 0 ? changeAmount.toStringAsFixed(2) : '0.00'}',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: changeAmount > 0

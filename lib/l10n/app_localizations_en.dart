@@ -1296,6 +1296,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serviceLocation => 'Service Location';
 
   @override
+  String get cashPayment => 'Cash Payment';
+
+  @override
+  String get amountToBePaid => 'Amount to be paid';
+
+  @override
+  String get balanceToReceive => 'Balance to receive';
+
+  @override
+  String get pleaseEnterTheAmountPaid => 'Please enter the amount paid';
+
+  @override
+  String get pleaseEnterAValidAmount => 'Please enter a valid amount';
+
+  @override
+  String get amountMustBeAtLeast => 'Amount must be at least';
+
+  @override
+  String get amountMustBeEqualTo => 'Amount must be equal to';
+
+  @override
   String inspectionFeeNote(String fee) {
     return 'Inspection fee: $fee SAR — paid only after the technician arrives and inspects the issue.';
   }

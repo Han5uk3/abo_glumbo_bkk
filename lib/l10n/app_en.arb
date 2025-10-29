@@ -412,6 +412,13 @@
   "pleaseContactSupport": "Please contact support for more information on why your account was blocked and what steps you may take to unlock it.",
   "yourAccountHasBeenBlocked": "Your account has been blocked by the admin due to one or more of the following reasons:",
   "serviceLocation": "Service Location",
+  "cashPayment": "Cash Payment",
+  "amountToBePaid": "Amount to be paid",
+  "balanceToReceive": "Balance to receive",
+  "pleaseEnterTheAmountPaid": "Please enter the amount paid",
+  "pleaseEnterAValidAmount": "Please enter a valid amount",
+  "amountMustBeAtLeast": "Amount must be at least",
+  "amountMustBeEqualTo": "Amount must be equal to",
   
   "inspectionFeeNote": "Inspection fee: {fee} SAR — paid only after the technician arrives and inspects the issue.",
   "@inspectionFeeNote": {

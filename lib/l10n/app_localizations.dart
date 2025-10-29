@@ -2576,6 +2576,48 @@ abstract class AppLocalizations {
   /// **'Service Location'**
   String get serviceLocation;
 
+  /// No description provided for @cashPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash Payment'**
+  String get cashPayment;
+
+  /// No description provided for @amountToBePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to be paid'**
+  String get amountToBePaid;
+
+  /// No description provided for @balanceToReceive.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance to receive'**
+  String get balanceToReceive;
+
+  /// No description provided for @pleaseEnterTheAmountPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the amount paid'**
+  String get pleaseEnterTheAmountPaid;
+
+  /// No description provided for @pleaseEnterAValidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid amount'**
+  String get pleaseEnterAValidAmount;
+
+  /// No description provided for @amountMustBeAtLeast.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount must be at least'**
+  String get amountMustBeAtLeast;
+
+  /// No description provided for @amountMustBeEqualTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount must be equal to'**
+  String get amountMustBeEqualTo;
+
   /// Message explaining the inspection fee amount and payment terms
   ///
   /// In en, this message translates to:

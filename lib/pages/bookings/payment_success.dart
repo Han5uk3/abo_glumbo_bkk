@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 
 class PaymentSuccessPage extends StatefulWidget {
   final double amount;
+  final bool isFromBooking;
   final String paymentMethod;
   final String orderId;
   final BookingModel booking;
@@ -20,6 +21,7 @@ class PaymentSuccessPage extends StatefulWidget {
     required this.paymentMethod,
     required this.orderId,
     required this.booking,
+    required this.isFromBooking,
   });
 
   @override
@@ -352,6 +354,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
   }
 
   Widget _buildActionButtons() {
+    log('isFromBooking: ${widget.isFromBooking}');
     return AnimatedBuilder(
       animation: _buttonSlideAnimation,
       builder: (context, child) => Transform.translate(
@@ -363,36 +366,38 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
           opacity: _buttonSlideAnimation.value.clamp(0.0, 1.0),
           child: Column(
             children: [
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _navigateToReview,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    foregroundColor: Colors.white,
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              if (widget.isFromBooking == true) ...[
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _navigateToReview,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.star_rate, size: 22),
+                        const SizedBox(width: 8),
+                        Text(
+                          AppLocalizations.of(context)!.reviewNow,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.star_rate, size: 22),
-                      const SizedBox(width: 8),
-                      Text(
-                        AppLocalizations.of(context)!.reviewNow,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
+              ],
               SizedBox(
                 width: double.infinity,
                 height: 56,

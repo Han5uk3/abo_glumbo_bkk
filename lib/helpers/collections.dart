@@ -1,4 +1,3 @@
-import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -50,10 +49,8 @@ class AppFirestore {
       .instance
       .collection('transactions');
 
-  static CollectionReference totalTipsCollectionRef = FirebaseFirestore.instance
-      .collection('tipping')
-      .doc(LocalStoreHelper.getUID())
-      .collection('total');
+  static CollectionReference tippingCollectionRef = FirebaseFirestore.instance
+      .collection('tipping');
 }
 
 class AppFireStorage {

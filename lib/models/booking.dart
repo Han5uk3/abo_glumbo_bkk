@@ -231,7 +231,7 @@ class ReviewModel {
     String? workerId,
   }) {
     return ReviewModel(
-      rating: rating ?? rating,
+      rating: rating ?? this.rating,
       review: review ?? this.review,
       tipAmount: tipAmount ?? this.tipAmount,
       paymentType: paymentType ?? this.paymentType,

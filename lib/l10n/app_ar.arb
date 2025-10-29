@@ -414,5 +414,12 @@
   "gallery": "المعرض",
   "selectImageSource": "اختر مصدر الصورة",
   "confirmPayment": "تأكيد الدفعة",
+  "cashPayment": "الدفع النقدي",
+  "amountToBePaid": "المبلغ المستحق",
+  "balanceToReceive": "الرصيد المستحق",
+  "pleaseEnterTheAmountPaid": "يرجى إدخال المبلغ المدفوع",
+  "pleaseEnterAValidAmount": "يرجى إدخال مبلغ صحيح",
+  "amountMustBeAtLeast": "المبلغ يجب أن يكون على الأقل",
+  "amountMustBeEqualTo": "المبلغ يجب أن يكون مساوياً ل",
   "inspectionFeeNote": "رسوم المعاينة: {fee} ر.س — تُدفع فقط بعد وصول الفني ومعاينة المشكلة."
 }

@@ -1,12 +1,14 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:abo_glumbo_bbk/apis/telr_services.dart';
-import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/telr/request_model.dart';
+import 'package:abo_glumbo_bbk/models/tipping.dart';
+import 'package:abo_glumbo_bbk/models/total_tip.dart';
 import 'package:abo_glumbo_bbk/models/transaction.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/payment_failed.dart';
@@ -173,10 +175,11 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                     updateBalance();
                   }
                   if (widget.isFromBooking == false) {
-                    setTip();
+                    saveReview();
+                    saveToTipping();
                   }
                 }
-                return _handleNavigation(request.url);
+                return _handleNavigation(request.url, widget.isFromBooking);
               },
               onPageStarted: (String url) {
                 debugPrint('Page started loading: $url');
@@ -230,13 +233,29 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     );
   }
 
+  Future<bool> saveToTipping() async {
+    return await BookingUtils.saveToTipping(
+      workerId: widget.review?.workerId ?? "",
+      tipData: TippingModel.fromJson({
+        "agentId": widget.review?.workerId ?? "",
+        "agentName": widget.agent?.name ?? "",
+        "agentPhone": widget.agent?.phone ?? "",
+        "cardtip": widget.review?.tipAmount ?? 0.00, // ✅ Pass actual number
+        "lastUpdated": DateTime.now().toString(),
+        "cashtip": 0.00, // ✅ Pass actual number
+        "walletId": widget.agent?.uid ?? "",
+        "payoutRequested": false,
+      }),
+    );
+  }
+
   Future<bool> saveTransaction() async {
-    final amount = widget.isFromBooking
-        ? double.tryParse(
-                widget.booking?.completionData?.totalCost.toString() ?? '0.00',
-              ) ??
-              0.00
-        : widget.review?.tipAmount ?? 0.00;
+    final amount =
+        double.tryParse(
+          widget.booking?.completionData?.totalCost.toString() ?? '0.00',
+        ) ??
+        0.00;
+
     TransactionModel transaction = TransactionModel(
       DateTime.now(),
       amount: amount,
@@ -259,19 +278,35 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     );
   }
 
-  Future<void> setTip() async {
-    return await AppFirestore.totalTipsCollectionRef
-        .doc(widget.review?.workerId)
-        .set({
-          "id": widget.review?.workerId,
-          "createdAt": DateTime.now(),
-          "updatedAt": DateTime.now(),
-          "totalTips": FieldValue.increment(widget.review?.tipAmount ?? 0.00),
-          "agentId": widget.review?.workerId,
-        });
+  Future<bool> saveReview() async {
+    try {
+      await BookingUtils.saveTipToSubcollection(
+        workerId: widget.review?.workerId ?? "",
+        tipData: AllTipsModel(
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          totalTipAmount: widget.review?.tipAmount,
+
+          proofs: [],
+          agentId: widget.review?.workerId,
+          paymentMethod: "cards",
+          id: "id_${DateTime.now().millisecondsSinceEpoch}",
+        ),
+      );
+      // Save the review with tip information
+      final success = await BookingUtils.saveReview(
+        booking: widget.booking!,
+        review: widget.review,
+      );
+
+      return success;
+    } catch (e) {
+      debugPrint('Error saving review: $e');
+      return false;
+    }
   }
 
-  NavigationDecision _handleNavigation(String url) {
+  NavigationDecision _handleNavigation(String url, bool isFromBooking) {
     if (url.contains('success') || url.contains('payment/success')) {
       if (widget.booking == null) {
         // Handle the case where there's no booking
@@ -289,11 +324,13 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           ),
         );
       } else {
+        log('Booking: isFromBooking: $isFromBooking');
         // If we have a booking, proceed to the success page
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => PaymentSuccessPage(
+              isFromBooking: isFromBooking,
               amount: widget.isFromBooking
                   ? double.tryParse(
                           widget.booking?.completionData?.totalCost
