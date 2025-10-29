@@ -757,7 +757,6 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
 
   double get totalAmount => (widget.amount);
   double get paidAmount => double.tryParse(_amountController.text) ?? 0.0;
-  double get changeAmount => paidAmount - totalAmount;
 
   @override
   void dispose() {
@@ -782,29 +781,162 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
 
   void _processPayment() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => _isProcessing = true);
-
-      BookingUtils.updateBookingStatus(
-        booking: widget.booking,
-        isCompleted: true,
-        paymentModeCode: widget.paymentModeCode,
-      );
-      await saveTransaction();
-
-      if (mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => PaymentSuccessPage(
-              isFromBooking: true,
-              amount: widget.amount,
-              paymentMethod: widget.paymentModeCode,
-              orderId: widget.orderId,
-              booking: widget.booking,
+      // Show confirmation dialog
+      final bool? confirmed = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false, // User must tap a button
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-          ),
-          (route) => false,
+            title: Row(
+              children: [
+                Icon(Icons.info_outline, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 12),
+                Text(
+                  AppLocalizations.of(context)!.confirmPayment,
+                  style: GoogleFonts.dmSans(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${AppLocalizations.of(context)!.orderId}: ${widget.orderId}',
+                  style: GoogleFonts.dmSans(fontSize: 14),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.amountToBePaid,
+                            style: GoogleFonts.dmSans(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            '${totalAmount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                            style: GoogleFonts.dmSans(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.amountPaid,
+                            style: GoogleFonts.dmSans(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            '${paidAmount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                            style: GoogleFonts.dmSans(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.green.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  AppLocalizations.of(
+                        context,
+                      )!.areYouSureYouWantToConfirmThisPayment ??
+                      'Are you sure you want to confirm this payment?',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(false); // Return false
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.cancel ?? 'Cancel',
+                  style: GoogleFonts.dmSans(
+                    color: Colors.grey.shade700,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(true); // Return true
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.confirm ?? 'Confirm',
+                  style: GoogleFonts.dmSans(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+
+      // Check if user confirmed the payment
+      if (confirmed == true) {
+        setState(() => _isProcessing = true);
+
+        BookingUtils.updateBookingStatus(
+          booking: widget.booking,
+          isCompleted: true,
+          paymentModeCode: widget.paymentModeCode,
         );
+        await saveTransaction();
+
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => PaymentSuccessPage(
+                isFromBooking: true,
+                amount: widget.amount,
+                paymentMethod: widget.paymentModeCode,
+                orderId: widget.orderId,
+                booking: widget.booking,
+              ),
+            ),
+            (route) => false,
+          );
+        }
       }
+      // If confirmed is false or null, do nothing (user cancelled)
     }
   }
 
@@ -945,52 +1077,8 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                 }
                 return null;
               },
-              onChanged: (value) {
-                setState(() {}); // Update change amount
-              },
             ),
             const SizedBox(height: 20),
-
-            // Change amount (if applicable)
-            if (paidAmount > 0)
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: changeAmount > 0
-                      ? Colors.green.shade50
-                      : Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: changeAmount > 0
-                        ? Colors.green.shade200
-                        : Colors.grey.shade300,
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.balanceToReceive,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: changeAmount > 0
-                            ? Colors.green.shade900
-                            : Colors.grey.shade700,
-                      ),
-                    ),
-                    Text(
-                      '${changeAmount > 0 ? changeAmount.toStringAsFixed(2) : '0.00'} ${AppLocalizations.of(context)!.sar}',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: changeAmount > 0
-                            ? Colors.green.shade900
-                            : Colors.grey.shade700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            const SizedBox(height: 24),
 
             // Confirm button
             ElevatedButton(

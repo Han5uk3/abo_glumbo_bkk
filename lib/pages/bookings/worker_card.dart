@@ -56,7 +56,7 @@ class WorkerCard extends StatelessWidget {
       customerAddress.lon ?? 0.0,
     );
 
-    final services = worker.jobRoles ?? [];
+    // final services = worker.jobRoles ?? [];
     final inspectionFee = service.price ?? 0.0;
 
     return Container(

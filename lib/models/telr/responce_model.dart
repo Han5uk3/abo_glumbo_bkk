@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class TelrPaymentResponse {
   final String? paymentUrl;
   final String? orderId;
@@ -16,7 +18,7 @@ class TelrPaymentResponse {
   });
 
   factory TelrPaymentResponse.fromJson(Map<String, dynamic> json) {
-    print('Full Telr Response: $json'); // Debug log
+    debugPrint('Full Telr Response: $json'); // Debug log
 
     if (json['error'] != null) {
       final error = json['error'];

@@ -64,6 +64,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get change => 'تغيير';
 
   @override
+  String get areYouSureYouWantToConfirmThisPayment =>
+      'هل تريد تاكيد هذا الدفع؟';
+
+  @override
+  String get confirm => 'تاكيد';
+
+  @override
   String get enterOtp => 'أدخل رمز التحقق';
 
   @override

@@ -206,6 +206,18 @@ abstract class AppLocalizations {
   /// **'Change'**
   String get change;
 
+  /// No description provided for @areYouSureYouWantToConfirmThisPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to confirm this payment?'**
+  String get areYouSureYouWantToConfirmThisPayment;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
   /// No description provided for @enterOtp.
   ///
   /// In en, this message translates to:

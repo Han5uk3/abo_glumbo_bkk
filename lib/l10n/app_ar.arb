@@ -130,6 +130,8 @@
   "ok": "نعم",
   "completedBold": "مُكتمل",
   "amount": "المبلغ",
+  "confirm": "تاكيد",
+  "areYouSureYouWantToConfirmThisPayment": "هل تريد تاكيد هذا الدفع؟",
   "signupRequired": "التسجيل مطلوب",
   "contactSupportOptions": "خيارات الاتصال بالدعم",
   "contactByEmail": "الاتصال عن طريق البريد الإلكتروني",

@@ -45,6 +45,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   bool _isLoading = true;
   bool _isMapReady = false;
   String? _errorMessage;
+  // ignore: prefer_final_fields
   bool _isFollowingAgent = true;
   final bool _showTrafficLayer = false;
   List<LatLng> routePoints = [];

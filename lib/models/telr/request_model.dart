@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 class TelrPaymentRequest {
   final String ivp_method;
   final String ivp_store;

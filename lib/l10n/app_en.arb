@@ -17,6 +17,8 @@
   "otpVerification": "OTP verification",
   "enterTheOtpSentToTheNumber": "Enter the OTP sent to the number ",
   "change": "Change",
+  "areYouSureYouWantToConfirmThisPayment": "Are you sure you want to confirm this payment?",
+  "confirm": "Confirm",
   "enterOtp": "Enter OTP",
   "verifyOtp": "Verify OTP",
   "language": "Language",

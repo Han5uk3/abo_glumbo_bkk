@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'dart:async';
 import 'dart:developer';
 import 'package:abo_glumbo_bbk/apis/google_tracking_polylines.dart';

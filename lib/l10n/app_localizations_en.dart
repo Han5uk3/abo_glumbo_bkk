@@ -66,6 +66,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get change => 'Change';
 
   @override
+  String get areYouSureYouWantToConfirmThisPayment =>
+      'Are you sure you want to confirm this payment?';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
   String get enterOtp => 'Enter OTP';
 
   @override

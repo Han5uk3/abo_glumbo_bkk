@@ -225,7 +225,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         if (mounted) setState(() => isPhoneNumberUpdated = true);
         // Remove the leading '0' and add '+966' before the rest
         final formattedPhone = '+966${phoneController.text.substring(1)}';
-        print(formattedPhone);
+        debugPrint(formattedPhone);
         await AuthServices().sendOTP(
           context,
           phoneNumber: formattedPhone,

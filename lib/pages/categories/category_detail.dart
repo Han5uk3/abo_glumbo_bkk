@@ -61,7 +61,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
           .where('isActive', isEqualTo: true)
           .get();
 
-      print(snapshot.docs.length);
+      debugPrint(snapshot.docs.length.toString());
 
       final services = snapshot.docs.map((e) {
         return ServiceModel.fromQueryDocumentSnapshot(e);

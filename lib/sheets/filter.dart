@@ -200,7 +200,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       if (mounted) {
         // Set empty categories list to prevent further errors
         setState(() {
-          this.categories = [];
+          categories = [];
         });
 
         // Show error message to user

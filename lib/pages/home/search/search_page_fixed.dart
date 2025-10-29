@@ -84,33 +84,33 @@ class _SearchPageState extends State<SearchPage> {
         isLoading = true;
       });
 
-      print('🔍 SearchPage: Starting to fetch services...');
+      debugPrint('🔍 SearchPage: Starting to fetch services...');
 
       final categoriesState = context.read<CategoriesBloc>().state;
       List<CategoryModel> categories = [];
 
       if (categoriesState is CategoriesLoaded) {
         categories = categoriesState.categories;
-        print('📂 SearchPage: Loaded ${categories.length} categories');
+        debugPrint('📂 SearchPage: Loaded ${categories.length} categories');
       } else {
-        print(
+        debugPrint(
           '⚠️ SearchPage: Categories not loaded yet, state: $categoriesState',
         );
       }
 
       // Fetch services from AppFirestore
-      print('🔥 SearchPage: Querying Firestore for active services...');
+      debugPrint('🔥 SearchPage: Querying Firestore for active services...');
       final querySnapshot = await AppFirestore.servicesCollectionRef
           .where('isActive', isEqualTo: true)
           .get();
 
-      print(
+      debugPrint(
         '📊 SearchPage: Found ${querySnapshot.docs.length} active services',
       );
 
       allServices = querySnapshot.docs.map((doc) {
         try {
-          print('🔧 SearchPage: Processing service: ${doc.id}');
+          debugPrint('🔧 SearchPage: Processing service: ${doc.id}');
           final service = ServiceModel.fromQueryDocumentSnapshot(doc);
 
           // Only use copyWith if we have categories loaded
@@ -120,13 +120,13 @@ class _SearchPageState extends State<SearchPage> {
             return service;
           }
         } catch (e) {
-          print('❌ SearchPage: Error processing service ${doc.id}: $e');
+          debugPrint('❌ SearchPage: Error processing service ${doc.id}: $e');
           // Return the service without copyWith if there's an error
           return ServiceModel.fromQueryDocumentSnapshot(doc);
         }
       }).toList();
 
-      print(
+      debugPrint(
         '✅ SearchPage: Successfully processed ${allServices.length} services',
       );
       _applyFilters();
@@ -134,7 +134,7 @@ class _SearchPageState extends State<SearchPage> {
         isLoading = false;
       });
     } catch (e) {
-      print('❌ SearchPage: Error fetching services: $e');
+      debugPrint('❌ SearchPage: Error fetching services: $e');
       setState(() {
         isLoading = false;
       });
@@ -155,12 +155,12 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _applyFilters() {
-    print('🔄 SearchPage: Applying filters...');
-    print(
+    debugPrint('🔄 SearchPage: Applying filters...');
+    debugPrint(
       '📝 SearchPage: Total services before filtering: ${allServices.length}',
     );
-    print('🔍 SearchPage: Search query: "$searchQuery"');
-    print('🎯 SearchPage: Has active filters: $_hasActiveFilters');
+    debugPrint('🔍 SearchPage: Search query: "$searchQuery"');
+    debugPrint('🎯 SearchPage: Has active filters: $_hasActiveFilters');
 
     List<ServiceModel> filtered = allServices;
     final isArabic = Directionality.of(context) == TextDirection.rtl;
@@ -168,7 +168,7 @@ class _SearchPageState extends State<SearchPage> {
     final languageCode = currentLocale.languageCode;
 
     if (searchQuery != null && searchQuery!.isNotEmpty) {
-      print(
+      debugPrint(
         '🔍 SearchPage: Applying search filter for: "$searchQuery" (Arabic: $isArabic, Locale: $languageCode)',
       );
       filtered = filtered.where((service) {
@@ -201,16 +201,16 @@ class _SearchPageState extends State<SearchPage> {
             serviceDescriptionAr.contains(query);
 
         if (matches) {
-          print('✅ SearchPage: Service "${serviceName}" matches search');
+          debugPrint('✅ SearchPage: Service "$serviceName" matches search');
         }
 
         return matches;
       }).toList();
-      print('🔍 SearchPage: After search filter: ${filtered.length} services');
+      debugPrint('🔍 SearchPage: After search filter: ${filtered.length} services');
     }
 
     if (_hasActiveFilters) {
-      print('🎯 SearchPage: Applying custom filters...');
+      debugPrint('🎯 SearchPage: Applying custom filters...');
       filtered = filtered.where((service) {
         final ratingCount = service.ratingCount ?? 0;
         final totalRating = service.totalRating ?? 0.0;
@@ -249,11 +249,11 @@ class _SearchPageState extends State<SearchPage> {
 
         return matches;
       }).toList();
-      print('🎯 SearchPage: After custom filters: ${filtered.length} services');
+      debugPrint('🎯 SearchPage: After custom filters: ${filtered.length} services');
     }
 
     filteredServices = filtered;
-    print('✅ SearchPage: Final filtered services: ${filteredServices.length}');
+    debugPrint('✅ SearchPage: Final filtered services: ${filteredServices.length}');
   }
 
   void _onSearchChanged(String query) {
