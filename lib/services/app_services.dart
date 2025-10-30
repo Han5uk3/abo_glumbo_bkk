@@ -760,12 +760,12 @@ class AppServices {
           if (validRatings.isNotEmpty) {
             final totalRating = validRatings.reduce((a, b) => a + b);
 
-            rating = totalRating / (validRatings.length * 5);
+            rating = totalRating / (validRatings.length);
           }
 
           return {
             'count': validRatings.length,
-            'rating': rating,
+            'rating': double.tryParse(rating.toStringAsFixed(2)),
           };
         });
   }
@@ -816,7 +816,12 @@ class AppServices {
 
       // Create a list of combined streams for each worker
       final workerStreams = workers.map((worker) {
-        return Rx.combineLatest3<UserModel, Map<String, dynamic>, int, WorkerWithStats>(
+        return Rx.combineLatest3<
+          UserModel,
+          Map<String, dynamic>,
+          int,
+          WorkerWithStats
+        >(
           Stream.value(worker), // Worker data
           getWorkerRating(worker.uid ?? ""), // Rating stream
           getCompletedJobsByWorkerId(worker.uid ?? ''), // Completed jobs stream
@@ -834,8 +839,9 @@ class AppServices {
     });
   }
 
-
-  static Future<Map<String, dynamic>>fetchCategory (String categoryDocId) async {
+  static Future<Map<String, dynamic>> fetchCategory(
+    String categoryDocId,
+  ) async {
     final categorySnapshot = await AppFirestore.categoriesCollectionRef
         .doc(categoryDocId)
         .get();
@@ -843,108 +849,111 @@ class AppServices {
       return {};
     }
     final categoryData = categorySnapshot.data() as Map<String, dynamic>;
-    
-    return categoryData;
-    
-  }
 
+    return categoryData;
+  }
 
   /// Fetch multiple categories by their IDs in batch (handles Firestore's whereIn limit of 10)
-static Future<List<CategoryModel>> getCategoriesByIds(List<String> categoryIds) async {
-  if (categoryIds.isEmpty) return [];
-  
-  try {
-    // Split into chunks of 10 due to Firestore whereIn limit
-    List<List<String>> chunks = [];
-    for (int i = 0; i < categoryIds.length; i += 10) {
-      chunks.add(categoryIds.sublist(i, min(i + 10, categoryIds.length)));
-    }
+  static Future<List<CategoryModel>> getCategoriesByIds(
+    List<String> categoryIds,
+  ) async {
+    if (categoryIds.isEmpty) return [];
 
-    // Fetch all chunks in parallel
-    List<Future<QuerySnapshot>> futures = chunks.map((chunk) =>
-      FirebaseFirestore.instance
-          .collection('categories')
-          .where(FieldPath.documentId, whereIn: chunk)
-          .get()
-    ).toList();
+    try {
+      // Split into chunks of 10 due to Firestore whereIn limit
+      List<List<String>> chunks = [];
+      for (int i = 0; i < categoryIds.length; i += 10) {
+        chunks.add(categoryIds.sublist(i, min(i + 10, categoryIds.length)));
+      }
 
-    List<QuerySnapshot> snapshots = await Future.wait(futures);
-    
-    List<CategoryModel> categories = [];
-    for (var snapshot in snapshots) {
-      categories.addAll(
-        snapshot.docs.map((doc) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          data['id'] = doc.id; // Add document ID to the data
-          return CategoryModel.fromJson(data);
-        }).toList()
+      // Fetch all chunks in parallel
+      List<Future<QuerySnapshot>> futures = chunks
+          .map(
+            (chunk) => FirebaseFirestore.instance
+                .collection('categories')
+                .where(FieldPath.documentId, whereIn: chunk)
+                .get(),
+          )
+          .toList();
+
+      List<QuerySnapshot> snapshots = await Future.wait(futures);
+
+      List<CategoryModel> categories = [];
+      for (var snapshot in snapshots) {
+        categories.addAll(
+          snapshot.docs.map((doc) {
+            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+            data['id'] = doc.id; // Add document ID to the data
+            return CategoryModel.fromJson(data);
+          }).toList(),
+        );
+      }
+
+      debugPrint(
+        'Fetched ${categories.length} categories from ${categoryIds.length} IDs',
       );
+      return categories;
+    } catch (e) {
+      debugPrint('Error fetching categories by IDs: $e');
+      return [];
     }
-
-    debugPrint('Fetched ${categories.length} categories from ${categoryIds.length} IDs');
-    return categories;
-  } catch (e) {
-    debugPrint('Error fetching categories by IDs: $e');
-    return [];
   }
-}
 
-/// Fetch a single category by ID (for backward compatibility)
-static Future<CategoryModel?> getCategoryByIdOnce(String categoryId) async {
-  try {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('categories')
-        .doc(categoryId)
-        .get();
+  /// Fetch a single category by ID (for backward compatibility)
+  static Future<CategoryModel?> getCategoryByIdOnce(String categoryId) async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('categories')
+          .doc(categoryId)
+          .get();
 
-    if (doc.exists) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      data['id'] = doc.id;
-      return CategoryModel.fromJson(data);
+      if (doc.exists) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return CategoryModel.fromJson(data);
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error fetching category $categoryId: $e');
+      return null;
     }
-    return null;
-  } catch (e) {
-    debugPrint('Error fetching category $categoryId: $e');
-    return null;
   }
-}
 
-/// Fetch category ID by job role name (one-time read)
-static Future<String?> getCategoryIdByJobRoleOnce(String jobRole) async {
-  try {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('categories')
-        .where('name', isEqualTo: jobRole)
-        .limit(1)
-        .get();
+  /// Fetch category ID by job role name (one-time read)
+  static Future<String?> getCategoryIdByJobRoleOnce(String jobRole) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('categories')
+          .where('name', isEqualTo: jobRole)
+          .limit(1)
+          .get();
 
-    if (querySnapshot.docs.isNotEmpty) {
-      String categoryId = querySnapshot.docs.first.id;
-      debugPrint('JobRole: $jobRole -> CategoryId: $categoryId');
-      return categoryId;
+      if (querySnapshot.docs.isNotEmpty) {
+        String categoryId = querySnapshot.docs.first.id;
+        debugPrint('JobRole: $jobRole -> CategoryId: $categoryId');
+        return categoryId;
+      }
+
+      // If not found by English name, try Arabic name
+      QuerySnapshot querySnapshotAr = await FirebaseFirestore.instance
+          .collection('categories')
+          .where('name_ar', isEqualTo: jobRole)
+          .limit(1)
+          .get();
+
+      if (querySnapshotAr.docs.isNotEmpty) {
+        String categoryId = querySnapshotAr.docs.first.id;
+        debugPrint('JobRole (AR): $jobRole -> CategoryId: $categoryId');
+        return categoryId;
+      }
+
+      debugPrint('No category found for JobRole: $jobRole');
+      return null;
+    } catch (e) {
+      debugPrint('Error fetching category ID for job role $jobRole: $e');
+      return null;
     }
-
-    // If not found by English name, try Arabic name
-    QuerySnapshot querySnapshotAr = await FirebaseFirestore.instance
-        .collection('categories')
-        .where('name_ar', isEqualTo: jobRole)
-        .limit(1)
-        .get();
-
-    if (querySnapshotAr.docs.isNotEmpty) {
-      String categoryId = querySnapshotAr.docs.first.id;
-      debugPrint('JobRole (AR): $jobRole -> CategoryId: $categoryId');
-      return categoryId;
-    }
-
-    debugPrint('No category found for JobRole: $jobRole');
-    return null;
-  } catch (e) {
-    debugPrint('Error fetching category ID for job role $jobRole: $e');
-    return null;
   }
-}
-
 }
 
 class WorkerWithStats {

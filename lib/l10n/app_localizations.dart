@@ -704,11 +704,17 @@ abstract class AppLocalizations {
   /// **'Failed to cancel booking'**
   String get failedToCancelBooking;
 
-  /// No description provided for @areYouSureToWantCancelBooking.
+  /// No description provided for @areYouSureToWanttoCancelthisBooking.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure to want cancel booking?'**
-  String get areYouSureToWantCancelBooking;
+  /// **'Are you sure to want to cancel this booking?'**
+  String get areYouSureToWanttoCancelthisBooking;
+
+  /// No description provided for @cancellationOnlyAvailableUntilTechnicianAccepts.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation only available until the technician accepts'**
+  String get cancellationOnlyAvailableUntilTechnicianAccepts;
 
   /// No description provided for @youWillBeRefundedTheFullAmount.
   ///
@@ -1147,6 +1153,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'CONFIRMED'**
   String get confirmed;
+
+  /// No description provided for @paymentPendings.
+  ///
+  /// In en, this message translates to:
+  /// **'PAYMENT PENDING'**
+  String get paymentPendings;
 
   /// No description provided for @pastBookings.
   ///
@@ -2647,6 +2659,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Amount must be equal to'**
   String get amountMustBeEqualTo;
+
+  /// No description provided for @noPendingBookingsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no pending bookings at the moment. New booking requests will appear here.'**
+  String get noPendingBookingsMessage;
+
+  /// No description provided for @noConfirmedBookingsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No confirmed bookings yet. Once technician accept your requests, they will appear here.'**
+  String get noConfirmedBookingsMessage;
+
+  /// No description provided for @noCompletedBookingsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your completed bookings will appear here once services are finished.'**
+  String get noCompletedBookingsMessage;
+
+  /// No description provided for @noPendingPaymentBookingsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no pending payment bookings. This is great!'**
+  String get noPendingPaymentBookingsMessage;
+
+  /// No description provided for @noCancelledBookingsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no cancelled bookings. This is great!'**
+  String get noCancelledBookingsMessage;
+
+  /// No description provided for @noBookingsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no bookings at the moment.'**
+  String get noBookingsMessage;
+
+  /// Message shown when no bookings are found for a specific type
+  ///
+  /// In en, this message translates to:
+  /// **'No {type} bookings found'**
+  String noBookingFound(String type);
 
   /// Message explaining the inspection fee amount and payment terms
   ///

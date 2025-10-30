@@ -238,7 +238,11 @@ class _WorkerListState extends State<WorkerList> {
 
               if (snapshot.hasError) {
                 debugPrint("Debug - Stream Error: ${snapshot.error}");
-                return const Center(child: Text("An error occurred"));
+                return Center(
+                  child: Text(
+                    "${AppLocalizations.of(context)!.error}: ${snapshot.error}",
+                  ),
+                );
               }
 
               final data = List<WorkerWithStats>.from(snapshot.data ?? []);

@@ -317,8 +317,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failedToCancelBooking => 'فشل في إلغاء الحجز';
 
   @override
-  String get areYouSureToWantCancelBooking =>
-      'هل أنت متأكد أنك تريد إلغاء الحجز؟';
+  String get areYouSureToWanttoCancelthisBooking =>
+      'هل تريد بالفعل الغاء هذا الحجز؟';
+
+  @override
+  String get cancellationOnlyAvailableUntilTechnicianAccepts =>
+      'الغاء فقط متاح حتى يقبل الفني';
 
   @override
   String get youWillBeRefundedTheFullAmount => 'سيتم استرداد المبلغ بالكامل';
@@ -548,6 +552,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get confirmed => 'مؤكد';
+
+  @override
+  String get paymentPendings => 'دفعات معلقة';
 
   @override
   String get pastBookings => 'الحجوزات السابقة';
@@ -1323,6 +1330,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get amountMustBeEqualTo => 'المبلغ يجب أن يكون مساوياً ل';
+
+  @override
+  String get noPendingBookingsMessage =>
+      'لا يوجد حجوزات معلقة حالياً. سيتم عرض الطلبات الجديدة هنا.';
+
+  @override
+  String get noConfirmedBookingsMessage =>
+      'لا يوجد حجوزات مؤكدة حالياً. بمجرد قبول الفنيون، سيتم عرض الحجوزات هنا.';
+
+  @override
+  String get noCompletedBookingsMessage =>
+      'سيتم عرض حجوزاتك المكتملة هنا بمجرد انتهاء الخدمة.';
+
+  @override
+  String get noPendingPaymentBookingsMessage =>
+      'لا يوجد حجوزات معلقة مدفوعة. هذه هي جيدة!';
+
+  @override
+  String get noCancelledBookingsMessage =>
+      'لا يوجد حجوزات ملغية حالياً. هذه هي جيدة!';
+
+  @override
+  String get noBookingsMessage => 'لا يوجد حجوزات حالياً.';
+
+  @override
+  String noBookingFound(String type) {
+    return 'لم يتم العثور على حجوزات $type';
+  }
 
   @override
   String inspectionFeeNote(String fee) {

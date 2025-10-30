@@ -319,8 +319,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failedToCancelBooking => 'Failed to cancel booking';
 
   @override
-  String get areYouSureToWantCancelBooking =>
-      'Are you sure to want cancel booking?';
+  String get areYouSureToWanttoCancelthisBooking =>
+      'Are you sure to want to cancel this booking?';
+
+  @override
+  String get cancellationOnlyAvailableUntilTechnicianAccepts =>
+      'Cancellation only available until the technician accepts';
 
   @override
   String get youWillBeRefundedTheFullAmount =>
@@ -552,6 +556,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmed => 'CONFIRMED';
+
+  @override
+  String get paymentPendings => 'PAYMENT PENDING';
 
   @override
   String get pastBookings => 'PAST BOOKINGS';
@@ -1331,6 +1338,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get amountMustBeEqualTo => 'Amount must be equal to';
+
+  @override
+  String get noPendingBookingsMessage =>
+      'You have no pending bookings at the moment. New booking requests will appear here.';
+
+  @override
+  String get noConfirmedBookingsMessage =>
+      'No confirmed bookings yet. Once technician accept your requests, they will appear here.';
+
+  @override
+  String get noCompletedBookingsMessage =>
+      'Your completed bookings will appear here once services are finished.';
+
+  @override
+  String get noPendingPaymentBookingsMessage =>
+      'You have no pending payment bookings. This is great!';
+
+  @override
+  String get noCancelledBookingsMessage =>
+      'You have no cancelled bookings. This is great!';
+
+  @override
+  String get noBookingsMessage => 'You have no bookings at the moment.';
+
+  @override
+  String noBookingFound(String type) {
+    return 'No $type bookings found';
+  }
 
   @override
   String inspectionFeeNote(String fee) {

@@ -242,7 +242,7 @@ class ReviewModel {
   }
 }
 
-enum BookingStatusType { pending, confirmed, completed, pastBookings }
+enum BookingStatusType { pending, confirmed, pendingPayment, completed, cancelled }
 
 class BookingServiceItem {
   final String name;

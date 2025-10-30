@@ -220,20 +220,7 @@ class ServiceBookingTile extends StatelessWidget {
                           controller: reasonController,
                         );
                         if (res == true) {
-                          if (reasonController.text.trim().isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: AppColors.red,
-                                content: Text(
-                                  AppLocalizations.of(
-                                        context,
-                                      )?.pleaseEnterCancellationReason ??
-                                      '',
-                                ),
-                              ),
-                            );
-                            return;
-                          }
+                        
                           bookingBloc.add(
                             CancelBookingEvent(
                               booking,

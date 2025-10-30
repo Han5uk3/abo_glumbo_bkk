@@ -100,7 +100,8 @@
   "cancel": "Cancel",
   "bookingCancelled": "Booking cancelled",
   "failedToCancelBooking": "Failed to cancel booking",
-  "areYouSureToWantCancelBooking": "Are you sure to want cancel booking?",
+  "areYouSureToWanttoCancelthisBooking": "Are you sure to want to cancel this booking?",
+  "cancellationOnlyAvailableUntilTechnicianAccepts": "Cancellation only available until the technician accepts",
   "youWillBeRefundedTheFullAmount": "You will be refunded the full amount",
   "no": "No",
   "yesCancel": "Yes, cancel",
@@ -174,6 +175,7 @@
   "verificationFailed": "Verification failed. Try again.",
   "pending": "PENDING",
   "confirmed": "CONFIRMED",
+  "paymentPendings": "PAYMENT PENDING",
   "pastBookings": "PAST BOOKINGS",
   "startTyping": "Start typing to search services",
   "noServicesFound": "No services found",
@@ -424,7 +426,23 @@
   "pleaseEnterAValidAmount": "Please enter a valid amount",
   "amountMustBeAtLeast": "Amount must be at least",
   "amountMustBeEqualTo": "Amount must be equal to",
-  
+  "noPendingBookingsMessage": "You have no pending bookings at the moment. New booking requests will appear here.",
+  "noConfirmedBookingsMessage": "No confirmed bookings yet. Once technician accept your requests, they will appear here.",
+  "noCompletedBookingsMessage": "Your completed bookings will appear here once services are finished.",
+  "noPendingPaymentBookingsMessage": "You have no pending payment bookings. This is great!",
+  "noCancelledBookingsMessage": "You have no cancelled bookings. This is great!",
+  "noBookingsMessage": "You have no bookings at the moment.",
+  "noBookingFound": "No {type} bookings found",
+  "@noBookingFound": {
+    "description": "Message shown when no bookings are found for a specific type",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "upcoming",
+        "description": "The type of booking (e.g., upcoming, completed, cancelled)"
+      }
+    }
+  },
   "inspectionFeeNote": "Inspection fee: {fee} SAR — paid only after the technician arrives and inspects the issue.",
   "@inspectionFeeNote": {
     "description": "Message explaining the inspection fee amount and payment terms",
@@ -435,5 +453,4 @@
       }
     }
   }
-
 }
