@@ -864,9 +864,8 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                 const SizedBox(height: 16),
                 Text(
                   AppLocalizations.of(
-                        context,
-                      )!.areYouSureYouWantToConfirmThisPayment ??
-                      'Are you sure you want to confirm this payment?',
+                    context,
+                  )!.areYouSureYouWantToConfirmThisPayment,
                   style: GoogleFonts.dmSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -880,7 +879,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                   Navigator.of(dialogContext).pop(false); // Return false
                 },
                 child: Text(
-                  AppLocalizations.of(context)!.cancel ?? 'Cancel',
+                  AppLocalizations.of(context)!.cancel,
                   style: GoogleFonts.dmSans(
                     color: Colors.grey.shade700,
                     fontWeight: FontWeight.w600,
@@ -898,7 +897,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                   ),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.confirm ?? 'Confirm',
+                  AppLocalizations.of(context)!.confirm,
                   style: GoogleFonts.dmSans(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
