@@ -917,6 +917,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
           booking: widget.booking,
           isCompleted: true,
           paymentModeCode: widget.paymentModeCode,
+          orderId: widget.orderId
         );
         await saveTransaction();
 

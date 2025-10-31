@@ -62,6 +62,7 @@ class BookingModel {
   Timestamp? cancelledAt;
   String? cancellationReason;
   bool paymentCompleted = false;
+  String? orderId;
 
   BookingModel({
     required this.id,
@@ -83,6 +84,7 @@ class BookingModel {
     this.completedAt,
     this.cancelledAt,
     this.cancellationReason,
+    this.orderId,
     this.completionData,
     this.paymentCompleted = false,
   });
@@ -112,6 +114,7 @@ class BookingModel {
       cancellationReason = data['cancellationReason'],
       completedAt = data['completedAt'],
       paymentCompleted = data['paymentCompleted'] ?? false,
+      orderId = data['orderId'],
       cancelledAt = data['cancelledAt'];
 
   factory BookingModel.fromJson(Map<String, dynamic> data) {
@@ -147,6 +150,7 @@ class BookingModel {
       'rejectedAt': rejectedAt,
       'completedAt': completedAt,
       'cancelledAt': cancelledAt,
+      'orderId': orderId,
       'cancellationReason': cancellationReason,
       'paymentCompleted': paymentCompleted,
       'completionData': completionData?.toJson(),

@@ -168,11 +168,13 @@ class BookingUtils {
     required BookingModel booking,
     required bool isCompleted,
     required String paymentModeCode,
+    required String orderId,
   }) async {
     try {
       await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
         "paymentCompleted": isCompleted,
         "paymentModeCode": paymentModeCode,
+        "orderId": orderId,
         "updatedAt": Timestamp.now(),
       });
       return true;
