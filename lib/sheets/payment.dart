@@ -757,6 +757,11 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
 
   double get totalAmount => (widget.amount);
   double get paidAmount => double.tryParse(_amountController.text) ?? 0.0;
+  @override
+  void initState() {
+    super.initState();
+    _amountController.text = totalAmount.toString();
+  }
 
   @override
   void dispose() {
@@ -917,7 +922,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
           booking: widget.booking,
           isCompleted: true,
           paymentModeCode: widget.paymentModeCode,
-          orderId: widget.orderId
+          orderId: widget.orderId,
         );
         await saveTransaction();
 
