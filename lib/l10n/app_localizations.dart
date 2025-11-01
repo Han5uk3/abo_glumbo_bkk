@@ -164,6 +164,60 @@ abstract class AppLocalizations {
   /// **'Nearest'**
   String get nearest;
 
+  /// No description provided for @failedToLoadImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load image'**
+  String get failedToLoadImage;
+
+  /// No description provided for @issueMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue Media'**
+  String get issueMedia;
+
+  /// No description provided for @image.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get image;
+
+  /// No description provided for @issueImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue Image'**
+  String get issueImage;
+
+  /// No description provided for @loadingVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading Video'**
+  String get loadingVideo;
+
+  /// No description provided for @allMarkedAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'All notifications marked as read'**
+  String get allMarkedAsRead;
+
+  /// No description provided for @failedToLoadVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load video'**
+  String get failedToLoadVideo;
+
+  /// No description provided for @video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get video;
+
+  /// No description provided for @markAllAsReadMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to mark all notifications as read?'**
+  String get markAllAsReadMessage;
+
   /// No description provided for @mostOrders.
   ///
   /// In en, this message translates to:

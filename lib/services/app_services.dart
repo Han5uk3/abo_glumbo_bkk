@@ -954,6 +954,77 @@ class AppServices {
       return null;
     }
   }
+  // Get count of unread notifications
+static Stream<int> getUnreadNotificationCount() {
+  String currentUid = LocalStoreHelper.getUID() ?? '';
+  if (currentUid.isEmpty) {
+    return Stream.value(0);
+  }
+
+  return AppFirestore.notificationsCollectionRef
+      .where('userId', isEqualTo: currentUid)
+      .where('isRead', isEqualTo: false)
+      .snapshots()
+      .map((snapshot) => snapshot.docs.length);
+}
+
+// Mark single notification as read
+static Future<void> markNotificationAsRead(String notificationId) async {
+  try {
+    String currentUid = LocalStoreHelper.getUID() ?? '';
+    if (currentUid.isEmpty) {
+      debugPrint('❌ Cannot mark notification as read: User ID is empty');
+      return;
+    }
+
+    await AppFirestore.notificationsCollectionRef
+        .doc(notificationId)
+        .update({
+          'isRead': true,
+          'readAt': FieldValue.serverTimestamp(),
+        });
+    debugPrint('✅ Notification marked as read: $notificationId');
+  } catch (e) {
+    debugPrint('❌ Error marking notification as read: $e');
+  }
+}
+
+// Mark all notifications as read (batch operation)
+static Future<void> markAllNotificationsAsRead() async {
+  try {
+    String currentUid = LocalStoreHelper.getUID() ?? '';
+    if (currentUid.isEmpty) {
+      debugPrint('❌ Cannot mark all as read: User ID is empty');
+      return;
+    }
+
+    final snapshot = await AppFirestore.notificationsCollectionRef
+        .where('userId', isEqualTo: currentUid)
+        .where('isRead', isEqualTo: false)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      debugPrint('✅ No unread notifications to mark');
+      return;
+    }
+
+    // Batch write operation
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    
+    for (var doc in snapshot.docs) {
+      batch.update(doc.reference, {
+        'isRead': true,
+        'readAt': FieldValue.serverTimestamp(),
+      });
+    }
+
+    await batch.commit();
+    debugPrint('✅ All ${snapshot.docs.length} notifications marked as read');
+  } catch (e) {
+    debugPrint('❌ Error marking all notifications as read: $e');
+  }
+}
+
 }
 
 class WorkerWithStats {

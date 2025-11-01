@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:convert';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
       }
     }
   }
+   @override
+  void dispose() {
+    // AUTO-MARK: Mark all notifications as read when leaving the page
+    AppServices.markAllNotificationsAsRead();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
 
   Future<void> _initializeApp() async {
     try {
@@ -190,11 +199,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
@@ -202,6 +206,47 @@ class _NotificationsPageState extends State<NotificationsPage> {
         !isLoadingMore &&
         hasMore) {
       _loadMoreNotifications();
+    }
+  }
+   Future<void> _markAllAsRead() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          AppLocalizations.of(context)?.markAllAsRead ?? 'Mark All as Read',
+        ),
+        content: Text(
+          AppLocalizations.of(context)?.markAllAsReadMessage ??
+              'Are you sure you want to mark all notifications as read?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(AppLocalizations.of(context)?.confirm ?? 'Confirm'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await AppServices.markAllNotificationsAsRead();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)?.allMarkedAsRead ??
+                  'All notifications marked as read',
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        // Refresh the page to reflect changes
+        await _refreshPage();
+      }
     }
   }
 
@@ -594,6 +639,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
         backgroundColor: AppColors.primary,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
+             IconButton(
+            icon: const Icon(Icons.done_all),
+            onPressed: _markAllAsRead,
+            tooltip: AppLocalizations.of(context)?.markAllAsRead ?? 'Mark All as Read',
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _refreshPage,

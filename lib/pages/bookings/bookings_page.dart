@@ -209,7 +209,7 @@ class _BookingsPageState extends State<BookingsPage> {
                   ),
                   const SizedBox(height: 32),
 
-                  // Optional CTA button (if applicable)
+         
                 ],
               ),
             ),

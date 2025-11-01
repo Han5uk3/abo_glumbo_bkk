@@ -42,6 +42,34 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nearest => 'الاقرب';
 
   @override
+  String get failedToLoadImage => 'Failed to load image';
+
+  @override
+  String get issueMedia => 'Issue Media';
+
+  @override
+  String get image => 'Image';
+
+  @override
+  String get issueImage => 'Issue Image';
+
+  @override
+  String get loadingVideo => 'Loading Video';
+
+  @override
+  String get allMarkedAsRead => 'تم وضع علامة على جميع الإخطارات كمقروء';
+
+  @override
+  String get failedToLoadVideo => 'Failed to load video';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get markAllAsReadMessage =>
+      'هل أنت متأكد من أنك تريد وضع علامة على جميع الإخطارات كمقروء؟';
+
+  @override
   String get mostOrders => 'الطلبات الكثيرة';
 
   @override

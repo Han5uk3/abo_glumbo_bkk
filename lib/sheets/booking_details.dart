@@ -1,8 +1,11 @@
 // ignore_for_file: deprecated_member_use
+import 'package:abo_glumbo_bbk/common_widgets/cached_video_player.dart';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -34,6 +37,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final localization = AppLocalizations.of(context)!;
 
     AddressModel? customerSelectedAddress = booking.customer.addresses.isEmpty
@@ -136,6 +141,12 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if ((booking.issueImage != null &&
+                          booking.issueImage!.isNotEmpty) ||
+                      (booking.issueVideo != null &&
+                          booking.issueVideo!.isNotEmpty)) ...{
+                    _buildIssueMediaCard(context, textTheme, colorScheme),
+                  },
                   const SizedBox(height: 16),
                   if (customerSelectedAddress != null &&
                       customerSelectedAddress.buildingNumber.isNotEmpty)
@@ -286,7 +297,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                       children: [
                         _buildRatingRow(
                           localization.rating,
-                          (booking.review!.rating?? 0.0).toDouble(),
+                          (booking.review!.rating ?? 0.0).toDouble(),
                         ),
                         if (booking.review!.review.isNotEmpty)
                           _buildInfoRow(
@@ -315,6 +326,147 @@ class BookingDetailsBottomSheet extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildIssueMediaCard(
+    BuildContext context,
+    TextTheme textTheme,
+    ColorScheme colorScheme,
+  ) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.shadow.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(
+          color: colorScheme.outline.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with icon
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.tertiary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.image_outlined,
+                    color: colorScheme.tertiary,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  AppLocalizations.of(context)!.issueMedia,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
+            if (booking.issueImage != null && booking.issueImage!.isNotEmpty)
+              const SizedBox(height: 20),
+
+            // Images Section
+            if (booking.issueImage != null && booking.issueImage!.isNotEmpty)
+              Text(
+                AppLocalizations.of(context)!.image,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
+            const SizedBox(height: 8),
+            if (booking.issueImage != null && booking.issueImage!.isNotEmpty)
+              GestureDetector(
+                onTap: () => _showFullScreenImage(booking.issueImage!, context),
+                child: Container(
+                  height: MediaQuery.of(context).size.width * 0.4,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: booking.issueImage!,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey[200],
+                        child: Center(child: Loader(size: 12)),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey[200],
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.broken_image,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              AppLocalizations.of(context)!.failedToLoadImage,
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            if (booking.issueVideo != null && booking.issueVideo!.isNotEmpty)
+              const SizedBox(height: 16),
+
+            if (booking.issueVideo != null && booking.issueVideo!.isNotEmpty)
+              Text(
+                AppLocalizations.of(context)!.video,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
+            if (booking.issueVideo != null && booking.issueVideo!.isNotEmpty)
+              const SizedBox(height: 8),
+            if (booking.issueVideo != null && booking.issueVideo!.isNotEmpty)
+              Container(
+                width: double.infinity,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceVariant.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: colorScheme.outline.withOpacity(0.2),
+                  ),
+                ),
+                child: CachedVideoPlayer(videoUrl: booking.issueVideo!),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -614,5 +766,58 @@ class BookingDetailsBottomSheet extends StatelessWidget {
     } catch (e) {
       debugPrint('Error launching URL: $e');
     }
+  }
+
+  void _showFullScreenImage(String imageUrl, BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: Text(
+              AppLocalizations.of(context)!.issueImage,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          body: Center(
+            child: InteractiveViewer(
+              panEnabled: true,
+              boundaryMargin: EdgeInsets.all(20),
+              minScale: 0.5,
+              maxScale: 4.0,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.contain,
+                placeholder: (context, url) => Center(
+                  child: SizedBox(
+                    width: 24,
+                    child: Loader(size: 14, color: Colors.white),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.broken_image, size: 100, color: Colors.white),
+                      SizedBox(height: 16),
+                      Text(
+                        AppLocalizations.of(context)!.failedToLoadImage,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -17,6 +17,8 @@
   "highestRating": "التقييم الاعلى",
   "nearest": "الاقرب",
   "mostOrders": "الطلبات الكثيرة",
+  "markAllAsReadMessage": "هل أنت متأكد من أنك تريد وضع علامة على جميع الإخطارات كمقروء؟",
+  "allMarkedAsRead": "تم وضع علامة على جميع الإخطارات كمقروء",
   "areYouSureYouWantToLogout": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
   "account": "الحساب",
   "wishlist": "قائمة الرغبات",

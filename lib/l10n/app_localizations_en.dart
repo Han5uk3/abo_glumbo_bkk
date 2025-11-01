@@ -43,6 +43,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nearest => 'Nearest';
 
   @override
+  String get failedToLoadImage => 'Failed to load image';
+
+  @override
+  String get issueMedia => 'Issue Media';
+
+  @override
+  String get image => 'Image';
+
+  @override
+  String get issueImage => 'Issue Image';
+
+  @override
+  String get loadingVideo => 'Loading Video';
+
+  @override
+  String get allMarkedAsRead => 'All notifications marked as read';
+
+  @override
+  String get failedToLoadVideo => 'Failed to load video';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get markAllAsReadMessage =>
+      'Are you sure you want to mark all notifications as read?';
+
+  @override
   String get mostOrders => 'Most Orders';
 
   @override

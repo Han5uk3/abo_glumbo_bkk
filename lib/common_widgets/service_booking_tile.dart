@@ -148,39 +148,41 @@ class ServiceBookingTile extends StatelessWidget {
                           ),
                           SizedBox(width: 4),
                         },
-                        SizedBox(
-                          height: 23,
-                          child: FilledButton(
-                            style: FilledButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                        if (booking.paymentCompleted == true) ...{
+                          SizedBox(
+                            height: 23,
+                            child: FilledButton(
+                              style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
+                                backgroundColor: AppColors.yellow,
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              backgroundColor: AppColors.yellow,
-                            ),
-                            onPressed: booking.review == null
-                                ? onReviewButtonPressed
-                                : null,
-                            child: Text(
-                              booking.review == null
-                                  ? AppLocalizations.of(
-                                          context,
-                                        )?.writeAReview ??
-                                        ''
-                                  : AppLocalizations.of(
-                                          context,
-                                        )?.reviewSubmitted ??
-                                        '',
-                              style: GoogleFonts.dmSans(
-                                color: Colors.black,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
+                              onPressed: booking.review == null
+                                  ? onReviewButtonPressed
+                                  : null,
+                              child: Text(
+                                booking.review == null
+                                    ? AppLocalizations.of(
+                                            context,
+                                          )?.writeAReview ??
+                                          ''
+                                    : AppLocalizations.of(
+                                            context,
+                                          )?.reviewSubmitted ??
+                                          '',
+                                style: GoogleFonts.dmSans(
+                                  color: Colors.black,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                        },
                       ],
                     ),
                   ],
@@ -220,7 +222,6 @@ class ServiceBookingTile extends StatelessWidget {
                           controller: reasonController,
                         );
                         if (res == true) {
-                        
                           bookingBloc.add(
                             CancelBookingEvent(
                               booking,

@@ -2,12 +2,14 @@ import 'package:abo_glumbo_bbk/common_widgets/category_card.dart';
 import 'package:abo_glumbo_bbk/common_widgets/highlighted_service.dart';
 import 'package:abo_glumbo_bbk/common_widgets/home_carousel.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/common_widgets/unread_notifications_badge.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/banner.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
 import 'package:abo_glumbo_bbk/models/highlighted_services.dart';
+import 'package:abo_glumbo_bbk/pages/accounts/notification.dart';
 import 'package:abo_glumbo_bbk/pages/home/active_bookings/active_bookings.dart';
 import 'package:abo_glumbo_bbk/pages/home/bloc/home_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/home/search/search_page.dart';
@@ -147,15 +149,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             color: AppColors.primary,
           ),
 
-          if (!_isGuest)
-            Positioned(
-              top: safePadding.top + 8,
-              right: Directionality.of(context) == TextDirection.rtl
-                  ? 16
-                  : null,
-              left: Directionality.of(context) == TextDirection.rtl ? null : 16,
-              child: const LocationShowingWidget(),
+         if (!_isGuest)
+  Positioned(
+    top: safePadding.top + 8,
+    right: 16,
+    left: 16,
+    child: Row(
+      children: [
+        const LocationShowingWidget(),
+        Spacer(),
+        UnreadNotificationBadge(
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const NotificationsPage(),
             ),
+          ),
+        ),
+      ],
+    ),
+  ),
           if (primaryBanners.isNotEmpty)
             Positioned(
               top: safePadding.top + 50,
