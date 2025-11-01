@@ -1,11 +1,1 @@
-{
-  "ar": [
-    "failedToLoadImage",
-    "issueMedia",
-    "image",
-    "issueImage",
-    "loadingVideo",
-    "failedToLoadVideo",
-    "video"
-  ]
-}
+{}

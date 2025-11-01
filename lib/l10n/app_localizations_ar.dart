@@ -42,28 +42,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nearest => 'الاقرب';
 
   @override
-  String get failedToLoadImage => 'Failed to load image';
+  String get failedToLoadImage => 'فشل تحميل الصورة';
 
   @override
-  String get issueMedia => 'Issue Media';
+  String get issueMedia => 'مشكلة في الوسائط';
 
   @override
-  String get image => 'Image';
+  String get image => 'صورة';
 
   @override
-  String get issueImage => 'Issue Image';
+  String get issueImage => 'مشكلة في الصورة';
 
   @override
-  String get loadingVideo => 'Loading Video';
+  String get loadingVideo => 'جاري تحميل الفيديو';
 
   @override
   String get allMarkedAsRead => 'تم وضع علامة على جميع الإخطارات كمقروء';
 
   @override
-  String get failedToLoadVideo => 'Failed to load video';
+  String get failedToLoadVideo => 'فشل تحميل الفيديو';
 
   @override
-  String get video => 'Video';
+  String get video => 'فيديو';
 
   @override
   String get markAllAsReadMessage =>
