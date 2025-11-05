@@ -247,21 +247,26 @@ class NotificationServices {
     required String body,
     String? payload,
   }) async {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-          'abo_glumbo_channel',
-          'Abo Glumbo Notifications',
-          channelDescription:
-              'Notifications related to Abo Glumbo tasks and updates',
-          importance: Importance.max,
-          priority: Priority.high,
-          showWhen: true,
-          enableVibration: true,
-          playSound: true,
-          visibility: NotificationVisibility.public,
-          enableLights: true,
-          icon: '@mipmap/ic_launcher',
-        );
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'abo_glumbo_channel',
+      'Abo Glumbo Notifications',
+      channelDescription:
+          'Notifications related to Abo Glumbo tasks and updates',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: true,
+      enableVibration: true,
+      playSound: true,
+      visibility: NotificationVisibility.public,
+      enableLights: true,
+      icon: '@mipmap/ic_launcher',
+      styleInformation: BigTextStyleInformation(
+        body,
+        contentTitle: title,
+        summaryText: '',
+        htmlFormatBigText: false,
+      ),
+    );
 
     const DarwinNotificationDetails iOSDetails = DarwinNotificationDetails(
       presentAlert: true,
@@ -270,7 +275,7 @@ class NotificationServices {
       sound: 'default',
     );
 
-    const NotificationDetails platformDetails = NotificationDetails(
+    NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
       iOS: iOSDetails,
     );

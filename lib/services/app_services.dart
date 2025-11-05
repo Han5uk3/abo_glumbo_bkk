@@ -15,6 +15,7 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AppServices {
@@ -29,26 +30,65 @@ class AppServices {
     RemoteMessage message,
   ) async {
     try {
-      String currentUid = LocalStoreHelper.getUID() ?? '';
-      if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot store notification: User ID is empty');
-        return;
+      // ✅ Try to get userId from message data first (cloud function sends it)
+      String userId = message.data['customerId']?.toString() ?? '';
+
+      // ✅ Only try Hive if message doesn't have userId AND Hive is open
+      if (userId.isEmpty && Hive.isBoxOpen('myBox')) {
+        try {
+          userId = LocalStoreHelper.getUID() ?? '';
+        } catch (e) {
+          debugPrint('⚠️ Could not get UID from Hive: $e');
+        }
       }
 
+      // ✅ If still empty, this is a background notification
+      // Store with a fallback identifier
+      if (userId.isEmpty) {
+        debugPrint(
+          '⚠️ Background notification received - userId not available, checking targetRole',
+        );
+
+        // For background notifications, use targetRole to determine storage
+        String targetRole = message.data['targetRole'] ?? 'unknown';
+
+        // Log the message for debugging
+        debugPrint(
+          '📨 Background notification: role=$targetRole, category=${message.data['category']}',
+        );
+
+        // If we truly can't get userId, the notification might be lost
+        // Try one more time to extract it from data
+        if (userId.isEmpty) {
+          debugPrint(
+            '❌ Cannot store notification: No userId available in message or Hive',
+          );
+          return;
+        }
+      }
+
+      debugPrint('📝 Storing notification for userId: $userId');
+
       Map<String, dynamic> notificationData = {
-        'userId': currentUid,
-        'title': message.notification?.title ?? '',
-        'body': message.notification?.body ?? '',
+        'userId': userId,
+        'title': message.notification?.title ?? message.data['title'] ?? '',
+        'body': message.notification?.body ?? message.data['body'] ?? '',
         'data': message.data,
-        'messageId': message.messageId,
-        'sentTime': message.sentTime,
+        'messageId': message.messageId ?? '',
+        'sentTime': message.sentTime != null
+            ? Timestamp.fromDate(message.sentTime!)
+            : Timestamp.now(),
         'createdAt': Timestamp.now(),
         'isRead': false,
         'category': message.data['category'] ?? 'general',
         'action': message.data['action'] ?? '',
         'platform': message.data['platform'] ?? 'unknown',
+        'targetRole': message.data['targetRole'] ?? 'customer',
       };
+
       await AppFirestore.notificationsCollectionRef.add(notificationData);
+
+      debugPrint('✅ Notification stored successfully');
     } catch (e) {
       debugPrint('❌ Error storing notification in Firestore: $e');
     }
@@ -954,77 +994,75 @@ class AppServices {
       return null;
     }
   }
+
   // Get count of unread notifications
-static Stream<int> getUnreadNotificationCount() {
-  String currentUid = LocalStoreHelper.getUID() ?? '';
-  if (currentUid.isEmpty) {
-    return Stream.value(0);
-  }
-
-  return AppFirestore.notificationsCollectionRef
-      .where('userId', isEqualTo: currentUid)
-      .where('isRead', isEqualTo: false)
-      .snapshots()
-      .map((snapshot) => snapshot.docs.length);
-}
-
-// Mark single notification as read
-static Future<void> markNotificationAsRead(String notificationId) async {
-  try {
+  static Stream<int> getUnreadNotificationCount() {
     String currentUid = LocalStoreHelper.getUID() ?? '';
     if (currentUid.isEmpty) {
-      debugPrint('❌ Cannot mark notification as read: User ID is empty');
-      return;
+      return Stream.value(0);
     }
 
-    await AppFirestore.notificationsCollectionRef
-        .doc(notificationId)
-        .update({
-          'isRead': true,
-          'readAt': FieldValue.serverTimestamp(),
-        });
-    debugPrint('✅ Notification marked as read: $notificationId');
-  } catch (e) {
-    debugPrint('❌ Error marking notification as read: $e');
-  }
-}
-
-// Mark all notifications as read (batch operation)
-static Future<void> markAllNotificationsAsRead() async {
-  try {
-    String currentUid = LocalStoreHelper.getUID() ?? '';
-    if (currentUid.isEmpty) {
-      debugPrint('❌ Cannot mark all as read: User ID is empty');
-      return;
-    }
-
-    final snapshot = await AppFirestore.notificationsCollectionRef
+    return AppFirestore.notificationsCollectionRef
         .where('userId', isEqualTo: currentUid)
         .where('isRead', isEqualTo: false)
-        .get();
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
 
-    if (snapshot.docs.isEmpty) {
-      debugPrint('✅ No unread notifications to mark');
-      return;
-    }
+  // Mark single notification as read
+  static Future<void> markNotificationAsRead(String notificationId) async {
+    try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot mark notification as read: User ID is empty');
+        return;
+      }
 
-    // Batch write operation
-    WriteBatch batch = FirebaseFirestore.instance.batch();
-    
-    for (var doc in snapshot.docs) {
-      batch.update(doc.reference, {
+      await AppFirestore.notificationsCollectionRef.doc(notificationId).update({
         'isRead': true,
         'readAt': FieldValue.serverTimestamp(),
       });
+      debugPrint('✅ Notification marked as read: $notificationId');
+    } catch (e) {
+      debugPrint('❌ Error marking notification as read: $e');
     }
-
-    await batch.commit();
-    debugPrint('✅ All ${snapshot.docs.length} notifications marked as read');
-  } catch (e) {
-    debugPrint('❌ Error marking all notifications as read: $e');
   }
-}
 
+  // Mark all notifications as read (batch operation)
+  static Future<void> markAllNotificationsAsRead() async {
+    try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot mark all as read: User ID is empty');
+        return;
+      }
+
+      final snapshot = await AppFirestore.notificationsCollectionRef
+          .where('userId', isEqualTo: currentUid)
+          .where('isRead', isEqualTo: false)
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        debugPrint('✅ No unread notifications to mark');
+        return;
+      }
+
+      // Batch write operation
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      for (var doc in snapshot.docs) {
+        batch.update(doc.reference, {
+          'isRead': true,
+          'readAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      await batch.commit();
+      debugPrint('✅ All ${snapshot.docs.length} notifications marked as read');
+    } catch (e) {
+      debugPrint('❌ Error marking all notifications as read: $e');
+    }
+  }
 }
 
 class WorkerWithStats {

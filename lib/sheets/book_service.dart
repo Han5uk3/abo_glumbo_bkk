@@ -27,7 +27,7 @@ showBookServiceBottomSheet(
   required ServiceModel service,
 }) async {
   await showModalBottomSheet(
-    enableDrag: true,
+    enableDrag: false,
     isDismissible: false,
     constraints: BoxConstraints(
       maxHeight: MediaQuery.of(context).size.height * 0.95,
@@ -289,77 +289,83 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
           }
           return SizedBox(
             height: MediaQuery.of(context).size.height * 0.95,
-            child: Scaffold(
-              body: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(color: AppColors.primary),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8,
-                          left: 16,
-                          right: 16,
-                          bottom: 8,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              isFirstStep
-                                  ? AppLocalizations.of(
-                                          context,
-                                        )?.selectDateTime ??
-                                        ''
-                                  : isSecondStep
-                                  ? AppLocalizations.of(
-                                          context,
-                                        )?.completeYourBooking ??
-                                        ''
-                                  : AppLocalizations.of(
-                                          context,
-                                        )?.chooseYourTechnician ??
-                                        '',
-                              style: GoogleFonts.dmSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
+            child: AbsorbPointer(
+              absorbing: saving,
+              child: PopScope(
+                canPop: !saving,
+                child: Scaffold(
+                  body: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(color: AppColors.primary),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 8,
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
                             ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.close,
-                                color: Colors.white,
-                              ),
-                              onPressed: () => Navigator.pop(context),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  isFirstStep
+                                      ? AppLocalizations.of(
+                                              context,
+                                            )?.selectDateTime ??
+                                            ''
+                                      : isSecondStep
+                                      ? AppLocalizations.of(
+                                              context,
+                                            )?.completeYourBooking ??
+                                            ''
+                                      : AppLocalizations.of(
+                                              context,
+                                            )?.chooseYourTechnician ??
+                                            '',
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
 
-                    Expanded(
-                      child: isFirstStep
-                          ? _buildFirstStepContent()
-                          : isSecondStep
-                          ? _buildSecondStepContent()
-                          : _buildThirdStepContent(),
+                        Expanded(
+                          child: isFirstStep
+                              ? _buildFirstStepContent()
+                              : isSecondStep
+                              ? _buildSecondStepContent()
+                              : _buildThirdStepContent(),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            bottom: safePadding.bottom + 3,
+                            top: 18,
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: isFirstStep
+                              ? _buildFirstStepBottom()
+                              : isSecondStep
+                              ? _buildSecondStepBottom()
+                              : _buildThirdStepBottom(context),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: safePadding.bottom + 3,
-                        top: 18,
-                        left: 16,
-                        right: 16,
-                      ),
-                      child: isFirstStep
-                          ? _buildFirstStepBottom()
-                          : isSecondStep
-                          ? _buildSecondStepBottom()
-                          : _buildThirdStepBottom(context),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -437,6 +443,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                 ),
                               );
                             } else {
+                              FocusScope.of(context).unfocus();
                               context.read<NewBookingBloc>().add(
                                 CreateBookingEvent(
                                   service: widget.service,

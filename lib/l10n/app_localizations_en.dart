@@ -58,6 +58,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadingVideo => 'Loading Video';
 
   @override
+  String get completionDetails => 'Completion Details';
+
+  @override
+  String get invoiceType => 'Invoice Type';
+
+  @override
+  String get uploadFilesTitle => 'Proof of Completion / Supporting Documents';
+
+  @override
+  String get serviceItems => 'Service Items';
+
+  @override
+  String get serviceCost => 'Service Cost';
+
+  @override
+  String get paymentInCash => 'Payment in Cash';
+
+  @override
+  String get inspection => 'Inspection';
+
+  @override
+  String get transactionId => 'Transaction ID';
+
+  @override
   String get allMarkedAsRead => 'All notifications marked as read';
 
   @override
@@ -299,9 +323,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentMode => 'Payment mode';
 
   @override
-  String get cashInHand => 'Cash in hand';
-
-  @override
   String get netBankingUpiCard => 'Net banking / UPI /Card';
 
   @override
@@ -430,7 +451,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your payment has been processed successfully.';
 
   @override
-  String get cashOnHands => 'Payment in cash';
+  String get bookedOn => 'Booked on';
+
+  @override
+  String get acceptedOn => 'Accepted on';
+
+  @override
+  String get completedOn => 'Completed on';
+
+  @override
+  String get canceledOn => 'Canceled on';
+
+  @override
+  String get optional => 'Optional';
 
   @override
   String get amount => 'Amount';

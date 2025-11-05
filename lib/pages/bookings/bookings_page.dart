@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/service_booking_tile.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -9,6 +10,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BookingsPage extends StatefulWidget {
   const BookingsPage({super.key});
@@ -28,101 +30,135 @@ class _BookingsPageState extends State<BookingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BookingBloc, BookingState>(
-      builder: (context, state) {
-        return RefreshIndicator(
-          onRefresh: () async {
-            context.read<BookingBloc>().add(
-              RefreshBookingsEvent(LocalStoreHelper.getUID() ?? ''),
-            );
-            await Future.delayed(const Duration(milliseconds: 500));
-          },
-          child: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                titleSpacing: 16,
-                title: Text(AppLocalizations.of(context)?.myBooking ?? ''),
-                pinned: true,
-                primary: true,
-                centerTitle: true,
-              ),
-              SliverToBoxAdapter(
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    context.read<BookingBloc>().add(
-                      RefreshBookingsEvent(LocalStoreHelper.getUID() ?? ''),
-                    );
-                    await Future.delayed(const Duration(milliseconds: 500));
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: SizedBox(
-                      height: 34,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: BookingStatusType.values.length,
-                        itemBuilder: (context, index) {
-                          BookingStatusType status =
-                              BookingStatusType.values[index];
-                          final selectedStatus = _getSelectedStatus(state);
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<BookingBloc>().add(
+          RefreshBookingsEvent(LocalStoreHelper.getUID() ?? ''),
+        );
+        await Future.delayed(const Duration(milliseconds: 500));
+      },
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            titleSpacing: 16,
+            title: Text(AppLocalizations.of(context)?.myBooking ?? ''),
+            pinned: true,
+            primary: true,
+            centerTitle: true,
+          ),
+          // Wrap filter tabs in BlocBuilder
+          BlocBuilder<BookingBloc, BookingState>(
+            builder: (context, state) {
+              if (state is BookingsLoading || state is BookingInitial) {
+                return _buildFilterTabsShimmer();
+              }
+              return SliverToBoxAdapter(
+                child: _buildFilterTabs(context, state),
+              );
+            },
+          ),
+          // State-dependent content
+          BlocBuilder<BookingBloc, BookingState>(
+            builder: (context, state) => _buildContent(context, state),
+          ),
+        ],
+      ),
+    );
+  }
 
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: InkWell(
-                              onTap: () {
-                                context.read<BookingBloc>().add(
-                                  ChangeStatusEvent(status),
-                                );
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: selectedStatus == status
-                                      ? Border.all(
-                                          width: 1,
-                                          color: AppColors.blue1,
-                                        )
-                                      : null,
-                                  borderRadius: BorderRadius.circular(4),
-                                  color: AppColors.blue1.withOpacity(0.04),
-                                ),
-                                child: Text(
-                                  _getLocalizedStatusNames(
-                                    status.name,
-                                    context,
-                                  ),
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: selectedStatus == status
-                                        ? AppColors.blue1
-                                        : Colors.black87,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+  // Shimmer loader for filter tabs
+  Widget _buildFilterTabsShimmer() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: SizedBox(
+          height: 34,
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            scrollDirection: Axis.horizontal,
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    width: 70,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Extract filter tabs widget
+  Widget _buildFilterTabs(BuildContext context, BookingState state) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: SizedBox(
+        height: 34,
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          scrollDirection: Axis.horizontal,
+          itemCount: BookingStatusType.values.length,
+          itemBuilder: (context, index) {
+            BookingStatusType status = BookingStatusType.values[index];
+            final selectedStatus = _getSelectedStatus(state);
+
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: InkWell(
+                onTap: () {
+                  context.read<BookingBloc>().add(ChangeStatusEvent(status));
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    border: selectedStatus == status
+                        ? Border.all(width: 1, color: AppColors.blue1)
+                        : null,
+                    borderRadius: BorderRadius.circular(4),
+                    color: AppColors.blue1.withOpacity(0.04),
+                  ),
+                  child: Text(
+                    _getLocalizedStatusNames(status.name, context),
+                    style: GoogleFonts.dmSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: selectedStatus == status
+                          ? AppColors.blue1
+                          : Colors.black87,
                     ),
                   ),
                 ),
               ),
-              _buildContent(context, state),
-            ],
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 
   Widget _buildContent(BuildContext context, BookingState state) {
     if (state is BookingsLoading || state is BookingInitial) {
-      return const SliverToBoxAdapter(child: LinearProgressIndicator());
+      return SliverToBoxAdapter(
+        child: Center(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Loader(color: AppColors.primary),
+          ),
+        ),
+      );
     } else if (state is BookingsError) {
       return SliverToBoxAdapter(
         child: Padding(
@@ -160,7 +196,6 @@ class _BookingsPageState extends State<BookingsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Empty state illustration
                   Container(
                     width: 140,
                     height: 140,
@@ -177,8 +212,6 @@ class _BookingsPageState extends State<BookingsPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
-                  // Main message
                   Text(
                     AppLocalizations.of(context)?.noBookingFound(
                           _getLocalizedNormalStatusNames(
@@ -195,8 +228,6 @@ class _BookingsPageState extends State<BookingsPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-
-                  // Supporting message
                   Text(
                     _getEmptyStateMessage(state.selectedStatus.name, context),
                     textAlign: TextAlign.center,
@@ -208,16 +239,12 @@ class _BookingsPageState extends State<BookingsPage> {
                     ),
                   ),
                   const SizedBox(height: 32),
-
-         
                 ],
               ),
             ),
           ),
         );
       }
-
-      // Helper methods
 
       return SliverList.builder(
         itemCount: filteredBookings.length,
@@ -249,6 +276,7 @@ class _BookingsPageState extends State<BookingsPage> {
     return const SliverToBoxAdapter(child: SizedBox.shrink());
   }
 
+  // Rest of your helper methods remain the same...
   BookingStatusType _getSelectedStatus(BookingState state) {
     if (state is BookingsLoaded) {
       return state.selectedStatus;

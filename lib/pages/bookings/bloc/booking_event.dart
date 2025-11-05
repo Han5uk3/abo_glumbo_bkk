@@ -9,10 +9,19 @@ sealed class BookingEvent extends Equatable {
 
 class LoadBookingsEvent extends BookingEvent {
   final String customerId;
-  const LoadBookingsEvent(this.customerId);
+  final bool isInitialLoad;
+  final BookingStatusType selectedStatus; // Non-nullable with default
+  
+  const LoadBookingsEvent(
+    this.customerId, {
+    this.isInitialLoad = true,
+    this.selectedStatus = BookingStatusType.pending, // Default value
+  });
+  
   @override
-  List<Object> get props => [customerId];
+  List<Object> get props => [customerId, isInitialLoad, selectedStatus];
 }
+
 
 class ChangeStatusEvent extends BookingEvent {
   final BookingStatusType status;

@@ -6,10 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 class UnreadNotificationBadge extends StatelessWidget {
   final VoidCallback onTap;
 
-  const UnreadNotificationBadge({
-    super.key,
-    required this.onTap,
-  });
+  const UnreadNotificationBadge({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +15,7 @@ class UnreadNotificationBadge extends StatelessWidget {
       child: Stack(
         children: [
           // Notification icon
-          const Icon(
-            Icons.notifications_none,
-            color: Colors.white,
-            size: 24,
-          ),
+          const Icon(Icons.notifications_none, color: Colors.white, size: 24),
           // Unread count badge
           StreamBuilder<int>(
             stream: AppServices.getUnreadNotificationCount(),
@@ -36,7 +29,7 @@ class UnreadNotificationBadge extends StatelessWidget {
 
               return Positioned(
                 top: -4,
-                right: -4,
+                right: 0,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.red,
@@ -49,8 +42,8 @@ class UnreadNotificationBadge extends StatelessWidget {
                     ],
                   ),
                   constraints: const BoxConstraints(
-                    minWidth: 20,
-                    minHeight: 20,
+                    minWidth: 10,
+                    minHeight: 10,
                   ),
                   padding: const EdgeInsets.all(2),
                   child: Center(

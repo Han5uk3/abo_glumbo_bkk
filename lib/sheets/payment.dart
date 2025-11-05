@@ -594,7 +594,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                   )
                 : Container(),
             paymentModeButtons(
-              title: AppLocalizations.of(context)?.cashOnHands ?? '',
+              title: AppLocalizations.of(context)?.paymentInCash ?? '',
               imageUrl:
                   "https://firebasestorage.googleapis.com/v0/b/worker-app-tnext.appspot.com/o/categories%2Fcash-on-delivery.png?alt=media&token=90773e14-dfe6-4954-86fa-129975ce8a51",
               isSelected: selectedPayment == "Cash On Hands",

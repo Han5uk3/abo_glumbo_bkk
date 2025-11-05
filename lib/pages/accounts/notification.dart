@@ -61,14 +61,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
       }
     }
   }
-   @override
+
+  @override
   void dispose() {
     // AUTO-MARK: Mark all notifications as read when leaving the page
     AppServices.markAllNotificationsAsRead();
     _scrollController.dispose();
     super.dispose();
   }
-
 
   Future<void> _initializeApp() async {
     try {
@@ -199,7 +199,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-
   void _onScroll() {
     if (_scrollController.position.pixels >=
             _scrollController.position.maxScrollExtent - 200 &&
@@ -208,7 +207,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
       _loadMoreNotifications();
     }
   }
-   Future<void> _markAllAsRead() async {
+
+  Future<void> _markAllAsRead() async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -639,10 +639,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
         backgroundColor: AppColors.primary,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
-             IconButton(
+          IconButton(
             icon: const Icon(Icons.done_all),
             onPressed: _markAllAsRead,
-            tooltip: AppLocalizations.of(context)?.markAllAsRead ?? 'Mark All as Read',
+            tooltip:
+                AppLocalizations.of(context)?.markAllAsRead ??
+                'Mark All as Read',
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -711,6 +713,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
       final title = notification['title']?.toString().trim() ?? '';
       final body = notification['body']?.toString().trim() ?? '';
       final category = notification['category']?.toString() ?? 'general';
+      // ✅ NEW: Check if notification is read
+      final isRead = notification['isRead'] as bool? ?? false;
 
       if (title.isEmpty && body.isEmpty) {
         return const SizedBox.shrink();
@@ -719,17 +723,21 @@ class _NotificationsPageState extends State<NotificationsPage> {
       return Card(
         margin: const EdgeInsets.only(bottom: 8),
         elevation: 2,
+        // ✅ NEW: Grey background for read notifications
+        color: isRead ? Colors.grey[100] : Colors.white,
         child: ListTile(
           leading: CircleAvatar(
-            backgroundColor: AppColors.primary,
+            // ✅ NEW: Greyed-out icon for read notifications
+            backgroundColor: isRead ? Colors.grey[400] : AppColors.primary,
             child: Icon(_getNotificationIcon(category), color: Colors.white),
           ),
           title: title.isNotEmpty
               ? Text(
                   title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                  style: TextStyle(
+                    fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
+                    // ✅ NEW: Greyed-out text for read notifications
+                    color: isRead ? Colors.grey[500] : Colors.black,
                   ),
                 )
               : null,
@@ -738,13 +746,23 @@ class _NotificationsPageState extends State<NotificationsPage> {
             children: [
               if (body.isNotEmpty) ...[
                 const SizedBox(height: 4),
-                Text(body, style: TextStyle(color: Colors.grey[700])),
+                Text(
+                  body,
+                  // ✅ NEW: Greyed-out body text for read notifications
+                  style: TextStyle(
+                    color: isRead ? Colors.grey[400] : Colors.grey[700],
+                  ),
+                ),
               ],
               if (createdAt != null) ...[
                 const SizedBox(height: 4),
                 Text(
                   DateFormat('MMM dd, yyyy - HH:mm').format(createdAt),
-                  style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                  style: TextStyle(
+                    fontSize: 12,
+                    // ✅ NEW: Lighter grey timestamp for read notifications
+                    color: isRead ? Colors.grey[300] : Colors.grey[400],
+                  ),
                 ),
               ],
             ],

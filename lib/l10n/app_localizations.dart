@@ -194,6 +194,54 @@ abstract class AppLocalizations {
   /// **'Loading Video'**
   String get loadingVideo;
 
+  /// No description provided for @completionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion Details'**
+  String get completionDetails;
+
+  /// No description provided for @invoiceType.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice Type'**
+  String get invoiceType;
+
+  /// No description provided for @uploadFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Proof of Completion / Supporting Documents'**
+  String get uploadFilesTitle;
+
+  /// No description provided for @serviceItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Items'**
+  String get serviceItems;
+
+  /// No description provided for @serviceCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Cost'**
+  String get serviceCost;
+
+  /// No description provided for @paymentInCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment in Cash'**
+  String get paymentInCash;
+
+  /// No description provided for @inspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection'**
+  String get inspection;
+
+  /// No description provided for @transactionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID'**
+  String get transactionId;
+
   /// No description provided for @allMarkedAsRead.
   ///
   /// In en, this message translates to:
@@ -662,12 +710,6 @@ abstract class AppLocalizations {
   /// **'Payment mode'**
   String get paymentMode;
 
-  /// No description provided for @cashInHand.
-  ///
-  /// In en, this message translates to:
-  /// **'Cash in hand'**
-  String get cashInHand;
-
   /// No description provided for @netBankingUpiCard.
   ///
   /// In en, this message translates to:
@@ -914,11 +956,35 @@ abstract class AppLocalizations {
   /// **'Your payment has been processed successfully.'**
   String get paymentProcessedSuccessfully;
 
-  /// No description provided for @cashOnHands.
+  /// No description provided for @bookedOn.
   ///
   /// In en, this message translates to:
-  /// **'Payment in cash'**
-  String get cashOnHands;
+  /// **'Booked on'**
+  String get bookedOn;
+
+  /// No description provided for @acceptedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted on'**
+  String get acceptedOn;
+
+  /// No description provided for @completedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed on'**
+  String get completedOn;
+
+  /// No description provided for @canceledOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled on'**
+  String get canceledOn;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
 
   /// No description provided for @amount.
   ///

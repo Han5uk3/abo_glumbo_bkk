@@ -38,282 +38,318 @@ class ServiceBookingTile extends StatelessWidget {
         ),
         margin: const EdgeInsets.only(left: 16, right: 16, bottom: 14),
         padding: const EdgeInsets.all(13),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child:
-                  (booking.service.image != null &&
-                      booking.service.image!.isNotEmpty &&
-                      Uri.tryParse(booking.service.image!) != null &&
-                      Uri.tryParse(booking.service.image!)!.hasAbsolutePath)
-                  ? CachedNetworkImage(
-                      imageUrl: booking.service.image!,
-                      height: 50,
-                      width: 50,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          Container(color: Colors.grey[200]),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.broken_image_outlined),
-                    )
-                  : Container(
-                      height: 50,
-                      width: 50,
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(
-                          Icons.image_not_supported,
-                          color: Colors.grey,
-                          size: 20,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child:
+                      (booking.service.image != null &&
+                          booking.service.image!.isNotEmpty &&
+                          Uri.tryParse(booking.service.image!) != null &&
+                          Uri.tryParse(booking.service.image!)!.hasAbsolutePath)
+                      ? CachedNetworkImage(
+                          imageUrl: booking.service.image!,
+                          height: 50,
+                          width: 50,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              Container(color: Colors.grey[200]),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.broken_image_outlined),
+                        )
+                      : Container(
+                          height: 50,
+                          width: 50,
+                          color: Colors.grey[300],
+                          child: const Center(
+                            child: Icon(
+                              Icons.image_not_supported,
+                              color: Colors.grey,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                ),
+                const SizedBox(width: 17),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        booking.service.nameLocalized(
+                              languageCode:
+                                  AppLocalizations.of(context)?.localeName ??
+                                  'en',
+                            ) ??
+                            '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.dmSans(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: Colors.black,
                         ),
                       ),
-                    ),
-            ),
-            const SizedBox(width: 17),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    booking.service.nameLocalized(
-                          languageCode:
-                              AppLocalizations.of(context)?.localeName ?? 'en',
-                        ) ??
-                        '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.dmSans(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Text(
-                    booking.service.descriptionLocalized(
-                          languageCode:
-                              AppLocalizations.of(context)?.localeName ?? 'en',
-                        ) ??
-                        '',
-                    style: GoogleFonts.dmSans(
-                      color: Colors.black45,
-                      fontSize: 12,
-                    ),
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (booking.bookingStatusCode == "C") ...[
-                    const SizedBox(height: 8),
-
-                    Row(
-                      children: [
-                        if (booking.paymentCompleted == false) ...{
-                          GestureDetector(
-                            child: SizedBox(
-                              height: 23,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.orange),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  AppLocalizations.of(
-                                        context,
-                                      )?.completePayment ??
-                                      '',
-                                  style: GoogleFonts.dmSans(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 10,
-                                    color: Colors.orange,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            onTap: () {
-                              showPaymentBottomSheet(
-                                context,
-                                agent: booking.agent!,
-                                service: booking.service,
-                                customerData: booking.customer,
-                                booking: booking,
-                              );
-                            },
-                          ),
-                          SizedBox(width: 4),
-                        },
-                        if (booking.paymentCompleted == true) ...{
-                          SizedBox(
-                            height: 23,
-                            child: FilledButton(
-                              style: FilledButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                ),
-                                backgroundColor: AppColors.yellow,
-                              ),
-                              onPressed: booking.review == null
-                                  ? onReviewButtonPressed
-                                  : null,
-                              child: Text(
-                                booking.review == null
-                                    ? AppLocalizations.of(
-                                            context,
-                                          )?.writeAReview ??
-                                          ''
-                                    : AppLocalizations.of(
-                                            context,
-                                          )?.reviewSubmitted ??
-                                          '',
-                                style: GoogleFonts.dmSans(
-                                  color: Colors.black,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        },
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  "${booking.bookingStatusCode == "C" ? booking.completionData?.totalCost : booking.service.price} ${AppLocalizations.of(context)!.sar}",
-                  style: GoogleFonts.dmSans(
-                    color: AppColors.green1,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                      Text(
+                        booking.service.descriptionLocalized(
+                              languageCode:
+                                  AppLocalizations.of(context)?.localeName ??
+                                  'en',
+                            ) ??
+                            '',
+                        style: GoogleFonts.dmSans(
+                          color: Colors.black45,
+                          fontSize: 12,
+                        ),
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "${booking.bookingStatusCode == "C" ? booking.completionData?.totalCost : booking.service.price} ${AppLocalizations.of(context)!.sar}",
+                      style: GoogleFonts.dmSans(
+                        color: AppColors.green1,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
 
-                if (booking.bookingStatusCode == "P")
-                  SizedBox(
-                    height: 23,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        shape: RoundedRectangleBorder(
+                    if (booking.bookingStatusCode == "P")
+                      SizedBox(
+                        height: 23,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          onPressed: () async {
+                            final bookingBloc = context.read<BookingBloc>();
+                            bool? res = await showBookingCancelDialog(
+                              context,
+                              booking: booking,
+                              controller: reasonController,
+                            );
+                            if (res == true) {
+                              bookingBloc.add(
+                                CancelBookingEvent(
+                                  booking,
+                                  reasonController.text.trim(),
+                                ),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: AppColors.green,
+                                  content: Text(
+                                    AppLocalizations.of(
+                                          context,
+                                        )?.bookingCancelled ??
+                                        '',
+                                  ),
+                                ),
+                              );
+                              // refresh the page
+                              onRefresh.call();
+                            }
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)?.cancel ?? '',
+                            style: GoogleFonts.dmSans(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                              color: AppColors.grey3,
+                            ),
+                          ),
+                        ),
+                      )
+                    else if (booking.bookingStatusCode == "C" &&
+                        booking.paymentCompleted == true)
+                      Container(
+                        height: 23,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.green2),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                      ),
-                      onPressed: () async {
-                        final bookingBloc = context.read<BookingBloc>();
-                        bool? res = await showBookingCancelDialog(
-                          context,
-                          booking: booking,
-                          controller: reasonController,
-                        );
-                        if (res == true) {
-                          bookingBloc.add(
-                            CancelBookingEvent(
-                              booking,
-                              reasonController.text.trim(),
-                            ),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: AppColors.green,
-                              content: Text(
-                                AppLocalizations.of(
-                                      context,
-                                    )?.bookingCancelled ??
-                                    '',
-                              ),
-                            ),
-                          );
-                          // refresh the page
-                          onRefresh.call();
-                        }
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)?.cancel ?? '',
-                        style: GoogleFonts.dmSans(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 10,
-                          color: AppColors.grey3,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        alignment: Alignment.center,
+                        child: Text(
+                          AppLocalizations.of(context)?.completed ?? '',
+                          style: GoogleFonts.dmSans(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 10,
+                            color: AppColors.green2,
+                          ),
+                        ),
+                      )
+                    else if (booking.bookingStatusCode == "X" ||
+                        booking.bookingStatusCode == "XC")
+                      Container(
+                        height: 23,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.red),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        alignment: Alignment.center,
+                        child: Text(
+                          AppLocalizations.of(context)?.canceled ?? '',
+                          style: GoogleFonts.dmSans(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 10,
+                            color: AppColors.red,
+                          ),
+                        ),
+                      )
+                    else if (booking.bookingStatusCode == "R")
+                      Container(
+                        height: 23,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.darkGrey),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        alignment: Alignment.center,
+                        child: Text(
+                          AppLocalizations.of(context)?.rejected ?? '',
+                          style: GoogleFonts.dmSans(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 10,
+                            color: AppColors.darkGrey,
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                else if (booking.bookingStatusCode == "C")
-                  Container(
-                    height: 23,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: booking.paymentCompleted
-                            ? AppColors.green2
-                            : Colors.orange,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    alignment: Alignment.center,
-                    child: Text(
-                      AppLocalizations.of(context)?.completed ?? '',
-                      style: GoogleFonts.dmSans(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10,
-                        color: booking.paymentCompleted
-                            ? AppColors.green2
-                            : Colors.orange,
-                      ),
-                    ),
-                  )
-                else if (booking.bookingStatusCode == "X" ||
-                    booking.bookingStatusCode == "XC")
-                  Container(
-                    height: 23,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.red),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    alignment: Alignment.center,
-                    child: Text(
-                      AppLocalizations.of(context)?.canceled ?? '',
-                      style: GoogleFonts.dmSans(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10,
-                        color: AppColors.red,
-                      ),
-                    ),
-                  )
-                else if (booking.bookingStatusCode == "R")
-                  Container(
-                    height: 23,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.darkGrey),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    alignment: Alignment.center,
-                    child: Text(
-                      AppLocalizations.of(context)?.rejected ?? '',
-                      style: GoogleFonts.dmSans(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10,
-                        color: AppColors.darkGrey,
-                      ),
-                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (booking.bookingStatusCode == "P" &&
+                    booking.createdAt != null) ...{
+                  Text(
+                    "${AppLocalizations.of(context)!.bookedOn} : ${booking.createdAt?.toDate().toString() ?? ""}",
+                    style: TextStyle(color: AppColors.grey3, fontSize: 12),
                   ),
+                },
+                if (booking.acceptedAt != null &&
+                    booking.bookingStatusCode == "A") ...{
+                  Text(
+                    "${AppLocalizations.of(context)!.acceptedOn} : ${booking.acceptedAt?.toDate().toString() ?? ""}",
+                    style: TextStyle(color: AppColors.grey3, fontSize: 12),
+                  ),
+                },
+                if (booking.completedAt != null &&
+                    booking.bookingStatusCode == "C") ...{
+                  Text(
+                    "${AppLocalizations.of(context)!.completedOn} : ${booking.completedAt?.toDate().toString() ?? ""}",
+                    style: TextStyle(color: AppColors.grey3, fontSize: 12),
+                  ),
+                },
+                if (booking.bookingStatusCode == "X" ||
+                    booking.bookingStatusCode == "XC" ||
+                    booking.bookingStatusCode == "R") ...{
+                  Text(
+                    "${AppLocalizations.of(context)!.canceledOn} : ${booking.cancelledAt?.toDate().toString() ?? ""}",
+                    style: TextStyle(color: AppColors.grey3, fontSize: 12),
+                  ),
+                },
+
+                if (booking.bookingStatusCode == "C") ...[
+                  Row(
+                    children: [
+                      if (booking.paymentCompleted == false) ...{
+                        GestureDetector(
+                          child: SizedBox(
+                            height: 23,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.orange),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                AppLocalizations.of(context)?.completePayment ??
+                                    '',
+                                style: GoogleFonts.dmSans(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                                  color: Colors.orange,
+                                ),
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            showPaymentBottomSheet(
+                              context,
+                              agent: booking.agent!,
+                              service: booking.service,
+                              customerData: booking.customer,
+                              booking: booking,
+                            );
+                          },
+                        ),
+                        SizedBox(width: 4),
+                      },
+                      if (booking.paymentCompleted == true) ...{
+                        SizedBox(
+                          height: 23,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              backgroundColor: AppColors.yellow,
+                            ),
+                            onPressed: booking.review == null
+                                ? onReviewButtonPressed
+                                : null,
+                            child: Text(
+                              booking.review == null
+                                  ? AppLocalizations.of(
+                                          context,
+                                        )?.writeAReview ??
+                                        ''
+                                  : AppLocalizations.of(
+                                          context,
+                                        )?.reviewSubmitted ??
+                                        '',
+                              style: GoogleFonts.dmSans(
+                                color: Colors.black,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      },
+                    ],
+                  ),
+                ],
               ],
             ),
           ],

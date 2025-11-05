@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:abo_glumbo_bbk/apis/place_suggestion_api.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/location_card.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
+import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -56,6 +61,26 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
   void initState() {
     super.initState();
     _initializeLocation();
+    log("populating Controllers");
+
+    _populateControllers();
+  }
+
+  _populateControllers() async {
+    log("getting user details");
+    final user = AppFirestore.customersCollectionRef.doc(
+      LocalStoreHelper.getUID(),
+    );
+    user.get().then((value) {
+      if (value.exists) {
+        final data = value.data() as Map<String, dynamic>?;
+        log("got user details: ${data.toString()}");
+        if (data != null) {
+          _fullNameController.text = data['name'] ?? '';
+          _phoneNumberController.text = data['phone'] ?? '';
+        }
+      }
+    });
   }
 
   void _initializeLocation() {
@@ -522,22 +547,12 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     isNeedLabel: false,
                     keyboardType: TextInputType.text,
                     hint: Text(
-                      AppLocalizations.of(context)?.buildingName ??
-                          'Building Name',
+                      "${AppLocalizations.of(context)?.buildingName ?? 'Building Name'} (${AppLocalizations.of(context)!.optional})",
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(
-                              context,
-                            )?.buildingNameRequired ??
-                            'Building name is required';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(height: 12),
                   TextFormWidget(
@@ -581,14 +596,19 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                             )?.phoneNumberRequired ??
                             'Phone number is required';
                       }
-                      final saudiRegex = RegExp(
-                        r'^(?:\+966|00966|0)?5[0-9]{8}$',
-                      );
-
-                      if (!saudiRegex.hasMatch(value)) {
-                        return AppLocalizations.of(context)!.phoneNumberInvalid;
+                      if (kDebugMode) {
+                        return null;
+                      } else {
+                        final saudiRegex = RegExp(
+                          r'^(?:\+966|00966|0)?5[0-9]{8}$',
+                        );
+                        if (!saudiRegex.hasMatch(value)) {
+                          return AppLocalizations.of(
+                            context,
+                          )!.phoneNumberInvalid;
+                        }
+                        return null;
                       }
-                      return null;
                     },
                   ),
                   const SizedBox(height: 20),

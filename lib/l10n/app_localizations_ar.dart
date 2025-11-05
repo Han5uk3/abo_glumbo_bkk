@@ -57,6 +57,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loadingVideo => 'جاري تحميل الفيديو';
 
   @override
+  String get completionDetails => 'تفاصيل الانتهاء';
+
+  @override
+  String get invoiceType => 'نوع الفاتورة';
+
+  @override
+  String get uploadFilesTitle => 'وثائق التكميل / المستندات المساعدة';
+
+  @override
+  String get serviceItems => 'عناصر الخدمة';
+
+  @override
+  String get serviceCost => 'تكلفة الخدمة';
+
+  @override
+  String get paymentInCash => 'الدفع كاش';
+
+  @override
+  String get inspection => 'فحصة';
+
+  @override
+  String get transactionId => 'رقم المعاملة';
+
+  @override
   String get allMarkedAsRead => 'تم وضع علامة على جميع الإخطارات كمقروء';
 
   @override
@@ -297,9 +321,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get paymentMode => 'طريقة الدفع';
 
   @override
-  String get cashInHand => 'نقداً';
-
-  @override
   String get netBankingUpiCard => 'التحويل البنكي الالكتروني / UPI / بطاقة';
 
   @override
@@ -426,7 +447,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get paymentProcessedSuccessfully => 'تمت معالجة الدفعة بنجاح.';
 
   @override
-  String get cashOnHands => 'الدفع نقدي';
+  String get bookedOn => 'حجز في';
+
+  @override
+  String get acceptedOn => 'قبول في';
+
+  @override
+  String get completedOn => 'مكتمل في';
+
+  @override
+  String get canceledOn => 'ملغى في';
+
+  @override
+  String get optional => 'اختياري';
 
   @override
   String get amount => 'المبلغ';
