@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
-import 'package:abo_glumbo_bbk/models/location.dart';
+import 'package:abo_glumbo_bbk/models/location_selection.dart'; // ✅ Add this
+import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/login/otp.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
@@ -26,8 +28,7 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   bool isLoading = false;
-  bool isUpdating = false;
-  List<LocationModel> _locations = [];
+  bool isLoadingLocations = true;
   bool isPhoneNumberUpdated = false;
   int? _resendToken;
 
@@ -35,15 +36,82 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController cityNameController = TextEditingController();
-  final TextEditingController neighborhoodController = TextEditingController();
-  final TextEditingController districtNameController = TextEditingController();
+
+  // ✅ Location dropdowns (same as signup)
+  List<Province> provinces = [];
+  Province? selectedProvince;
+  Governorate? selectedGovernorate;
+  Neighborhood? selectedNeighborhood;
 
   @override
   void initState() {
-    _fetchLocations();
-    _fillOut();
     super.initState();
+    _loadLocations();
+    _fillOut();
+  }
+
+  // ✅ Load locations from JSON
+  Future<void> _loadLocations() async {
+    setState(() => isLoadingLocations = true);
+    try {
+      final jsonString = await rootBundle.loadString(
+        'assets/data/saudi_locations.json',
+      );
+      final List<dynamic> jsonData = json.decode(jsonString);
+
+      setState(() {
+        provinces = jsonData.map((p) => Province.fromJson(p)).toList();
+        isLoadingLocations = false;
+      });
+
+      // After loading, pre-select if data exists
+      if (widget.customer.detailedLocation != null) {
+        _preselectLocation(widget.customer.detailedLocation!);
+      }
+    } catch (e) {
+      debugPrint('❌ Error loading locations: $e');
+      setState(() => isLoadingLocations = false);
+      _showSnackBar(
+        AppLocalizations.of(context)?.errorFetchingLocations ??
+            'Error fetching locations',
+        backgroundColor: AppColors.red,
+      );
+    }
+  }
+
+  // ✅ Pre-select saved location
+  void _preselectLocation(DetailedLocationModel detailedLoc) {
+    if (provinces.isEmpty) return;
+
+    // Find and select province
+    final province = provinces.firstWhere(
+      (p) => p.provinceId == detailedLoc.provinceId,
+      orElse: () => provinces.first,
+    );
+
+    setState(() {
+      selectedProvince = province;
+
+      // Find and select governorate
+      if (province.governorates.isNotEmpty) {
+        final governorate = province.governorates.firstWhere(
+          (g) => g.govId == detailedLoc.governorateId,
+          orElse: () => province.governorates.first,
+        );
+
+        selectedGovernorate = governorate;
+
+        // Find and select neighborhood
+        if (governorate.neighborhoods.isNotEmpty) {
+          final neighborhood = governorate.neighborhoods.firstWhere(
+            (n) => n.neighId == detailedLoc.neighborhoodId,
+            orElse: () => governorate.neighborhoods.first,
+          );
+
+          selectedNeighborhood = neighborhood;
+        }
+      }
+    });
   }
 
   void _fillOut() {
@@ -51,48 +119,45 @@ class _EditProfilePageState extends State<EditProfilePage> {
       nameController.text = widget.customer.name ?? '';
       emailController.text = widget.customer.email ?? '';
       phoneController.text = widget.customer.phone ?? '';
-      neighborhoodController.text = widget.customer.neighbourhood ?? '';
-      cityNameController.text = widget.customer.cityName ?? '';
-      districtNameController.text = widget.customer.districtName ?? '';
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)?.errorFillingProfile ??
-                'Error filling out profile',
-          ),
-          backgroundColor: AppColors.red,
-        ),
+      _showSnackBar(
+        AppLocalizations.of(context)?.errorFillingProfile ??
+            'Error filling out profile',
+        backgroundColor: AppColors.red,
       );
-    }
-  }
-
-  void _fetchLocations() async {
-    try {
-      _locations = await AppServices.fetchLocations();
-    } catch (e) {
-      debugPrint('❌ Error fetching locations: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)?.errorFetchingLocations ??
-                'Error fetching locations',
-          ),
-          backgroundColor: AppColors.red,
-        ),
-      );
-      _locations = [];
     }
   }
 
   void _updateProfile() {
     if (_formKey.currentState?.validate() ?? false) {
+      // ✅ Validate location selection
+      if (selectedProvince == null ||
+          selectedGovernorate == null ||
+          selectedNeighborhood == null) {
+        _showSnackBar(
+          AppLocalizations.of(context)!.pleaseSelectAllLocationFields,
+          backgroundColor: AppColors.yellow,
+        );
+        return;
+      }
+
+      // ✅ Create DetailedLocationModel
+      final detailedLocation = DetailedLocationModel(
+        provinceId: selectedProvince!.provinceId,
+        provinceEn: selectedProvince!.provinceEn,
+        provinceAr: selectedProvince!.provinceAr,
+        governorateId: selectedGovernorate!.govId,
+        governorateEn: selectedGovernorate!.govEn,
+        governorateAr: selectedGovernorate!.govAr,
+        neighborhoodId: selectedNeighborhood!.neighId,
+        neighborhoodEn: selectedNeighborhood!.neighEn,
+        neighborhoodAr: selectedNeighborhood!.neighAr,
+      );
+
       final updatedCustomer = widget.customer.copyWith(
         name: nameController.text.trim(),
         email: emailController.text.trim(),
-        cityName: cityNameController.text.trim(),
-        districtName: districtNameController.text.trim(),
-        neighbourhood: neighborhoodController.text.trim(),
+        detailedLocation: detailedLocation, // ✅ Use DetailedLocationModel
         updatedAt: Timestamp.now(),
       );
 
@@ -103,69 +168,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       );
     }
-  }
-
-  void selectLocationBottomSheet() async {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        final safePaddings = MediaQuery.of(context).padding;
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)?.selectDistrict ??
-                        'Select District',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _locations.length,
-                padding: EdgeInsets.only(bottom: safePaddings.bottom + 16),
-                itemBuilder: (context, index) {
-                  final location = _locations[index];
-                  return ListTile(
-                    dense: true,
-                    leading: Icon(
-                      Icons.apartment_rounded,
-                      color: AppColors.grey2,
-                    ),
-                    title: Text(
-                      AppLocalizations.of(context)?.localeName == "ar"
-                          ? location.name_ar ?? ''
-                          : location.name ?? '',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    onTap: () {
-                      districtNameController.text = location.name ?? '';
-                      Navigator.pop(context);
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _showSnackBar(String message, {Color? backgroundColor}) {
@@ -193,7 +195,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool _isValidPhoneNumber(String phoneNumber) {
     if (phoneNumber.isEmpty) return false;
     if (!phoneNumber.startsWith('05')) return false;
-    if (phoneNumber.length < 10 || phoneNumber.length > 10) return false;
+    if (phoneNumber.length != 10) return false;
     return true;
   }
 
@@ -211,8 +213,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
         await AppServices.checkCustomerPhoneNumberAlredyExist(
           phoneController.text,
         );
+
     if (phoneController.text != widget.customer.phone) {
       if (mounted) setState(() => isLoading = true);
+
       if (isNumberAlreadyExists) {
         if (mounted) setState(() => isLoading = false);
         _showSnackBar(
@@ -221,11 +225,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         );
         return;
       }
+
       if (phoneController.text.startsWith('05')) {
         if (mounted) setState(() => isPhoneNumberUpdated = true);
-        // Remove the leading '0' and add '+966' before the rest
         final formattedPhone = '+966${phoneController.text.substring(1)}';
-        debugPrint(formattedPhone);
+
         await AuthServices().sendOTP(
           context,
           phoneNumber: formattedPhone,
@@ -262,21 +266,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     AppLocalizations.of(context)?.tooManyAttempts ??
                     'Too many attempts. Please wait and try again.';
                 break;
-              case 'quota-exceeded':
-                errorMessage =
-                    AppLocalizations.of(context)?.quotaExceeded ??
-                    'SMS quota exceeded. Try again later.';
-                break;
-              case 'network-request-failed':
-                errorMessage =
-                    AppLocalizations.of(context)?.networkError ??
-                    'Network error. Please check your connection.';
-                break;
-              case 'session-expired':
-                errorMessage =
-                    AppLocalizations.of(context)?.otpExpired ??
-                    'OTP expired. Please request a new OTP.';
-                break;
               case 'invalid-phone-number':
                 errorMessage =
                     AppLocalizations.of(
@@ -284,30 +273,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     )?.pleaseEnterAValidPhoneNumber ??
                     'Please enter a valid phone number';
                 break;
-              case 'internal-error':
-                errorMessage =
-                    AppLocalizations.of(context)?.internalError ??
-                    'An internal error occurred. Please try again later.';
-                break;
               default:
                 errorMessage =
                     e.message ??
                     AppLocalizations.of(context)?.somethingWentWrongTryAgain ??
                     'Something went wrong. Please try again.';
             }
-
             _showSnackBar(errorMessage, backgroundColor: AppColors.red);
           },
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)?.pleaseAddCountryCode ??
-                  'Please enter a valid phone number starting with 05',
-            ),
-            behavior: SnackBarBehavior.floating,
-          ),
         );
       }
     } else {
@@ -316,7 +289,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         AppLocalizations.of(context)?.phoneNumberAlreadyUpdated ?? '',
         backgroundColor: AppColors.yellow,
       );
-      return;
     }
   }
 
@@ -324,6 +296,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     final safePadding = MediaQuery.of(context).padding;
     final locale = AppLocalizations.of(context);
+    final isArabic = locale?.localeName == 'ar';
 
     return BlocListener<AccountBloc, AccountState>(
       listener: (context, state) {
@@ -343,7 +316,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(locale?.profileManagement ?? ''),
+          title: Text(locale?.profileManagement ?? 'Profile Management'),
           centerTitle: true,
         ),
         body: Form(
@@ -356,88 +329,50 @@ class _EditProfilePageState extends State<EditProfilePage> {
               bottom: safePadding.bottom + 16,
             ),
             children: [
+              if (isLoadingLocations) const LinearProgressIndicator(),
+              const SizedBox(height: 16),
+
+              // Name Field
               TextFormWidget(
                 controller: nameController,
-                label: locale?.yourName ?? '',
+                label: locale?.yourName ?? 'Your Name',
                 keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return locale?.nameIsRequired ?? '';
+                    return locale?.nameIsRequired ?? 'Name is required';
                   } else if (value.length < 3) {
-                    return locale?.enterAValidName ?? '';
+                    return locale?.enterAValidName ?? 'Enter a valid name';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
+
+              // Email Field
               TextFormWidget(
                 controller: emailController,
-                label: locale?.emailAddress ?? '',
+                label: locale?.emailAddress ?? 'Email Address',
                 keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.done,
+                textInputAction: TextInputAction.next,
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return locale?.emailIsRequired ?? '';
-                  }
-
-                  final email = value.trim();
-
-                  if (email.length < 5) {
-                    return locale?.enterAValidEmail ?? '';
-                  }
-
-                  if (!email.contains('@') || !email.contains('.')) {
-                    return locale?.enterAValidEmail ?? '';
-                  }
-
                   final emailRegex = RegExp(
                     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                    caseSensitive: false,
                   );
-
-                  if (!emailRegex.hasMatch(email)) {
-                    return locale?.enterAValidEmail ?? '';
+                  if (value != null && value.isNotEmpty) {
+                    if (!emailRegex.hasMatch(value)) {
+                      return locale?.enterAValidEmail ?? 'Enter a valid email';
+                    }
                   }
-
-                  if (email.contains('..')) {
-                    return locale?.enterAValidEmail ?? '';
-                  }
-
-                  if (email.startsWith('.') ||
-                      email.startsWith('-') ||
-                      email.endsWith('.') ||
-                      email.endsWith('-')) {
-                    return locale?.enterAValidEmail ?? '';
-                  }
-
-                  final parts = email.split('@');
-                  if (parts.length != 2) {
-                    return locale?.enterAValidEmail ?? '';
-                  }
-
-                  final localPart = parts[0];
-                  final domainPart = parts[1];
-
-                  if (localPart.isEmpty || localPart.length > 64) {
-                    return locale?.enterAValidEmail ?? '';
-                  }
-
-                  if (domainPart.isEmpty || domainPart.length > 255) {
-                    return locale?.enterAValidEmail ?? '';
-                  }
-
-                  if (!domainPart.contains('.')) {
-                    return locale?.enterAValidEmail ?? '';
-                  }
-
                   return null;
                 },
               ),
               const SizedBox(height: 16),
+
+              // Phone Field
               TextFormWidget(
                 controller: phoneController,
-                label: locale?.phoneNumber ?? '',
+                label: locale?.phoneNumber ?? 'Phone Number',
                 keyboardType: TextInputType.phone,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
@@ -445,7 +380,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ],
                 suffixIcon: TextButton(
                   onPressed: _updatePhoneNumber,
-                  child: Text(locale?.update ?? ''),
+                  child: Text(locale?.update ?? 'Update'),
                 ),
                 textInputAction: TextInputAction.next,
                 validator: (value) {
@@ -456,46 +391,91 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormWidget(
-                controller: neighborhoodController,
-                label: locale?.neighbourhood ?? '',
-                keyboardType: TextInputType.streetAddress,
-                textInputAction: TextInputAction.next,
+
+              // ✅ Location Section Header
+              Text(
+                locale?.location ?? 'Location',
+                style: GoogleFonts.dmSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.secondary,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // ✅ Province Dropdown
+              _buildDropdownField<Province>(
+                label: '${locale?.province ?? 'Province'} *',
+                value: selectedProvince,
+                items: provinces,
+                itemLabel: (province) => province.getName(isArabic),
+                onChanged: (province) {
+                  setState(() {
+                    selectedProvince = province;
+                    selectedGovernorate = null;
+                    selectedNeighborhood = null;
+                  });
+                },
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return locale?.neighbourhoodIsRequired ?? '';
+                  if (value == null) {
+                    return locale?.pleaseSelectProvince ??
+                        'Please select a province';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
-              TextFormWidget(
-                controller: cityNameController,
-                label: locale?.city ?? '',
-                keyboardType: TextInputType.streetAddress,
-                textInputAction: TextInputAction.next,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return locale?.cityNameIsRequired ?? '';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormWidget(
-                controller: districtNameController,
-                label: locale?.districtName ?? '',
-                keyboardType: TextInputType.streetAddress,
-                textInputAction: TextInputAction.next,
-                onTap: selectLocationBottomSheet,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return locale?.districtNameIsRequired ?? '';
-                  }
-                  return null;
-                },
-              ),
+
+              if (selectedProvince != null) ...[
+                const SizedBox(height: 16),
+
+                // ✅ Governorate Dropdown
+                _buildDropdownField<Governorate>(
+                  label: '${locale?.city ?? 'City'} *',
+                  value: selectedGovernorate,
+                  items: selectedProvince!.governorates,
+                  itemLabel: (gov) => gov.getName(isArabic),
+                  onChanged: (gov) {
+                    setState(() {
+                      selectedGovernorate = gov;
+                      selectedNeighborhood = null;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      return locale?.pleaseSelectCity ?? 'Please select a city';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+
+              if (selectedGovernorate != null) ...[
+                const SizedBox(height: 16),
+
+                // ✅ Neighborhood Dropdown
+                _buildDropdownField<Neighborhood>(
+                  label: '${locale?.neighbourhood ?? 'Neighborhood'} *',
+                  value: selectedNeighborhood,
+                  items: selectedGovernorate!.neighborhoods,
+                  itemLabel: (neigh) => neigh.getName(isArabic),
+                  onChanged: (neigh) {
+                    setState(() {
+                      selectedNeighborhood = neigh;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      return locale?.pleaseSelectNeighborhood ??
+                          'Please select a neighborhood';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+
               const SizedBox(height: 30),
+
+              // Update Button
               BlocBuilder<AccountBloc, AccountState>(
                 builder: (context, state) {
                   return SizedBox(
@@ -503,7 +483,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     height: 55,
                     child: ElevatedButton(
                       onPressed: state is UpdateCustomerProfileLoading
-                          ? () {}
+                          ? null
                           : _updateProfile,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.secondary,
@@ -514,7 +494,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: state is UpdateCustomerProfileLoading
                           ? Loader(size: 20, color: Colors.white)
                           : Text(
-                              locale?.update ?? '',
+                              locale?.update ?? 'Update',
                               style: GoogleFonts.dmSans(
                                 color: Colors.white,
                                 fontSize: 17,
@@ -532,12 +512,58 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  // ✅ Dropdown builder
+  Widget _buildDropdownField<T>({
+    required String label,
+    required T? value,
+    required List<T> items,
+    required String Function(T) itemLabel,
+    required void Function(T?) onChanged,
+    String? Function(T?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.dmSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<T>(
+          value: value,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+          ),
+          items: items.map((item) {
+            return DropdownMenuItem<T>(
+              value: item,
+              child: Text(
+                itemLabel(item),
+                style: GoogleFonts.dmSans(fontSize: 14),
+              ),
+            );
+          }).toList(),
+          onChanged: onChanged,
+          validator: validator,
+          isExpanded: true,
+        ),
+      ],
+    );
+  }
+
   @override
   void dispose() {
     nameController.dispose();
     emailController.dispose();
     phoneController.dispose();
-    districtNameController.dispose();
     super.dispose();
   }
 }

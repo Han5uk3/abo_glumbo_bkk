@@ -69,6 +69,7 @@ flutter:
     - assets/map_styles/
     - assets/images/
     - assets/
+    - assets/data/
 
 flutter_gen:
   synthetic-package: false

@@ -1,0 +1,2316 @@
+[
+  {
+    "province_id": "P01",
+    "province_en": "Riyadh",
+    "province_ar": "الرياض",
+    "governorates": [
+      {
+        "gov_id": "G0101",
+        "gov_en": "Riyadh",
+        "gov_ar": "الرياض",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0101010001",
+            "neigh_en": "Al-Malaz",
+            "neigh_ar": "الملز"
+          },
+          {
+            "neigh_id": "N0101010002",
+            "neigh_en": "Al-Olaya",
+            "neigh_ar": "العليا"
+          },
+          {
+            "neigh_id": "N0101010003",
+            "neigh_en": "Al-Sulimaniyah",
+            "neigh_ar": "السليمانية"
+          },
+          {
+            "neigh_id": "N0101010004",
+            "neigh_en": "Al-Nakheel",
+            "neigh_ar": "النخيل"
+          },
+          {
+            "neigh_id": "N0101010005",
+            "neigh_en": "Al-Aziziyah",
+            "neigh_ar": "العزيزية"
+          },
+          {
+            "neigh_id": "N0101010006",
+            "neigh_en": "Al-Shemeisani",
+            "neigh_ar": "الشميسانية"
+          },
+          {
+            "neigh_id": "N0101010007",
+            "neigh_en": "Al-Baqi",
+            "neigh_ar": "الباقي"
+          },
+          {
+            "neigh_id": "N0101010008",
+            "neigh_en": "Al-Fozan",
+            "neigh_ar": "الفوزان"
+          },
+          {
+            "neigh_id": "N0101010009",
+            "neigh_en": "Al-Yarmouk",
+            "neigh_ar": "اليرموك"
+          },
+          {
+            "neigh_id": "N0101010010",
+            "neigh_en": "Al-Muhammadiyah",
+            "neigh_ar": "المحمدية"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0102",
+        "gov_en": "Al-Kharj",
+        "gov_ar": "الخرج",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0102010001",
+            "neigh_en": "Al-Kharj Center",
+            "neigh_ar": "وسط الخرج"
+          },
+          {
+            "neigh_id": "N0102010002",
+            "neigh_en": "Al-Thaghr",
+            "neigh_ar": "الثغر"
+          },
+          {
+            "neigh_id": "N0102010003",
+            "neigh_en": "Al-Rawdah",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0102010004",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0102010005",
+            "neigh_en": "Al-Shams",
+            "neigh_ar": "الشمس"
+          },
+          {
+            "neigh_id": "N0102010006",
+            "neigh_en": "Al-Qasr",
+            "neigh_ar": "القصر"
+          },
+          {
+            "neigh_id": "N0102010007",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0102010008",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0102010009",
+            "neigh_en": "Al-Reef",
+            "neigh_ar": "الريف"
+          },
+          {
+            "neigh_id": "N0102010010",
+            "neigh_en": "Al-Hana",
+            "neigh_ar": "الهنا"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0103",
+        "gov_en": "Diriyah",
+        "gov_ar": "الدرعية",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0103010001",
+            "neigh_en": "Old Diriyah",
+            "neigh_ar": "الدرعية القديمة"
+          },
+          {
+            "neigh_id": "N0103010002",
+            "neigh_en": "Turaif",
+            "neigh_ar": "الطريف"
+          },
+          {
+            "neigh_id": "N0103010003",
+            "neigh_en": "Al-Bujairi",
+            "neigh_ar": "البجيري"
+          },
+          {
+            "neigh_id": "N0103010004",
+            "neigh_en": "Al-Salihiyah",
+            "neigh_ar": "الصالحية"
+          },
+          {
+            "neigh_id": "N0103010005",
+            "neigh_en": "Al-Maseef",
+            "neigh_ar": "المصيف"
+          },
+          {
+            "neigh_id": "N0103010006",
+            "neigh_en": "Al-Qasseem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0103010007",
+            "neigh_en": "Al-Omara",
+            "neigh_ar": "العمارة"
+          },
+          {
+            "neigh_id": "N0103010008",
+            "neigh_en": "Al-Jadaan",
+            "neigh_ar": "الجدعان"
+          },
+          {
+            "neigh_id": "N0103010009",
+            "neigh_en": "Al-Sofan",
+            "neigh_ar": "الصوفان"
+          },
+          {
+            "neigh_id": "N0103010010",
+            "neigh_en": "Al-Hazm",
+            "neigh_ar": "الحزم"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0104",
+        "gov_en": "Dawadmi",
+        "gov_ar": "الدوادمي",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0104010001",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0104010002",
+            "neigh_en": "Al-Rawdah",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0104010003",
+            "neigh_en": "Al-Jazira",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0104010004",
+            "neigh_en": "Al-Tareen",
+            "neigh_ar": "الطريين"
+          },
+          {
+            "neigh_id": "N0104010005",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0104010006",
+            "neigh_en": "Al-Hana",
+            "neigh_ar": "الهنا"
+          },
+          {
+            "neigh_id": "N0104010007",
+            "neigh_en": "Al-Salam",
+            "neigh_ar": "السلام"
+          },
+          {
+            "neigh_id": "N0104010008",
+            "neigh_en": "Al-Mustaqbal",
+            "neigh_ar": "المستقبل"
+          },
+          {
+            "neigh_id": "N0104010009",
+            "neigh_en": "Al-Wahda",
+            "neigh_ar": "الوحدة"
+          },
+          {
+            "neigh_id": "N0104010010",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0105",
+        "gov_en": "Al-Majma'ah",
+        "gov_ar": "المجمعة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0105010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0105010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0105010003",
+            "neigh_en": "Al-Hayyan",
+            "neigh_ar": "الحيان"
+          },
+          {
+            "neigh_id": "N0105010004",
+            "neigh_en": "Al-Khaleej",
+            "neigh_ar": "الخليج"
+          },
+          {
+            "neigh_id": "N0105010005",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0105010006",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0105010007",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0105010008",
+            "neigh_en": "Al-Nakheel",
+            "neigh_ar": "النخيل"
+          },
+          {
+            "neigh_id": "N0105010009",
+            "neigh_en": "Al-Reef",
+            "neigh_ar": "الريف"
+          },
+          {
+            "neigh_id": "N0105010010",
+            "neigh_en": "Al-Sahel",
+            "neigh_ar": "الساحل"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P02",
+    "province_en": "Mecca",
+    "province_ar": "مكة المكرمة",
+    "governorates": [
+      {
+        "gov_id": "G0201",
+        "gov_en": "Mecca",
+        "gov_ar": "مكة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0201010001",
+            "neigh_en": "Al-Haram",
+            "neigh_ar": "الحرم"
+          },
+          {
+            "neigh_id": "N0201010002",
+            "neigh_en": "Al-Shawqiyah",
+            "neigh_ar": "الشوقية"
+          },
+          {
+            "neigh_id": "N0201010003",
+            "neigh_en": "Al-Mansorah",
+            "neigh_ar": "المنصورة"
+          },
+          {
+            "neigh_id": "N0201010004",
+            "neigh_en": "Al-Aziziyah",
+            "neigh_ar": "العزيزية"
+          },
+          {
+            "neigh_id": "N0201010005",
+            "neigh_en": "Ajyad",
+            "neigh_ar": "أجياد"
+          },
+          {
+            "neigh_id": "N0201010006",
+            "neigh_en": "Al-Mudda",
+            "neigh_ar": "المضة"
+          },
+          {
+            "neigh_id": "N0201010007",
+            "neigh_en": "Al-Qushashiyah",
+            "neigh_ar": "القشاشية"
+          },
+          {
+            "neigh_id": "N0201010008",
+            "neigh_en": "Al-Falah",
+            "neigh_ar": "الفلاح"
+          },
+          {
+            "neigh_id": "N0201010009",
+            "neigh_en": "Al-Rusaifah",
+            "neigh_ar": "الرصيفة"
+          },
+          {
+            "neigh_id": "N0201010010",
+            "neigh_en": "Al-Misfalah",
+            "neigh_ar": "المصفلة"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0202",
+        "gov_en": "Jeddah",
+        "gov_ar": "جدة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0202010001",
+            "neigh_en": "Al-Balad",
+            "neigh_ar": "البلد"
+          },
+          {
+            "neigh_id": "N0202010002",
+            "neigh_en": "Al-Shati",
+            "neigh_ar": "الشاطئ"
+          },
+          {
+            "neigh_id": "N0202010003",
+            "neigh_en": "Ash-Sharafiyah",
+            "neigh_ar": "الشرفية"
+          },
+          {
+            "neigh_id": "N0202010004",
+            "neigh_en": "Al-Khaleej",
+            "neigh_ar": "الخليج"
+          },
+          {
+            "neigh_id": "N0202010005",
+            "neigh_en": "Al-Azizia",
+            "neigh_ar": "العزيزية"
+          },
+          {
+            "neigh_id": "N0202010006",
+            "neigh_en": "Al-Jamiah",
+            "neigh_ar": "الجامعة"
+          },
+          {
+            "neigh_id": "N0202010007",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0202010008",
+            "neigh_en": "Al-Mansuria",
+            "neigh_ar": "المنصورية"
+          },
+          {
+            "neigh_id": "N0202010009",
+            "neigh_en": "An-Nuzha",
+            "neigh_ar": "النزهة"
+          },
+          {
+            "neigh_id": "N0202010010",
+            "neigh_en": "As-Salama",
+            "neigh_ar": "السلامة"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0203",
+        "gov_en": "Taif",
+        "gov_ar": "الطائف",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0203010001",
+            "neigh_en": "Al-Hada",
+            "neigh_ar": "الهدا"
+          },
+          {
+            "neigh_id": "N0203010002",
+            "neigh_en": "Al-Shifa",
+            "neigh_ar": "الشفا"
+          },
+          {
+            "neigh_id": "N0203010003",
+            "neigh_en": "Al-Fakahiyah",
+            "neigh_ar": "الفاكهية"
+          },
+          {
+            "neigh_id": "N0203010004",
+            "neigh_en": "As-Sulaymaniyah",
+            "neigh_ar": "السليمانية"
+          },
+          {
+            "neigh_id": "N0203010005",
+            "neigh_en": "An-Nuzha",
+            "neigh_ar": "النزهة"
+          },
+          {
+            "neigh_id": "N0203010006",
+            "neigh_en": "Al-Qooz",
+            "neigh_ar": "القوز"
+          },
+          {
+            "neigh_id": "N0203010007",
+            "neigh_en": "Ash-Shubra",
+            "neigh_ar": "الشبرا"
+          },
+          {
+            "neigh_id": "N0203010008",
+            "neigh_en": "Al-Watiya",
+            "neigh_ar": "الوطية"
+          },
+          {
+            "neigh_id": "N0203010009",
+            "neigh_en": "Al-Karanah",
+            "neigh_ar": "الكرانة"
+          },
+          {
+            "neigh_id": "N0203010010",
+            "neigh_en": "Al-Misraa",
+            "neigh_ar": "المصراع"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0204",
+        "gov_en": "Al-Qunfudhah",
+        "gov_ar": "القنفذة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0204010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0204010002",
+            "neigh_en": "Al-Rahmaniyah",
+            "neigh_ar": "الرحمانية"
+          },
+          {
+            "neigh_id": "N0204010003",
+            "neigh_en": "Al-Shati",
+            "neigh_ar": "الشاطئ"
+          },
+          {
+            "neigh_id": "N0204010004",
+            "neigh_en": "Al-Sabahiyah",
+            "neigh_ar": "الصباحية"
+          },
+          {
+            "neigh_id": "N0204010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0204010006",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0204010007",
+            "neigh_en": "Al-Masala",
+            "neigh_ar": "المسالة"
+          },
+          {
+            "neigh_id": "N0204010008",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0204010009",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0204010010",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0205",
+        "gov_en": "Rabigh",
+        "gov_ar": "رابغ",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0205010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0205010002",
+            "neigh_en": "Al-Shati",
+            "neigh_ar": "الشاطئ"
+          },
+          {
+            "neigh_id": "N0205010003",
+            "neigh_en": "Al-Jadeed",
+            "neigh_ar": "الجديد"
+          },
+          {
+            "neigh_id": "N0205010004",
+            "neigh_en": "Al-Qadeem",
+            "neigh_ar": "القديم"
+          },
+          {
+            "neigh_id": "N0205010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0205010006",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          },
+          {
+            "neigh_id": "N0205010007",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0205010008",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0205010009",
+            "neigh_en": "Al-Reef",
+            "neigh_ar": "الريف"
+          },
+          {
+            "neigh_id": "N0205010010",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P03",
+    "province_en": "Medina",
+    "province_ar": "المدينة المنورة",
+    "governorates": [
+      {
+        "gov_id": "G0301",
+        "gov_en": "Medina",
+        "gov_ar": "المدينة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0301010001",
+            "neigh_en": "Al-Haram",
+            "neigh_ar": "الحرم"
+          },
+          {
+            "neigh_id": "N0301010002",
+            "neigh_en": "Al-Ansar",
+            "neigh_ar": "الأنصار"
+          },
+          {
+            "neigh_id": "N0301010003",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0301010004",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0301010005",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0301010006",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0301010007",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0301010008",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0301010009",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0301010010",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0302",
+        "gov_en": "Yanbu",
+        "gov_ar": "ينبع",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0302010001",
+            "neigh_en": "Yanbu Al-Bahr",
+            "neigh_ar": "ينبع البحر"
+          },
+          {
+            "neigh_id": "N0302010002",
+            "neigh_en": "Yanbu Al-Nakheel",
+            "neigh_ar": "ينبع النخيل"
+          },
+          {
+            "neigh_id": "N0302010003",
+            "neigh_en": "Al-Shati",
+            "neigh_ar": "الشاطئ"
+          },
+          {
+            "neigh_id": "N0302010004",
+            "neigh_en": "Al-Safa",
+            "neigh_ar": "الصفا"
+          },
+          {
+            "neigh_id": "N0302010005",
+            "neigh_en": "Al-Bashaer",
+            "neigh_ar": "البشائر"
+          },
+          {
+            "neigh_id": "N0302010006",
+            "neigh_en": "Al-Jalali",
+            "neigh_ar": "الجلالي"
+          },
+          {
+            "neigh_id": "N0302010007",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0302010008",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0302010009",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0302010010",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0303",
+        "gov_en": "Al-Ula",
+        "gov_ar": "العلا",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0303010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0303010002",
+            "neigh_en": "Al-Madain",
+            "neigh_ar": "المدائن"
+          },
+          {
+            "neigh_id": "N0303010003",
+            "neigh_en": "Al-Jawf",
+            "neigh_ar": "الجوف"
+          },
+          {
+            "neigh_id": "N0303010004",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0303010005",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0303010006",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0303010007",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0303010008",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0303010009",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0303010010",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0304",
+        "gov_en": "Badr",
+        "gov_ar": "بدر",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0304010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0304010002",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0304010003",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0304010004",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0304010005",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0304010006",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0304010007",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0304010008",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0304010009",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0304010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P04",
+    "province_en": "Eastern",
+    "province_ar": "الشرقية",
+    "governorates": [
+      {
+        "gov_id": "G0401",
+        "gov_en": "Dammam",
+        "gov_ar": "الدمام",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0401010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0401010002",
+            "neigh_en": "Al-Nakheel",
+            "neigh_ar": "النخيل"
+          },
+          {
+            "neigh_id": "N0401010003",
+            "neigh_en": "Al-Shati",
+            "neigh_ar": "الشاطئ"
+          },
+          {
+            "neigh_id": "N0401010004",
+            "neigh_en": "Al-Badi",
+            "neigh_ar": "البديع"
+          },
+          {
+            "neigh_id": "N0401010005",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0401010006",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0401010007",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0401010008",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0401010009",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0401010010",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0402",
+        "gov_en": "Khobar",
+        "gov_ar": "الخبر",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0402010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0402010002",
+            "neigh_en": "Al-Shati",
+            "neigh_ar": "الشاطئ"
+          },
+          {
+            "neigh_id": "N0402010003",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0402010004",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0402010005",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0402010006",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0402010007",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0402010008",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0402010009",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0402010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0403",
+        "gov_en": "Al-Ahsa",
+        "gov_ar": "الأحساء",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0403010001",
+            "neigh_en": "Al-Hofuf",
+            "neigh_ar": "الهفوف"
+          },
+          {
+            "neigh_id": "N0403010002",
+            "neigh_en": "Al-Mubarraz",
+            "neigh_ar": "المبرز"
+          },
+          {
+            "neigh_id": "N0403010003",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0403010004",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0403010005",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0403010006",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0403010007",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0403010008",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0403010009",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0403010010",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0404",
+        "gov_en": "Qatif",
+        "gov_ar": "القطيف",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0404010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0404010002",
+            "neigh_en": "Al-Shati",
+            "neigh_ar": "الشاطئ"
+          },
+          {
+            "neigh_id": "N0404010003",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0404010004",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0404010005",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0404010006",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0404010007",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0404010008",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0404010009",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0404010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P05",
+    "province_en": "Qassim",
+    "province_ar": "القصيم",
+    "governorates": [
+      {
+        "gov_id": "G0501",
+        "gov_en": "Buraydah",
+        "gov_ar": "بريدة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0501010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0501010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0501010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0501010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0501010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0501010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0501010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0501010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0501010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0501010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0502",
+        "gov_en": "Unaizah",
+        "gov_ar": "عنيزة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0502010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0502010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0502010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0502010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0502010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0502010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0502010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0502010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0502010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0502010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0503",
+        "gov_en": "Ar Rass",
+        "gov_ar": "الرس",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0503010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0503010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0503010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0503010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0503010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0503010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0503010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0503010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0503010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0503010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P06",
+    "province_en": "Hail",
+    "province_ar": "حائل",
+    "governorates": [
+      {
+        "gov_id": "G0601",
+        "gov_en": "Hail",
+        "gov_ar": "حائل",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0601010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0601010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0601010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0601010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0601010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0601010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0601010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0601010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0601010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0601010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0602",
+        "gov_en": "Baqaa",
+        "gov_ar": "الباقة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0602010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0602010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0602010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0602010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0602010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0602010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0602010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0602010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0602010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0602010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P07",
+    "province_en": "Tabuk",
+    "province_ar": "تبوك",
+    "governorates": [
+      {
+        "gov_id": "G0701",
+        "gov_en": "Tabuk",
+        "gov_ar": "تبوك",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0701010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0701010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0701010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0701010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0701010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0701010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0701010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0701010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0701010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0701010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0702",
+        "gov_en": "Al-Wajh",
+        "gov_ar": "الوجه",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0702010001",
+            "neigh_en": "Al-Shati",
+            "neigh_ar": "الشاطئ"
+          },
+          {
+            "neigh_id": "N0702010002",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0702010003",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0702010004",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0702010005",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0702010006",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0702010007",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0702010008",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0702010009",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0702010010",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P08",
+    "province_en": "Northern Borders",
+    "province_ar": "الحدود الشمالية",
+    "governorates": [
+      {
+        "gov_id": "G0801",
+        "gov_en": "Arar",
+        "gov_ar": "عرعر",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0801010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0801010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0801010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0801010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0801010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0801010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0801010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0801010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0801010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0801010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0802",
+        "gov_en": "Rafha",
+        "gov_ar": "رفحاء",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0802010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0802010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0802010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0802010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0802010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0802010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0802010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0802010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0802010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0802010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P09",
+    "province_en": "Asir",
+    "province_ar": "عسير",
+    "governorates": [
+      {
+        "gov_id": "G0901",
+        "gov_en": "Abha",
+        "gov_ar": "أبها",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0901010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0901010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0901010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0901010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0901010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0901010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0901010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0901010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0901010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0901010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0902",
+        "gov_en": "Khamis Mushait",
+        "gov_ar": "خميس مشيط",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0902010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0902010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0902010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0902010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0902010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0902010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0902010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0902010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0902010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0902010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G0903",
+        "gov_en": "Bisha",
+        "gov_ar": "بيشة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N0903010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N0903010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N0903010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N0903010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N0903010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N0903010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N0903010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N0903010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N0903010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N0903010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P10",
+    "province_en": "Jazan",
+    "province_ar": "جازان",
+    "governorates": [
+      {
+        "gov_id": "G1001",
+        "gov_en": "Jizan",
+        "gov_ar": "جيزان",
+        "neighborhoods": [
+          {
+            "neigh_id": "N1001010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N1001010002",
+            "neigh_en": "Al-Shati",
+            "neigh_ar": "الشاطئ"
+          },
+          {
+            "neigh_id": "N1001010003",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N1001010004",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N1001010005",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N1001010006",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N1001010007",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N1001010008",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N1001010009",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N1001010010",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          }
+        ]
+      },
+      {
+        "gov_id": "G1002",
+        "gov_en": "Sabya",
+        "gov_ar": "صبيا",
+        "neighborhoods": [
+          {
+            "neigh_id": "N1002010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N1002010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N1002010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N1002010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N1002010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N1002010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N1002010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N1002010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N1002010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N1002010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G1003",
+        "gov_en": "Abu Arish",
+        "gov_ar": "أبو عريش",
+        "neighborhoods": [
+          {
+            "neigh_id": "N1003010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N1003010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N1003010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N1003010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N1003010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N1003010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N1003010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N1003010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N1003010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N1003010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P11",
+    "province_en": "Najran",
+    "province_ar": "نجران",
+    "governorates": [
+      {
+        "gov_id": "G1101",
+        "gov_en": "Najran",
+        "gov_ar": "نجران",
+        "neighborhoods": [
+          {
+            "neigh_id": "N1101010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N1101010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N1101010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N1101010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N1101010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N1101010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N1101010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N1101010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N1101010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N1101010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G1102",
+        "gov_en": "Sharurah",
+        "gov_ar": "شرورة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N1102010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N1102010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N1102010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N1102010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N1102010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N1102010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N1102010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N1102010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N1102010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N1102010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P12",
+    "province_en": "Al-Baha",
+    "province_ar": "الباحة",
+    "governorates": [
+      {
+        "gov_id": "G1201",
+        "gov_en": "Al-Baha",
+        "gov_ar": "الباحة",
+        "neighborhoods": [
+          {
+            "neigh_id": "N1201010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N1201010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N1201010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N1201010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N1201010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N1201010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N1201010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N1201010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N1201010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N1201010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G1202",
+        "gov_en": "Baljurashi",
+        "gov_ar": "بلجرشي",
+        "neighborhoods": [
+          {
+            "neigh_id": "N1202010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N1202010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N1202010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N1202010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N1202010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N1202010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N1202010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N1202010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N1202010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N1202010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "province_id": "P13",
+    "province_en": "Al-Jawf",
+    "province_ar": "الجوف",
+    "governorates": [
+      {
+        "gov_id": "G1301",
+        "gov_en": "Sakaka",
+        "gov_ar": "سكاكا",
+        "neighborhoods": [
+          {
+            "neigh_id": "N1301010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N1301010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N1301010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N1301010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N1301010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N1301010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N1301010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N1301010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N1301010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N1301010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      },
+      {
+        "gov_id": "G1302",
+        "gov_en": "Qurayyat",
+        "gov_ar": "القريات",
+        "neighborhoods": [
+          {
+            "neigh_id": "N1302010001",
+            "neigh_en": "Al-Markaz",
+            "neigh_ar": "المركز"
+          },
+          {
+            "neigh_id": "N1302010002",
+            "neigh_en": "Al-Qassem",
+            "neigh_ar": "القاسم"
+          },
+          {
+            "neigh_id": "N1302010003",
+            "neigh_en": "Al-Noor",
+            "neigh_ar": "النور"
+          },
+          {
+            "neigh_id": "N1302010004",
+            "neigh_en": "Al-Sada",
+            "neigh_ar": "الصدى"
+          },
+          {
+            "neigh_id": "N1302010005",
+            "neigh_en": "Al-Waha",
+            "neigh_ar": "الواحة"
+          },
+          {
+            "neigh_id": "N1302010006",
+            "neigh_en": "Al-Rawda",
+            "neigh_ar": "الروضة"
+          },
+          {
+            "neigh_id": "N1302010007",
+            "neigh_en": "Al-Jazeera",
+            "neigh_ar": "الجزيرة"
+          },
+          {
+            "neigh_id": "N1302010008",
+            "neigh_en": "Al-Ameen",
+            "neigh_ar": "الأمين"
+          },
+          {
+            "neigh_id": "N1302010009",
+            "neigh_en": "Al-Manara",
+            "neigh_ar": "المنارة"
+          },
+          {
+            "neigh_id": "N1302010010",
+            "neigh_en": "Al-Yasamin",
+            "neigh_ar": "الياسمين"
+          }
+        ]
+      }
+    ]
+  }
+]

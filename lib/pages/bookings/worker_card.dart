@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
@@ -29,32 +27,16 @@ class WorkerCard extends StatelessWidget {
     required this.localizedJobRoles,
   });
 
-  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    const R = 6371.00;
-    final dLat = _toRadians(lat2 - lat1);
-    final dLon = _toRadians(lon2 - lon1);
-    final a =
-        sin(dLat / 2) * sin(dLat / 2) +
-        cos(_toRadians(lat1)) *
-            cos(_toRadians(lat2)) *
-            sin(dLon / 2) *
-            sin(dLon / 2);
-    final c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    return R * c;
-  }
-
-  double _toRadians(double degree) {
-    return degree * pi / 180;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final distance = calculateDistance(
-      worker.liveLocation?.latitude ?? 0.0,
-      worker.liveLocation?.longitude ?? 0.0,
-      customerAddress.lat ?? 0.0,
-      customerAddress.lon ?? 0.0,
-    );
+    final detaliLocation = worker.detailedLocation;
+    final cityName = Directionality.of(context) == TextDirection.rtl
+        ? detaliLocation?.governorateAr ?? ''
+        : detaliLocation?.governorateEn ?? '';
+    final neighborhoodName = Directionality.of(context) == TextDirection.rtl
+        ? detaliLocation?.neighborhoodAr ?? ''
+        : detaliLocation?.neighborhoodEn ?? '';
+
 
     // final services = worker.jobRoles ?? [];
     final inspectionFee = service.price ?? 0.0;
@@ -117,11 +99,7 @@ class WorkerCard extends StatelessWidget {
             const SizedBox(height: 6),
 
             // Distance
-            _InfoRow(
-              icon: '📍',
-              text:
-                  '${distance.toStringAsFixed(1)} ${AppLocalizations.of(context)!.kmaway}',
-            ),
+            _InfoRow(icon: '📍', text: '$neighborhoodName | $cityName '),
 
             const SizedBox(height: 6),
 

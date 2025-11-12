@@ -89,8 +89,7 @@ class BookingUtils {
         createdAt: customerData.createdAt,
         updatedAt: customerData.updatedAt,
         isAdmin: customerData.isAdmin,
-        districtName: customerData.districtName,
-
+        detailedLocation: customerData.detailedLocation,
         addresses: customerData.addresses.map((address) {
           return address.copyWith(isSelected: address.isSelected);
         }).toList(),

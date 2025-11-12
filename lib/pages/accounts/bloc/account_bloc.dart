@@ -186,7 +186,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         createdAt: customerData.createdAt,
         updatedAt: customerData.updatedAt,
         isAdmin: customerData.isAdmin,
-        districtName: customerData.districtName,
+        detailedLocation: customerData.detailedLocation,
       );
 
       // Emit the updated state with new customer data

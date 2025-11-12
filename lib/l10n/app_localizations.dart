@@ -962,11 +962,47 @@ abstract class AppLocalizations {
   /// **'Booked on'**
   String get bookedOn;
 
+  /// No description provided for @pleaseSelectAllLocationFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select all location fields'**
+  String get pleaseSelectAllLocationFields;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @clearFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filter'**
+  String get clearFilter;
+
+  /// No description provided for @filterByLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by location'**
+  String get filterByLocation;
+
   /// No description provided for @acceptedOn.
   ///
   /// In en, this message translates to:
   /// **'Accepted on'**
   String get acceptedOn;
+
+  /// No description provided for @province.
+  ///
+  /// In en, this message translates to:
+  /// **'Province'**
+  String get province;
+
+  /// No description provided for @creatingAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating Your Account'**
+  String get creatingAccount;
 
   /// No description provided for @completedOn.
   ///
@@ -979,6 +1015,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Canceled on'**
   String get canceledOn;
+
+  /// No description provided for @pleaseSelectNeighborhood.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select neighborhood'**
+  String get pleaseSelectNeighborhood;
+
+  /// No description provided for @pleaseSelectCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select city'**
+  String get pleaseSelectCity;
+
+  /// No description provided for @pleaseSelectProvince.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select province'**
+  String get pleaseSelectProvince;
 
   /// No description provided for @optional.
   ///

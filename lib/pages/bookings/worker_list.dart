@@ -1,15 +1,23 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:math' show sin, cos, sqrt, atan2, pi;
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
+import 'package:abo_glumbo_bbk/models/customer.dart';
+import 'package:abo_glumbo_bbk/models/location_selection.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/worker_card.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-enum FilterType { rating, distance, completedOrders }
+enum FilterType { rating, completedOrders }
 
 class WorkerList extends StatefulWidget {
   final ServiceModel service;
@@ -38,11 +46,102 @@ class _WorkerListState extends State<WorkerList> {
   final TextEditingController _searchController = TextEditingController();
   final ValueNotifier<bool> _isFilteringNotifier = ValueNotifier<bool>(false);
 
+  List<Province> provinces = [];
+  Province? selectedProvince;
+  Governorate? selectedGovernorate;
+  Neighborhood? selectedNeighborhood;
+  bool isLoadingLocations = true;
+
+  CustomerModel? customerData;
+  bool isLoadingCustomer = true;
+
   @override
   void initState() {
     super.initState();
-
+    _fetchCustomerData();
+    _loadLocations();
     _fetchcategory();
+  }
+
+  Future<void> _fetchCustomerData() async {
+    setState(() => isLoadingCustomer = true);
+
+    try {
+      final uid = LocalStoreHelper.getUID();
+      if (uid != null) {
+        final docSnapshot = await AppFirestore.customersCollectionRef
+            .doc(uid)
+            .get();
+
+        if (docSnapshot.exists) {
+          customerData = CustomerModel.fromJson(
+            docSnapshot.data() as Map<String, dynamic>,
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching customer data: $e');
+    } finally {
+      setState(() => isLoadingCustomer = false);
+    }
+  }
+
+  Future<void> _loadLocations() async {
+    setState(() => isLoadingLocations = true);
+    try {
+      final jsonString = await rootBundle.loadString(
+        'assets/data/saudi_locations.json',
+      );
+      final List<dynamic> jsonData = json.decode(jsonString);
+
+      setState(() {
+        provinces = jsonData.map((p) => Province.fromJson(p)).toList();
+      });
+
+      // ✅ Wait for customer data before preselecting
+      while (isLoadingCustomer) {
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+
+      // ✅ Pre-select customer's location from customerData
+      if (customerData?.detailedLocation != null) {
+        _preselectCustomerLocation(customerData!.detailedLocation!);
+      }
+    } catch (e) {
+      debugPrint('Error loading locations: $e');
+    } finally {
+      setState(() => isLoadingLocations = false);
+    }
+  }
+
+  // ✅ Pre-select customer's location as default filter
+  void _preselectCustomerLocation(DetailedLocationModel location) {
+    if (provinces.isEmpty) return;
+
+    final province = provinces.firstWhere(
+      (p) => p.provinceId == location.provinceId,
+      orElse: () => provinces.first,
+    );
+
+    selectedProvince = province;
+
+    if (province.governorates.isNotEmpty) {
+      final governorate = province.governorates.firstWhere(
+        (g) => g.govId == location.governorateId,
+        orElse: () => province.governorates.first,
+      );
+
+      selectedGovernorate = governorate;
+
+      if (governorate.neighborhoods.isNotEmpty) {
+        selectedNeighborhood = governorate.neighborhoods.firstWhere(
+          (n) => n.neighId == location.neighborhoodId,
+          orElse: () => governorate.neighborhoods.first,
+        );
+      }
+    }
+
+    setState(() {});
   }
 
   _fetchcategory() async {
@@ -59,45 +158,65 @@ class _WorkerListState extends State<WorkerList> {
     super.dispose();
   }
 
-  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    const R = 6371;
-    final dLat = _toRadians(lat2 - lat1);
-    final dLon = _toRadians(lon2 - lon1);
-    final a =
-        sin(dLat / 2) * sin(dLat / 2) +
-        cos(_toRadians(lat1)) *
-            cos(_toRadians(lat2)) *
-            sin(dLon / 2) *
-            sin(dLon / 2);
-    final c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    return R * c;
-  }
+  // double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+  //   const R = 6371;
+  //   final dLat = _toRadians(lat2 - lat1);
+  //   final dLon = _toRadians(lon2 - lon1);
+  //   final a =
+  //       sin(dLat / 2) * sin(dLat / 2) +
+  //       cos(_toRadians(lat1)) *
+  //           cos(_toRadians(lat2)) *
+  //           sin(dLon / 2) *
+  //           sin(dLon / 2);
+  //   final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+  //   return R * c;
+  // }
 
   Future<List<WorkerWithStats>> _applySearchAndFilters(
     List<WorkerWithStats> workers,
     String searchQuery,
     Set<FilterType> selectedFilters,
   ) async {
-    // Show filtering animation
     _isFilteringNotifier.value = true;
-
-    // Simulate processing time for smooth animation
     await Future.delayed(const Duration(milliseconds: 600));
 
-    // First, apply search filter
-    List<WorkerWithStats> searchResults = workers;
+    // 1. Apply location filter (if selected)
+    List<WorkerWithStats> locationFiltered = workers;
+    // ✅ FIXED: Only filter if a location is selected, otherwise show all
+    if (selectedNeighborhood != null) {
+      // Filter by neighborhood
+      locationFiltered = workers.where((workerData) {
+        final workerLocation = workerData.worker.detailedLocation;
+        return workerLocation?.neighborhoodId == selectedNeighborhood!.neighId;
+      }).toList();
+    } else if (selectedGovernorate != null) {
+      // Filter by governorate
+      locationFiltered = workers.where((workerData) {
+        final workerLocation = workerData.worker.detailedLocation;
+        return workerLocation?.governorateId == selectedGovernorate!.govId;
+      }).toList();
+    } else if (selectedProvince != null) {
+      // Filter by province
+      locationFiltered = workers.where((workerData) {
+        final workerLocation = workerData.worker.detailedLocation;
+        return workerLocation?.provinceId == selectedProvince!.provinceId;
+      }).toList();
+    } else {
+      // ✅ FIXED: Show all workers when no location filter is applied
+      log('No location filter applied - Showing all ${workers.length} workers');
+    }
+
+    // 2. Apply search filter
+    List<WorkerWithStats> searchResults = locationFiltered;
 
     if (searchQuery.isNotEmpty) {
-      searchResults = workers.where((workerData) {
+      searchResults = locationFiltered.where((workerData) {
         final worker = workerData.worker;
         final name = worker.name?.toLowerCase() ?? '';
         final jobRoles = worker.jobRoles ?? [];
         final searchLower = searchQuery.toLowerCase();
 
-        // Check if name matches
         final nameMatches = name.contains(searchLower);
-
-        // Check if any job role matches
         final jobRoleMatches = jobRoles.any(
           (role) => role.toLowerCase().contains(searchLower),
         );
@@ -106,75 +225,26 @@ class _WorkerListState extends State<WorkerList> {
       }).toList();
     }
 
-    // Then, apply sorting based on filters
+    // 3. Apply sorting
     final sortedWorkers = List<WorkerWithStats>.from(searchResults);
 
     if (selectedFilters.isEmpty) {
-      // Default sorting: Rating first, then Distance
+      // ✅ Default: Highest rating, then most jobs
       sortedWorkers.sort((a, b) {
-        final ratingA = a.rating;
-        final ratingB = b.rating;
-        int ratingComparison = ratingB.compareTo(ratingA);
+        final ratingComparison = b.rating.compareTo(a.rating);
+        if (ratingComparison != 0) return ratingComparison;
 
-        if (ratingComparison != 0) {
-          return ratingComparison;
-        }
-
-        if (widget.selectedAddress != null) {
-          final distanceA = calculateDistance(
-            a.worker.liveLocation?.latitude ?? 0.0,
-            a.worker.liveLocation?.longitude ?? 0.0,
-            widget.selectedAddress!.lat ?? 0.0,
-            widget.selectedAddress!.lon ?? 0.0,
-          );
-          final distanceB = calculateDistance(
-            b.worker.liveLocation?.latitude ?? 0.0,
-            b.worker.liveLocation?.longitude ?? 0.0,
-            widget.selectedAddress!.lat ?? 0.0,
-            widget.selectedAddress!.lon ?? 0.0,
-          );
-          return distanceA.compareTo(distanceB);
-        }
-        return 0;
+        return b.completedJobs.compareTo(a.completedJobs);
       });
     } else {
       sortedWorkers.sort((a, b) {
         if (selectedFilters.contains(FilterType.rating)) {
-          final ratingA = a.rating;
-          final ratingB = b.rating;
-          int ratingComparison = ratingB.compareTo(ratingA);
-          if (ratingComparison != 0) {
-            return ratingComparison;
-          }
-        }
-
-        if (selectedFilters.contains(FilterType.distance) &&
-            widget.selectedAddress != null) {
-          final addressLat = widget.selectedAddress!.lat ?? 0.0;
-          final addressLon = widget.selectedAddress!.lon ?? 0.0;
-
-          final distanceA = calculateDistance(
-            a.worker.liveLocation?.latitude ?? 0.0,
-            a.worker.liveLocation?.longitude ?? 0.0,
-            addressLat,
-            addressLon,
-          );
-          final distanceB = calculateDistance(
-            b.worker.liveLocation?.latitude ?? 0.0,
-            b.worker.liveLocation?.longitude ?? 0.0,
-            addressLat,
-            addressLon,
-          );
-          int distanceComparison = distanceA.compareTo(distanceB);
-          if (distanceComparison != 0) {
-            return distanceComparison;
-          }
+          final ratingComparison = b.rating.compareTo(a.rating);
+          if (ratingComparison != 0) return ratingComparison;
         }
 
         if (selectedFilters.contains(FilterType.completedOrders)) {
-          final ordersA = a.completedJobs;
-          final ordersB = b.completedJobs;
-          return ordersB.compareTo(ordersA);
+          return b.completedJobs.compareTo(a.completedJobs);
         }
 
         return 0;
@@ -185,14 +255,254 @@ class _WorkerListState extends State<WorkerList> {
     return sortedWorkers;
   }
 
-  double _toRadians(double degree) {
-    return degree * pi / 180;
+  // double _toRadians(double degree) {
+  //   return degree * pi / 180;
+  // }
+
+  void _showLocationFilterDialog() {
+    final isArabic = AppLocalizations.of(context)?.localeName == 'ar';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Header
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Colors.grey.shade200),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)?.filterByLocation ??
+                              'Filter by Location',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                setModalState(() {
+                                  selectedProvince = null;
+                                  selectedGovernorate = null;
+                                  selectedNeighborhood = null;
+                                });
+                                setState(() {});
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)?.clearFilter ??
+                                    'Clear',
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.close),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.all(16),
+                      children: [
+                        // Province Dropdown
+                        _buildLocationDropdown<Province>(
+                          label:
+                              AppLocalizations.of(context)?.province ??
+                              'Province',
+                          value: selectedProvince,
+                          items: provinces,
+                          itemLabel: (province) => province.getName(isArabic),
+                          onChanged: (province) {
+                            setModalState(() {
+                              selectedProvince = province;
+                              selectedGovernorate = null;
+                              selectedNeighborhood = null;
+                            });
+                          },
+                        ),
+
+                        if (selectedProvince != null) ...[
+                          SizedBox(height: 16),
+
+                          // Governorate Dropdown
+                          _buildLocationDropdown<Governorate>(
+                            label: AppLocalizations.of(context)?.city ?? 'City',
+                            value: selectedGovernorate,
+                            items: selectedProvince!.governorates,
+                            itemLabel: (gov) => gov.getName(isArabic),
+                            onChanged: (gov) {
+                              setModalState(() {
+                                selectedGovernorate = gov;
+                                selectedNeighborhood = null;
+                              });
+                            },
+                          ),
+                        ],
+
+                        if (selectedGovernorate != null) ...[
+                          SizedBox(height: 16),
+
+                          // Neighborhood Dropdown
+                          _buildLocationDropdown<Neighborhood>(
+                            label:
+                                AppLocalizations.of(context)?.neighbourhood ??
+                                'Neighborhood',
+                            value: selectedNeighborhood,
+                            items: selectedGovernorate!.neighborhoods,
+                            itemLabel: (neigh) => neigh.getName(isArabic),
+                            onChanged: (neigh) {
+                              setModalState(() {
+                                selectedNeighborhood = neigh;
+                              });
+                            },
+                          ),
+                        ],
+
+                        SizedBox(height: 24),
+
+                        // Apply Button
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {});
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)?.apply ?? 'Apply',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildLocationDropdown<T>({
+    required String label,
+    required T? value,
+    required List<T> items,
+    required String Function(T) itemLabel,
+    required void Function(T?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+        SizedBox(height: 8),
+        DropdownButtonFormField<T>(
+          value: value,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          items: items.map((item) {
+            return DropdownMenuItem<T>(
+              value: item,
+              child: Text(itemLabel(item)),
+            );
+          }).toList(),
+          onChanged: onChanged,
+          isExpanded: true,
+        ),
+      ],
+    );
+  }
+
+  // ✅ Get current location filter label
+  String _getLocationFilterLabel() {
+    final isArabic = Directionality.of(context) == TextDirection.rtl;
+
+    if (selectedNeighborhood != null) {
+      return selectedNeighborhood!.getName(isArabic);
+    } else if (selectedGovernorate != null) {
+      return selectedGovernorate!.getName(isArabic);
+    } else if (selectedProvince != null) {
+      return selectedProvince!.getName(isArabic);
+    }
+    return AppLocalizations.of(context)?.selectLocation ?? 'Select Location';
   }
 
   @override
   Widget build(BuildContext context) {
+    // ✅ Show loading while fetching customer data
+    if (isLoadingCustomer || isLoadingLocations) {
+      return Center(child: Loader());
+    }
     return Column(
       children: [
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: ElevatedButton.icon(
+            onPressed: _showLocationFilterDialog,
+            icon: Icon(Icons.location_on_rounded, size: 20),
+            label: Text(
+              _getLocationFilterLabel(),
+              style: TextStyle(fontSize: 14),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: selectedProvince != null
+                  ? AppColors.primary
+                  : Colors.grey.shade200,
+              foregroundColor: selectedProvince != null
+                  ? Colors.white
+                  : Colors.black87,
+              minimumSize: Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ),
         // Filter Chips Section
         SizedBox(
           width: double.infinity,
@@ -621,7 +931,6 @@ class _WorkerListViewState extends State<_WorkerListView>
     for (int i = 0; i < jobRolesList.length; i++) {
       if (categoryIdResults[i] != null) {
         roleToIdMap[jobRolesList[i]] = categoryIdResults[i]!;
-        debugPrint('Mapped: ${jobRolesList[i]} -> ${categoryIdResults[i]}');
       }
     }
 
@@ -646,9 +955,6 @@ class _WorkerListViewState extends State<_WorkerListView>
           'name': category.name ?? '',
           'name_ar': category.name_ar ?? category.name ?? '',
         };
-        debugPrint(
-          'Category ${category.id}: ${category.name} / ${category.name_ar}',
-        );
       }
     }
 
@@ -659,10 +965,6 @@ class _WorkerListViewState extends State<_WorkerListView>
         _isLoadingCategories = false;
       });
     }
-
-    debugPrint(
-      'Loaded ${idToNamesMap.length} categories for ${roleToIdMap.length} job roles',
-    );
   }
 
   List<String> _getLocalizedRoles(UserModel worker) {
@@ -771,8 +1073,6 @@ class FilterChipsSection extends StatelessWidget {
     switch (filter) {
       case FilterType.rating:
         return AppLocalizations.of(context)!.highestRating;
-      case FilterType.distance:
-        return AppLocalizations.of(context)!.nearest;
       case FilterType.completedOrders:
         return AppLocalizations.of(context)!.mostOrders;
     }
@@ -782,8 +1082,6 @@ class FilterChipsSection extends StatelessWidget {
     switch (filter) {
       case FilterType.rating:
         return Icons.star_rounded;
-      case FilterType.distance:
-        return Icons.location_on_rounded;
       case FilterType.completedOrders:
         return Icons.check_circle_rounded;
     }
@@ -792,44 +1090,70 @@ class FilterChipsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
-      width: double.infinity,
+      height: 70,
+      width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
+      child: Row(
         children: FilterType.values.map((filter) {
           final isSelected = selectedFilters.contains(filter);
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: FilterChip(
-              label: Text(_getFilterLabel(filter, context)),
-              selected: isSelected,
-              onSelected: (bool selected) {
-                final newFilters = Set<FilterType>.from(selectedFilters);
-                if (selected) {
-                  newFilters.add(filter);
-                } else {
-                  newFilters.remove(filter);
-                }
-                onFilterChanged(newFilters);
-              },
-              avatar: Icon(
-                _getFilterIcon(filter),
-                size: 18,
-                color: isSelected ? Colors.white : AppColors.primary,
+          return Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                right: filter == FilterType.rating ? 8 : 0,
+                left: filter == FilterType.completedOrders ? 8 : 0,
               ),
-              selectedColor: AppColors.primary,
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.white : Colors.black87,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              child: InkWell(
+                onTap: () {
+                  final newFilters = Set<FilterType>.from(selectedFilters);
+                  if (isSelected) {
+                    newFilters.remove(filter);
+                  } else {
+                    newFilters.add(filter);
+                  }
+                  onFilterChanged(newFilters);
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.primary
+                        : Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSelected
+                          ? AppColors.primary
+                          : Colors.grey.shade300,
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _getFilterIcon(filter),
+                        size: 20,
+                        color: isSelected ? Colors.white : AppColors.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          _getFilterLabel(filter, context),
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black87,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              backgroundColor: Colors.grey.shade100,
-              side: BorderSide(
-                color: isSelected ? AppColors.primary : Colors.grey.shade300,
-                width: 1,
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              showCheckmark: false,
             ),
           );
         }).toList(),

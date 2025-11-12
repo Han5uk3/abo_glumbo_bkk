@@ -1,5 +1,6 @@
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/location.dart';
+import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CustomerModel {
@@ -10,15 +11,26 @@ class CustomerModel {
   final String? country;
   final String? fcmToken;
   final String? lanCode;
-  final LocationModel? location;
+
+  // Location models
+  final LocationModel?
+  location; // Old location model (keep for backward compatibility)
+  final DetailedLocationModel? detailedLocation; // ✅ New structured location
+
+  // Multiple saved addresses
   final List<AddressModel> addresses;
+
+  // Favorites (technician UIDs)
   final List<String> favourites;
+
+  // Timestamps
   final Timestamp? createdAt;
   final Timestamp? updatedAt;
+
+  // Admin flag
   final bool? isAdmin;
-  final String? neighbourhood;
-  final String? cityName;
-  final String? districtName;
+
+  // Block status
   final bool? isBlocked;
 
   CustomerModel({
@@ -30,15 +42,13 @@ class CustomerModel {
     this.lanCode,
     this.country,
     this.location,
+    this.detailedLocation,
     this.addresses = const [],
     this.favourites = const [],
     this.createdAt,
     this.updatedAt,
     this.isAdmin,
-    this.neighbourhood,
-    this.districtName,
-    this.cityName,
-    this.isBlocked
+    this.isBlocked,
   });
 
   factory CustomerModel.fromJson(Map<String, dynamic> json) {
@@ -53,6 +63,9 @@ class CustomerModel {
       location: json['location'] != null
           ? LocationModel.fromJson(json['location'] as Map<String, dynamic>)
           : null,
+      detailedLocation: json['detailedLocation'] != null
+          ? DetailedLocationModel.fromJson(json['detailedLocation'])
+          : null,
       addresses:
           (json['addresses'] as List<dynamic>?)
               ?.map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
@@ -66,9 +79,6 @@ class CustomerModel {
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       isAdmin: json['isAdmin'],
-      neighbourhood: json['neighbourhood'],
-      districtName: json['districtName'],
-      cityName: json['cityName'],
       isBlocked: json['isBlocked'] as bool? ?? false,
     );
   }
@@ -83,15 +93,14 @@ class CustomerModel {
       'lanCode': lanCode,
       'country': country,
       'location': location?.toJson(),
+      'detailedLocation': detailedLocation?.toJson(),
       'addresses': addresses.map((e) => e.toJson()).toList(),
       'favourites': favourites,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'isAdmin': isAdmin,
-      'neighbourhood': neighbourhood,
-      'districtName': districtName,
-      'cityName': cityName,
-      'isBlocked': isBlocked ?? false
+      // Don't include deprecated fields in new documents
+      'isBlocked': isBlocked ?? false,
     };
   }
 
@@ -104,15 +113,13 @@ class CustomerModel {
     String? lanCode,
     String? country,
     LocationModel? location,
+    DetailedLocationModel? detailedLocation,
     List<AddressModel>? addresses,
     List<String>? favourites,
     Timestamp? createdAt,
     Timestamp? updatedAt,
     bool? isAdmin,
-    String? neighbourhood,
-    String? districtName,
-    String? cityName,
-    bool? isBlocked
+    bool? isBlocked,
   }) {
     return CustomerModel(
       uid: uid ?? this.uid,
@@ -123,15 +130,13 @@ class CustomerModel {
       lanCode: lanCode ?? this.lanCode,
       country: country ?? this.country,
       location: location ?? this.location,
+      detailedLocation: detailedLocation ?? this.detailedLocation,
       addresses: addresses ?? this.addresses,
       favourites: favourites ?? this.favourites,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isAdmin: isAdmin ?? this.isAdmin,
-      neighbourhood: neighbourhood ?? this.neighbourhood,
-      districtName: districtName ?? this.districtName,
-      cityName: cityName ?? this.cityName,
-      isBlocked: isBlocked ?? this.isBlocked
+      isBlocked: isBlocked ?? this.isBlocked,
     );
   }
 
@@ -154,6 +159,11 @@ class CustomerModel {
     checkAndSet('country', country, previous.country);
     checkAndSet('location', location?.toJson(), previous.location?.toJson());
     checkAndSet(
+      'detailedLocation',
+      detailedLocation?.toJson(),
+      previous.detailedLocation?.toJson(),
+    );
+    checkAndSet(
       'addresses',
       addresses.map((e) => e.toJson()).toList(),
       previous.addresses.map((e) => e.toJson()).toList(),
@@ -161,9 +171,6 @@ class CustomerModel {
     checkAndSet('favourites', favourites, previous.favourites);
     checkAndSet('createdAt', createdAt, previous.createdAt);
     checkAndSet('isAdmin', isAdmin, previous.isAdmin);
-    checkAndSet('districtName', districtName, previous.districtName);
-    checkAndSet('neighbourhood', neighbourhood, previous.neighbourhood);
-    checkAndSet('cityName', cityName, previous.cityName);
     checkAndSet('isBlocked', isBlocked, previous.isBlocked);
 
     return json;

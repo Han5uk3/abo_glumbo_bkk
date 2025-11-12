@@ -814,6 +814,7 @@ class AppServices {
     return AppFirestore.bookingsCollectionRef
         .where('agent.uid', isEqualTo: workerId)
         .where('bookingStatusCode', isEqualTo: 'C')
+        .where('paymentCompleted', isEqualTo: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
   }
@@ -822,23 +823,12 @@ class AppServices {
   static Stream<List<WorkerWithStats>> getWorkersByRolesWithStatsRealtime(
     String categoryDocId,
   ) async* {
-    // Step 1: Get the category name from its document
-    final categorySnapshot = await AppFirestore.categoriesCollectionRef
-        .doc(categoryDocId)
-        .get();
-
-    if (!categorySnapshot.exists) {
-      yield [];
-      return;
-    }
-
-    final categoryData = categorySnapshot.data() as Map<String, dynamic>;
-    final categoryName = categoryData['name'];
-
     // Step 2: Get workers stream
     final workersStream = AppFirestore.usersCollectionRef
-        .where('jobRoles', arrayContains: categoryName)
+        .where('jobRoles', arrayContains: categoryDocId)
         .where('isAdmin', isEqualTo: false)
+        .where('isOnline', isEqualTo: true)
+        .where('isVerified', isEqualTo: true)
         .snapshots()
         .map((snapshot) {
           return snapshot.docs
@@ -929,9 +919,6 @@ class AppServices {
         );
       }
 
-      debugPrint(
-        'Fetched ${categories.length} categories from ${categoryIds.length} IDs',
-      );
       return categories;
     } catch (e) {
       debugPrint('Error fetching categories by IDs: $e');
@@ -962,32 +949,28 @@ class AppServices {
   /// Fetch category ID by job role name (one-time read)
   static Future<String?> getCategoryIdByJobRoleOnce(String jobRole) async {
     try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('categories')
-          .where('name', isEqualTo: jobRole)
+      QuerySnapshot querySnapshot = await AppFirestore.categoriesCollectionRef
+          .where('id', isEqualTo: jobRole)
           .limit(1)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
         String categoryId = querySnapshot.docs.first.id;
-        debugPrint('JobRole: $jobRole -> CategoryId: $categoryId');
+
         return categoryId;
       }
 
       // If not found by English name, try Arabic name
-      QuerySnapshot querySnapshotAr = await FirebaseFirestore.instance
-          .collection('categories')
+      QuerySnapshot querySnapshotAr = await AppFirestore.categoriesCollectionRef
           .where('name_ar', isEqualTo: jobRole)
           .limit(1)
           .get();
 
       if (querySnapshotAr.docs.isNotEmpty) {
         String categoryId = querySnapshotAr.docs.first.id;
-        debugPrint('JobRole (AR): $jobRole -> CategoryId: $categoryId');
         return categoryId;
       }
 
-      debugPrint('No category found for JobRole: $jobRole');
       return null;
     } catch (e) {
       debugPrint('Error fetching category ID for job role $jobRole: $e');

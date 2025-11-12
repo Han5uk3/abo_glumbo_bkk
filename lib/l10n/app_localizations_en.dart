@@ -454,13 +454,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookedOn => 'Booked on';
 
   @override
+  String get pleaseSelectAllLocationFields =>
+      'Please select all location fields';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get clearFilter => 'Clear Filter';
+
+  @override
+  String get filterByLocation => 'Filter by location';
+
+  @override
   String get acceptedOn => 'Accepted on';
+
+  @override
+  String get province => 'Province';
+
+  @override
+  String get creatingAccount => 'Creating Your Account';
 
   @override
   String get completedOn => 'Completed on';
 
   @override
   String get canceledOn => 'Canceled on';
+
+  @override
+  String get pleaseSelectNeighborhood => 'Please select neighborhood';
+
+  @override
+  String get pleaseSelectCity => 'Please select city';
+
+  @override
+  String get pleaseSelectProvince => 'Please select province';
 
   @override
   String get optional => 'Optional';
