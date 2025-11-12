@@ -1,13 +1,1 @@
-{
-  "ar": [
-    "pleaseSelectAllLocationFields",
-    "apply",
-    "clearFilter",
-    "filterByLocation",
-    "province",
-    "creatingAccount",
-    "pleaseSelectNeighborhood",
-    "pleaseSelectCity",
-    "pleaseSelectProvince"
-  ]
-}
+{}

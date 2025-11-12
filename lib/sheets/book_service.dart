@@ -436,7 +436,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                   content: Text(
                                     AppLocalizations.of(
                                           context,
-                                        )?.pleaseSelectaWorker ??
+                                        )?.pleaseSelectaTechnician ??
                                         'Please select a worker',
                                   ),
                                   backgroundColor: Colors.orange,

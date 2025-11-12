@@ -824,7 +824,7 @@ class _EmptyState extends StatelessWidget {
                 ? AppLocalizations.of(
                     context,
                   )!.noTechniciansFoundMatchingYourSearch
-                : AppLocalizations.of(context)!.noWorkersFound,
+                : AppLocalizations.of(context)!.noTechniciansFound,
             style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             textAlign: TextAlign.center,
           ),

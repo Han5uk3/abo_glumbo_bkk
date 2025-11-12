@@ -204,7 +204,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                   const SizedBox(height: 16),
                   if (booking.agent != null)
                     _buildSectionCard(
-                      title: localization.workerInfo,
+                      title: localization.technicianInfo,
                       icon: Icons.person_rounded,
                       children: [
                         if (booking.agent!.name?.isNotEmpty == true)
@@ -511,7 +511,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                 ? AppLocalizations.of(context)!.card
                 : booking.paymentModeCode.toLowerCase() == 'a'
                 ? AppLocalizations.of(context)!.applePay
-                : AppLocalizations.of(context)!.paymentInCash,
+                : AppLocalizations.of(context)!.cashPayment,
           ),
         },
       ],
@@ -747,7 +747,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
       case 'A':
         return localization.applePay;
       case 'O':
-        return localization.paymentInCash;
+        return localization.cashPayment;
       default:
         return localization.unknown;
     }

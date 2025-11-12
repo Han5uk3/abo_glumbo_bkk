@@ -26,7 +26,7 @@ class TrackingData extends StatelessWidget {
         children: [
           SizedBox(height: 10),
           _title(
-            AppLocalizations.of(context)?.workerArrivesToLocationIn ??
+            AppLocalizations.of(context)?.technicianArrivesToLocationIn ??
                 'Worker arrives to location in',
             16,
             fontWeight: FontWeight.normal,
@@ -39,7 +39,7 @@ class TrackingData extends StatelessWidget {
           ),
           SizedBox(height: 10),
           _title(
-            AppLocalizations.of(context)?.yourWorkerIsOnTheWay ??
+            AppLocalizations.of(context)?.yourTechnicianIsOnTheWay ??
                 'Your Worker is on the way',
             16,
             fontWeight: FontWeight.normal,

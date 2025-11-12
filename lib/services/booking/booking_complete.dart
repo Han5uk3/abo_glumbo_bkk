@@ -286,7 +286,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                           children: [
                             _buildSectionTitle(
                               context,
-                              AppLocalizations.of(context)?.workerDetails ??
+                              AppLocalizations.of(context)?.technicianDetails ??
                                   'Worker Details',
                             ),
                             const SizedBox(height: 12),

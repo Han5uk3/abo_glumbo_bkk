@@ -194,54 +194,6 @@ abstract class AppLocalizations {
   /// **'Loading Video'**
   String get loadingVideo;
 
-  /// No description provided for @completionDetails.
-  ///
-  /// In en, this message translates to:
-  /// **'Completion Details'**
-  String get completionDetails;
-
-  /// No description provided for @invoiceType.
-  ///
-  /// In en, this message translates to:
-  /// **'Invoice Type'**
-  String get invoiceType;
-
-  /// No description provided for @uploadFilesTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Proof of Completion / Supporting Documents'**
-  String get uploadFilesTitle;
-
-  /// No description provided for @serviceItems.
-  ///
-  /// In en, this message translates to:
-  /// **'Service Items'**
-  String get serviceItems;
-
-  /// No description provided for @serviceCost.
-  ///
-  /// In en, this message translates to:
-  /// **'Service Cost'**
-  String get serviceCost;
-
-  /// No description provided for @paymentInCash.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment in Cash'**
-  String get paymentInCash;
-
-  /// No description provided for @inspection.
-  ///
-  /// In en, this message translates to:
-  /// **'Inspection'**
-  String get inspection;
-
-  /// No description provided for @transactionId.
-  ///
-  /// In en, this message translates to:
-  /// **'Transaction ID'**
-  String get transactionId;
-
   /// No description provided for @allMarkedAsRead.
   ///
   /// In en, this message translates to:
@@ -710,6 +662,12 @@ abstract class AppLocalizations {
   /// **'Payment mode'**
   String get paymentMode;
 
+  /// No description provided for @cashInHand.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash in hand'**
+  String get cashInHand;
+
   /// No description provided for @netBankingUpiCard.
   ///
   /// In en, this message translates to:
@@ -956,89 +914,11 @@ abstract class AppLocalizations {
   /// **'Your payment has been processed successfully.'**
   String get paymentProcessedSuccessfully;
 
-  /// No description provided for @bookedOn.
+  /// No description provided for @cashOnHands.
   ///
   /// In en, this message translates to:
-  /// **'Booked on'**
-  String get bookedOn;
-
-  /// No description provided for @pleaseSelectAllLocationFields.
-  ///
-  /// In en, this message translates to:
-  /// **'Please select all location fields'**
-  String get pleaseSelectAllLocationFields;
-
-  /// No description provided for @apply.
-  ///
-  /// In en, this message translates to:
-  /// **'Apply'**
-  String get apply;
-
-  /// No description provided for @clearFilter.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear Filter'**
-  String get clearFilter;
-
-  /// No description provided for @filterByLocation.
-  ///
-  /// In en, this message translates to:
-  /// **'Filter by location'**
-  String get filterByLocation;
-
-  /// No description provided for @acceptedOn.
-  ///
-  /// In en, this message translates to:
-  /// **'Accepted on'**
-  String get acceptedOn;
-
-  /// No description provided for @province.
-  ///
-  /// In en, this message translates to:
-  /// **'Province'**
-  String get province;
-
-  /// No description provided for @creatingAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Creating Your Account'**
-  String get creatingAccount;
-
-  /// No description provided for @completedOn.
-  ///
-  /// In en, this message translates to:
-  /// **'Completed on'**
-  String get completedOn;
-
-  /// No description provided for @canceledOn.
-  ///
-  /// In en, this message translates to:
-  /// **'Canceled on'**
-  String get canceledOn;
-
-  /// No description provided for @pleaseSelectNeighborhood.
-  ///
-  /// In en, this message translates to:
-  /// **'Please select neighborhood'**
-  String get pleaseSelectNeighborhood;
-
-  /// No description provided for @pleaseSelectCity.
-  ///
-  /// In en, this message translates to:
-  /// **'Please select city'**
-  String get pleaseSelectCity;
-
-  /// No description provided for @pleaseSelectProvince.
-  ///
-  /// In en, this message translates to:
-  /// **'Please select province'**
-  String get pleaseSelectProvince;
-
-  /// No description provided for @optional.
-  ///
-  /// In en, this message translates to:
-  /// **'Optional'**
-  String get optional;
+  /// **'Payment in cash'**
+  String get cashOnHands;
 
   /// No description provided for @amount.
   ///
@@ -1148,11 +1028,11 @@ abstract class AppLocalizations {
   /// **'Camera'**
   String get camera;
 
-  /// No description provided for @noWorkersFound.
+  /// No description provided for @noTechniciansFound.
   ///
   /// In en, this message translates to:
-  /// **'No workers found'**
-  String get noWorkersFound;
+  /// **'No Technicians found'**
+  String get noTechniciansFound;
 
   /// No description provided for @gallery.
   ///
@@ -1223,7 +1103,7 @@ abstract class AppLocalizations {
   /// No description provided for @paymentPendingDesc.
   ///
   /// In en, this message translates to:
-  /// **'Your booking is confirmed. Please pay the worker in cash at the time of service.'**
+  /// **'Your booking is confirmed. Please pay the Technician in cash at the time of service.'**
   String get paymentPendingDesc;
 
   /// No description provided for @ok.
@@ -1304,11 +1184,11 @@ abstract class AppLocalizations {
   /// **'An internal error occurred. Please try again later.'**
   String get internalError;
 
-  /// No description provided for @networkError.
+  /// No description provided for @netTechnicianror.
   ///
   /// In en, this message translates to:
   /// **'Network error. Please check your connection.'**
-  String get networkError;
+  String get netTechnicianror;
 
   /// No description provided for @verificationFailed.
   ///
@@ -1745,7 +1625,7 @@ abstract class AppLocalizations {
   /// No description provided for @pendingPayment.
   ///
   /// In en, this message translates to:
-  /// **'Payment pending. Please pay when the worker completes the work.'**
+  /// **'Payment pending. Please pay when the Technician completes the work.'**
   String get pendingPayment;
 
   /// No description provided for @notifications.
@@ -2282,11 +2162,11 @@ abstract class AppLocalizations {
   /// **'Loading location...'**
   String get loadingLocation;
 
-  /// No description provided for @trackWorker.
+  /// No description provided for @trackTechnician.
   ///
   /// In en, this message translates to:
-  /// **'Track Worker'**
-  String get trackWorker;
+  /// **'Track Technician'**
+  String get trackTechnician;
 
   /// No description provided for @phoneNumberInvalid.
   ///
@@ -2444,11 +2324,11 @@ abstract class AppLocalizations {
   /// **'Services found'**
   String get servicesFound;
 
-  /// No description provided for @workerArrivesToLocationIn.
+  /// No description provided for @technicianArrivesToLocationIn.
   ///
   /// In en, this message translates to:
-  /// **'Worker arrives to location in'**
-  String get workerArrivesToLocationIn;
+  /// **'Technician arrives to location in'**
+  String get technicianArrivesToLocationIn;
 
   /// No description provided for @away.
   ///
@@ -2456,22 +2336,22 @@ abstract class AppLocalizations {
   /// **'away'**
   String get away;
 
-  /// No description provided for @yourWorkerIsOnTheWay.
+  /// No description provided for @yourTechnicianIsOnTheWay.
   ///
   /// In en, this message translates to:
-  /// **'Your worker is on the way'**
-  String get yourWorkerIsOnTheWay;
+  /// **'Your Technician is on the way'**
+  String get yourTechnicianIsOnTheWay;
 
   /// No description provided for @serviceProvider.
   ///
   /// In en, this message translates to:
-  /// **'Service Provider'**
+  /// **'Technician'**
   String get serviceProvider;
 
   /// No description provided for @callServiceProvider.
   ///
   /// In en, this message translates to:
-  /// **'Call Service Provider'**
+  /// **'Call Technician'**
   String get callServiceProvider;
 
   /// No description provided for @invalidOtpCode.
@@ -2570,11 +2450,11 @@ abstract class AppLocalizations {
   /// **'Waiting for agent location...'**
   String get waitingForAgentLocation;
 
-  /// No description provided for @workerInfo.
+  /// No description provided for @technicianInfo.
   ///
   /// In en, this message translates to:
-  /// **'Worker Info'**
-  String get workerInfo;
+  /// **'Technician Info'**
+  String get technicianInfo;
 
   /// No description provided for @name.
   ///
@@ -2672,17 +2552,17 @@ abstract class AppLocalizations {
   /// **'Exit App'**
   String get exitApp;
 
-  /// No description provided for @pleaseSelectaWorker.
+  /// No description provided for @pleaseSelectaTechnician.
   ///
   /// In en, this message translates to:
-  /// **'Please select a worker'**
-  String get pleaseSelectaWorker;
+  /// **'Please select a Technician'**
+  String get pleaseSelectaTechnician;
 
-  /// No description provided for @chooseWorker.
+  /// No description provided for @chooseTechnician.
   ///
   /// In en, this message translates to:
-  /// **'Choose Worker'**
-  String get chooseWorker;
+  /// **'Choose Technician'**
+  String get chooseTechnician;
 
   /// No description provided for @within.
   ///
@@ -2744,11 +2624,11 @@ abstract class AppLocalizations {
   /// **'Inspection Fee'**
   String get inspectionFee;
 
-  /// No description provided for @workerDetails.
+  /// No description provided for @technicianDetails.
   ///
   /// In en, this message translates to:
-  /// **'Worker Details'**
-  String get workerDetails;
+  /// **'Technician Details'**
+  String get technicianDetails;
 
   /// No description provided for @inspectionDisclaimer.
   ///
@@ -2881,6 +2761,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Inspection fee: {fee} SAR — paid only after the technician arrives and inspects the issue.'**
   String inspectionFeeNote(String fee);
+
+  /// No description provided for @pleaseSelectAllLocationFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select all location fields'**
+  String get pleaseSelectAllLocationFields;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @clearFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filter'**
+  String get clearFilter;
+
+  /// No description provided for @filterByLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Location'**
+  String get filterByLocation;
+
+  /// No description provided for @province.
+  ///
+  /// In en, this message translates to:
+  /// **'Province'**
+  String get province;
+
+  /// No description provided for @creatingAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating Account'**
+  String get creatingAccount;
+
+  /// No description provided for @pleaseSelectNeighborhood.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a neighborhood'**
+  String get pleaseSelectNeighborhood;
+
+  /// No description provided for @pleaseSelectCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a city'**
+  String get pleaseSelectCity;
+
+  /// No description provided for @pleaseSelectProvince.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a province'**
+  String get pleaseSelectProvince;
+
+  /// No description provided for @bookedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked on'**
+  String get bookedOn;
+
+  /// No description provided for @acceptedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted on'**
+  String get acceptedOn;
+
+  /// No description provided for @canceledOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled on'**
+  String get canceledOn;
+
+  /// No description provided for @completedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed on'**
+  String get completedOn;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// No description provided for @completionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion Details'**
+  String get completionDetails;
+
+  /// No description provided for @serviceCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Cost'**
+  String get serviceCost;
+
+  /// No description provided for @serviceItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Items'**
+  String get serviceItems;
+
+  /// No description provided for @uploadFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Proof of Completion / Supporting Documents'**
+  String get uploadFilesTitle;
+
+  /// No description provided for @inspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection'**
+  String get inspection;
+
+  /// No description provided for @invoiceType.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice Type'**
+  String get invoiceType;
+
+  /// No description provided for @transactionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID'**
+  String get transactionId;
+
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Please check your connection.'**
+  String get networkError;
 }
 
 class _AppLocalizationsDelegate

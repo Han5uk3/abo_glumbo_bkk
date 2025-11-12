@@ -58,30 +58,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadingVideo => 'Loading Video';
 
   @override
-  String get completionDetails => 'Completion Details';
-
-  @override
-  String get invoiceType => 'Invoice Type';
-
-  @override
-  String get uploadFilesTitle => 'Proof of Completion / Supporting Documents';
-
-  @override
-  String get serviceItems => 'Service Items';
-
-  @override
-  String get serviceCost => 'Service Cost';
-
-  @override
-  String get paymentInCash => 'Payment in Cash';
-
-  @override
-  String get inspection => 'Inspection';
-
-  @override
-  String get transactionId => 'Transaction ID';
-
-  @override
   String get allMarkedAsRead => 'All notifications marked as read';
 
   @override
@@ -323,6 +299,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentMode => 'Payment mode';
 
   @override
+  String get cashInHand => 'Cash in hand';
+
+  @override
   String get netBankingUpiCard => 'Net banking / UPI /Card';
 
   @override
@@ -451,47 +430,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your payment has been processed successfully.';
 
   @override
-  String get bookedOn => 'Booked on';
-
-  @override
-  String get pleaseSelectAllLocationFields =>
-      'Please select all location fields';
-
-  @override
-  String get apply => 'Apply';
-
-  @override
-  String get clearFilter => 'Clear Filter';
-
-  @override
-  String get filterByLocation => 'Filter by location';
-
-  @override
-  String get acceptedOn => 'Accepted on';
-
-  @override
-  String get province => 'Province';
-
-  @override
-  String get creatingAccount => 'Creating Your Account';
-
-  @override
-  String get completedOn => 'Completed on';
-
-  @override
-  String get canceledOn => 'Canceled on';
-
-  @override
-  String get pleaseSelectNeighborhood => 'Please select neighborhood';
-
-  @override
-  String get pleaseSelectCity => 'Please select city';
-
-  @override
-  String get pleaseSelectProvince => 'Please select province';
-
-  @override
-  String get optional => 'Optional';
+  String get cashOnHands => 'Payment in cash';
 
   @override
   String get amount => 'Amount';
@@ -549,7 +488,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get camera => 'Camera';
 
   @override
-  String get noWorkersFound => 'No workers found';
+  String get noTechniciansFound => 'No Technicians found';
 
   @override
   String get gallery => 'Gallery';
@@ -590,7 +529,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paymentPendingDesc =>
-      'Your booking is confirmed. Please pay the worker in cash at the time of service.';
+      'Your booking is confirmed. Please pay the Technician in cash at the time of service.';
 
   @override
   String get ok => 'Ok';
@@ -635,7 +574,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'An internal error occurred. Please try again later.';
 
   @override
-  String get networkError => 'Network error. Please check your connection.';
+  String get netTechnicianror => 'Network error. Please check your connection.';
 
   @override
   String get verificationFailed => 'Verification failed. Try again.';
@@ -860,7 +799,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pendingPayment =>
-      'Payment pending. Please pay when the worker completes the work.';
+      'Payment pending. Please pay when the Technician completes the work.';
 
   @override
   String get notifications => 'Notifications';
@@ -1138,7 +1077,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadingLocation => 'Loading location...';
 
   @override
-  String get trackWorker => 'Track Worker';
+  String get trackTechnician => 'Track Technician';
 
   @override
   String get phoneNumberInvalid => 'Phone number is invalid';
@@ -1223,19 +1162,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get servicesFound => 'Services found';
 
   @override
-  String get workerArrivesToLocationIn => 'Worker arrives to location in';
+  String get technicianArrivesToLocationIn =>
+      'Technician arrives to location in';
 
   @override
   String get away => 'away';
 
   @override
-  String get yourWorkerIsOnTheWay => 'Your worker is on the way';
+  String get yourTechnicianIsOnTheWay => 'Your Technician is on the way';
 
   @override
-  String get serviceProvider => 'Service Provider';
+  String get serviceProvider => 'Technician';
 
   @override
-  String get callServiceProvider => 'Call Service Provider';
+  String get callServiceProvider => 'Call Technician';
 
   @override
   String get invalidOtpCode => 'Invalid OTP code';
@@ -1287,7 +1227,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get waitingForAgentLocation => 'Waiting for agent location...';
 
   @override
-  String get workerInfo => 'Worker Info';
+  String get technicianInfo => 'Technician Info';
 
   @override
   String get name => 'Name';
@@ -1341,10 +1281,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exitApp => 'Exit App';
 
   @override
-  String get pleaseSelectaWorker => 'Please select a worker';
+  String get pleaseSelectaTechnician => 'Please select a Technician';
 
   @override
-  String get chooseWorker => 'Choose Worker';
+  String get chooseTechnician => 'Choose Technician';
 
   @override
   String get within => 'Within';
@@ -1380,7 +1320,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inspectionFee => 'Inspection Fee';
 
   @override
-  String get workerDetails => 'Worker Details';
+  String get technicianDetails => 'Technician Details';
 
   @override
   String get inspectionDisclaimer =>
@@ -1460,4 +1400,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String inspectionFeeNote(String fee) {
     return 'Inspection fee: $fee SAR — paid only after the technician arrives and inspects the issue.';
   }
+
+  @override
+  String get pleaseSelectAllLocationFields =>
+      'Please select all location fields';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get clearFilter => 'Clear Filter';
+
+  @override
+  String get filterByLocation => 'Filter by Location';
+
+  @override
+  String get province => 'Province';
+
+  @override
+  String get creatingAccount => 'Creating Account';
+
+  @override
+  String get pleaseSelectNeighborhood => 'Please select a neighborhood';
+
+  @override
+  String get pleaseSelectCity => 'Please select a city';
+
+  @override
+  String get pleaseSelectProvince => 'Please select a province';
+
+  @override
+  String get bookedOn => 'Booked on';
+
+  @override
+  String get acceptedOn => 'Accepted on';
+
+  @override
+  String get canceledOn => 'Canceled on';
+
+  @override
+  String get completedOn => 'Completed on';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get completionDetails => 'Completion Details';
+
+  @override
+  String get serviceCost => 'Service Cost';
+
+  @override
+  String get serviceItems => 'Service Items';
+
+  @override
+  String get uploadFilesTitle => 'Proof of Completion / Supporting Documents';
+
+  @override
+  String get inspection => 'Inspection';
+
+  @override
+  String get invoiceType => 'Invoice Type';
+
+  @override
+  String get transactionId => 'Transaction ID';
+
+  @override
+  String get networkError => 'Network error. Please check your connection.';
 }
