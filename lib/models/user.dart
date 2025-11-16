@@ -167,7 +167,7 @@ class UserModel {
           ? List<PayoutAccountModel>.from(
               json['payoutAccounts'].map((x) => PayoutAccountModel.fromJson(x)),
             )
-          : <PayoutAccountModel>[],
+          : [],
       availableBalance: json['availableBalance']?.toString(),
       paidAmounts: json['paidAmounts']?.toString(),
       highestTier: json['highestTier'],
@@ -205,7 +205,9 @@ class UserModel {
       'profileUrl': profileUrl,
       'fcmToken': fcmToken,
       'rating': rating,
-      'payoutAccounts': payoutAccounts,
+      'payoutAccounts': payoutAccounts != null
+          ? List<dynamic>.from(payoutAccounts!.map((x) => x.toJson()))
+          : [],
       'availableBalance': availableBalance,
       'paidAmounts': paidAmounts,
       'highestTier': highestTier,
@@ -237,7 +239,7 @@ class UserModel {
       'profileUrl': profileUrl,
       'fcmToken': fcmToken,
       'rating': rating,
-      'payoutAccounts': payoutAccounts,
+      'payoutAccounts': payoutAccounts ?? [],
       'availableBalance': availableBalance,
       'paidAmounts': paidAmounts,
       'highestTier': highestTier,

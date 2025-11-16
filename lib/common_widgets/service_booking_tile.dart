@@ -246,7 +246,7 @@ class ServiceBookingTile extends StatelessWidget {
                 if (booking.bookingStatusCode == "P" &&
                     booking.createdAt != null) ...{
                   Text(
-                    "${AppLocalizations.of(context)!.booked} : ${booking.createdAt?.toDate().toString() ?? ""}",
+                    "${AppLocalizations.of(context)!.bookedOn} : ${booking.createdAt?.toDate().toString() ?? ""}",
                     style: TextStyle(color: AppColors.grey3, fontSize: 12),
                   ),
                 },

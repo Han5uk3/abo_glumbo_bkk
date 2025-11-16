@@ -444,6 +444,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                               );
                             } else {
                               FocusScope.of(context).unfocus();
+
                               context.read<NewBookingBloc>().add(
                                 CreateBookingEvent(
                                   service: widget.service,
@@ -457,6 +458,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                   agent: selectedWorker,
                                 ),
                               );
+                                 
                             }
                           },
                     child: saving
