@@ -1,6 +1,7 @@
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/models/warranty.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BookingModel {
@@ -63,6 +64,7 @@ class BookingModel {
   String? cancellationReason;
   bool paymentCompleted = false;
   String? orderId;
+  WarrantyModel? warranty;
 
   BookingModel({
     required this.id,
@@ -87,6 +89,7 @@ class BookingModel {
     this.orderId,
     this.completionData,
     this.paymentCompleted = false,
+    this.warranty,
   });
 
   BookingModel.fromMap(Map<String, dynamic> data)
@@ -105,6 +108,9 @@ class BookingModel {
       paymentModeCode = data['paymentModeCode'],
       review = data['review'] != null
           ? ReviewModel.fromMap(data['review'])
+          : null,
+      warranty = data['warranty'] != null
+          ? WarrantyModel.fromJson(data['warranty'])
           : null,
       agent = data['agent'] != null ? UserModel.fromJson(data['agent']) : null,
       createdAt = data['createdAt'],
@@ -156,7 +162,9 @@ class BookingModel {
     };
 
     map['id'] = id;
-
+    if (warranty != null) {
+      map['warranty'] = warranty!.toJson();
+    }
     if (review != null) {
       map['review'] = review!.toJson();
     }

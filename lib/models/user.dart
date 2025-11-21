@@ -477,92 +477,103 @@ class PayoutAccountModel {
 // lib/models/detailed_location.dart
 class DetailedLocationModel {
   // Province
-  final String? provinceId;
-  final String? provinceEn;
-  final String? provinceAr;
+  final String? regionId;
+  final String? regionEn;
+  final String? regionAr;
 
   // Governorate
-  final String? governorateId;
-  final String? governorateEn;
-  final String? governorateAr;
-
-  // ❌ REMOVED: City fields (no longer in JSON)
+  final String? cityId;
+  final String? cityEn;
+  final String? cityAr;
 
   // Neighborhood
   final String? neighborhoodId;
   final String? neighborhoodEn;
   final String? neighborhoodAr;
 
+  final double? lon;
+  final double? lat;
+
   DetailedLocationModel({
-    this.provinceId,
-    this.provinceEn,
-    this.provinceAr,
-    this.governorateId,
-    this.governorateEn,
-    this.governorateAr,
+    this.regionId,
+    this.regionEn,
+    this.regionAr,
+    this.cityId,
+    this.cityEn,
+    this.cityAr,
     this.neighborhoodId,
     this.neighborhoodEn,
     this.neighborhoodAr,
+    this.lon,
+    this.lat,
   });
 
   factory DetailedLocationModel.fromJson(Map<String, dynamic> json) {
     return DetailedLocationModel(
-      provinceId: json['provinceId'],
-      provinceEn: json['provinceEn'],
-      provinceAr: json['provinceAr'],
-      governorateId: json['governorateId'],
-      governorateEn: json['governorateEn'],
-      governorateAr: json['governorateAr'],
+      regionId: json['regionId'],
+      regionEn: json['regionEn'],
+      regionAr: json['regionAr'],
+      cityId: json['cityId'],
+      cityEn: json['cityEn'],
+      cityAr: json['cityAr'],
       neighborhoodId: json['neighborhoodId'],
       neighborhoodEn: json['neighborhoodEn'],
       neighborhoodAr: json['neighborhoodAr'],
+      lon: json['lon'],
+      lat: json['lat'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'provinceId': provinceId,
-      'provinceEn': provinceEn,
-      'provinceAr': provinceAr,
-      'governorateId': governorateId,
-      'governorateEn': governorateEn,
-      'governorateAr': governorateAr,
+      'regionId': regionId,
+      'regionEn': regionEn,
+      'regionAr': regionAr,
+      'cityId': cityId,
+      'cityEn': cityEn,
+      'cityAr': cityAr,
       'neighborhoodId': neighborhoodId,
       'neighborhoodEn': neighborhoodEn,
       'neighborhoodAr': neighborhoodAr,
+      'lat': lat,
+      'lon': lon,
     };
   }
 
   DetailedLocationModel copyWith({
-    String? provinceId,
-    String? provinceEn,
-    String? provinceAr,
-    String? governorateId,
-    String? governorateEn,
-    String? governorateAr,
+    String? regionId,
+    String? regionEn,
+    String? regionAr,
+    String? cityId,
+    String? cityEn,
+    String? cityAr,
     String? neighborhoodId,
     String? neighborhoodEn,
     String? neighborhoodAr,
+    double? lon,
+    double? lat,
   }) {
     return DetailedLocationModel(
-      provinceId: provinceId ?? this.provinceId,
-      provinceEn: provinceEn ?? this.provinceEn,
-      provinceAr: provinceAr ?? this.provinceAr,
-      governorateId: governorateId ?? this.governorateId,
-      governorateEn: governorateEn ?? this.governorateEn,
-      governorateAr: governorateAr ?? this.governorateAr,
+      regionId: regionId ?? this.regionId,
+      regionEn: regionEn ?? this.regionEn,
+      regionAr: regionAr ?? this.regionAr,
+      cityId: cityId ?? this.cityId,
+      cityEn: cityEn ?? this.cityEn,
+      cityAr: cityAr ?? this.cityAr,
       neighborhoodId: neighborhoodId ?? this.neighborhoodId,
       neighborhoodEn: neighborhoodEn ?? this.neighborhoodEn,
       neighborhoodAr: neighborhoodAr ?? this.neighborhoodAr,
+      lon: lon ?? this.lon,
+      lat: lat ?? this.lat,
     );
   }
 
   // Helper methods
   String getProvinceName(bool isArabic) =>
-      isArabic ? (provinceAr ?? provinceEn ?? '') : (provinceEn ?? '');
+      isArabic ? (regionAr ?? regionEn ?? '') : (regionEn ?? '');
 
   String getGovernorateName(bool isArabic) =>
-      isArabic ? (governorateAr ?? governorateEn ?? '') : (governorateEn ?? '');
+      isArabic ? (cityAr ?? cityEn ?? '') : (cityEn ?? '');
 
   String getNeighborhoodName(bool isArabic) => isArabic
       ? (neighborhoodAr ?? neighborhoodEn ?? '')
@@ -574,10 +585,10 @@ class DetailedLocationModel {
     if (neighborhoodEn != null && neighborhoodEn!.isNotEmpty) {
       parts.add(getNeighborhoodName(isArabic));
     }
-    if (governorateEn != null && governorateEn!.isNotEmpty) {
+    if (cityEn != null && cityEn!.isNotEmpty) {
       parts.add(getGovernorateName(isArabic));
     }
-    if (provinceEn != null && provinceEn!.isNotEmpty) {
+    if (regionEn != null && regionEn!.isNotEmpty) {
       parts.add(getProvinceName(isArabic));
     }
     return parts.join(', ');
@@ -589,7 +600,7 @@ class DetailedLocationModel {
     if (neighborhoodEn != null && neighborhoodEn!.isNotEmpty) {
       parts.add(getNeighborhoodName(isArabic));
     }
-    if (governorateEn != null && governorateEn!.isNotEmpty) {
+    if (cityEn != null && cityEn!.isNotEmpty) {
       parts.add(getGovernorateName(isArabic));
     }
     return parts.join(', ');
@@ -597,6 +608,6 @@ class DetailedLocationModel {
 
   @override
   String toString() {
-    return 'DetailedLocationModel(province: $provinceEn, governorate: $governorateEn, neighborhood: $neighborhoodEn)';
+    return 'DetailedLocationModel(province: $regionEn, governorate: $cityEn, neighborhood: $neighborhoodEn)';
   }
 }

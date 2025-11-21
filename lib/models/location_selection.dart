@@ -1,78 +1,80 @@
 // lib/models/location_selection.dart
-class Province {
-  final String provinceId;
-  final String provinceEn;
-  final String provinceAr;
-  final List<Governorate> governorates;
+class Region {
+  final String regionId;
+  final String regionEn;
+  final String regionAr;
+  final List<City> cities;
 
-  Province({
-    required this.provinceId,
-    required this.provinceEn,
-    required this.provinceAr,
-    required this.governorates,
+  Region({
+    required this.regionId,
+    required this.regionEn,
+    required this.regionAr,
+    required this.cities,
   });
 
-  factory Province.fromJson(Map<String, dynamic> json) {
-    return Province(
-      provinceId: json['province_id'],
-      provinceEn: json['province_en'],
-      provinceAr: json['province_ar'],
-      governorates: (json['governorates'] as List)
-          .map((g) => Governorate.fromJson(g))
+  factory Region.fromJson(Map<String, dynamic> json) {
+    return Region(
+      regionId: json['region_id'],
+      regionEn: json['region_en'],
+      regionAr: json['region_ar'],
+      cities: (json['cities'] as List).map((c) => City.fromJson(c)).toList(),
+    );
+  }
+
+  String getName(bool isArabic) => isArabic ? regionAr : regionEn;
+}
+
+class City {
+  final String cityId;
+  final String cityEn;
+  final String cityAr;
+  final List<District> districts;
+
+  City({
+    required this.cityId,
+    required this.cityEn,
+    required this.cityAr,
+    required this.districts,
+  });
+
+  factory City.fromJson(Map<String, dynamic> json) {
+    return City(
+      cityId: json['city_id'],
+      cityEn: json['city_en'],
+      cityAr: json['city_ar'],
+      districts: (json['districts'] as List)
+          .map((d) => District.fromJson(d))
           .toList(),
     );
   }
 
-  String getName(bool isArabic) => isArabic ? provinceAr : provinceEn;
+  String getName(bool isArabic) => isArabic ? cityAr : cityEn;
 }
 
-class Governorate {
-  final String govId;
-  final String govEn;
-  final String govAr;
-  final List<Neighborhood>
-  neighborhoods; // ✅ Changed from cities to neighborhoods
+class District {
+  final String districtId;
+  final String districtEn;
+  final String districtAr;
+  final double latitude;
+  final double longitude;
 
-  Governorate({
-    required this.govId,
-    required this.govEn,
-    required this.govAr,
-    required this.neighborhoods,
+  District({
+    required this.districtId,
+    required this.districtEn,
+    required this.districtAr,
+    required this.latitude,
+    required this.longitude,
   });
 
-  factory Governorate.fromJson(Map<String, dynamic> json) {
-    return Governorate(
-      govId: json['gov_id'],
-      govEn: json['gov_en'],
-      govAr: json['gov_ar'],
-      neighborhoods:
-          (json['neighborhoods'] as List) // ✅ Changed from cities
-              .map((n) => Neighborhood.fromJson(n))
-              .toList(),
+  factory District.fromJson(Map<String, dynamic> json) {
+    return District(
+      districtId: json['district_id'],
+      districtEn: json['district_en'],
+      districtAr: json['district_ar'],
+      latitude: (json['latitude'] as num).toDouble(),
+      longitude: (json['longitude'] as num).toDouble(),
     );
   }
 
-  String getName(bool isArabic) => isArabic ? govAr : govEn;
-}
-
-class Neighborhood {
-  final String neighId;
-  final String neighEn;
-  final String neighAr;
-
-  Neighborhood({
-    required this.neighId,
-    required this.neighEn,
-    required this.neighAr,
-  });
-
-  factory Neighborhood.fromJson(Map<String, dynamic> json) {
-    return Neighborhood(
-      neighId: json['neigh_id'],
-      neighEn: json['neigh_en'],
-      neighAr: json['neigh_ar'],
-    );
-  }
-
-  String getName(bool isArabic) => isArabic ? neighAr : neighEn;
+  String getName(bool isArabic) => isArabic ? districtAr : districtEn;
 }

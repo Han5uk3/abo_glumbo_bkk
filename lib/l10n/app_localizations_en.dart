@@ -1463,7 +1463,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invoiceType => 'Invoice Type';
 
   @override
+  String get warrantyInformation => 'Warranty Information';
+
+  @override
+  String get whatsCovered => 'What\'s Covered';
+
+  @override
+  String get issueone => 'Faulty installation or poor workmanship';
+
+  @override
+  String get issuetwo => 'Substandard performance by technician';
+
+  @override
+  String get issuethree => 'Same original fault that was repaired';
+
+  @override
+  String get issuefour => 'Valid for 7 days from completion date';
+
+  @override
+  String get whatsNotCovered => 'What\'s Not Covered';
+
+  @override
+  String get notissueone => 'Defective spare parts or materials';
+
+  @override
+  String get notissuetwo => 'Misuse or tampering after service';
+
+  @override
+  String get notissuethree => 'Third-party interventions';
+
+  @override
+  String get notissuefour => 'Power surges, water leaks, natural disasters';
+
+  @override
+  String get notissuefive => 'Normal wear and tear';
+
+  @override
+  String get claimText =>
+      'To claim warranty, submit a request through the app within 7 days from service completion.';
+
+  @override
+  String get warrantyAlertContent =>
+      'Are you sure you want to request warranty repair for this service?';
+
+  @override
   String get transactionId => 'Transaction ID';
+
+  @override
+  String get repairUnderWarranty => 'Repair under warranty';
+
+  @override
+  String get warrantyRepairSubmittedSuccessfully =>
+      ' \'Warranty repair request submitted successfully\'';
+
+  @override
+  String get requestRepairUnderWarranty => 'Request repair under warranty';
 
   @override
   String get networkError => 'Network error. Please check your connection.';

@@ -5,6 +5,7 @@ import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/location_selection.dart'; // ✅ Add this
+import 'package:abo_glumbo_bbk/models/searchable_dropdown.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/login/otp.dart';
@@ -13,6 +14,7 @@ import 'package:abo_glumbo_bbk/services/auth_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,77 +40,88 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController phoneController = TextEditingController();
 
   // ✅ Location dropdowns (same as signup)
-  List<Province> provinces = [];
-  Province? selectedProvince;
-  Governorate? selectedGovernorate;
-  Neighborhood? selectedNeighborhood;
+  List<Region> regions = [];
+  Region? selectedRegion;
+  City? selectedCity;
+  District? selectedDistrict;
 
   @override
   void initState() {
     super.initState();
-    _loadLocations();
-    _fillOut();
+
+    // Load data first, then fill content after frame is built
+    loadLocations();
+
+    // Schedule fillContent after the first frame to avoid setState during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _fillOut();
+      }
+    });
   }
 
   // ✅ Load locations from JSON
-  Future<void> _loadLocations() async {
-    setState(() => isLoadingLocations = true);
+  Future<void> loadLocations() async {
+    setState(() {
+      isLoadingLocations = true;
+    });
+
     try {
       final jsonString = await rootBundle.loadString(
-        'assets/data/saudi_locations.json',
+        'assets/data/saudi_hierarchical.json',
       );
       final List<dynamic> jsonData = json.decode(jsonString);
 
-      setState(() {
-        provinces = jsonData.map((p) => Province.fromJson(p)).toList();
-        isLoadingLocations = false;
-      });
+      if (mounted) {
+        setState(() {
+          regions = jsonData.map((r) => Region.fromJson(r)).toList();
+          isLoadingLocations = false;
+        });
 
-      // After loading, pre-select if data exists
-      if (widget.customer.detailedLocation != null) {
-        _preselectLocation(widget.customer.detailedLocation!);
+        // Pre-select location AFTER regions are loaded and state is set
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (widget.customer.detailedLocation != null && mounted) {
+            preselectLocation(widget.customer.detailedLocation!);
+          }
+        });
       }
     } catch (e) {
-      debugPrint('❌ Error loading locations: $e');
-      setState(() => isLoadingLocations = false);
-      _showSnackBar(
-        AppLocalizations.of(context)?.errorFetchingLocations ??
-            'Error fetching locations',
-        backgroundColor: AppColors.red,
-      );
+      if (kDebugMode) {
+        print('Error loading locations: $e');
+      }
+      if (mounted) {
+        setState(() {
+          isLoadingLocations = false;
+        });
+      }
     }
   }
 
   // ✅ Pre-select saved location
-  void _preselectLocation(DetailedLocationModel detailedLoc) {
-    if (provinces.isEmpty) return;
+  void preselectLocation(DetailedLocationModel detailedLoc) {
+    if (regions.isEmpty || !mounted) return;
 
-    // Find and select province
-    final province = provinces.firstWhere(
-      (p) => p.provinceId == detailedLoc.provinceId,
-      orElse: () => provinces.first,
+    final region = regions.firstWhere(
+      (r) => r.regionId == detailedLoc.regionId,
+      orElse: () => regions.first,
     );
 
     setState(() {
-      selectedProvince = province;
+      selectedRegion = region;
 
-      // Find and select governorate
-      if (province.governorates.isNotEmpty) {
-        final governorate = province.governorates.firstWhere(
-          (g) => g.govId == detailedLoc.governorateId,
-          orElse: () => province.governorates.first,
+      if (region.cities.isNotEmpty) {
+        final city = region.cities.firstWhere(
+          (c) => c.cityId == detailedLoc.cityId,
+          orElse: () => region.cities.first,
         );
+        selectedCity = city;
 
-        selectedGovernorate = governorate;
-
-        // Find and select neighborhood
-        if (governorate.neighborhoods.isNotEmpty) {
-          final neighborhood = governorate.neighborhoods.firstWhere(
-            (n) => n.neighId == detailedLoc.neighborhoodId,
-            orElse: () => governorate.neighborhoods.first,
+        if (city.districts.isNotEmpty) {
+          final district = city.districts.firstWhere(
+            (d) => d.districtId == detailedLoc.neighborhoodId,
+            orElse: () => city.districts.first,
           );
-
-          selectedNeighborhood = neighborhood;
+          selectedDistrict = district;
         }
       }
     });
@@ -131,9 +144,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void _updateProfile() {
     if (_formKey.currentState?.validate() ?? false) {
       // ✅ Validate location selection
-      if (selectedProvince == null ||
-          selectedGovernorate == null ||
-          selectedNeighborhood == null) {
+      if (selectedRegion == null ||
+          selectedCity == null ||
+          selectedDistrict == null) {
         _showSnackBar(
           AppLocalizations.of(context)!.pleaseSelectAllLocationFields,
           backgroundColor: AppColors.yellow,
@@ -143,15 +156,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       // ✅ Create DetailedLocationModel
       final detailedLocation = DetailedLocationModel(
-        provinceId: selectedProvince!.provinceId,
-        provinceEn: selectedProvince!.provinceEn,
-        provinceAr: selectedProvince!.provinceAr,
-        governorateId: selectedGovernorate!.govId,
-        governorateEn: selectedGovernorate!.govEn,
-        governorateAr: selectedGovernorate!.govAr,
-        neighborhoodId: selectedNeighborhood!.neighId,
-        neighborhoodEn: selectedNeighborhood!.neighEn,
-        neighborhoodAr: selectedNeighborhood!.neighAr,
+        regionId: selectedRegion?.regionId,
+        regionEn: selectedRegion?.regionEn,
+        regionAr: selectedRegion?.regionAr,
+        cityId: selectedCity?.cityId,
+        cityEn: selectedCity?.cityEn,
+        cityAr: selectedCity?.cityAr,
+        neighborhoodId: selectedDistrict?.districtId,
+        neighborhoodEn: selectedDistrict?.districtEn,
+        neighborhoodAr: selectedDistrict?.districtAr,
+        lat: selectedDistrict?.latitude,
+        lon: selectedDistrict?.longitude,
       );
 
       final updatedCustomer = widget.customer.copyWith(
@@ -404,40 +419,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
               const SizedBox(height: 8),
 
               // ✅ Province Dropdown
-              _buildDropdownField<Province>(
-                label: '${locale?.province ?? 'Province'} *',
-                value: selectedProvince,
-                items: provinces,
-                itemLabel: (province) => province.getName(isArabic),
-                onChanged: (province) {
+              _buildDropdownField<Region>(
+                label: '${locale?.province ?? 'Region'} *',
+                value: selectedRegion,
+                items: regions,
+                itemLabel: (region) => region.getName(isArabic),
+                onChanged: (region) {
                   setState(() {
-                    selectedProvince = province;
-                    selectedGovernorate = null;
-                    selectedNeighborhood = null;
+                    selectedRegion = region;
+                    selectedCity = null;
+                    selectedDistrict = null;
                   });
                 },
                 validator: (value) {
                   if (value == null) {
                     return locale?.pleaseSelectProvince ??
-                        'Please select a province';
+                        'Please select a region';
                   }
                   return null;
                 },
               ),
 
-              if (selectedProvince != null) ...[
+              if (selectedRegion != null) ...[
                 const SizedBox(height: 16),
 
-                // ✅ Governorate Dropdown
-                _buildDropdownField<Governorate>(
+                // ✅ City Dropdown
+                _buildDropdownField<City>(
                   label: '${locale?.city ?? 'City'} *',
-                  value: selectedGovernorate,
-                  items: selectedProvince!.governorates,
-                  itemLabel: (gov) => gov.getName(isArabic),
-                  onChanged: (gov) {
+                  value: selectedCity,
+                  items: selectedRegion!.cities,
+                  itemLabel: (city) => city.getName(isArabic),
+                  onChanged: (city) {
                     setState(() {
-                      selectedGovernorate = gov;
-                      selectedNeighborhood = null;
+                      selectedCity = city;
+                      selectedDistrict = null;
                     });
                   },
                   validator: (value) {
@@ -449,24 +464,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ],
 
-              if (selectedGovernorate != null) ...[
+              if (selectedCity != null) ...[
                 const SizedBox(height: 16),
 
-                // ✅ Neighborhood Dropdown
-                _buildDropdownField<Neighborhood>(
-                  label: '${locale?.neighbourhood ?? 'Neighborhood'} *',
-                  value: selectedNeighborhood,
-                  items: selectedGovernorate!.neighborhoods,
-                  itemLabel: (neigh) => neigh.getName(isArabic),
-                  onChanged: (neigh) {
+                // ✅ District Dropdown
+                _buildDropdownField<District>(
+                  label: '${locale?.neighbourhood ?? 'District'} *',
+                  value: selectedDistrict,
+                  items: selectedCity!.districts,
+                  itemLabel: (district) => district.getName(isArabic),
+                  onChanged: (district) {
                     setState(() {
-                      selectedNeighborhood = neigh;
+                      selectedDistrict = district;
                     });
                   },
                   validator: (value) {
                     if (value == null) {
                       return locale?.pleaseSelectNeighborhood ??
-                          'Please select a neighborhood';
+                          'Please select a district';
                     }
                     return null;
                   },
@@ -513,7 +528,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   // ✅ Dropdown builder
-  Widget _buildDropdownField<T>({
+  Widget _buildDropdownField<T extends Object>({
     required String label,
     required T? value,
     required List<T> items,
@@ -521,41 +536,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     required void Function(T?) onChanged,
     String? Function(T?)? validator,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.dmSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<T>(
-          value: value,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
-          ),
-          items: items.map((item) {
-            return DropdownMenuItem<T>(
-              value: item,
-              child: Text(
-                itemLabel(item),
-                style: GoogleFonts.dmSans(fontSize: 14),
-              ),
-            );
-          }).toList(),
-          onChanged: onChanged,
-          validator: validator,
-          isExpanded: true,
-        ),
-      ],
+    return SearchableDropdown<T>(
+      label: label,
+      value: value,
+      items: items,
+      itemLabel: itemLabel,
+      onChanged: onChanged,
+      validator: validator,
     );
   }
 

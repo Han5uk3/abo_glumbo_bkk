@@ -6,6 +6,7 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/location_selection.dart'; // ✅ Add this
+import 'package:abo_glumbo_bbk/models/searchable_dropdown.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
@@ -35,10 +36,10 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController emailController = TextEditingController();
 
   // ✅ Location dropdowns (same as technician app)
-  List<Province> provinces = [];
-  Province? selectedProvince;
-  Governorate? selectedGovernorate;
-  Neighborhood? selectedNeighborhood;
+  List<Region> regions = [];
+  Region? selectedRegion;
+  City? selectedCity;
+  District? selectedDistrict;
 
   @override
   void initState() {
@@ -51,12 +52,12 @@ class _SignupPageState extends State<SignupPage> {
     setState(() => isLoadingLocations = true);
     try {
       final jsonString = await rootBundle.loadString(
-        'assets/data/saudi_locations.json',
+        'assets/data/saudi_hierarchical.json',
       );
       final List<dynamic> jsonData = json.decode(jsonString);
 
       setState(() {
-        provinces = jsonData.map((p) => Province.fromJson(p)).toList();
+        regions = jsonData.map((r) => Region.fromJson(r)).toList();
       });
     } catch (e) {
       if (mounted) {
@@ -85,7 +86,7 @@ class _SignupPageState extends State<SignupPage> {
     if (!_formkey.currentState!.validate()) return;
 
     // ✅ Validate location selection
-    if (selectedProvince == null) {
+    if (selectedRegion == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -97,7 +98,7 @@ class _SignupPageState extends State<SignupPage> {
       return;
     }
 
-    if (selectedGovernorate == null) {
+    if (selectedCity == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -109,7 +110,7 @@ class _SignupPageState extends State<SignupPage> {
       return;
     }
 
-    if (selectedNeighborhood == null) {
+    if (selectedDistrict == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -155,15 +156,15 @@ class _SignupPageState extends State<SignupPage> {
 
       // ✅ Create DetailedLocationModel
       final detailedLocation = DetailedLocationModel(
-        provinceId: selectedProvince!.provinceId,
-        provinceEn: selectedProvince!.provinceEn,
-        provinceAr: selectedProvince!.provinceAr,
-        governorateId: selectedGovernorate!.govId,
-        governorateEn: selectedGovernorate!.govEn,
-        governorateAr: selectedGovernorate!.govAr,
-        neighborhoodId: selectedNeighborhood!.neighId,
-        neighborhoodEn: selectedNeighborhood!.neighEn,
-        neighborhoodAr: selectedNeighborhood!.neighAr,
+        regionId: selectedRegion!.regionId,
+        regionEn: selectedRegion!.regionEn,
+        regionAr: selectedRegion!.regionAr,
+        cityId: selectedCity!.cityId,
+        cityEn: selectedCity!.cityEn,
+        cityAr: selectedCity!.cityAr,
+        neighborhoodId: selectedDistrict!.districtId,
+        neighborhoodEn: selectedDistrict!.districtEn,
+        neighborhoodAr: selectedDistrict!.districtAr,
       );
 
       CustomerModel customer = CustomerModel(
@@ -410,40 +411,40 @@ class _SignupPageState extends State<SignupPage> {
             const SizedBox(height: 8),
 
             // ✅ Province Dropdown
-            _buildDropdownField<Province>(
-              label: '${locale?.province ?? 'Province'} *',
-              value: selectedProvince,
-              items: provinces,
-              itemLabel: (province) => province.getName(isArabic),
-              onChanged: (province) {
+            _buildDropdownField<Region>(
+              label: '${locale?.province ?? 'Region'} *',
+              value: selectedRegion,
+              items: regions,
+              itemLabel: (region) => region.getName(isArabic),
+              onChanged: (region) {
                 setState(() {
-                  selectedProvince = province;
-                  selectedGovernorate = null;
-                  selectedNeighborhood = null;
+                  selectedRegion = region;
+                  selectedCity = null;
+                  selectedDistrict = null;
                 });
               },
               validator: (value) {
                 if (value == null) {
                   return locale?.pleaseSelectProvince ??
-                      'Please select a province';
+                      'Please select a region';
                 }
                 return null;
               },
             ),
 
-            if (selectedProvince != null) ...[
+            if (selectedRegion != null) ...[
               const SizedBox(height: 16),
 
-              // ✅ Governorate Dropdown
-              _buildDropdownField<Governorate>(
+              // ✅ City Dropdown
+              _buildDropdownField<City>(
                 label: '${locale?.city ?? 'City'} *',
-                value: selectedGovernorate,
-                items: selectedProvince!.governorates,
-                itemLabel: (gov) => gov.getName(isArabic),
-                onChanged: (gov) {
+                value: selectedCity,
+                items: selectedRegion!.cities,
+                itemLabel: (city) => city.getName(isArabic),
+                onChanged: (city) {
                   setState(() {
-                    selectedGovernorate = gov;
-                    selectedNeighborhood = null;
+                    selectedCity = city;
+                    selectedDistrict = null;
                   });
                 },
                 validator: (value) {
@@ -455,24 +456,24 @@ class _SignupPageState extends State<SignupPage> {
               ),
             ],
 
-            if (selectedGovernorate != null) ...[
+            if (selectedCity != null) ...[
               const SizedBox(height: 16),
 
-              // ✅ Neighborhood Dropdown
-              _buildDropdownField<Neighborhood>(
-                label: '${locale?.neighbourhood ?? 'Neighborhood'} *',
-                value: selectedNeighborhood,
-                items: selectedGovernorate!.neighborhoods,
-                itemLabel: (neigh) => neigh.getName(isArabic),
-                onChanged: (neigh) {
+              // ✅ District Dropdown
+              _buildDropdownField<District>(
+                label: '${locale?.neighbourhood ?? 'District'} *',
+                value: selectedDistrict,
+                items: selectedCity!.districts,
+                itemLabel: (district) => district.getName(isArabic),
+                onChanged: (district) {
                   setState(() {
-                    selectedNeighborhood = neigh;
+                    selectedDistrict = district;
                   });
                 },
                 validator: (value) {
                   if (value == null) {
                     return locale?.pleaseSelectNeighborhood ??
-                        'Please select a neighborhood';
+                        'Please select a district';
                   }
                   return null;
                 },
@@ -515,7 +516,7 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   // ✅ Dropdown builder
-  Widget _buildDropdownField<T>({
+  Widget _buildDropdownField<T extends Object>({
     required String label,
     required T? value,
     required List<T> items,
@@ -523,41 +524,13 @@ class _SignupPageState extends State<SignupPage> {
     required void Function(T?) onChanged,
     String? Function(T?)? validator,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.dmSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<T>(
-          value: value,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
-          ),
-          items: items.map((item) {
-            return DropdownMenuItem<T>(
-              value: item,
-              child: Text(
-                itemLabel(item),
-                style: GoogleFonts.dmSans(fontSize: 14),
-              ),
-            );
-          }).toList(),
-          onChanged: onChanged,
-          validator: validator,
-          isExpanded: true,
-        ),
-      ],
+    return SearchableDropdown<T>(
+      label: label,
+      value: value,
+      items: items,
+      itemLabel: itemLabel,
+      onChanged: onChanged,
+      validator: validator,
     );
   }
 

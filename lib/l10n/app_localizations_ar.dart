@@ -1445,7 +1445,62 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invoiceType => 'نوع الفاتورة';
 
   @override
+  String get warrantyInformation => 'معلومات الضمان';
+
+  @override
+  String get whatsCovered => 'ما يتغط';
+
+  @override
+  String get issueone => 'تعطيل أو ضيق عمل الفني';
+
+  @override
+  String get issuetwo => 'استخدام غير صحيح من الفني';
+
+  @override
+  String get issuethree => 'المشكلة الاصلية التي تم تصحيحها';
+
+  @override
+  String get issuefour => 'صالحة لمدة 7 أيام من تاريخ اكمال الخدمة';
+
+  @override
+  String get whatsNotCovered => 'ما لا يتغط';
+
+  @override
+  String get notissueone => 'قطع غير صحيحة أو مواد';
+
+  @override
+  String get notissuetwo => 'استخدام غير صحيح من الفني';
+
+  @override
+  String get notissuethree => 'أوامر ثالثة';
+
+  @override
+  String get notissuefour =>
+      'التدفق الكهربائي، والخطوات البحرية، والطوارئ الطبيعية';
+
+  @override
+  String get notissuefive => 'التغطية العادية';
+
+  @override
+  String get claimText =>
+      'لطلب ضمان، ارسل طلب من خلال التطبيق خلال 7 أيام من تاريخ اكمال الخدمة.';
+
+  @override
+  String get warrantyAlertContent =>
+      'هل ترغب في طلب اصلاح تحت ضمان لهذه الخدمة؟';
+
+  @override
   String get transactionId => 'رقم المعاملة';
+
+  @override
+  String get repairUnderWarranty => 'اصلاح تحت ضمان';
+
+  @override
+  String get warrantyRepairSubmittedSuccessfully =>
+      'تم ارسال طلب اصلاح تحت ضمان بنجاح';
+
+  @override
+  String get requestRepairUnderWarranty => 'طلب اصلاح تحت ضمان';
 
   @override
   String get networkError => 'خطأ في الشبكة. يرجى التحقق من اتصالك.';

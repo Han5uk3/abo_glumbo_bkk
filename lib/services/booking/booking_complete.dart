@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
+import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,6 +42,10 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
   late Animation<double> _checkRotationAnimation;
   late Animation<double> _headerSlideAnimation;
   late Animation<double> _headerFadeAnimation;
+
+  String? _localizedRole;
+  bool _isLoadingRole = true;
+  bool _hasLoadedRole = false;
 
   @override
   void initState() {
@@ -95,6 +102,17 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
     _startAnimations();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Load role data here - context is now fully available
+    if (!_hasLoadedRole) {
+      _hasLoadedRole = true;
+      _loadRoleData();
+    }
+  }
+
   void _startAnimations() async {
     await Future.delayed(const Duration(milliseconds: 200));
     _checkController.forward();
@@ -107,6 +125,55 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
 
     await Future.delayed(const Duration(milliseconds: 800));
     _buttonController.forward();
+  }
+
+  Future<void> _loadRoleData() async {
+    try {
+      final role = await getLocalizedRole(
+        context,
+        widget.worker.jobRoles ?? [],
+      );
+
+      if (mounted) {
+        setState(() {
+          _localizedRole = role;
+          _isLoadingRole = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _localizedRole = 'Unknown Role';
+          _isLoadingRole = false;
+        });
+      }
+    }
+  }
+
+  Future<String> getLocalizedRole(
+    BuildContext context,
+    List<String> roleIds,
+  ) async {
+    bool isArabic = Directionality.of(context) == TextDirection.rtl;
+
+    log("Role IDs: $roleIds");
+
+    // Use Future.wait to fetch all role names in parallel
+    List<String> roleNames = await Future.wait(
+      roleIds.map((element) async {
+        if (isArabic) {
+          return await AppServices.getroleNameArbyid(element);
+        } else {
+          return await AppServices.getroleNameEnbyid(element);
+        }
+      }),
+    );
+
+    // Join the names with commas
+    String name = roleNames.join(', ');
+    log("Localized roles: $name");
+
+    return name;
   }
 
   @override
@@ -325,10 +392,11 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            widget.worker.jobRoles?.join(
-                                                  ', ',
-                                                ) ??
-                                                '',
+                                            _isLoadingRole
+                                                ? AppLocalizations.of(
+                                                    context,
+                                                  )!.loading
+                                                : (_localizedRole ?? ''),
                                             style: GoogleFonts.dmSans(
                                               fontSize: 13,
                                               color: Colors.grey[600],

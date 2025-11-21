@@ -31,8 +31,8 @@ class WorkerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final detaliLocation = worker.detailedLocation;
     final cityName = Directionality.of(context) == TextDirection.rtl
-        ? detaliLocation?.governorateAr ?? ''
-        : detaliLocation?.governorateEn ?? '';
+        ? detaliLocation?.regionAr ?? ''
+        : detaliLocation?.regionEn ?? '';
     final neighborhoodName = Directionality.of(context) == TextDirection.rtl
         ? detaliLocation?.neighborhoodAr ?? ''
         : detaliLocation?.neighborhoodEn ?? '';

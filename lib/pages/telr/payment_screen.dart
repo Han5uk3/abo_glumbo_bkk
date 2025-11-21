@@ -156,7 +156,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             : null,
         ivp_lang: 'en',
         bill_custref: widget.customerData.uid,
-        bill_city: widget.customerData.detailedLocation?.governorateEn ?? "",
+        bill_city: widget.customerData.detailedLocation?.cityEn ?? "",
       );
       final paymentService = TelrPaymentService();
       final response = await paymentService.createPayment(paymentRequest);
@@ -274,7 +274,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       booking: widget.booking!,
       paymentModeCode: widget.selectedPayment == "Cards" ? "C" : "O",
       isCompleted: true,
-      orderId:orderId??""
+      orderId: orderId ?? "",
     );
   }
 

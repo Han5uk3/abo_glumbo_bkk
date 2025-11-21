@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:math' show sin, cos, sqrt, atan2, pi;
+import 'dart:math';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -9,11 +9,13 @@ import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/location_selection.dart';
+import 'package:abo_glumbo_bbk/models/searchable_dropdown.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/worker_card.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -46,10 +48,10 @@ class _WorkerListState extends State<WorkerList> {
   final TextEditingController _searchController = TextEditingController();
   final ValueNotifier<bool> _isFilteringNotifier = ValueNotifier<bool>(false);
 
-  List<Province> provinces = [];
-  Province? selectedProvince;
-  Governorate? selectedGovernorate;
-  Neighborhood? selectedNeighborhood;
+  List<Region> regions = [];
+  Region? selectedRegion;
+  City? selectedCity;
+  District? selectedDistrict;
   bool isLoadingLocations = true;
 
   CustomerModel? customerData;
@@ -59,7 +61,7 @@ class _WorkerListState extends State<WorkerList> {
   void initState() {
     super.initState();
     _fetchCustomerData();
-    _loadLocations();
+    loadLocations();
     _fetchcategory();
   }
 
@@ -86,57 +88,65 @@ class _WorkerListState extends State<WorkerList> {
     }
   }
 
-  Future<void> _loadLocations() async {
-    setState(() => isLoadingLocations = true);
+  Future<void> loadLocations() async {
+    setState(() {
+      isLoadingLocations = true;
+    });
+
     try {
       final jsonString = await rootBundle.loadString(
-        'assets/data/saudi_locations.json',
+        'assets/data/saudi_hierarchical.json',
       );
       final List<dynamic> jsonData = json.decode(jsonString);
 
-      setState(() {
-        provinces = jsonData.map((p) => Province.fromJson(p)).toList();
-      });
+      if (mounted) {
+        setState(() {
+          regions = jsonData.map((r) => Region.fromJson(r)).toList();
+          isLoadingLocations = false;
+        });
 
-      // ✅ Wait for customer data before preselecting
-      while (isLoadingCustomer) {
-        await Future.delayed(const Duration(milliseconds: 100));
-      }
-
-      // ✅ Pre-select customer's location from customerData
-      if (customerData?.detailedLocation != null) {
-        _preselectCustomerLocation(customerData!.detailedLocation!);
+        // Pre-select location AFTER regions are loaded and state is set
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (customerData?.detailedLocation != null && mounted) {
+            _preselectCustomerLocation(customerData!.detailedLocation!);
+          }
+        });
       }
     } catch (e) {
-      debugPrint('Error loading locations: $e');
-    } finally {
-      setState(() => isLoadingLocations = false);
+      if (kDebugMode) {
+        print('Error loading locations: $e');
+      }
+      if (mounted) {
+        setState(() {
+          isLoadingLocations = false;
+        });
+      }
     }
   }
 
   // ✅ Pre-select customer's location as default filter
   void _preselectCustomerLocation(DetailedLocationModel location) {
-    if (provinces.isEmpty) return;
+    if (regions.isEmpty) return;
 
-    final province = provinces.firstWhere(
-      (p) => p.provinceId == location.provinceId,
-      orElse: () => provinces.first,
+    final province = regions.firstWhere(
+      (p) => p.regionId == location.regionId,
+      orElse: () => regions.first,
     );
 
-    selectedProvince = province;
+    selectedRegion = province;
 
-    if (province.governorates.isNotEmpty) {
-      final governorate = province.governorates.firstWhere(
-        (g) => g.govId == location.governorateId,
-        orElse: () => province.governorates.first,
+    if (province.cities.isNotEmpty) {
+      final governorate = province.cities.firstWhere(
+        (g) => g.cityId == location.cityId,
+        orElse: () => province.cities.first,
       );
 
-      selectedGovernorate = governorate;
+      selectedCity = governorate;
 
-      if (governorate.neighborhoods.isNotEmpty) {
-        selectedNeighborhood = governorate.neighborhoods.firstWhere(
-          (n) => n.neighId == location.neighborhoodId,
-          orElse: () => governorate.neighborhoods.first,
+      if (governorate.districts.isNotEmpty) {
+        selectedDistrict = governorate.districts.firstWhere(
+          (n) => n.districtId == location.neighborhoodId,
+          orElse: () => governorate.districts.first,
         );
       }
     }
@@ -183,27 +193,35 @@ class _WorkerListState extends State<WorkerList> {
     // 1. Apply location filter (if selected)
     List<WorkerWithStats> locationFiltered = workers;
     // ✅ FIXED: Only filter if a location is selected, otherwise show all
-    if (selectedNeighborhood != null) {
+    if (selectedDistrict != null) {
       // Filter by neighborhood
       locationFiltered = workers.where((workerData) {
         final workerLocation = workerData.worker.detailedLocation;
-        return workerLocation?.neighborhoodId == selectedNeighborhood!.neighId;
+
+        debugPrint('Worker location: ${workerLocation?.neighborhoodEn}');
+
+        return workerLocation?.neighborhoodId == selectedDistrict!.districtId;
       }).toList();
-    } else if (selectedGovernorate != null) {
+    } else if (selectedCity != null) {
       // Filter by governorate
       locationFiltered = workers.where((workerData) {
         final workerLocation = workerData.worker.detailedLocation;
-        return workerLocation?.governorateId == selectedGovernorate!.govId;
+        debugPrint('Worker location: ${workerLocation?.cityEn}');
+        return workerLocation?.cityId == selectedCity!.cityId;
       }).toList();
-    } else if (selectedProvince != null) {
+    } else if (selectedRegion != null) {
       // Filter by province
       locationFiltered = workers.where((workerData) {
         final workerLocation = workerData.worker.detailedLocation;
-        return workerLocation?.provinceId == selectedProvince!.provinceId;
+        debugPrint('Worker location: ${workerLocation?.regionEn}');
+
+        return workerLocation?.regionId == selectedRegion!.regionId;
       }).toList();
     } else {
       // ✅ FIXED: Show all workers when no location filter is applied
-      log('No location filter applied - Showing all ${workers.length} workers');
+      debugPrint(
+        'No location filter applied - Showing all ${workers.length} workers',
+      );
     }
 
     // 2. Apply search filter
@@ -304,9 +322,9 @@ class _WorkerListState extends State<WorkerList> {
                             TextButton(
                               onPressed: () {
                                 setModalState(() {
-                                  selectedProvince = null;
-                                  selectedGovernorate = null;
-                                  selectedNeighborhood = null;
+                                  selectedRegion = null;
+                                  selectedCity = null;
+                                  selectedDistrict = null;
                                 });
                                 setState(() {});
                                 Navigator.pop(context);
@@ -331,55 +349,81 @@ class _WorkerListState extends State<WorkerList> {
                       padding: EdgeInsets.all(16),
                       children: [
                         // Province Dropdown
-                        _buildLocationDropdown<Province>(
+                        _buildDropdownField<Region>(
                           label:
-                              AppLocalizations.of(context)?.province ??
-                              'Province',
-                          value: selectedProvince,
-                          items: provinces,
-                          itemLabel: (province) => province.getName(isArabic),
-                          onChanged: (province) {
-                            setModalState(() {
-                              selectedProvince = province;
-                              selectedGovernorate = null;
-                              selectedNeighborhood = null;
+                              '${AppLocalizations.of(context)?.province ?? 'Region'} *',
+                          value: selectedRegion,
+                          items: regions,
+                          itemLabel: (region) => region.getName(isArabic),
+                          onChanged: (region) {
+                            setState(() {
+                              selectedRegion = region;
+                              selectedCity = null;
+                              selectedDistrict = null;
                             });
+                          },
+                          validator: (value) {
+                            if (value == null) {
+                              return AppLocalizations.of(
+                                    context,
+                                  )?.pleaseSelectProvince ??
+                                  'Please select a region';
+                            }
+                            return null;
                           },
                         ),
 
-                        if (selectedProvince != null) ...[
-                          SizedBox(height: 16),
+                        if (selectedRegion != null) ...[
+                          const SizedBox(height: 16),
 
-                          // Governorate Dropdown
-                          _buildLocationDropdown<Governorate>(
-                            label: AppLocalizations.of(context)?.city ?? 'City',
-                            value: selectedGovernorate,
-                            items: selectedProvince!.governorates,
-                            itemLabel: (gov) => gov.getName(isArabic),
-                            onChanged: (gov) {
-                              setModalState(() {
-                                selectedGovernorate = gov;
-                                selectedNeighborhood = null;
+                          // ✅ City Dropdown
+                          _buildDropdownField<City>(
+                            label:
+                                '${AppLocalizations.of(context)?.city ?? 'City'} *',
+                            value: selectedCity,
+                            items: selectedRegion!.cities,
+                            itemLabel: (city) => city.getName(isArabic),
+                            onChanged: (city) {
+                              setState(() {
+                                selectedCity = city;
+                                selectedDistrict = null;
                               });
+                            },
+                            validator: (value) {
+                              if (value == null) {
+                                return AppLocalizations.of(
+                                      context,
+                                    )?.pleaseSelectCity ??
+                                    'Please select a city';
+                              }
+                              return null;
                             },
                           ),
                         ],
 
-                        if (selectedGovernorate != null) ...[
-                          SizedBox(height: 16),
+                        if (selectedCity != null) ...[
+                          const SizedBox(height: 16),
 
-                          // Neighborhood Dropdown
-                          _buildLocationDropdown<Neighborhood>(
+                          // ✅ District Dropdown
+                          _buildDropdownField<District>(
                             label:
-                                AppLocalizations.of(context)?.neighbourhood ??
-                                'Neighborhood',
-                            value: selectedNeighborhood,
-                            items: selectedGovernorate!.neighborhoods,
-                            itemLabel: (neigh) => neigh.getName(isArabic),
-                            onChanged: (neigh) {
-                              setModalState(() {
-                                selectedNeighborhood = neigh;
+                                '${AppLocalizations.of(context)?.neighbourhood ?? 'District'} *',
+                            value: selectedDistrict,
+                            items: selectedCity!.districts,
+                            itemLabel: (district) => district.getName(isArabic),
+                            onChanged: (district) {
+                              setState(() {
+                                selectedDistrict = district;
                               });
+                            },
+                            validator: (value) {
+                              if (value == null) {
+                                return AppLocalizations.of(
+                                      context,
+                                    )?.pleaseSelectNeighborhood ??
+                                    'Please select a district';
+                              }
+                              return null;
                             },
                           ),
                         ],
@@ -420,41 +464,21 @@ class _WorkerListState extends State<WorkerList> {
     );
   }
 
-  Widget _buildLocationDropdown<T>({
+  Widget _buildDropdownField<T extends Object>({
     required String label,
     required T? value,
     required List<T> items,
     required String Function(T) itemLabel,
     required void Function(T?) onChanged,
+    String? Function(T?)? validator,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
-        ),
-        SizedBox(height: 8),
-        DropdownButtonFormField<T>(
-          value: value,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          ),
-          items: items.map((item) {
-            return DropdownMenuItem<T>(
-              value: item,
-              child: Text(itemLabel(item)),
-            );
-          }).toList(),
-          onChanged: onChanged,
-          isExpanded: true,
-        ),
-      ],
+    return SearchableDropdown<T>(
+      label: label,
+      value: value,
+      items: items,
+      itemLabel: itemLabel,
+      onChanged: onChanged,
+      validator: validator,
     );
   }
 
@@ -462,12 +486,12 @@ class _WorkerListState extends State<WorkerList> {
   String _getLocationFilterLabel() {
     final isArabic = Directionality.of(context) == TextDirection.rtl;
 
-    if (selectedNeighborhood != null) {
-      return selectedNeighborhood!.getName(isArabic);
-    } else if (selectedGovernorate != null) {
-      return selectedGovernorate!.getName(isArabic);
-    } else if (selectedProvince != null) {
-      return selectedProvince!.getName(isArabic);
+    if (selectedDistrict != null) {
+      return selectedDistrict!.getName(isArabic);
+    } else if (selectedCity != null) {
+      return selectedCity!.getName(isArabic);
+    } else if (selectedRegion != null) {
+      return selectedRegion!.getName(isArabic);
     }
     return AppLocalizations.of(context)?.selectLocation ?? 'Select Location';
   }
@@ -490,10 +514,10 @@ class _WorkerListState extends State<WorkerList> {
               style: TextStyle(fontSize: 14),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: selectedProvince != null
+              backgroundColor: selectedRegion != null
                   ? AppColors.primary
                   : Colors.grey.shade200,
-              foregroundColor: selectedProvince != null
+              foregroundColor: selectedRegion != null
                   ? Colors.white
                   : Colors.black87,
               minimumSize: Size(double.infinity, 48),

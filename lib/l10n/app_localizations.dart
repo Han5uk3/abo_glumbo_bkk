@@ -2882,11 +2882,113 @@ abstract class AppLocalizations {
   /// **'Invoice Type'**
   String get invoiceType;
 
+  /// No description provided for @warrantyInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Information'**
+  String get warrantyInformation;
+
+  /// No description provided for @whatsCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s Covered'**
+  String get whatsCovered;
+
+  /// No description provided for @issueone.
+  ///
+  /// In en, this message translates to:
+  /// **'Faulty installation or poor workmanship'**
+  String get issueone;
+
+  /// No description provided for @issuetwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Substandard performance by technician'**
+  String get issuetwo;
+
+  /// No description provided for @issuethree.
+  ///
+  /// In en, this message translates to:
+  /// **'Same original fault that was repaired'**
+  String get issuethree;
+
+  /// No description provided for @issuefour.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid for 7 days from completion date'**
+  String get issuefour;
+
+  /// No description provided for @whatsNotCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s Not Covered'**
+  String get whatsNotCovered;
+
+  /// No description provided for @notissueone.
+  ///
+  /// In en, this message translates to:
+  /// **'Defective spare parts or materials'**
+  String get notissueone;
+
+  /// No description provided for @notissuetwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Misuse or tampering after service'**
+  String get notissuetwo;
+
+  /// No description provided for @notissuethree.
+  ///
+  /// In en, this message translates to:
+  /// **'Third-party interventions'**
+  String get notissuethree;
+
+  /// No description provided for @notissuefour.
+  ///
+  /// In en, this message translates to:
+  /// **'Power surges, water leaks, natural disasters'**
+  String get notissuefour;
+
+  /// No description provided for @notissuefive.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal wear and tear'**
+  String get notissuefive;
+
+  /// No description provided for @claimText.
+  ///
+  /// In en, this message translates to:
+  /// **'To claim warranty, submit a request through the app within 7 days from service completion.'**
+  String get claimText;
+
+  /// No description provided for @warrantyAlertContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to request warranty repair for this service?'**
+  String get warrantyAlertContent;
+
   /// No description provided for @transactionId.
   ///
   /// In en, this message translates to:
   /// **'Transaction ID'**
   String get transactionId;
+
+  /// No description provided for @repairUnderWarranty.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair under warranty'**
+  String get repairUnderWarranty;
+
+  /// No description provided for @warrantyRepairSubmittedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **' \'Warranty repair request submitted successfully\''**
+  String get warrantyRepairSubmittedSuccessfully;
+
+  /// No description provided for @requestRepairUnderWarranty.
+  ///
+  /// In en, this message translates to:
+  /// **'Request repair under warranty'**
+  String get requestRepairUnderWarranty;
 
   /// No description provided for @networkError.
   ///

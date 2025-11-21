@@ -1046,6 +1046,49 @@ class AppServices {
       debugPrint('❌ Error marking all notifications as read: $e');
     }
   }
+
+  static Stream<List<BookingModel?>> getBookingsWithWarranty(
+    String customerId,
+  ) {
+    return AppFirestore.bookingsCollectionRef
+        .where('customer.uid', isEqualTo: customerId)
+        .where('bookingStatusCode', isEqualTo: "C")
+        .where('warranty', isNull: false)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map(
+                (doc) =>
+                    BookingModel.fromJson(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
+        });
+  }
+
+  static void requestWarrantyRepair(BookingModel booking) async {
+    try {
+      await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+        'warranty.availability': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      debugPrint('❌ Error requesting warranty repair: $e');
+    }
+  }
+
+  static Future<String> getroleNameArbyid(String id) async {
+    DocumentSnapshot value = await AppFirestore.categoriesCollectionRef
+        .doc(id)
+        .get();
+    return value.get('name_ar') as String;
+  }
+
+  static Future<String> getroleNameEnbyid(String id) async {
+    DocumentSnapshot value = await AppFirestore.categoriesCollectionRef
+        .doc(id)
+        .get();
+    return value.get('name') as String;
+  }
 }
 
 class WorkerWithStats {
