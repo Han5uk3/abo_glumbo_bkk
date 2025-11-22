@@ -1053,6 +1053,7 @@ class AppServices {
     return AppFirestore.bookingsCollectionRef
         .where('customer.uid', isEqualTo: customerId)
         .where('bookingStatusCode', isEqualTo: "C")
+        .where('paymentCompleted', isEqualTo: true)
         .where('warranty', isNull: false)
         .snapshots()
         .map((snapshot) {

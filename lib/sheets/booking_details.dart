@@ -5,6 +5,8 @@ import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
+import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
+import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -101,6 +103,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                   _buildStatusBadge(localization),
                   const SizedBox(height: 20),
                   _buildSectionCard(
+                    context: context,
+                    hasChat: false,
                     title: localization.serviceInformation,
                     icon: Icons.build_rounded,
                     children: [
@@ -137,6 +141,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   _buildSectionCard(
+                    context: context,
+                    hasChat: false,
                     title: localization.schedule,
                     icon: Icons.schedule_rounded,
                     children: [
@@ -160,6 +166,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
 
                   if (booking.notes.isNotEmpty) ...{
                     _buildSectionCard(
+                      context: context,
+                      hasChat: false,
                       title: localization.additionalNotes,
                       icon: Icons.note_rounded,
                       children: [
@@ -188,6 +196,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                   if (customerSelectedAddress != null &&
                       customerSelectedAddress.buildingNumber.isNotEmpty)
                     _buildSectionCard(
+                      context: context,
+                      hasChat: false,
                       title: localization.location,
                       icon: Icons.location_on_rounded,
                       children: [
@@ -204,6 +214,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                   const SizedBox(height: 16),
                   if (booking.agent != null)
                     _buildSectionCard(
+                      context: context,
+                      hasChat: true,
                       title: localization.technicianInfo,
                       icon: Icons.person_rounded,
                       children: [
@@ -212,6 +224,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                             localization.name,
                             booking.agent!.name!,
                           ),
+
                         if (booking.agent!.phone?.isNotEmpty == true)
                           _buildClickableInfoRow(
                             localization.phoneNumber,
@@ -234,6 +247,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
 
                   if (booking.bookingStatusCode == 'C')
                     _buildSectionCard(
+                      context: context,
+                      hasChat: false,
                       title: localization.pricingAndPayment,
                       icon: Icons.payments_rounded,
                       children: [
@@ -256,6 +271,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                       booking.bookingStatusCode == 'XC') ...[
                     const SizedBox(height: 16),
                     _buildSectionCard(
+                      context: context,
+                      hasChat: false,
                       title: localization.cancellationDetails,
                       icon: Icons.cancel_rounded,
                       children: [
@@ -295,6 +312,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                     const SizedBox(height: 16),
                   if (booking.review != null)
                     _buildSectionCard(
+                      context: context,
+                      hasChat: false,
                       title: localization.customerReview,
                       icon: Icons.star_rounded,
                       children: [
@@ -344,6 +363,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
     final completionData = booking.completionData!;
 
     return _buildSectionCard(
+      context: context,
+      hasChat: false,
       title: AppLocalizations.of(context)!.completionDetails,
       icon: Icons.check_circle,
       children: [
@@ -360,6 +381,17 @@ class BookingDetailsBottomSheet extends StatelessWidget {
               ? AppLocalizations.of(context)!.inspection
               : AppLocalizations.of(context)!.fullService,
         ),
+        if (booking.bookingStatusCode.toLowerCase() == 'c' &&
+            booking.paymentCompleted) ...{
+          _buildInfoRow(
+            AppLocalizations.of(context)!.paymentMode,
+            booking.paymentModeCode.toLowerCase() == 'c'
+                ? AppLocalizations.of(context)!.card
+                : booking.paymentModeCode.toLowerCase() == 'a'
+                ? AppLocalizations.of(context)!.applePay
+                : AppLocalizations.of(context)!.cashPayment,
+          ),
+        },
 
         // Upload Files
         if (completionData.fileUrls.isNotEmpty) ...[
@@ -452,6 +484,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 16),
         ],
 
         // Service Cost
@@ -503,17 +536,6 @@ class BookingDetailsBottomSheet extends StatelessWidget {
           ),
         ),
         SizedBox(height: 12),
-        if (booking.bookingStatusCode.toLowerCase() == 'c' &&
-            booking.paymentCompleted) ...{
-          _buildInfoRow(
-            AppLocalizations.of(context)!.paymentMode,
-            booking.paymentModeCode.toLowerCase() == 'c'
-                ? AppLocalizations.of(context)!.card
-                : booking.paymentModeCode.toLowerCase() == 'a'
-                ? AppLocalizations.of(context)!.applePay
-                : AppLocalizations.of(context)!.cashPayment,
-          ),
-        },
       ],
     );
   }
@@ -828,9 +850,11 @@ class BookingDetailsBottomSheet extends StatelessWidget {
   }
 
   Widget _buildSectionCard({
+    required BuildContext context,
     required String title,
     required IconData icon,
     required List<Widget> children,
+    required bool hasChat,
   }) {
     return Container(
       width: double.infinity,
@@ -869,6 +893,71 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
+              if (hasChat) ...{
+                const Spacer(),
+                if (booking.chatroomId.isNotEmpty)
+                  StreamBuilder<int>(
+                    stream: ChatService().getUnreadCountStream(
+                      booking.chatroomId,
+                    ),
+                    builder: (context, snapshot) {
+                      final unreadCount = snapshot.data ?? 0;
+                      return SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatScreen(
+                                  chatId: booking.chatroomId,
+                                  participantName:
+                                      booking.agent!.name ?? 'Technician',
+                                  participantId: booking.agent!.uid ?? '',
+                                  participantPhoto:
+                                      booking.agent!.profileUrl ?? '',
+                                  customerName:
+                                      booking.customer.name ?? 'Customer',
+                                  customerPhoto: '',
+                                  bookingId: booking
+                                      .id, // Customer model does not have profileUrl yet
+                                ),
+                              ),
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Icon(
+                                  Icons.chat_bubble_outline,
+                                  color: AppColors.secondary,
+                                ),
+                              ),
+                              if (unreadCount > 0)
+                                Positioned(
+                                  right: 12,
+                                  top: 12,
+                                  child: Container(
+                                    width: 12,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+              },
             ],
           ),
           const SizedBox(height: 16),

@@ -77,6 +77,7 @@ class BookingUtils {
 
       // Create customer data with only the selected address marked as selected
       final updatedCustomerData = CustomerModel(
+        role: "customer",
         uid: customerData.uid,
         name: customerData.name,
         email: customerData.email,

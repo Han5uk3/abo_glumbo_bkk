@@ -6,6 +6,7 @@ import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/providers.dart';
 import 'package:abo_glumbo_bbk/services/notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,15 +17,45 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 final String hiveBoxName = 'myBox';
 GlobalKey<NavigatorState>? navigatorKey = GlobalKey();
+
+// Track if persistence has been set
+bool _persistenceEnabled = false;
+
+Future<void> _initializeFirebaseDatabase() async {
+  if (!_persistenceEnabled) {
+    try {
+      FirebaseDatabase.instance.setPersistenceEnabled(true);
+      _persistenceEnabled = true;
+      debugPrint('✅ Database persistence enabled');
+    } catch (e) {
+      debugPrint('⚠️ Persistence already set or error: $e');
+      _persistenceEnabled = true;
+    }
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // 1. Initialize Firebase FIRST
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
+  // 2. Set database persistence IMMEDIATELY after Firebase init, before ANY database usage
+  await _initializeFirebaseDatabase();
+  
+  // 3. Set background message handler
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  
+  // 4. Initialize Hive
   await Hive.initFlutter();
   await Hive.openBox(hiveBoxName);
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  
+  // 5. Initialize notifications (non-blocking for permissions)
   await NotificationServices.initializeNotifications();
-  await NotificationServices.setupFCMListeners();
-  await NotificationServices.checkForInitialMessage();
+  NotificationServices.setupFCMListeners(); // Don't await - let it run async
+  NotificationServices.checkForInitialMessage(); // Don't await
+  
+  // 6. System UI setup
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -32,6 +63,7 @@ Future<void> main() async {
       statusBarColor: Colors.transparent,
     ),
   );
+  
   runApp(MyApp(navigatorKey: navigatorKey));
 }
 
@@ -60,7 +92,6 @@ class MyApp extends StatelessWidget {
               ],
               supportedLocales: const [Locale('en'), Locale('ar')],
               localeResolutionCallback: (locale, supportedLocales) {
-                // Always return the user's saved locale preference, not the device locale
                 if (supportedLocales.any(
                   (supported) =>
                       supported.languageCode == state.locale.languageCode,

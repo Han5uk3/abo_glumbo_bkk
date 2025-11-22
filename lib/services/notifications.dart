@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:io' show Platform;
@@ -11,12 +13,22 @@ import 'app_services.dart';
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 
+  // Set persistence in background isolate too (with try-catch)
+  try {
+    FirebaseDatabase.instance.setPersistenceEnabled(true);
+  } catch (e) {
+    // Already set, ignore
+  }
+
   await AppServices.storeNotificationInFirestore(message);
 }
 
 class NotificationServices {
   static bool _isInitialized = false;
   static bool _tokenRefreshListenerSet = false;
+  static bool _permissionRequestInProgress = false;
+  static Completer<NotificationSettings>? _permissionCompleter;
+
   static final FirebaseMessaging _firebaseMessaging =
       FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin
@@ -71,6 +83,41 @@ class NotificationServices {
     });
   }
 
+  // Safe permission request that prevents duplicate calls
+  static Future<NotificationSettings> _requestPermissionSafe() async {
+    // If a request is already in progress, wait for it
+    if (_permissionRequestInProgress && _permissionCompleter != null) {
+      debugPrint('⏳ Permission request already in progress, waiting...');
+      return _permissionCompleter!.future;
+    }
+
+    _permissionRequestInProgress = true;
+    _permissionCompleter = Completer<NotificationSettings>();
+
+    try {
+      final settings = await _firebaseMessaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      _permissionCompleter!.complete(settings);
+      return settings;
+    } catch (e) {
+      // If permission request fails, try to get current settings instead
+      debugPrint('⚠️ Permission request failed, getting current settings: $e');
+      try {
+        final settings = await _firebaseMessaging.getNotificationSettings();
+        _permissionCompleter!.complete(settings);
+        return settings;
+      } catch (e2) {
+        _permissionCompleter!.completeError(e2);
+        rethrow;
+      }
+    } finally {
+      _permissionRequestInProgress = false;
+    }
+  }
+
   static Future<void> initializeFCM() async {
     if (_isInitialized) {
       debugPrint('FCM already initialized, skipping...');
@@ -85,14 +132,19 @@ class NotificationServices {
             sound: true,
           );
 
-      NotificationSettings settings = await _firebaseMessaging
-          .requestPermission(alert: true, badge: true, sound: true);
+      // Use safe permission request
+      NotificationSettings settings = await _requestPermissionSafe();
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized ||
           settings.authorizationStatus == AuthorizationStatus.provisional) {
         await _getFCMTokenAndUpdate();
         _setupTokenRefreshListener();
         _isInitialized = true;
+        debugPrint('✅ FCM initialized successfully');
+      } else {
+        debugPrint(
+          '⚠️ Notification permissions not granted: ${settings.authorizationStatus}',
+        );
       }
     } catch (e) {
       debugPrint('❌ Error initializing FCM: $e');
@@ -104,7 +156,6 @@ class NotificationServices {
       String? token;
 
       if (Platform.isIOS) {
-        // Wait for APNS token with timeout
         await _waitForAPNSToken();
         token = await _firebaseMessaging.getToken();
       } else {
@@ -130,10 +181,8 @@ class NotificationServices {
 
       debugPrint('⏳ Waiting for APNS token...');
 
-      // Wait up to 10 seconds for APNS token
       int attempts = 0;
       while (attempts < 20) {
-        // 20 attempts * 500ms = 10 seconds
         await Future.delayed(const Duration(milliseconds: 500));
         apnsToken = await _firebaseMessaging.getAPNSToken();
         if (apnsToken != null) {
@@ -162,12 +211,13 @@ class NotificationServices {
         debugPrint('🔄 FCM Token refreshed: ${fcmToken.substring(0, 20)}...');
         if (fcmToken.isNotEmpty) {
           AppServices.updateFCMToken(fcmToken)
-              .then((_) {
-                debugPrint('✅ Refreshed FCM Token updated successfully');
-              })
-              .catchError((error) {
-                debugPrint('❌ Error updating refreshed FCM token: $error');
-              });
+              .then(
+                (_) => debugPrint('✅ Refreshed FCM Token updated successfully'),
+              )
+              .catchError(
+                (error) =>
+                    debugPrint('❌ Error updating refreshed FCM token: $error'),
+              );
         }
       },
       onError: (error) {
@@ -206,6 +256,7 @@ class NotificationServices {
   static Future<void> deleteFCMToken() async {
     try {
       await _firebaseMessaging.deleteToken();
+      _isInitialized = false; // Reset so FCM can be re-initialized
       debugPrint('🗑️ FCM token deleted successfully');
     } catch (e) {
       debugPrint('❌ Error deleting FCM token: $e');
@@ -217,6 +268,9 @@ class NotificationServices {
       debugPrint('🔍 FCM Debug Status:');
       debugPrint('   - Initialized: $_isInitialized');
       debugPrint('   - Token refresh listener set: $_tokenRefreshListenerSet');
+      debugPrint(
+        '   - Permission request in progress: $_permissionRequestInProgress',
+      );
 
       String? token = await getCurrentFCMToken();
       if (token != null) {
@@ -298,11 +352,5 @@ class NotificationServices {
         AppServices.storeNotificationInFirestore(initialMessage);
       }
     }
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        AppServices.storeNotificationInFirestore(message);
-      }
-    });
   }
 }

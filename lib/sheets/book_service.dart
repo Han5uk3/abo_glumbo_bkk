@@ -51,7 +51,7 @@ class BookServiceBottomSheet extends StatefulWidget {
 
 class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   final ValueNotifier<int?> selectedIndexNotifier = ValueNotifier<int?>(null);
-  UserModel selectedWorker = UserModel(uid: "");
+  UserModel selectedWorker = UserModel(uid: "",role: "customer");
   bool isFirstStep = true;
   bool isSecondStep = false;
   bool isThirdStep = false;

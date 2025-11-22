@@ -168,6 +168,7 @@ class _SignupPageState extends State<SignupPage> {
       );
 
       CustomerModel customer = CustomerModel(
+        role: "customer",
         uid: widget.uid,
         name: nameController.text.trim(),
         email: emailController.text.trim(),

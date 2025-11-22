@@ -4,6 +4,7 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CustomerModel {
+  final String role;
   final String? uid;
   final String? name;
   final String? email;
@@ -35,6 +36,7 @@ class CustomerModel {
 
   CustomerModel({
     this.uid,
+    required this.role,
     this.name,
     this.email,
     this.phone,
@@ -56,6 +58,7 @@ class CustomerModel {
       uid: json['uid'] ?? '',
       name: json['name'],
       email: json['email'],
+      role: json['role'],
       phone: json['phone'],
       fcmToken: json['fcmToken'],
       lanCode: json['lanCode'],
@@ -89,6 +92,7 @@ class CustomerModel {
       'name': name,
       'email': email,
       'phone': phone,
+      'role': role,
       'fcmToken': fcmToken,
       'lanCode': lanCode,
       'country': country,
@@ -111,6 +115,7 @@ class CustomerModel {
     String? phone,
     String? fcmToken,
     String? lanCode,
+    required String role,
     String? country,
     LocationModel? location,
     DetailedLocationModel? detailedLocation,
@@ -123,6 +128,7 @@ class CustomerModel {
   }) {
     return CustomerModel(
       uid: uid ?? this.uid,
+      role: role,
       name: name ?? this.name,
       email: email ?? this.email,
       phone: phone ?? this.phone,
@@ -152,6 +158,7 @@ class CustomerModel {
     }
 
     checkAndSet('name', name, previous.name);
+    checkAndSet('role', role, previous.role);
     checkAndSet('email', email, previous.email);
     checkAndSet('phone', phone, previous.phone);
     checkAndSet('fcmToken', fcmToken, previous.fcmToken);

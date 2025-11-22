@@ -1521,4 +1521,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get networkError => 'Network error. Please check your connection.';
+
+  @override
+  String get technician => 'Technician';
+
+  @override
+  String get typeMessage => 'Type a message...';
+
+  @override
+  String get noMessages => 'No messages yet';
+
+  @override
+  String get startConversation => 'Start a conversation';
+
+  @override
+  String get errorLoadingMessages => 'Error loading messages';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get chat => 'Chat';
+
+  @override
+  String get chatWithTechnician => 'Chat with Technician';
 }

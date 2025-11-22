@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/helpers/date_formatter.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/booking_bloc.dart';
@@ -246,21 +247,21 @@ class ServiceBookingTile extends StatelessWidget {
                 if (booking.bookingStatusCode == "P" &&
                     booking.createdAt != null) ...{
                   Text(
-                    "${AppLocalizations.of(context)!.bookedOn} : ${booking.createdAt?.toDate().toString() ?? ""}",
+                    "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
                     style: TextStyle(color: AppColors.grey3, fontSize: 12),
                   ),
                 },
                 if (booking.acceptedAt != null &&
                     booking.bookingStatusCode == "A") ...{
                   Text(
-                    "${AppLocalizations.of(context)!.acceptedOn} : ${booking.acceptedAt?.toDate().toString() ?? ""}",
+                    "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(booking.acceptedAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
                     style: TextStyle(color: AppColors.grey3, fontSize: 12),
                   ),
                 },
                 if (booking.completedAt != null &&
                     booking.bookingStatusCode == "C") ...{
                   Text(
-                    "${AppLocalizations.of(context)!.completedOn} : ${booking.completedAt?.toDate().toString() ?? ""}",
+                    "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(booking.completedAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
                     style: TextStyle(color: AppColors.grey3, fontSize: 12),
                   ),
                 },
@@ -268,7 +269,7 @@ class ServiceBookingTile extends StatelessWidget {
                     booking.bookingStatusCode == "XC" ||
                     booking.bookingStatusCode == "R") ...{
                   Text(
-                    "${AppLocalizations.of(context)!.canceledOn} : ${booking.cancelledAt?.toDate().toString() ?? ""}",
+                    "${AppLocalizations.of(context)!.canceledOn} : ${formatBookingDateTime(booking.cancelledAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
                     style: TextStyle(color: AppColors.grey3, fontSize: 12),
                   ),
                 },

@@ -25,7 +25,7 @@ class CategoryCard extends StatelessWidget {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
+        // margin: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
         height: 105,
         width: 105,
         clipBehavior: Clip.antiAlias,
@@ -61,16 +61,22 @@ class CategoryCard extends StatelessWidget {
                     ),
             ),
             const SizedBox(height: 5),
-            Text(
-              category.nameLocalized(
-                    languageCode:
-                        AppLocalizations.of(context)?.localeName ?? '',
-                  ) ??
-                  '',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: AppColors.black3,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                category.nameLocalized(
+                      languageCode:
+                          AppLocalizations.of(context)?.localeName ?? '',
+                    ) ??
+                    '',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.black3,
+                ),
               ),
             ),
           ],

@@ -35,6 +35,7 @@ class BookingModel {
   late CustomerModel customer;
   CompletionDataModel? completionData;
   late String paymentModeCode;
+  String chatroomId = '';
 
   /// generate payment mode string based on payment mode code
   String get paymentModeGen {
@@ -77,6 +78,7 @@ class BookingModel {
     required this.customer,
     required this.paymentModeCode,
     this.isStartTracking,
+    this.chatroomId = '',
     this.review,
     this.agent,
     this.createdAt,
@@ -97,6 +99,7 @@ class BookingModel {
       completionData = data['completionData'] != null
           ? CompletionDataModel.fromMap(data['completionData'])
           : null,
+      chatroomId = data['chatroomId'] ?? '',
       bookingDateTime = data['bookingDateTime'],
       bookingStatusCode = data['bookingStatusCode'],
       isStartTracking = data['isStarted'] ?? false,
@@ -147,6 +150,7 @@ class BookingModel {
       'notes': notes,
       'issueImage': issueImage,
       'issueVideo': issueVideo,
+      'chatroomId': chatroomId,
       'customer': customer.toJson(),
       'paymentModeCode': paymentModeCode,
       'isStarted': isStartTracking ?? false,

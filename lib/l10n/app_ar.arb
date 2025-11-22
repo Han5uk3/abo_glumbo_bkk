@@ -491,5 +491,14 @@
   "notissuefour": "التدفق الكهربائي، والخطوات البحرية، والطوارئ الطبيعية",
   "notissuefive": "التغطية العادية",
   "claimText": "لطلب ضمان، ارسل طلب من خلال التطبيق خلال 7 أيام من تاريخ اكمال الخدمة.",
-  "warrantyRepairSubmittedSuccessfully": "تم ارسال طلب اصلاح تحت ضمان بنجاح"
+  "warrantyRepairSubmittedSuccessfully": "تم ارسال طلب اصلاح تحت ضمان بنجاح",
+  "technician": "فني",
+  "typeMessage": "اكتب رسالة...",
+  "noMessages": "لا توجد رسائل بعد",
+  "startConversation": "ابدأ محادثة",
+  "errorLoadingMessages": "خطأ في تحميل الرسائل",
+  "today": "اليوم",
+  "yesterday": "أمس",
+  "chat": "الدردشة",
+  "chatWithTechnician": "الدردشة مع الفني"
 }

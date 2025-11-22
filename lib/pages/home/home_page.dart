@@ -149,25 +149,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             color: AppColors.primary,
           ),
 
-         if (!_isGuest)
-  Positioned(
-    top: safePadding.top + 8,
-    right: 16,
-    left: 16,
-    child: Row(
-      children: [
-        const LocationShowingWidget(),
-        Spacer(),
-        UnreadNotificationBadge(
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const NotificationsPage(),
+          if (!_isGuest)
+            Positioned(
+              top: safePadding.top + 8,
+              right: 16,
+              left: 16,
+              child: Row(
+                children: [
+                  const LocationShowingWidget(),
+                  Spacer(),
+                  UnreadNotificationBadge(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationsPage(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-      ],
-    ),
-  ),
           if (primaryBanners.isNotEmpty)
             Positioned(
               top: safePadding.top + 50,
@@ -245,9 +245,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         return SliverGrid(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
-            childAspectRatio: 1,
-            mainAxisSpacing: 8,
-            mainAxisExtent: 105,
+            childAspectRatio: 1.0,
+            mainAxisExtent: 125,
           ),
           delegate: SliverChildBuilderDelegate((context, index) {
             final category = CategoryModel.fromQuerySnapshot(categories[index]);

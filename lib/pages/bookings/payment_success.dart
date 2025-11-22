@@ -230,7 +230,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
               _buildDetailRow(
                 icon: Icons.payment,
                 label: AppLocalizations.of(context)!.paymentMethod,
-                value: widget.paymentMethod,
+                value: _getPaymentMethod(widget.paymentMethod),
               ),
               const SizedBox(height: 16),
               _buildDetailRow(
@@ -259,6 +259,17 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
         ),
       ),
     );
+  }
+
+  _getPaymentMethod(String method) {
+    switch (method) {
+      case 'O':
+        return AppLocalizations.of(context)!.cashInHand;
+      case 'C':
+        return AppLocalizations.of(context)!.cards;
+      default:
+        return AppLocalizations.of(context)!.unknown;
+    }
   }
 
   Widget _buildAmountRow() {

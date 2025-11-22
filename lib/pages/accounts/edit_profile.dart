@@ -170,6 +170,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       );
 
       final updatedCustomer = widget.customer.copyWith(
+        role: "customer",
         name: nameController.text.trim(),
         email: emailController.text.trim(),
         detailedLocation: detailedLocation, // ✅ Use DetailedLocationModel

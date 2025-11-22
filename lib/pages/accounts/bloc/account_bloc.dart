@@ -173,6 +173,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
       // Create updated customer data
       final updatedCustomerData = CustomerModel(
+        role: "customer",
         uid: customerData.uid,
         name: customerData.name,
         email: customerData.email,

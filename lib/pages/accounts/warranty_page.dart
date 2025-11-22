@@ -90,9 +90,17 @@ class _WarrantyPageState extends State<WarrantyPage> {
             children: [
               // Warranty Information Header
               Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                color: Colors.white,
                 margin: const EdgeInsets.all(16),
                 elevation: 2,
                 child: ExpansionTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: Colors.white,
                   initiallyExpanded: true,
                   title: Text(
                     locale.warrantyInformation,
@@ -191,7 +199,7 @@ class _WarrantyPageState extends State<WarrantyPage> {
                             notes: '',
                             issueImage: '',
                             issueVideo: '',
-                            customer: CustomerModel(),
+                            customer: CustomerModel(role: "customer"),
                             paymentModeCode: '',
                           ),
                       isRequested: booking?.warranty?.availability ?? false,

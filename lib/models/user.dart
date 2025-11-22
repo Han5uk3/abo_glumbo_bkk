@@ -3,6 +3,7 @@ import '/models/location.dart';
 
 class UserModel {
   String? uid;
+  String role;
   String? name;
   String? email;
   String? phone;
@@ -33,6 +34,7 @@ class UserModel {
   Timestamp? lastBonusDate;
 
   UserModel({
+    required this.role,
     this.uid,
     this.name,
     this.certifications,
@@ -65,6 +67,7 @@ class UserModel {
 
   UserModel copyWith({
     String? uid,
+    String? role,
     String? name,
     String? email,
     String? phone,
@@ -96,6 +99,7 @@ class UserModel {
   }) {
     return UserModel(
       uid: uid ?? this.uid,
+      role: role ?? this.role,
       name: name ?? this.name,
       email: email ?? this.email,
       phone: phone ?? this.phone,
@@ -133,6 +137,7 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       uid: json['uid'] ?? '',
+      role: json['role'],
       name: json['name'],
       email: json['email'],
       phone: json['phone'],
@@ -188,6 +193,7 @@ class UserModel {
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
+      'role': role,
       'name': name,
       'email': email,
       'phone': phone,
@@ -222,6 +228,7 @@ class UserModel {
   Map<String, dynamic> toFirestore() {
     return {
       'name': name,
+      'role': role,
       'email': email,
       'phone': phone,
       'lanCode': lanCode,
@@ -256,6 +263,9 @@ class UserModel {
 
     if (name != previous.name && name != null) {
       json['name'] = name;
+    }
+    if (role != previous.role && role != null) {
+      json['role'] = role;
     }
     if (email != previous.email && email != null) {
       json['email'] = email;

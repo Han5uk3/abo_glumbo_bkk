@@ -1504,4 +1504,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get networkError => 'خطأ في الشبكة. يرجى التحقق من اتصالك.';
+
+  @override
+  String get technician => 'فني';
+
+  @override
+  String get typeMessage => 'اكتب رسالة...';
+
+  @override
+  String get noMessages => 'لا توجد رسائل بعد';
+
+  @override
+  String get startConversation => 'ابدأ محادثة';
+
+  @override
+  String get errorLoadingMessages => 'خطأ في تحميل الرسائل';
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get yesterday => 'أمس';
+
+  @override
+  String get chat => 'الدردشة';
+
+  @override
+  String get chatWithTechnician => 'الدردشة مع الفني';
 }

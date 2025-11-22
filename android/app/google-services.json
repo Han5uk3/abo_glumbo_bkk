@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "629201660527",
+    "firebase_url": "https://worker-app-tnext-default-rtdb.firebaseio.com",
     "project_id": "worker-app-tnext",
     "storage_bucket": "worker-app-tnext.appspot.com"
   },
@@ -66,6 +67,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "629201660527-4lladjbm97q603ldd34rkv7b1uc9cqps.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aboglumbo.cPanel",
+            "certificate_hash": "f82ab6b94ed43935d3f5204860f6e83f4c4865d4"
+          }
+        },
+        {
+          "client_id": "629201660527-ejplcg472na9r6fjofanjaarvo3oemrb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aboglumbo.cPanel",
+            "certificate_hash": "f7c3998f8644b2bb67dcb5d3f64f75f91a08df19"
+          }
+        },
+        {
           "client_id": "629201660527-evll86fp24bad640optrj8mmob390som.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -79,6 +96,14 @@
           "android_info": {
             "package_name": "com.aboglumbo.cPanel",
             "certificate_hash": "e92d1a421ba021715ebc3f4e67bc61709af4434f"
+          }
+        },
+        {
+          "client_id": "629201660527-sgj82n36k0a5a5m26d5o8844t8r2q8ms.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aboglumbo.cPanel",
+            "certificate_hash": "1cbd79af68514d45cd06ff5295ee8ff4ae38600b"
           }
         },
         {
