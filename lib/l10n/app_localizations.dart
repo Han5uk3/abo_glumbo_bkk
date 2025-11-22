@@ -182,6 +182,12 @@ abstract class AppLocalizations {
   /// **'Image'**
   String get image;
 
+  /// No description provided for @yourTechnicianIsMovingToYourLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your technician is moving to your location.'**
+  String get yourTechnicianIsMovingToYourLocation;
+
   /// No description provided for @issueImage.
   ///
   /// In en, this message translates to:
@@ -193,6 +199,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading Video'**
   String get loadingVideo;
+
+  /// No description provided for @tapForLiveLocationTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap for Live Location Tracking'**
+  String get tapForLiveLocationTracking;
 
   /// No description provided for @allMarkedAsRead.
   ///
@@ -3049,6 +3061,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Chat with Technician'**
   String get chatWithTechnician;
+
+  /// No description provided for @mins.
+  ///
+  /// In en, this message translates to:
+  /// **'mins'**
+  String get mins;
+
+  /// No description provided for @hour.
+  ///
+  /// In en, this message translates to:
+  /// **'hr'**
+  String get hour;
+
+  /// No description provided for @hours.
+  ///
+  /// In en, this message translates to:
+  /// **'hrs'**
+  String get hours;
 }
 
 class _AppLocalizationsDelegate

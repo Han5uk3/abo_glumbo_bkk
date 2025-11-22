@@ -13,8 +13,10 @@
   "failedToLoadImage": "Failed to load image",
   "issueMedia": "Issue Media",
   "image": "Image",
+  "yourTechnicianIsMovingToYourLocation": "Your technician is moving to your location.",
   "issueImage": "Issue Image",
   "loadingVideo": "Loading Video",
+  "tapForLiveLocationTracking": "Tap for Live Location Tracking",
   "allMarkedAsRead": "All notifications marked as read",
   "failedToLoadVideo": "Failed to load video",
   "video": "Video",
@@ -509,5 +511,8 @@
   "today": "Today",
   "yesterday": "Yesterday",
   "chat": "Chat",
-  "chatWithTechnician": "Chat with Technician"
+  "chatWithTechnician": "Chat with Technician",
+  "mins": "mins",
+  "hour": "hr",
+  "hours": "hrs"
 }

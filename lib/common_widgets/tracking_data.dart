@@ -1,4 +1,5 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +7,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TrackingData extends StatelessWidget {
-  String? timeTakenToArrive;
-  String? remainingKm;
-  UserModel? worker;
+  final String? timeTakenToArrive;
+  final String? remainingKm;
+  final UserModel? worker;
 
-  TrackingData({
+  const TrackingData({
     super.key,
     this.timeTakenToArrive,
     this.worker,
@@ -19,120 +20,189 @@ class TrackingData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return Container(
+      padding: const EdgeInsets.all(24.0),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10),
-          _title(
-            AppLocalizations.of(context)?.technicianArrivesToLocationIn ??
-                'Worker arrives to location in',
-            16,
-            fontWeight: FontWeight.normal,
+          // ETA & Distance Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Time / ETA
+              Row(
+                children: [
+                  const Text('⏱️', style: TextStyle(fontSize: 24)),
+                  const SizedBox(width: 8),
+                  Text(
+                    timeTakenToArrive ?? '--',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+
+              // Distance
+              if (remainingKm != "") ...{
+                Row(
+                  children: [
+                    const Text('📍', style: TextStyle(fontSize: 18)),
+                    const SizedBox(width: 4),
+                    Text(
+                      Directionality.of(context) == TextDirection.rtl
+                          ? remainingKm ?? '--'
+                          : "${remainingKm ?? '--'} away",
+                      style: GoogleFonts.dmSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                  ],
+                ),
+              },
+            ],
           ),
-          SizedBox(height: 5),
-          _title('$timeTakenToArrive', 35, fontWeight: FontWeight.bold),
-          _title('$remainingKm ${AppLocalizations.of(context)!.localeName == 'ar'? '' : 'away'}',
-            12,
-            fontWeight: FontWeight.normal,
+
+          const SizedBox(height: 16),
+
+          // Status Message
+          Text(
+            AppLocalizations.of(context)!.yourTechnicianIsMovingToYourLocation,
+            style: GoogleFonts.dmSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
           ),
-          SizedBox(height: 10),
-          _title(
-            AppLocalizations.of(context)?.yourTechnicianIsOnTheWay ??
-                'Your Worker is on the way',
-            16,
-            fontWeight: FontWeight.normal,
-          ),
-          SizedBox(height: 5),
-          serviceWorkerCard(
-            name:
-                worker?.name ??
-                AppLocalizations.of(context)?.serviceProvider ??
-                'Service Provider',
-            onCall: worker?.phone != null
-                ? () {
+
+          const SizedBox(height: 24),
+          Divider(height: 1, color: Colors.grey[200]),
+          const SizedBox(height: 24),
+
+          // Technician Bottom Card
+          Row(
+            children: [
+              // Avatar / Icon
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.amber[50],
+                  shape: BoxShape.circle,
+                ),
+                child: ClipOval(
+                  child:
+                      worker?.profileUrl != null &&
+                          worker!.profileUrl!.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: worker!.profileUrl!,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(
+                            child: Icon(
+                              Icons.person,
+                              color: AppColors.primary,
+                              size: 28,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Center(
+                            child: Icon(
+                              Icons.person,
+                              color: AppColors.primary,
+                              size: 28,
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Icon(
+                            Icons.person,
+                            color: AppColors.primary,
+                            size: 28,
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              // Name & Profession
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      worker?.name ?? 'Technician',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      worker?.role ??
+                          'Service Provider', // Assuming role is available or use a default
+                      style: GoogleFonts.dmSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Call Button
+              if (worker?.phone != null)
+                InkWell(
+                  onTap: () {
                     launchUrl(
                       Uri.parse('tel:${worker!.phone}'),
                       mode: LaunchMode.externalApplication,
                     );
-                  }
-                : null,
-            context: context,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _title(
-    String title,
-    double fontSize, {
-    FontWeight fontWeight = FontWeight.w600,
-    String? subtitle,
-  }) {
-    return Column(
-      children: [
-        Text(
-          title,
-          style: GoogleFonts.poppins(
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-            color: Colors.black,
-          ),
-        ),
-        SizedBox(height: 5),
-        if (subtitle != null)
-          Text(
-            subtitle,
-            style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600]),
-          ),
-      ],
-    );
-  }
-
-  Widget serviceWorkerCard({
-    String name = 'Service Provider',
-    VoidCallback? onCall,
-    VoidCallback? onTap,
-    required BuildContext context,
-  }) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 2, vertical: 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey[300]!, width: 1),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        child: ListTile(
-          leading: Container(
-            decoration: BoxDecoration(
-              color: Colors.amber[50],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: EdgeInsets.all(10),
-            child: Icon(Icons.engineering, color: AppColors.primary, size: 32),
-          ),
-          title: Text(
-            name,
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: Icon(Icons.call, color: AppColors.primary),
-                tooltip:
-                    AppLocalizations.of(context)?.callServiceProvider ??
-                    'Call Service Provider',
-                onPressed: onCall,
-              ),
+                  },
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary, // Main brand color
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.phone,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
             ],
           ),
-          onTap: onTap,
-        ),
+          const SizedBox(height: 16), // Bottom padding
+        ],
       ),
     );
   }

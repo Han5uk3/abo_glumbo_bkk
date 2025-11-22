@@ -14,6 +14,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -658,8 +659,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
               children: [
                 Column(
                   children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.65,
+                    Expanded(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: GoogleMap(
@@ -710,21 +710,16 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                             if (routePoints.isNotEmpty)
                               Polyline(
                                 polylineId: const PolylineId("route"),
-                                color: const Color(0xFF1976D2),
-                                width:
-                                    MediaQuery.of(context).devicePixelRatio < 2
-                                    ? 5
-                                    : 6,
+                                color: Colors.red, // Red color as requested
+                                width: 5,
                                 startCap: Cap.roundCap,
                                 endCap: Cap.roundCap,
                                 jointType: JointType.round,
                                 points: routePoints,
-                                patterns: routePoints.length == 2
-                                    ? [
-                                        PatternItem.dash(20),
-                                        PatternItem.gap(10),
-                                      ]
-                                    : [],
+                                patterns: [
+                                  PatternItem.dash(20),
+                                  PatternItem.gap(10),
+                                ],
                               ),
                           },
                         ),
@@ -741,32 +736,56 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                       remainingKm:
                           distance ??
                           (_agentLatLng == null
-                              ? '--'
-                              : AppLocalizations.of(context)!.calculating),
+                              ? AppLocalizations.of(
+                                  context,
+                                )!.waitingForAgentLocation
+                              : ""),
                       worker: widget.booking?.agent,
                     ),
                   ],
                 ),
 
+                // Header
                 Positioned(
-                  top: 24 + MediaQuery.of(context).viewPadding.top,
-                  left: Directionality.of(context) == TextDirection.rtl
-                      ? null
-                      : 16,
-                  right: Directionality.of(context) == TextDirection.rtl
-                      ? 16
-                      : null,
-                  child: ClipOval(
-                    child: Material(
-                      color: Colors.white.withOpacity(0.9),
-                      child: InkWell(
-                        splashColor: Colors.grey[300],
-                        onTap: () => Navigator.pop(context),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Icon(Icons.arrow_back, size: 24),
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).padding.top + 10,
+                      bottom: 10,
+                      left: 16,
+                      right: 16,
+                    ),
+                    // color: Colors.white.withOpacity(0.9),
+                    color: AppColors.primary,
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.transparent,
+                            ),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 16),
+                        Text(
+                          AppLocalizations.of(context)!.liveTracking,
+                          style: GoogleFonts.dmSans(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

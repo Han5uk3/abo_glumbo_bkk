@@ -52,10 +52,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get image => 'صورة';
 
   @override
+  String get yourTechnicianIsMovingToYourLocation =>
+      'الفنّي في طريقه إلى موقعك';
+
+  @override
   String get issueImage => 'مشكلة في الصورة';
 
   @override
   String get loadingVideo => 'جاري تحميل الفيديو';
+
+  @override
+  String get tapForLiveLocationTracking => 'اضغط لتتبع الموقع المباشر';
 
   @override
   String get allMarkedAsRead => 'تم وضع علامة على جميع الإشعارات كمقروءة';
@@ -1531,4 +1538,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get chatWithTechnician => 'الدردشة مع الفني';
+
+  @override
+  String get mins => 'دقائق';
+
+  @override
+  String get hour => 'ساعة';
+
+  @override
+  String get hours => 'ساعات';
 }

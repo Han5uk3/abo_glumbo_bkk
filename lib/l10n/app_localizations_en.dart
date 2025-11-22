@@ -52,10 +52,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get image => 'Image';
 
   @override
+  String get yourTechnicianIsMovingToYourLocation =>
+      'Your technician is moving to your location.';
+
+  @override
   String get issueImage => 'Issue Image';
 
   @override
   String get loadingVideo => 'Loading Video';
+
+  @override
+  String get tapForLiveLocationTracking => 'Tap for Live Location Tracking';
 
   @override
   String get allMarkedAsRead => 'All notifications marked as read';
@@ -1548,4 +1555,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatWithTechnician => 'Chat with Technician';
+
+  @override
+  String get mins => 'mins';
+
+  @override
+  String get hour => 'hr';
+
+  @override
+  String get hours => 'hrs';
 }

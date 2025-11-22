@@ -36,25 +36,25 @@ Future<void> _initializeFirebaseDatabase() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // 1. Initialize Firebase FIRST
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  
+
   // 2. Set database persistence IMMEDIATELY after Firebase init, before ANY database usage
   await _initializeFirebaseDatabase();
-  
+
   // 3. Set background message handler
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  
+
   // 4. Initialize Hive
   await Hive.initFlutter();
   await Hive.openBox(hiveBoxName);
-  
+
   // 5. Initialize notifications (non-blocking for permissions)
   await NotificationServices.initializeNotifications();
   NotificationServices.setupFCMListeners(); // Don't await - let it run async
   NotificationServices.checkForInitialMessage(); // Don't await
-  
+
   // 6. System UI setup
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
@@ -63,7 +63,7 @@ Future<void> main() async {
       statusBarColor: Colors.transparent,
     ),
   );
-  
+
   runApp(MyApp(navigatorKey: navigatorKey));
 }
 
@@ -101,11 +101,23 @@ class MyApp extends StatelessWidget {
                 return supportedLocales.first;
               },
               builder: (context, child) {
-                return Directionality(
-                  textDirection: state.locale.languageCode == 'ar'
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
-                  child: child!,
+                final mediaQuery = MediaQuery.of(context);
+                // Check if there's a bottom system inset (nav bar/home indicator)
+                final double extraBottomPadding =
+                    mediaQuery.viewPadding.bottom > 0 ? 60.0 : 0.0;
+
+                return MediaQuery(
+                  data: mediaQuery.copyWith(
+                    padding: mediaQuery.padding.copyWith(
+                      bottom: mediaQuery.padding.bottom + extraBottomPadding,
+                    ),
+                  ),
+                  child: Directionality(
+                    textDirection: state.locale.languageCode == 'ar'
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                    child: child!,
+                  ),
                 );
               },
               theme: ThemeData(
