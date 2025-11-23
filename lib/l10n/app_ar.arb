@@ -499,6 +499,7 @@
   "claimText": "ملاحظة: للمطالبة بالضمان، قدّم طلباً عبر التطبيق خلال 7 أيام من إكمال الخدمة.",
   "warrantyRepairSubmittedSuccessfully": "تم ارسال طلب اصلاح تحت ضمان بنجاح",
   "technician": "فني",
+  "fetching": "جاري الجلب",
   "idDocument": "وثيقة الهوية",
   "typeMessage": "اكتب رسالة...",
   "rejectedOn": "تم رفضه في",
@@ -512,5 +513,6 @@
   "tapToUpload": "اضغط لتحميل",
   "tapToView": "اضغط لعرض",
   "issueVideo": "فيديو المشكلة",
+  "locationError": "خطأ في الموقع",
   "chatWithTechnician": "الدردشة مع الفني"
 }

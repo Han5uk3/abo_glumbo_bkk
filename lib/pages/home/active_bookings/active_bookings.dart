@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:developer';
+import 'dart:math' as math;
 import 'package:abo_glumbo_bbk/apis/google_tracking_polylines.dart';
 import 'package:abo_glumbo_bbk/common_widgets/live_tracking.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -349,6 +350,22 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         lng <= 180;
   }
 
+  /// Calculate straight-line distance between two coordinates using Haversine formula
+  double _calculateStraightLineDistance(
+    double lat1,
+    double lng1,
+    double lat2,
+    double lng2,
+  ) {
+    const p = 0.017453292519943295; // Math.PI / 180
+    final dlat = (lat2 - lat1) * p;
+    final dlng = (lng2 - lng1) * p;
+    final a =
+        (0.5 - math.cos(dlat) / 2) +
+        math.cos(lat1 * p) * math.cos(lat2 * p) * (1 - math.cos(dlng)) / 2;
+    return 12742 * math.asin(math.sqrt(a)); // 2 * R; R = 6371 km
+  }
+
   /// Calculate arrival time from ETA minutes
   String _calculateArrivalTime(int etaMinutes) {
     final now = DateTime.now();
@@ -454,6 +471,37 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       _log('[ETA] Agent live location: $agentLat, $agentLng');
       _log('[ETA] Delivery address: $customerLat, $customerLng');
 
+      // Calculate straight-line distance to validate coordinates
+      final straightLineDistance = _calculateStraightLineDistance(
+        agentLat,
+        agentLng,
+        customerLat,
+        customerLng,
+      );
+      _log(
+        '[ETA] Straight-line distance: ${straightLineDistance.toStringAsFixed(2)} km',
+      );
+
+      // Validate that coordinates are not identical or suspiciously close
+      if (straightLineDistance < 0.01) {
+        // Less than 10 meters - likely same location (error)
+        _log(
+          '[ETA] ⚠️ Agent and customer coordinates are identical or too close for booking ${booking.id}',
+        );
+        _setFallbackETA(booking.id, isLocationError: true);
+        return;
+      }
+
+      // Validate that distance is reasonable (not too far)
+      if (straightLineDistance > 500) {
+        // More than 500km - likely incorrect coordinates
+        _log(
+          '[ETA] ⚠️ Distance too large (${straightLineDistance.toStringAsFixed(1)} km) - possible location error for booking ${booking.id}',
+        );
+        _setFallbackETA(booking.id, isLocationError: true);
+        return;
+      }
+
       // Call Google Maps API to get ETA from agent to delivery address
       final result = await getEtaAndDistance(
         originLat: agentLat,
@@ -524,9 +572,12 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   }
 
   /// Set fallback ETA when calculation fails
-  void _setFallbackETA(String bookingId) {
-    const fallbackMinutes = 15;
-    final fallbackArrivalTime = _calculateArrivalTime(fallbackMinutes);
+  void _setFallbackETA(String bookingId, {bool isLocationError = false}) {
+    // Use -1 to indicate location error (will be handled in UI)
+    final fallbackMinutes = isLocationError ? -1 : 15;
+    final fallbackArrivalTime = isLocationError
+        ? '--:--'
+        : _calculateArrivalTime(15);
 
     if (mounted) {
       setState(() {
@@ -534,11 +585,12 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
           'minutes': fallbackMinutes,
           'arrivalTime': fallbackArrivalTime,
           'timestamp': DateTime.now().millisecondsSinceEpoch,
+          'isLocationError': isLocationError,
         };
       });
     }
     _log(
-      '[ETA] Set fallback ETA ($fallbackMinutes mins, arrival: $fallbackArrivalTime) for booking $bookingId',
+      '[ETA] Set fallback ETA (${isLocationError ? "location error" : "$fallbackMinutes mins"}, arrival: $fallbackArrivalTime) for booking $bookingId',
     );
   }
 

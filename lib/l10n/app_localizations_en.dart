@@ -1578,8 +1578,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rejectedOn => 'Rejected on';
 
   @override
+  String get fetching => 'Fetching';
+
+  @override
   String get issueVideo => 'Issue Video';
 
   @override
   String get hours => 'hrs';
+
+  @override
+  String get locationError => 'Location Error';
 }

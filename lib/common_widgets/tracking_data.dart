@@ -1,4 +1,7 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/models/booking.dart';
+import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
+import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -10,12 +13,14 @@ class TrackingData extends StatelessWidget {
   final String? timeTakenToArrive;
   final String? remainingKm;
   final UserModel? worker;
+  final BookingModel booking;
 
   const TrackingData({
     super.key,
     this.timeTakenToArrive,
     this.worker,
     this.remainingKm,
+    required this.booking,
   });
 
   @override
@@ -168,6 +173,83 @@ class TrackingData extends StatelessWidget {
                   ],
                 ),
               ),
+              if (booking.chatroomId.isNotEmpty)
+                StreamBuilder<int>(
+                  stream: ChatService().getUnreadCountStream(
+                    booking.chatroomId,
+                  ),
+                  builder: (context, snapshot) {
+                    final unreadCount = snapshot.data ?? 0;
+                    return SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatScreen(
+                                chatId: booking.chatroomId,
+                                participantName:
+                                    booking.agent!.name ?? 'Technician',
+                                participantId: booking.agent!.uid ?? '',
+                                participantPhoto:
+                                    booking.agent!.profileUrl ?? '',
+                                customerName:
+                                    booking.customer.name ?? 'Customer',
+                                customerPhoto: '',
+                                bookingId: booking
+                                    .id, // Customer model does not have profileUrl yet
+                              ),
+                            ),
+                          );
+                        },
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: 50,
+                              decoration: BoxDecoration(
+                                color: AppColors.bgWhite,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26.withAlpha(40),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 5),
+                                  ),
+                                ],
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Image.asset(
+                                  'assets/icons/chat2.png',
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                            ),
+                            if (unreadCount > 0)
+                              Positioned(
+                                right: 10,
+                                top: 10,
+                                child: Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
 
               // Call Button
               if (worker?.phone != null)

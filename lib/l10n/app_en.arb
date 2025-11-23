@@ -519,6 +519,8 @@
   "tapToUpload": "Tap to upload",
   "tapToView": "Tap to view",
   "rejectedOn": "Rejected on",
+  "fetching": "Fetching",
   "issueVideo": "Issue Video",
-  "hours": "hrs"
+  "hours": "hrs",
+  "locationError": "Location Error"
 }

@@ -71,6 +71,7 @@ flutter:
     - assets/images/
     - assets/
     - assets/data/
+    - assets/icons/
 
 flutter_gen:
   synthetic-package: false

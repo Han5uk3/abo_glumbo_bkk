@@ -1561,8 +1561,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rejectedOn => 'تم رفضه في';
 
   @override
+  String get fetching => 'جاري الجلب';
+
+  @override
   String get issueVideo => 'فيديو المشكلة';
 
   @override
   String get hours => 'ساعات';
+
+  @override
+  String get locationError => 'خطأ في الموقع';
 }

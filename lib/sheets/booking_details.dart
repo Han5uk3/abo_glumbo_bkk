@@ -950,9 +950,10 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                           child: Stack(
                             children: [
                               Center(
-                                child: Icon(
-                                  Icons.chat_bubble_outline,
-                                  color: AppColors.secondary,
+                                child: Image.asset(
+                                  'assets/icons/chat2.png',
+                                  width: 24,
+                                  height: 24,
                                 ),
                               ),
                               if (unreadCount > 0)

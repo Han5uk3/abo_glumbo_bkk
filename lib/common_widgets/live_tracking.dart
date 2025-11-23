@@ -726,19 +726,16 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                       ),
                     ),
                     TrackingData(
+                      booking: widget.booking!,
                       timeTakenToArrive:
                           eta ??
                           (_agentLatLng == null
-                              ? AppLocalizations.of(
-                                  context,
-                                )!.waitingForAgentLocation
+                              ? AppLocalizations.of(context)!.fetching
                               : AppLocalizations.of(context)!.calculating),
                       remainingKm:
                           distance ??
                           (_agentLatLng == null
-                              ? AppLocalizations.of(
-                                  context,
-                                )!.waitingForAgentLocation
+                              ? AppLocalizations.of(context)!.waitingForAgentLocation
                               : ""),
                       worker: widget.booking?.agent,
                     ),

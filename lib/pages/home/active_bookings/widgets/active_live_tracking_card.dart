@@ -90,33 +90,52 @@ class TrackingCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          etaMinutes > 60
-                              ? (etaMinutes / 60)
-                                    .toStringAsFixed(1)
-                                    .replaceAll(RegExp(r'\.0$'), '')
-                              : '$etaMinutes',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                            height: 1.0,
+                        if (etaMinutes == -1) ...[
+                          // Location error indicator
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            size: 32,
+                            color: Colors.orange,
                           ),
-                        ),
-                        Text(
-                          etaMinutes > 60
-                              ? (etaMinutes / 60) >= 2
-                                    ? AppLocalizations.of(context)!.hours
-                                    : AppLocalizations.of(context)!.hour
-                              : etaMinutes.toString().length == 1
-                              ? AppLocalizations.of(context)!.min
-                              : AppLocalizations.of(context)!.mins,
-                          style: GoogleFonts.dmSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                          const SizedBox(height: 4),
+                          Text(
+                            AppLocalizations.of(context)!.locationError,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.orange,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                        ),
+                        ] else ...[
+                          Text(
+                            etaMinutes > 60
+                                ? (etaMinutes / 60)
+                                      .toStringAsFixed(1)
+                                      .replaceAll(RegExp(r'\.0$'), '')
+                                : '$etaMinutes',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                              height: 1.0,
+                            ),
+                          ),
+                          Text(
+                            etaMinutes > 60
+                                ? (etaMinutes / 60) >= 2
+                                      ? AppLocalizations.of(context)!.hours
+                                      : AppLocalizations.of(context)!.hour
+                                : etaMinutes.toString().length == 1
+                                ? AppLocalizations.of(context)!.min
+                                : AppLocalizations.of(context)!.mins,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

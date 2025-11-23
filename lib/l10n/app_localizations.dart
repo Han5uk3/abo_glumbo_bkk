@@ -3104,6 +3104,12 @@ abstract class AppLocalizations {
   /// **'Rejected on'**
   String get rejectedOn;
 
+  /// No description provided for @fetching.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching'**
+  String get fetching;
+
   /// No description provided for @issueVideo.
   ///
   /// In en, this message translates to:
@@ -3115,6 +3121,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'hrs'**
   String get hours;
+
+  /// No description provided for @locationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Error'**
+  String get locationError;
 }
 
 class _AppLocalizationsDelegate
