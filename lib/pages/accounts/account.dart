@@ -6,7 +6,6 @@ import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/edit_profile.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/notification.dart';
-import 'package:abo_glumbo_bbk/pages/accounts/warranty_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/account_list_tile.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/contact_bottom_sheet.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/faq_page.dart';
@@ -199,10 +198,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           title: AppLocalizations.of(context)?.profileManagement ?? '',
           onTap: _handleProfileManagement,
         ),
-        AccountListTile.withArrow(
-          title: AppLocalizations.of(context)?.repairUnderWarranty ?? '',
-          onTap: _handleWarranty,
-        ),
+
         AccountListTile.withArrow(
           title: AppLocalizations.of(context)?.wishlist ?? '',
           onTap: _handleWishlist,
@@ -294,22 +290,6 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       context,
       MaterialPageRoute(
         builder: (context) => EditProfilePage(customer: widget.customerData!),
-      ),
-    );
-  }
-
-  void _handleWarranty() {
-    if (widget.customerData == null) {
-      showSnackBar(
-        AppLocalizations.of(context)?.errorFillingProfile ?? '',
-        context,
-      );
-      return;
-    }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WarrantyPage(customerData: widget.customerData!),
       ),
     );
   }
