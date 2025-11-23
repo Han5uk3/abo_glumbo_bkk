@@ -1558,6 +1558,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tapToView => 'اضغط لعرض';
 
   @override
+  String get rejectedOn => 'تم رفضه في';
+
+  @override
   String get issueVideo => 'فيديو المشكلة';
 
   @override

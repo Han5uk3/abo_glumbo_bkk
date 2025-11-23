@@ -3098,6 +3098,12 @@ abstract class AppLocalizations {
   /// **'Tap to view'**
   String get tapToView;
 
+  /// No description provided for @rejectedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected on'**
+  String get rejectedOn;
+
   /// No description provided for @issueVideo.
   ///
   /// In en, this message translates to:

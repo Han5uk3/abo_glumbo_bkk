@@ -265,14 +265,21 @@ class ServiceBookingTile extends StatelessWidget {
                     style: TextStyle(color: AppColors.grey3, fontSize: 12),
                   ),
                 },
-                if (booking.bookingStatusCode == "X" ||
-                    booking.bookingStatusCode == "XC" ||
-                    booking.bookingStatusCode == "R") ...{
+                if ((booking.bookingStatusCode == "X" ||
+                        booking.bookingStatusCode == "XC" ||
+                        booking.bookingStatusCode == "R") &&
+                    booking.cancelledAt != null) ...{
+                  if(booking.bookingStatusCode !="R") ...{
                   Text(
                     "${AppLocalizations.of(context)!.canceledOn} : ${formatBookingDateTime(booking.cancelledAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
                     style: TextStyle(color: AppColors.grey3, fontSize: 12),
                   ),
-                },
+                }else... {
+                  Text(
+                    "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(booking.cancelledAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
+                    style: TextStyle(color: AppColors.grey3, fontSize: 12),
+                  ),
+                }},
 
                 if (booking.bookingStatusCode == "C") ...[
                   Row(

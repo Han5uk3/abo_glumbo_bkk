@@ -518,6 +518,7 @@
   "failedToPickImage": "Failed to pick image",
   "tapToUpload": "Tap to upload",
   "tapToView": "Tap to view",
+  "rejectedOn": "Rejected on",
   "issueVideo": "Issue Video",
   "hours": "hrs"
 }

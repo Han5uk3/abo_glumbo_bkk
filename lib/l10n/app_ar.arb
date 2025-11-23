@@ -501,6 +501,7 @@
   "technician": "فني",
   "idDocument": "وثيقة الهوية",
   "typeMessage": "اكتب رسالة...",
+  "rejectedOn": "تم رفضه في",
   "noMessages": "لا توجد رسائل بعد",
   "startConversation": "ابدأ محادثة",
   "errorLoadingMessages": "خطأ في تحميل الرسائل",

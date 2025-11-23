@@ -1575,6 +1575,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tapToView => 'Tap to view';
 
   @override
+  String get rejectedOn => 'Rejected on';
+
+  @override
   String get issueVideo => 'Issue Video';
 
   @override
