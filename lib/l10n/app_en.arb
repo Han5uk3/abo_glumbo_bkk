@@ -514,5 +514,10 @@
   "chatWithTechnician": "Chat with Technician",
   "mins": "mins",
   "hour": "hr",
+  "iddocument": "ID Document",
+  "failedToPickImage": "Failed to pick image",
+  "tapToUpload": "Tap to upload",
+  "tapToView": "Tap to view",
+  "issueVideo": "Issue Video",
   "hours": "hrs"
 }

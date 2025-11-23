@@ -3074,6 +3074,36 @@ abstract class AppLocalizations {
   /// **'hr'**
   String get hour;
 
+  /// No description provided for @iddocument.
+  ///
+  /// In en, this message translates to:
+  /// **'ID Document'**
+  String get iddocument;
+
+  /// No description provided for @failedToPickImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pick image'**
+  String get failedToPickImage;
+
+  /// No description provided for @tapToUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to upload'**
+  String get tapToUpload;
+
+  /// No description provided for @tapToView.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view'**
+  String get tapToView;
+
+  /// No description provided for @issueVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue Video'**
+  String get issueVideo;
+
   /// No description provided for @hours.
   ///
   /// In en, this message translates to:

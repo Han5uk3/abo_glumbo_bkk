@@ -198,7 +198,7 @@ class _CachedVideoPlayerState extends State<CachedVideoPlayer> {
         children: [
           // Video Player
           FittedBox(
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             child: SizedBox(
               width: _videoController!.value.size.width,
               height: _videoController!.value.size.height,
@@ -274,7 +274,7 @@ class _CachedVideoPlayerState extends State<CachedVideoPlayer> {
 
   Widget _buildControlsOverlay(ColorScheme colorScheme) {
     return Positioned(
-      bottom: 0,
+      bottom: 16,
       left: 0,
       right: 0,
       child: Container(
@@ -301,6 +301,16 @@ class _CachedVideoPlayerState extends State<CachedVideoPlayer> {
                 // Control Buttons
                 Row(
                   children: [
+                    IconButton(
+                      onPressed: () {
+                        final currentPosition =
+                            _videoController!.value.position;
+                        final newPosition =
+                            currentPosition - const Duration(seconds: 5);
+                        _videoController!.seekTo(newPosition);
+                      },
+                      icon: const Icon(Icons.replay_5, color: Colors.white),
+                    ),
                     IconButton(
                       onPressed: _togglePlayPause,
                       icon: Icon(

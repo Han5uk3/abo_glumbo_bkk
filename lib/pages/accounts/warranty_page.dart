@@ -1,9 +1,11 @@
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/warranty_tile.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -80,7 +82,12 @@ class _WarrantyPageState extends State<WarrantyPage> {
         ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: SizedBox(
+                height: 24,
+                child: Loader(color: AppColors.primary),
+              ),
+            );
           }
           if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));

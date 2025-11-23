@@ -103,13 +103,11 @@ class MyApp extends StatelessWidget {
               builder: (context, child) {
                 final mediaQuery = MediaQuery.of(context);
                 // Check if there's a bottom system inset (nav bar/home indicator)
-                final double extraBottomPadding =
-                    mediaQuery.viewPadding.bottom > 0 ? 60.0 : 0.0;
 
                 return MediaQuery(
                   data: mediaQuery.copyWith(
                     padding: mediaQuery.padding.copyWith(
-                      bottom: mediaQuery.padding.bottom + extraBottomPadding,
+                      bottom: mediaQuery.padding.bottom + 10,
                     ),
                   ),
                   child: Directionality(

@@ -1455,42 +1455,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get warrantyInformation => 'معلومات الضمان';
 
   @override
-  String get whatsCovered => 'ما يتغط';
+  String get whatsCovered => 'ما يغطيه الضمان';
 
   @override
-  String get issueone => 'تعطيل أو ضيق عمل الفني';
+  String get issueone => 'خطأ في التركيب أو سوء المصنعية.';
 
   @override
-  String get issuetwo => 'استخدام غير صحيح من الفني';
+  String get issuetwo => 'أداء دون المستوى المطلوب من الفني.';
 
   @override
-  String get issuethree => 'المشكلة الاصلية التي تم تصحيحها';
+  String get issuethree => 'نفس العطل الأصلي الذي تم إصلاحه.';
 
   @override
-  String get issuefour => 'صالحة لمدة 7 أيام من تاريخ اكمال الخدمة';
+  String get issuefour => 'صالحة لمدة 7 أيام من تاريخ الإكمال.';
 
   @override
-  String get whatsNotCovered => 'ما لا يتغط';
+  String get whatsNotCovered => 'ما لا يغطيه الضمان';
 
   @override
-  String get notissueone => 'قطع غير صحيحة أو مواد';
+  String get notissueone => 'قطع غيار أو مواد معيبة.';
 
   @override
-  String get notissuetwo => 'استخدام غير صحيح من الفني';
+  String get notissuetwo => 'إساءة الاستخدام أو العبث بعد الخدمة.';
 
   @override
-  String get notissuethree => 'أوامر ثالثة';
+  String get notissuethree => 'تدخلات طرف ثالث.';
 
   @override
   String get notissuefour =>
-      'التدفق الكهربائي، والخطوات البحرية، والطوارئ الطبيعية';
+      'زيادة التيار الكهربائي (Power surges)، تسربات المياه، الكوارث الطبيعية.';
 
   @override
-  String get notissuefive => 'التغطية العادية';
+  String get notissuefive => 'الاهتراء والتآكل الطبيعي.';
 
   @override
   String get claimText =>
-      'لطلب ضمان، ارسل طلب من خلال التطبيق خلال 7 أيام من تاريخ اكمال الخدمة.';
+      'ملاحظة: للمطالبة بالضمان، قدّم طلباً عبر التطبيق خلال 7 أيام من إكمال الخدمة.';
 
   @override
   String get warrantyAlertContent =>
@@ -1544,6 +1544,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get hour => 'ساعة';
+
+  @override
+  String get iddocument => 'وثيقة الهوية';
+
+  @override
+  String get failedToPickImage => 'فشل في اختيار الصورة';
+
+  @override
+  String get tapToUpload => 'اضغط لتحميل';
+
+  @override
+  String get tapToView => 'اضغط لعرض';
+
+  @override
+  String get issueVideo => 'فيديو المشكلة';
 
   @override
   String get hours => 'ساعات';

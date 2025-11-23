@@ -1563,5 +1563,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hour => 'hr';
 
   @override
+  String get iddocument => 'ID Document';
+
+  @override
+  String get failedToPickImage => 'Failed to pick image';
+
+  @override
+  String get tapToUpload => 'Tap to upload';
+
+  @override
+  String get tapToView => 'Tap to view';
+
+  @override
+  String get issueVideo => 'Issue Video';
+
+  @override
   String get hours => 'hrs';
 }

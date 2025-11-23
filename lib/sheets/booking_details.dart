@@ -677,55 +677,36 @@ class BookingDetailsBottomSheet extends StatelessWidget {
             if (booking.issueImage != null && booking.issueImage!.isNotEmpty)
               const SizedBox(height: 20),
 
-            // Images Section
-            if (booking.issueImage != null && booking.issueImage!.isNotEmpty)
-              Text(
-                AppLocalizations.of(context)!.image,
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: colorScheme.onSurface.withOpacity(0.7),
-                ),
-              ),
             const SizedBox(height: 8),
             if (booking.issueImage != null && booking.issueImage!.isNotEmpty)
               GestureDetector(
                 onTap: () => _showFullScreenImage(booking.issueImage!, context),
                 child: Container(
-                  height: MediaQuery.of(context).size.width * 0.4,
+                  padding: const EdgeInsets.all(8),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade300),
+                    border: Border.all(color: Colors.grey[600]!),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CachedNetworkImage(
-                      imageUrl: booking.issueImage!,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.grey[200],
-                        child: Center(child: Loader(size: 12)),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[200],
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.broken_image,
-                              size: 50,
-                              color: Colors.grey,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              AppLocalizations.of(context)!.failedToLoadImage,
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                          ],
+                  child: Row(
+                    children: [
+                      // Icon(Icons.image, color: Colors.grey[600]!),
+                      SizedBox(width: 6),
+                      Text(
+                        AppLocalizations.of(context)!.image,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[600]!,
                         ),
                       ),
-                    ),
+                      const Spacer(),
+                      Icon(
+                        Icons.open_in_new,
+                        size: 16,
+                        color: Colors.grey[600]!,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -733,30 +714,70 @@ class BookingDetailsBottomSheet extends StatelessWidget {
               const SizedBox(height: 16),
 
             if (booking.issueVideo != null && booking.issueVideo!.isNotEmpty)
-              Text(
-                AppLocalizations.of(context)!.video,
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: colorScheme.onSurface.withOpacity(0.7),
-                ),
-              ),
-            if (booking.issueVideo != null && booking.issueVideo!.isNotEmpty)
-              const SizedBox(height: 8),
-            if (booking.issueVideo != null && booking.issueVideo!.isNotEmpty)
-              Container(
-                width: double.infinity,
-                height: 200,
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceVariant.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: colorScheme.outline.withOpacity(0.2),
+              GestureDetector(
+                onTap: () => _showFullScreenVideo(booking.issueVideo!, context),
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey[600]!),
+                  ),
+                  child: Row(
+                    children: [
+                      // Icon(
+                      //   Icons.video_camera_back_rounded,
+                      //   color: Colors.grey[600]!,
+                      // ),
+                      SizedBox(width: 8),
+                      Text(
+                        AppLocalizations.of(context)!.video,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[600]!,
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(
+                        Icons.open_in_new,
+                        size: 16,
+                        color: Colors.grey[600]!,
+                      ),
+                    ],
                   ),
                 ),
-                child: CachedVideoPlayer(videoUrl: booking.issueVideo!),
               ),
           ],
+        ),
+      ),
+    );
+  }
+
+  _showFullScreenVideo(String videoUrl, BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: AppColors.primary,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: Text(
+              AppLocalizations.of(context)!.issueVideo,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          body: Center(
+            child: CachedVideoPlayer(
+              videoUrl: videoUrl,
+              height: double.infinity,
+              width: double.infinity,
+            ),
+          ),
         ),
       ),
     );
@@ -1163,10 +1184,10 @@ class BookingDetailsBottomSheet extends StatelessWidget {
         builder: (context) => Scaffold(
           backgroundColor: Colors.black,
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: AppColors.primary,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => Navigator.of(context).pop(),
             ),
             title: Text(

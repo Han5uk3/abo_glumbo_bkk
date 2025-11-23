@@ -1,11 +1,14 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'dart:convert';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
-import 'package:abo_glumbo_bbk/models/location.dart';
+import 'package:abo_glumbo_bbk/models/location_selection.dart';
+import 'package:abo_glumbo_bbk/models/searchable_dropdown.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // Singleton class to manage locations cache
@@ -14,54 +17,31 @@ class LocationsCache {
   factory LocationsCache() => _instance;
   LocationsCache._internal();
 
-  List<LocationModel>? _locations;
+  List<Region>? _regions;
   bool _isLoading = false;
 
-  Future<List<LocationModel>> getLocations(BuildContext context) async {
-    if (_locations != null) {
-      return _locations!;
+  Future<List<Region>> getRegions() async {
+    if (_regions != null) {
+      return _regions!;
     }
 
     if (_isLoading) {
-      // Wait for the current loading to complete
       while (_isLoading) {
         await Future.delayed(const Duration(milliseconds: 100));
       }
-      return _locations ?? [];
+      return _regions ?? [];
     }
 
     _isLoading = true;
     try {
-      var response = await AppFirestore.locationsCollectionRef.get();
-      final currentLanguage = AppLocalizations.of(context)?.localeName ?? 'en';
-      final isArabic = currentLanguage == 'ar';
-
-      List<LocationModel> allLocations = response.docs
-          .map((e) => LocationModel.fromQuerySnapshot(e))
-          .toList();
-
-      Map<String, LocationModel> uniqueLocations = {};
-
-      for (LocationModel location in allLocations) {
-        final displayName = isArabic
-            ? (location.name_ar ?? location.name ?? '')
-            : (location.name ?? '');
-
-        if (displayName.isNotEmpty) {
-          uniqueLocations[displayName.toLowerCase()] = location;
-        }
-      }
-
-      _locations = uniqueLocations.values.toList();
-
-      _locations!.sort((a, b) {
-        final aName = isArabic ? (a.name_ar ?? a.name ?? '') : (a.name ?? '');
-        final bName = isArabic ? (b.name_ar ?? b.name ?? '') : (b.name ?? '');
-        return aName.toLowerCase().compareTo(bName.toLowerCase());
-      });
-
-      return _locations!;
+      final jsonString = await rootBundle.loadString(
+        'assets/data/saudi_hierarchical.json',
+      );
+      final List<dynamic> jsonData = json.decode(jsonString);
+      _regions = jsonData.map((r) => Region.fromJson(r)).toList();
+      return _regions!;
     } catch (e) {
+      debugPrint('Failed to load locations: $e');
       return [];
     } finally {
       _isLoading = false;
@@ -69,7 +49,7 @@ class LocationsCache {
   }
 
   void clearCache() {
-    _locations = null;
+    _regions = null;
   }
 }
 
@@ -80,6 +60,8 @@ Future<Map<String, dynamic>?> showFilterBottomSheet(
   Set<int>? selectedPriceRanges,
   Set<String>? selectedCategories,
   bool isFromSearchPage = false,
+  bool showRating = true,
+  bool showPrice = true,
 }) {
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
@@ -92,6 +74,8 @@ Future<Map<String, dynamic>?> showFilterBottomSheet(
         selectedPriceRanges: selectedPriceRanges ?? {},
         selectedCategories: selectedCategories ?? {},
         isFromSearchPage: isFromSearchPage,
+        showRating: showRating,
+        showPrice: showPrice,
       );
     },
   );
@@ -105,6 +89,8 @@ class FilterBottomSheet extends StatefulWidget {
     required this.selectedPriceRanges,
     required this.selectedCategories,
     this.isFromSearchPage = false,
+    this.showRating = true,
+    this.showPrice = true,
   });
 
   final Set<String> selectedDistricts;
@@ -112,6 +98,8 @@ class FilterBottomSheet extends StatefulWidget {
   final Set<int> selectedPriceRanges;
   final Set<String> selectedCategories;
   final bool isFromSearchPage;
+  final bool showRating;
+  final bool showPrice;
 
   @override
   State<FilterBottomSheet> createState() => _FilterBottomSheetState();
@@ -123,7 +111,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   Set<int> selectedPriceRanges = {};
   Set<String> selectedDistricts = {};
   Set<String> selectedCategories = {};
-  List<LocationModel> locations = [];
+
+  List<Region> regions = [];
+  Region? selectedRegion;
+  City? selectedCity;
+
   List<CategoryModel> categories = [];
   bool isLoading = false;
   final LocationsCache _locationsCache = LocationsCache();
@@ -147,21 +139,19 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     setState(() => isLoading = true);
 
     try {
-      final cachedLocations = await _locationsCache.getLocations(context);
+      final cachedRegions = await _locationsCache.getRegions();
       if (mounted) {
         setState(() {
-          locations = cachedLocations;
+          regions = cachedRegions;
+          _restoreSelection();
         });
       }
     } catch (e) {
       debugPrint('Failed to load locations: $e');
       if (mounted) {
-        // Set empty locations list to prevent further errors
         setState(() {
-          locations = [];
+          regions = [];
         });
-
-        // Show error message to user
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -175,6 +165,26 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
     if (mounted) {
       setState(() => isLoading = false);
+    }
+  }
+
+  void _restoreSelection() {
+    if (selectedDistricts.isEmpty || regions.isEmpty) return;
+
+    // Find the region and city for the first selected district
+    // This assumes we want to show the context of the selected district
+    // If multiple districts from different cities are selected, we pick the first one found
+
+    for (var region in regions) {
+      for (var city in region.cities) {
+        for (var district in city.districts) {
+          if (selectedDistricts.contains(district.districtId)) {
+            selectedRegion = region;
+            selectedCity = city;
+            return;
+          }
+        }
+      }
     }
   }
 
@@ -320,27 +330,30 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                 setState(() => selectedFilterIndex = 1);
                             },
                           ),
-                          _buildFilterCategoryTile(
-                            icon: Icons.star_outline,
-                            title:
-                                AppLocalizations.of(context)?.rating ??
-                                'Rating',
-                            isSelected: selectedFilterIndex == 2,
-                            onTap: () {
-                              if (mounted)
-                                setState(() => selectedFilterIndex = 2);
-                            },
-                          ),
-                          _buildFilterCategoryTile(
-                            icon: Icons.payments_outlined,
-                            title:
-                                AppLocalizations.of(context)?.price ?? 'Price',
-                            isSelected: selectedFilterIndex == 3,
-                            onTap: () {
-                              if (mounted)
-                                setState(() => selectedFilterIndex = 3);
-                            },
-                          ),
+                          if (widget.showRating)
+                            _buildFilterCategoryTile(
+                              icon: Icons.star_outline,
+                              title:
+                                  AppLocalizations.of(context)?.rating ??
+                                  'Rating',
+                              isSelected: selectedFilterIndex == 2,
+                              onTap: () {
+                                if (mounted)
+                                  setState(() => selectedFilterIndex = 2);
+                              },
+                            ),
+                          if (widget.showPrice)
+                            _buildFilterCategoryTile(
+                              icon: Icons.payments_outlined,
+                              title:
+                                  AppLocalizations.of(context)?.price ??
+                                  'Price',
+                              isSelected: selectedFilterIndex == 3,
+                              onTap: () {
+                                if (mounted)
+                                  setState(() => selectedFilterIndex = 3);
+                              },
+                            ),
                           if (widget.isFromSearchPage) ...{
                             _buildFilterCategoryTile(
                               icon: Icons.category_outlined,
@@ -527,8 +540,12 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
     switch (selectedFilterIndex) {
       case 1:
+        final currentLanguage =
+            AppLocalizations.of(context)?.localeName ?? 'en';
+        final isArabic = currentLanguage == 'ar';
+
         return Container(
-          padding: const EdgeInsets.only(left: 10),
+          padding: const EdgeInsets.only(left: 10, right: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -536,63 +553,113 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 const Expanded(
                   child: Center(child: CircularProgressIndicator()),
                 )
-              else
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(bottom: 100 + safePadding.bottom),
-                    itemCount: locations.length,
-                    itemBuilder: (context, index) {
-                      final location = locations[index];
-                      final currentLanguage =
-                          AppLocalizations.of(context)?.localeName ?? 'en';
-                      final isArabic = currentLanguage == 'ar';
-                      final displayName = isArabic
-                          ? (location.name_ar ?? location.name ?? '')
-                          : (location.name ?? '');
-                      final isSelected = selectedDistricts.contains(
-                        location.id!,
-                      );
-
-                      return CheckboxListTile(
-                        side: BorderSide(
-                          color: isSelected
-                              ? AppColors.secondary
-                              : Colors.grey[700]!,
-                          width: 1,
-                        ),
-                        value: isSelected,
-                        onChanged: (value) {
-                          setState(() {
-                            if (value == true) {
-                              selectedDistricts.add(location.id!);
-                            } else {
-                              selectedDistricts.remove(location.id!);
-                            }
-                          });
-                        },
-                        title: Text(
-                          displayName,
-                          style: GoogleFonts.dmSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: isSelected
-                                ? AppColors.secondary
-                                : Colors.black87,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 5,
-                          vertical: 4,
-                        ),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        activeColor: AppColors.secondary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      );
+              else ...[
+                const SizedBox(height: 16),
+                SearchableDropdown<Region>(
+                  label: AppLocalizations.of(context)?.province ?? 'Region',
+                  value: selectedRegion,
+                  items: regions,
+                  itemLabel: (region) => region.getName(isArabic),
+                  onChanged: (region) {
+                    setState(() {
+                      selectedRegion = region;
+                      selectedCity = null;
+                      // We might want to clear selected districts if region changes?
+                      // For now, let's keep them but maybe they won't be visible
+                      // actually, if we change region, the previously selected districts
+                      // (if they belong to the old region) should probably be unchecked
+                      // or just kept as "hidden selections".
+                      // Let's keep them for now to avoid data loss if user switches back.
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                if (selectedRegion != null)
+                  SearchableDropdown<City>(
+                    label: AppLocalizations.of(context)?.city ?? 'City',
+                    value: selectedCity,
+                    items: selectedRegion!.cities,
+                    itemLabel: (city) => city.getName(isArabic),
+                    onChanged: (city) {
+                      setState(() {
+                        selectedCity = city;
+                      });
                     },
                   ),
-                ),
+                const SizedBox(height: 16),
+                if (selectedCity != null) ...[
+                  Text(
+                    AppLocalizations.of(context)?.neighbourhood ?? 'District',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(
+                        bottom: 100 + safePadding.bottom,
+                      ),
+                      itemCount: selectedCity!.districts.length,
+                      itemBuilder: (context, index) {
+                        final district = selectedCity!.districts[index];
+                        final displayName = district.getName(isArabic);
+                        final isSelected = selectedDistricts.contains(
+                          district.districtId,
+                        );
+
+                        return CheckboxListTile(
+                          side: BorderSide(
+                            color: isSelected
+                                ? AppColors.secondary
+                                : Colors.grey[700]!,
+                            width: 1,
+                          ),
+                          value: isSelected,
+                          onChanged: (value) {
+                            setState(() {
+                              if (value == true) {
+                                selectedDistricts.add(district.districtId);
+                              } else {
+                                selectedDistricts.remove(district.districtId);
+                              }
+                            });
+                          },
+                          title: Text(
+                            displayName,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: isSelected
+                                  ? AppColors.secondary
+                                  : Colors.black87,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 4,
+                          ),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          activeColor: AppColors.secondary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ] else
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        AppLocalizations.of(context)?.pleaseSelectCity ??
+                            'Please select a city to see districts',
+                        style: GoogleFonts.dmSans(color: Colors.grey),
+                      ),
+                    ),
+                  ),
+              ],
             ],
           ),
         );

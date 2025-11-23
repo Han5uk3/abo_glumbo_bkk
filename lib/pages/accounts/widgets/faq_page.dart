@@ -23,7 +23,12 @@ class FAQPage extends StatelessWidget {
         stream: AppServices.getFaq(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: Loader());
+            return Center(
+              child: SizedBox(
+                height: 24,
+                child: Loader(color: AppColors.primary),
+              ),
+            );
           }
           if (snapshot.hasError) {
             return Center(

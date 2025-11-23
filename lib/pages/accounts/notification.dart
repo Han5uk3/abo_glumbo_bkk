@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:convert';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
@@ -681,7 +682,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(),
+          SizedBox(height: 24, child: Loader(color: AppColors.primary)),
           const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context)!.loadingNotifications,
@@ -698,7 +699,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const CircularProgressIndicator(),
+            SizedBox(height: 24, child: Loader(color: AppColors.primary)),
             const SizedBox(height: 8),
             Text(AppLocalizations.of(context)!.loadingMore),
           ],
