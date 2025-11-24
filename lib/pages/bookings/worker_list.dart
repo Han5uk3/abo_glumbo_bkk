@@ -963,8 +963,8 @@ class _WorkerListViewState extends State<_WorkerListView>
               for (var doc in snapshot.docs) {
                 final data = doc.data() as Map<String, dynamic>;
                 final status = data['bookingStatusCode'];
-                // Consider busy if not Cancelled (X, XC) and not Rejected (R)
-                if (status != 'X' && status != 'XC' && status != 'R') {
+                // Consider busy only if status is Accepted (A)
+                if (status == 'A') {
                   final agent = data['agent'];
                   if (agent != null && agent['uid'] != null) {
                     busyIds.add(agent['uid']);
