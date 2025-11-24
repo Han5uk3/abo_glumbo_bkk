@@ -13,6 +13,7 @@ class WorkerCard extends StatelessWidget {
   final int completedJobs;
   final AddressModel customerAddress;
   final bool isSelected;
+  final bool isBusy;
   final List<String> localizedJobRoles;
 
   const WorkerCard({
@@ -25,6 +26,7 @@ class WorkerCard extends StatelessWidget {
     required this.service,
     required this.reviewCount,
     required this.localizedJobRoles,
+    this.isBusy = false,
   });
 
   @override
@@ -36,7 +38,6 @@ class WorkerCard extends StatelessWidget {
     final neighborhoodName = Directionality.of(context) == TextDirection.rtl
         ? detaliLocation?.neighborhoodAr ?? ''
         : detaliLocation?.neighborhoodEn ?? '';
-
 
     // final services = worker.jobRoles ?? [];
     final inspectionFee = service.price ?? 0.0;
@@ -84,6 +85,15 @@ class WorkerCard extends StatelessWidget {
                 ),
                 if (isSelected)
                   Icon(Icons.check_circle, color: AppColors.primary, size: 24),
+                if (isBusy)
+                  Text(
+                    'Technician is busy',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
               ],
             ),
 

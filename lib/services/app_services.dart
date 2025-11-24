@@ -10,10 +10,12 @@ import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/customer_support.dart';
 import 'package:abo_glumbo_bbk/models/faq.dart';
 import 'package:abo_glumbo_bbk/models/location.dart';
+import 'package:abo_glumbo_bbk/models/notification.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
@@ -1090,6 +1092,66 @@ class AppServices {
         .get();
     return value.get('name') as String;
   }
+
+  static Stream<List<NotificationModel>> getNotificationsStream() {
+    String userId = LocalStoreHelper.getUID() ?? '';
+    if (userId.isEmpty) return Stream.value([]);
+
+    return AppFirestore.usersCollectionRef
+        .doc(userId)
+        .collection('notifications')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => NotificationModel.fromFirestore(doc))
+              .toList();
+        });
+  }
+
+  static Future<void> markFirestoreNotificationAsRead(
+    String notificationId,
+  ) async {
+    String userId = LocalStoreHelper.getUID() ?? '';
+    if (userId.isEmpty) return;
+
+    await AppFirestore.usersCollectionRef
+        .doc(userId)
+        .collection('notifications')
+        .doc(notificationId)
+        .update({'read': true});
+  }
+
+  static Future<void> deleteAllFirestoreNotifications() async {
+    String userId = LocalStoreHelper.getUID() ?? '';
+    if (userId.isEmpty) return;
+
+    final collection = AppFirestore.usersCollectionRef
+        .doc(userId)
+        .collection('notifications');
+
+    final snapshot = await collection.get();
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (var doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    await batch.commit();
+  }
+
+ static Stream<int> getUnreadNotificationsCountStream() {
+    String userId = LocalStoreHelper.getUID() ?? '';
+    if (userId.isEmpty) return Stream.value(0);
+
+    return AppFirestore.usersCollectionRef
+        .doc(userId)
+        .collection('notifications')
+        .where('read', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
 }
 
 class WorkerWithStats {

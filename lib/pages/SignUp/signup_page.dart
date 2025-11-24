@@ -240,6 +240,7 @@ class _SignupPageState extends State<SignupPage> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
+          actionsAlignment: MainAxisAlignment.start,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -284,13 +285,6 @@ class _SignupPageState extends State<SignupPage> {
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(
-                locale.cancel,
-                style: GoogleFonts.dmSans(color: Colors.black54),
-              ),
-            ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.secondary,
@@ -302,6 +296,14 @@ class _SignupPageState extends State<SignupPage> {
               child: Text(
                 locale.accept,
                 style: GoogleFonts.dmSans(color: Colors.white),
+              ),
+            ),
+            SizedBox(width: 8),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                locale.cancel,
+                style: GoogleFonts.dmSans(color: Colors.black54),
               ),
             ),
           ],

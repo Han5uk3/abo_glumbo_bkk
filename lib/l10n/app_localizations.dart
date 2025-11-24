@@ -2426,11 +2426,29 @@ abstract class AppLocalizations {
   /// **'Booking history'**
   String get bookingHistory;
 
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @loadingChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading Chat'**
+  String get loadingChat;
+
   /// No description provided for @or.
   ///
   /// In en, this message translates to:
   /// **'OR'**
   String get or;
+
+  /// No description provided for @rejectedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected By'**
+  String get rejectedBy;
 
   /// No description provided for @documents.
   ///

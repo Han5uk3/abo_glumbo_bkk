@@ -1,3 +1,5 @@
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
@@ -8,6 +10,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TrackingData extends StatelessWidget {
   final String? timeTakenToArrive;
@@ -22,6 +25,99 @@ class TrackingData extends StatelessWidget {
     this.remainingKm,
     required this.booking,
   });
+
+  Future<void> _openOrCreateChat(BuildContext context) async {
+    final chatService = ChatService();
+
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          constraints: BoxConstraints(minWidth: 100),
+          backgroundColor: Colors.white,
+          content: SizedBox(
+            height: 70,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 24, child: Loader(color: AppColors.primary)),
+                  Text(AppLocalizations.of(context)!.loadingChat),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      String chatId;
+
+      // Check if chatroom exists
+      if (booking.chatroomId.isNotEmpty) {
+        chatId = booking.chatroomId;
+      } else {
+        // Create new chatroom
+        final currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser == null) {
+          throw Exception('User not authenticated');
+        }
+
+        chatId = await chatService.createChat(
+          booking.id,
+          booking.agent!.uid ?? '',
+          booking.agent!.name ?? 'Technician',
+          booking.agent!.profileUrl ?? '',
+          booking.customer.name ?? 'Customer',
+          '', // Customer photo - update if available
+          'customer',
+        );
+
+       await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+          'chatroomId': chatId,
+        });
+      }
+
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+
+      // Open chat screen
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              chatId: chatId,
+              participantName: booking.agent!.name ?? 'Technician',
+              participantId: booking.agent!.uid ?? '',
+              participantPhoto: booking.agent!.profileUrl ?? '',
+              customerName: booking.customer.name ?? 'Customer',
+              customerPhoto: '',
+              bookingId: booking.id,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+
+      // Show error message
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to open chat: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,8 +258,7 @@ class TrackingData extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      worker?.role ??
-                          'Service Provider', // Assuming role is available or use a default
+                      worker?.role ?? 'Service Provider',
                       style: GoogleFonts.dmSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -173,83 +268,65 @@ class TrackingData extends StatelessWidget {
                   ],
                 ),
               ),
-              if (booking.chatroomId.isNotEmpty)
-                StreamBuilder<int>(
-                  stream: ChatService().getUnreadCountStream(
-                    booking.chatroomId,
-                  ),
-                  builder: (context, snapshot) {
-                    final unreadCount = snapshot.data ?? 0;
-                    return SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatScreen(
-                                chatId: booking.chatroomId,
-                                participantName:
-                                    booking.agent!.name ?? 'Technician',
-                                participantId: booking.agent!.uid ?? '',
-                                participantPhoto:
-                                    booking.agent!.profileUrl ?? '',
-                                customerName:
-                                    booking.customer.name ?? 'Customer',
-                                customerPhoto: '',
-                                bookingId: booking
-                                    .id, // Customer model does not have profileUrl yet
-                              ),
-                            ),
-                          );
-                        },
-                        child: Stack(
-                          children: [
-                            Container(
-                              width: 50,
-                              decoration: BoxDecoration(
-                                color: AppColors.bgWhite,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black26.withAlpha(40),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 5),
-                                  ),
-                                ],
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Image.asset(
-                                  'assets/icons/chat2.png',
-                                  width: 24,
-                                  height: 24,
+
+              // Chat Button with unread indicator
+              StreamBuilder<int>(
+                stream: booking.chatroomId.isNotEmpty
+                    ? ChatService().getUnreadCountStream(booking.chatroomId)
+                    : Stream.value(0),
+                builder: (context, snapshot) {
+                  final unreadCount = snapshot.data ?? 0;
+                  return SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: GestureDetector(
+                      onTap: () => _openOrCreateChat(context),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: AppColors.bgWhite,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26.withAlpha(40),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 5),
                                 ),
+                              ],
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Image.asset(
+                                'assets/icons/chat2.png',
+                                width: 24,
+                                height: 24,
                               ),
                             ),
-                            if (unreadCount > 0)
-                              Positioned(
-                                right: 10,
-                                top: 10,
-                                child: Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 2,
-                                    ),
+                          ),
+                          if (unreadCount > 0)
+                            Positioned(
+                              right: 10,
+                              top: 10,
+                              child: Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
                                   ),
                                 ),
                               ),
-                          ],
-                        ),
+                            ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
+              ),
 
               // Call Button
               if (worker?.phone != null)
@@ -264,7 +341,7 @@ class TrackingData extends StatelessWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: AppColors.primary, // Main brand color
+                      color: AppColors.primary,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
@@ -283,7 +360,7 @@ class TrackingData extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 16), // Bottom padding
+          const SizedBox(height: 16),
         ],
       ),
     );

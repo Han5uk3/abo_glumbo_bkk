@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:async';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -17,6 +18,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum FilterType { rating, completedOrders }
 
@@ -26,6 +28,8 @@ class WorkerList extends StatefulWidget {
   final AddressModel? selectedAddress;
   final ValueNotifier<int?> selectedIndexNotifier;
   final Function(UserModel) onWorkerSelected;
+  final DateTime selectedDate;
+  final Map timeSlot;
 
   const WorkerList({
     super.key,
@@ -34,6 +38,8 @@ class WorkerList extends StatefulWidget {
     required this.selectedIndexNotifier,
     required this.onWorkerSelected,
     required this.service,
+    required this.selectedDate,
+    required this.timeSlot,
   });
 
   @override
@@ -616,6 +622,8 @@ class _WorkerListState extends State<WorkerList> {
                                 selectedIndexNotifier:
                                     widget.selectedIndexNotifier,
                                 onWorkerSelected: widget.onWorkerSelected,
+                                selectedDate: widget.selectedDate,
+                                timeSlot: widget.timeSlot,
                               );
                             },
                           );
@@ -875,6 +883,8 @@ class _WorkerListView extends StatefulWidget {
   final AddressModel? selectedAddress;
   final ValueNotifier<int?> selectedIndexNotifier;
   final Function(UserModel) onWorkerSelected;
+  final DateTime selectedDate;
+  final Map timeSlot;
 
   const _WorkerListView({
     super.key,
@@ -883,6 +893,8 @@ class _WorkerListView extends StatefulWidget {
     required this.selectedIndexNotifier,
     required this.onWorkerSelected,
     required this.service,
+    required this.selectedDate,
+    required this.timeSlot,
   });
 
   @override
@@ -925,6 +937,54 @@ class _WorkerListViewState extends State<_WorkerListView>
 
     _animationController.forward();
     _loadCategoryNames();
+    _subscribeToBusyAgents();
+  }
+
+  Set<String> busyAgentIds = {};
+  StreamSubscription? _bookingsSubscription;
+
+  void _subscribeToBusyAgents() {
+    try {
+      final timeOfDay = widget.timeSlot["time"] as TimeOfDay;
+      final bookingDate = DateTime(
+        widget.selectedDate.year,
+        widget.selectedDate.month,
+        widget.selectedDate.day,
+        timeOfDay.hour,
+        timeOfDay.minute,
+      );
+
+      _bookingsSubscription = AppFirestore.bookingsCollectionRef
+          .where('bookingDateTime', isEqualTo: Timestamp.fromDate(bookingDate))
+          .snapshots()
+          .listen(
+            (snapshot) {
+              final busyIds = <String>{};
+              for (var doc in snapshot.docs) {
+                final data = doc.data() as Map<String, dynamic>;
+                final status = data['bookingStatusCode'];
+                // Consider busy if not Cancelled (X, XC) and not Rejected (R)
+                if (status != 'X' && status != 'XC' && status != 'R') {
+                  final agent = data['agent'];
+                  if (agent != null && agent['uid'] != null) {
+                    busyIds.add(agent['uid']);
+                  }
+                }
+              }
+
+              if (mounted) {
+                setState(() {
+                  busyAgentIds = busyIds;
+                });
+              }
+            },
+            onError: (e) {
+              debugPrint("Error fetching busy agents: $e");
+            },
+          );
+    } catch (e) {
+      debugPrint("Error setting up busy agents subscription: $e");
+    }
   }
 
   Future<void> _loadCategoryNames() async {
@@ -1021,6 +1081,7 @@ class _WorkerListViewState extends State<_WorkerListView>
 
   @override
   void dispose() {
+    _bookingsSubscription?.cancel();
     _animationController.dispose();
     super.dispose();
   }
@@ -1050,6 +1111,14 @@ class _WorkerListViewState extends State<_WorkerListView>
               final isSelected = selectedIndex == index;
               return GestureDetector(
                 onTap: () {
+                  if (busyAgentIds.contains(statData.worker.uid)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Technician is busy at this time'),
+                      ),
+                    );
+                    return;
+                  }
                   widget.selectedIndexNotifier.value = index;
                   widget.onWorkerSelected(statData.worker);
                 },
@@ -1071,6 +1140,7 @@ class _WorkerListViewState extends State<_WorkerListView>
                   localizedJobRoles: _getLocalizedRoles(
                     statData.worker,
                   ), // Pass localized names
+                  isBusy: busyAgentIds.contains(statData.worker.uid),
                 ),
               );
             },

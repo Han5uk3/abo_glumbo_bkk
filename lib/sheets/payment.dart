@@ -792,6 +792,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
         barrierDismissible: false, // User must tap a button
         builder: (BuildContext dialogContext) {
           return AlertDialog(
+            actionsAlignment: MainAxisAlignment.start,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -879,18 +880,6 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
               ],
             ),
             actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop(false); // Return false
-                },
-                child: Text(
-                  AppLocalizations.of(context)!.cancel,
-                  style: GoogleFonts.dmSans(
-                    color: Colors.grey.shade700,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(dialogContext).pop(true); // Return true
@@ -906,6 +895,19 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                   style: GoogleFonts.dmSans(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(width: 8),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(false); // Return false
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.cancel,
+                  style: GoogleFonts.dmSans(
+                    color: Colors.grey.shade700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

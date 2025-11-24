@@ -2,6 +2,7 @@
 
 import 'package:abo_glumbo_bbk/common_widgets/cached_video_player.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
@@ -9,6 +10,7 @@ import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -52,6 +54,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
             (address) => address.isSelected ?? false,
             orElse: () => booking.customer.addresses.first,
           );
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: const BoxDecoration(
@@ -278,51 +281,51 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                       icon: Icons.cancel_rounded,
                       children: [
                         if (booking.bookingStatusCode != null &&
-                            (booking.bookingStatusCode == 'XC'))...{
-                                             _buildInfoRow(
+                            (booking.bookingStatusCode == 'XC')) ...{
+                          _buildInfoRow(
                             localization.cancelledBy,
                             localization.customer,
                           ),
-                           if (booking.cancelledAt != null)
-                          _buildInfoRow(
-                            localization.cancelledOn,
-                            formatDateTime(
-                              booking.cancelledAt!.toDate(),
-                              AppLocalizations.of(context)?.localeName ?? '',
+                          if (booking.cancelledAt != null)
+                            _buildInfoRow(
+                              localization.cancelledOn,
+                              formatDateTime(
+                                booking.cancelledAt!.toDate(),
+                                AppLocalizations.of(context)?.localeName ?? '',
+                              ),
                             ),
-                          ),
-                            },
-           
+                        },
+
                         if (booking.bookingStatusCode != null &&
-                            (booking.bookingStatusCode == 'X'))...[
+                            (booking.bookingStatusCode == 'X')) ...[
                           _buildInfoRow(
                             localization.cancelledBy,
                             localization.serviceProvider,
                           ),
-                           if (booking.cancelledAt != null)
-                          _buildInfoRow(
-                            localization.cancelledOn,
-                            formatDateTime(
-                              booking.cancelledAt!.toDate(),
-                              AppLocalizations.of(context)?.localeName ?? '',
+                          if (booking.cancelledAt != null)
+                            _buildInfoRow(
+                              localization.cancelledOn,
+                              formatDateTime(
+                                booking.cancelledAt!.toDate(),
+                                AppLocalizations.of(context)?.localeName ?? '',
+                              ),
                             ),
-                          ),
                         ],
                         if (booking.bookingStatusCode != null &&
-                            (booking.bookingStatusCode == 'R'))...{
+                            (booking.bookingStatusCode == 'R')) ...{
                           _buildInfoRow(
-                            localization.cancelledBy,
+                            localization.rejectedBy,
                             localization.admin,
                           ),
                           if (booking.rejectedAt != null)
-                          _buildInfoRow(
-                            localization.cancelledOn,
-                            formatDateTime(
-                              booking.rejectedAt!.toDate(),
-                              AppLocalizations.of(context)?.localeName ?? '',
+                            _buildInfoRow(
+                              localization.rejectedOn,
+                              formatDateTime(
+                                booking.rejectedAt!.toDate(),
+                                AppLocalizations.of(context)?.localeName ?? '',
+                              ),
                             ),
-                          ),
-                            },
+                        },
 
                         if (booking.cancellationReason != null &&
                             (booking.cancellationReason ?? "").isNotEmpty)
@@ -330,8 +333,6 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                             localization.cancellationReason,
                             booking.cancellationReason ?? "",
                           ),
-
-                       
                       ],
                     ),
                   ],
@@ -381,6 +382,99 @@ class BookingDetailsBottomSheet extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _openOrCreateChat(BuildContext context) async {
+    final chatService = ChatService();
+
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          constraints: BoxConstraints(minWidth: 100),
+          backgroundColor: Colors.white,
+          content: SizedBox(
+            height: 70,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 24, child: Loader(color: AppColors.primary)),
+                  Text(AppLocalizations.of(context)!.loadingChat),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      String chatId;
+
+      // Check if chatroom exists
+      if (booking.chatroomId.isNotEmpty) {
+        chatId = booking.chatroomId;
+      } else {
+        // Create new chatroom
+        final currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser == null) {
+          throw Exception('User not authenticated');
+        }
+
+        chatId = await chatService.createChat(
+          booking.id,
+          booking.agent!.uid ?? '',
+          booking.agent!.name ?? 'Technician',
+          booking.agent!.profileUrl ?? '',
+          booking.customer.name ?? 'Customer',
+          '', // Customer photo - update if available
+          'customer',
+        );
+
+       await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+          'chatroomId': chatId,
+        });
+      }
+
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+
+      // Open chat screen
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              chatId: chatId,
+              participantName: booking.agent!.name ?? 'Technician',
+              participantId: booking.agent!.uid ?? '',
+              participantPhoto: booking.agent!.profileUrl ?? '',
+              customerName: booking.customer.name ?? 'Customer',
+              customerPhoto: '',
+              bookingId: booking.id,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+
+      // Show error message
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to open chat: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildCompletionDataCard(BuildContext context) {
@@ -944,69 +1038,50 @@ class BookingDetailsBottomSheet extends StatelessWidget {
               ),
               if (hasChat) ...{
                 const Spacer(),
-                if (booking.chatroomId.isNotEmpty)
-                  StreamBuilder<int>(
-                    stream: ChatService().getUnreadCountStream(
-                      booking.chatroomId,
-                    ),
-                    builder: (context, snapshot) {
-                      final unreadCount = snapshot.data ?? 0;
-                      return SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ChatScreen(
-                                  chatId: booking.chatroomId,
-                                  participantName:
-                                      booking.agent!.name ?? 'Technician',
-                                  participantId: booking.agent!.uid ?? '',
-                                  participantPhoto:
-                                      booking.agent!.profileUrl ?? '',
-                                  customerName:
-                                      booking.customer.name ?? 'Customer',
-                                  customerPhoto: '',
-                                  bookingId: booking
-                                      .id, // Customer model does not have profileUrl yet
-                                ),
+
+                StreamBuilder<int>(
+                  stream: booking.chatroomId.isNotEmpty
+                      ? ChatService().getUnreadCountStream(booking.chatroomId)
+                      : Stream.value(0),
+                  builder: (context, snapshot) {
+                    final unreadCount = snapshot.data ?? 0;
+                    return SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: GestureDetector(
+                        onTap: () => _openOrCreateChat(context),
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Image.asset(
+                                'assets/icons/chat2.png',
+                                width: 24,
+                                height: 24,
                               ),
-                            );
-                          },
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: Image.asset(
-                                  'assets/icons/chat2.png',
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              ),
-                              if (unreadCount > 0)
-                                Positioned(
-                                  right: 12,
-                                  top: 12,
-                                  child: Container(
-                                    width: 12,
-                                    height: 12,
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 2,
-                                      ),
+                            ),
+                            if (unreadCount > 0)
+                              Positioned(
+                                right: 12,
+                                top: 12,
+                                child: Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
                                     ),
                                   ),
                                 ),
-                            ],
-                          ),
+                              ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
+                ),
               },
             ],
           ),

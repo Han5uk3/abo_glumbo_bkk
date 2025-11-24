@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   UnreadNotificationBadge(
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const NotificationsPage(),
+                        builder: (context) => const NewNotificationsPage(),
                       ),
                     ),
                   ),

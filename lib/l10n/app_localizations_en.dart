@@ -1217,7 +1217,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingHistory => 'Booking history';
 
   @override
+  String get delete => 'Delete';
+
+  @override
+  String get loadingChat => 'Loading Chat';
+
+  @override
   String get or => 'OR';
+
+  @override
+  String get rejectedBy => 'Rejected By';
 
   @override
   String get documents => 'Uploaded documents';

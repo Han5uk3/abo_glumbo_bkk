@@ -51,7 +51,7 @@ class BookServiceBottomSheet extends StatefulWidget {
 
 class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   final ValueNotifier<int?> selectedIndexNotifier = ValueNotifier<int?>(null);
-  UserModel selectedWorker = UserModel(uid: "",role: "customer");
+  UserModel selectedWorker = UserModel(uid: "", role: "customer");
   bool isFirstStep = true;
   bool isSecondStep = false;
   bool isThirdStep = false;
@@ -458,7 +458,6 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                   agent: selectedWorker,
                                 ),
                               );
-                                 
                             }
                           },
                     child: saving
@@ -625,7 +624,6 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
 
   _buildThirdStepContent() {
     return WorkerList(
-      
       service: widget.service,
       category: widget.service.category ?? "",
       selectedAddress: selectedAddress,
@@ -633,6 +631,8 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
       onWorkerSelected: (worker) {
         selectedWorker = worker;
       },
+      selectedDate: selectedDate!,
+      timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
     );
   }
 

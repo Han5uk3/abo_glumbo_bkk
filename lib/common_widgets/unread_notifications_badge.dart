@@ -17,7 +17,7 @@ class UnreadNotificationBadge extends StatelessWidget {
           const Icon(Icons.notifications_none, color: Colors.white, size: 24),
           // Unread count badge
           StreamBuilder<int>(
-            stream: AppServices.getUnreadNotificationCount(),
+            stream: AppServices.getUnreadNotificationsCountStream(),
             builder: (context, snapshot) {
               if (!snapshot.hasData || snapshot.data == 0) {
                 return const SizedBox.shrink();

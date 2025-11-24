@@ -318,7 +318,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   void _handleNotifications() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const NotificationsPage()),
+      MaterialPageRoute(builder: (context) => const NewNotificationsPage()),
     );
   }
 
@@ -402,6 +402,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         context: context,
         builder: (BuildContext dialogContext) {
           return AlertDialog(
+            actionsAlignment: MainAxisAlignment.start,
             title: Row(
               children: [
                 Icon(Icons.warning_amber_rounded, color: Colors.orange),
@@ -457,16 +458,6 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
               ],
             ),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.of(dialogContext).pop(false),
-                child: Text(
-                  AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
-                  style: GoogleFonts.dmSans(
-                    color: Colors.grey.shade600,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
               ElevatedButton(
                 onPressed: () => Navigator.of(dialogContext).pop(true),
                 style: ElevatedButton.styleFrom(
@@ -476,6 +467,17 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                 child: Text(
                   AppLocalizations.of(dialogContext)?.disable ?? 'Disable',
                   style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(width: 8),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(
+                  AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
+                  style: GoogleFonts.dmSans(
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
@@ -526,6 +528,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
+          actionsAlignment: MainAxisAlignment.start,
           title: Row(
             children: [
               const Icon(Icons.warning_amber_rounded, color: Colors.red),
@@ -616,16 +619,6 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
             ],
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: Text(
-                AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
-                style: GoogleFonts.dmSans(
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
             ElevatedButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
               style: ElevatedButton.styleFrom(
@@ -638,6 +631,17 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                 style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
               ),
             ),
+            SizedBox(width: 8),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(
+                AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
+                style: GoogleFonts.dmSans(
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
           ],
         );
       },
@@ -647,7 +651,8 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       await _performDeleteAccount();
     }
   }
-   Widget _buildDeleteItem(BuildContext context, String text) {
+
+  Widget _buildDeleteItem(BuildContext context, String text) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, top: 4),
       child: Row(
@@ -711,6 +716,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          actionsAlignment: MainAxisAlignment.start,
           title: Text(
             AppLocalizations.of(context)?.logout ?? 'Logout',
             style: GoogleFonts.dmSans(
@@ -724,6 +730,21 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
             style: GoogleFonts.dmSans(fontSize: 16),
           ),
           actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _performLogout();
+              },
+              child: Text(
+                AppLocalizations.of(context)?.logout ?? 'Logout',
+                style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(width: 8),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -733,19 +754,6 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                 style: GoogleFonts.dmSans(
                   color: Colors.grey[600],
                   fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _performLogout();
-              },
-              child: Text(
-                AppLocalizations.of(context)?.logout ?? 'Logout',
-                style: GoogleFonts.dmSans(
-                  color: AppColors.red,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

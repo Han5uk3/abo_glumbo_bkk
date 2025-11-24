@@ -127,6 +127,7 @@ class _HomeState extends State<Home> {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
+              actionsAlignment: MainAxisAlignment.start,
               title: Text(locale?.exitAppTitle ?? 'Exit App'),
               content: Text(
                 locale?.exitAppMessage ??
@@ -134,12 +135,13 @@ class _HomeState extends State<Home> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(locale?.cancel ?? 'Cancel'),
-                ),
-                TextButton(
                   onPressed: () => Navigator.of(context).pop(true),
                   child: Text(locale?.exit ?? 'Exit'),
+                ),
+                SizedBox(width: 8),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(locale?.cancel ?? 'Cancel'),
                 ),
               ],
             ),
@@ -290,7 +292,7 @@ class _HomeState extends State<Home> {
             ),
             const SizedBox(height: 20),
             Text(
-              AppLocalizations.of(context)!.pleaseContactSupport ,
+              AppLocalizations.of(context)!.pleaseContactSupport,
               style: const TextStyle(
                 fontSize: 15,
                 color: Colors.black87,
@@ -470,6 +472,7 @@ class _HomeState extends State<Home> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          actionsAlignment: MainAxisAlignment.start,
           title: Text(
             AppLocalizations.of(context)?.logout ?? 'Logout',
             style: GoogleFonts.dmSans(
@@ -484,18 +487,6 @@ class _HomeState extends State<Home> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                AppLocalizations.of(context)?.cancel ?? 'Cancel',
-                style: GoogleFonts.dmSans(
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
                 await _performLogout();
@@ -505,6 +496,19 @@ class _HomeState extends State<Home> {
                 style: GoogleFonts.dmSans(
                   color: AppColors.red,
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(width: 8),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                AppLocalizations.of(context)?.cancel ?? 'Cancel',
+                style: GoogleFonts.dmSans(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),

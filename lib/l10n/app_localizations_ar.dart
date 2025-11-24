@@ -46,7 +46,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failedToLoadImage => 'فشل تحميل الصورة';
 
   @override
-  String get issueMedia => 'مشكلة في الوسائط';
+  String get issueMedia => 'مرفقات المشكلة';
 
   @override
   String get image => 'صورة';
@@ -913,7 +913,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteAccoundSnack => 'جارٍ حذف الحساب... سيتم تسجيل الخروج';
 
   @override
-  String get bioMetricAuthentication => 'تفعيل البصمة';
+  String get bioMetricAuthentication => 'تفعيل بصمة الدخول';
 
   @override
   String get chooseServiceAddress => 'اختر عنوان الخدمة';
@@ -1088,7 +1088,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removeAddress => 'حذف العنوان';
 
   @override
-  String get enableBiometricAuthentication => 'تفعيل بصمة الدخول';
+  String get enableBiometricAuthentication => 'تفعيل التحقق بواسطة البصمة';
 
   @override
   String get loading => 'جاري التحميل...';
@@ -1097,7 +1097,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get call => 'اتصال';
 
   @override
-  String get biometricNotSupported => 'البصمة غير مدعومة على هذا الجهاز';
+  String get biometricNotSupported => 'ميزة البصمة غير مدعومة';
 
   @override
   String get pleaseAuthenticateToContinue => 'يرجى مصادقة البصمة للمتابعة';
@@ -1106,10 +1106,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authenticationFailed => 'فشل مصادقة البصمة';
 
   @override
-  String get biometricNotAvailable => 'البصمة غير متوفرة على هذا الجهاز';
+  String get biometricNotAvailable => 'ميزة البصمة غير متوفرة';
 
   @override
-  String get biometricTemporarilyLocked => 'البصمة مقفلة مؤقتًا على هذا الجهاز';
+  String get biometricTemporarilyLocked => 'ميزة البصمة مقفلة مؤقتًا';
 
   @override
   String get notificationLanguageChanged => 'تم تغيير لغة الإشعارات';
@@ -1177,21 +1177,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get disable => 'تعطيل';
 
   @override
-  String get biometricEnabled => 'تم تفعيل البيوميتريك';
+  String get biometricEnabled => 'تم تفعيل البصمة';
 
   @override
-  String get biometricDisabled => 'تم تعطيل البيوميتريك';
+  String get biometricDisabled => 'تم تعطيل البصمة';
 
   @override
   String get disableBiometricWarning =>
-      'تعطيل البيوميتريك سوف يمنعك من تسجيل الدخول باستخدام البيوميتريك';
+      'تعطيل البصمة سيمنعك من تسجيل الدخول باستخدام البصمة';
 
   @override
   String get youWillNeedPhoneOtp =>
       'سوف تحتاج إلى استخدام رقم الهاتف وOTP لتسجيل الدخول';
 
   @override
-  String get disableBiometric => 'تعطيل البيوميتريك';
+  String get disableBiometric => 'تعطيل البصمة';
 
   @override
   String get whatWillBeDeleted => 'سوف يتم حذف:';
@@ -1203,7 +1203,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingHistory => 'تاريخ الحجز';
 
   @override
+  String get delete => 'حذف';
+
+  @override
+  String get loadingChat => 'جاري تحميل الدردشة';
+
+  @override
   String get or => 'أو';
+
+  @override
+  String get rejectedBy => 'تم رفضه';
 
   @override
   String get documents => 'وثائق';

@@ -49,6 +49,7 @@ class _CancelBookingDialogWidgetState extends State<CancelBookingDialogWidget> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      actionsAlignment: MainAxisAlignment.start,
       backgroundColor: Colors.white,
       contentPadding: const EdgeInsets.all(0),
       content: SizedBox(
