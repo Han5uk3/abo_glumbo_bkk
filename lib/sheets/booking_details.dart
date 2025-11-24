@@ -268,7 +268,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                     ),
 
                   if (booking.bookingStatusCode == 'X' ||
-                      booking.bookingStatusCode == 'XC') ...[
+                      booking.bookingStatusCode == 'XC' ||
+                      booking.bookingStatusCode == 'R') ...[
                     const SizedBox(height: 16),
                     _buildSectionCard(
                       context: context,
@@ -277,17 +278,51 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                       icon: Icons.cancel_rounded,
                       children: [
                         if (booking.bookingStatusCode != null &&
-                            (booking.bookingStatusCode == 'XC'))
-                          _buildInfoRow(
+                            (booking.bookingStatusCode == 'XC'))...{
+                                             _buildInfoRow(
                             localization.cancelledBy,
                             localization.customer,
                           ),
+                           if (booking.cancelledAt != null)
+                          _buildInfoRow(
+                            localization.cancelledOn,
+                            formatDateTime(
+                              booking.cancelledAt!.toDate(),
+                              AppLocalizations.of(context)?.localeName ?? '',
+                            ),
+                          ),
+                            },
+           
                         if (booking.bookingStatusCode != null &&
-                            (booking.bookingStatusCode == 'X'))
+                            (booking.bookingStatusCode == 'X'))...[
                           _buildInfoRow(
                             localization.cancelledBy,
                             localization.serviceProvider,
                           ),
+                           if (booking.cancelledAt != null)
+                          _buildInfoRow(
+                            localization.cancelledOn,
+                            formatDateTime(
+                              booking.cancelledAt!.toDate(),
+                              AppLocalizations.of(context)?.localeName ?? '',
+                            ),
+                          ),
+                        ],
+                        if (booking.bookingStatusCode != null &&
+                            (booking.bookingStatusCode == 'R'))...{
+                          _buildInfoRow(
+                            localization.cancelledBy,
+                            localization.admin,
+                          ),
+                          if (booking.rejectedAt != null)
+                          _buildInfoRow(
+                            localization.cancelledOn,
+                            formatDateTime(
+                              booking.rejectedAt!.toDate(),
+                              AppLocalizations.of(context)?.localeName ?? '',
+                            ),
+                          ),
+                            },
 
                         if (booking.cancellationReason != null &&
                             (booking.cancellationReason ?? "").isNotEmpty)
@@ -296,14 +331,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                             booking.cancellationReason ?? "",
                           ),
 
-                        if (booking.cancelledAt != null)
-                          _buildInfoRow(
-                            localization.cancelledOn,
-                            formatDateTime(
-                              booking.cancelledAt!.toDate(),
-                              AppLocalizations.of(context)?.localeName ?? '',
-                            ),
-                          ),
+                       
                       ],
                     ),
                   ],

@@ -639,6 +639,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get customer => 'العميل';
 
   @override
+  String get admin => 'الادمن';
+
+  @override
   String get address => 'العنوان';
 
   @override
@@ -1085,7 +1088,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removeAddress => 'حذف العنوان';
 
   @override
-  String get enableBiometricAuthentication => 'تفعيل البصمة';
+  String get enableBiometricAuthentication => 'تفعيل بصمة الدخول';
 
   @override
   String get loading => 'جاري التحميل...';
@@ -1169,6 +1172,48 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get callServiceProvider => 'اتصل بالفني';
+
+  @override
+  String get disable => 'تعطيل';
+
+  @override
+  String get biometricEnabled => 'تم تفعيل البيوميتريك';
+
+  @override
+  String get biometricDisabled => 'تم تعطيل البيوميتريك';
+
+  @override
+  String get disableBiometricWarning =>
+      'تعطيل البيوميتريك سوف يمنعك من تسجيل الدخول باستخدام البيوميتريك';
+
+  @override
+  String get youWillNeedPhoneOtp =>
+      'سوف تحتاج إلى استخدام رقم الهاتف وOTP لتسجيل الدخول';
+
+  @override
+  String get disableBiometric => 'تعطيل البيوميتريك';
+
+  @override
+  String get whatWillBeDeleted => 'سوف يتم حذف:';
+
+  @override
+  String get personalInfo => 'معلومات شخصية';
+
+  @override
+  String get bookingHistory => 'تاريخ الحجز';
+
+  @override
+  String get or => 'أو';
+
+  @override
+  String get documents => 'وثائق';
+
+  @override
+  String get allData => 'جميع البيانات المرتبطة';
+
+  @override
+  String get deleteAccountWarning =>
+      'هل أنت متأكد أنك تريد حذف حسابك؟ هذا الإجراء لا يمكن التراجع عنه';
 
   @override
   String get invalidOtpCode => 'رمز التحقق غير صحيح';

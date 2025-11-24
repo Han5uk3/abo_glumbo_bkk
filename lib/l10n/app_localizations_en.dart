@@ -644,6 +644,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customer => 'Customer';
 
   @override
+  String get admin => 'Admin';
+
+  @override
   String get address => 'Address';
 
   @override
@@ -1183,6 +1186,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get callServiceProvider => 'Call Technician';
+
+  @override
+  String get disable => 'Disable';
+
+  @override
+  String get biometricEnabled => 'Biometric authentication enabled';
+
+  @override
+  String get biometricDisabled => 'Biometric authentication disabled';
+
+  @override
+  String get disableBiometricWarning =>
+      'Disabling biometric authentication will prevent you from logging in using fingerprint.';
+
+  @override
+  String get youWillNeedPhoneOtp =>
+      'You will need to use your phone number and OTP to login.';
+
+  @override
+  String get disableBiometric => 'Disable Biometric?';
+
+  @override
+  String get whatWillBeDeleted => 'What will be deleted:';
+
+  @override
+  String get personalInfo => 'Personal information';
+
+  @override
+  String get bookingHistory => 'Booking history';
+
+  @override
+  String get or => 'OR';
+
+  @override
+  String get documents => 'Uploaded documents';
+
+  @override
+  String get allData => 'All associated data';
+
+  @override
+  String get deleteAccountWarning =>
+      'Are you sure you want to delete your account? This action cannot be undone';
 
   @override
   String get invalidOtpCode => 'Invalid OTP code';

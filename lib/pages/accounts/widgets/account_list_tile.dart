@@ -8,12 +8,14 @@ class AccountListTile extends StatelessWidget {
   final VoidCallback? onTap;
   final Widget? trailing;
   final bool dense;
+  final Color? textcolor;
 
   const AccountListTile({
     super.key,
     required this.title,
     this.onTap,
     this.trailing,
+    this.textcolor,
     this.dense = false,
   });
 
@@ -32,6 +34,7 @@ class AccountListTile extends StatelessWidget {
     required String title,
     required String trailingText,
     VoidCallback? onTap,
+    Color? textColor,
   }) {
     return AccountListTile(
       title: title,
@@ -40,7 +43,7 @@ class AccountListTile extends StatelessWidget {
         trailingText,
         style: GoogleFonts.dmSans(
           fontSize: 13,
-          color: AppColors.black1,
+          color: textColor ?? AppColors.black1,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -56,7 +59,7 @@ class AccountListTile extends StatelessWidget {
         title,
         style: GoogleFonts.dmSans(
           fontSize: dense ? 15 : 16,
-          color: AppColors.black1,
+          color: textcolor ?? AppColors.black1,
         ),
       ),
       trailing: trailing,

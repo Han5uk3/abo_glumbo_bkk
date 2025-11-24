@@ -1322,6 +1322,12 @@ abstract class AppLocalizations {
   /// **'Customer'**
   String get customer;
 
+  /// No description provided for @admin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get admin;
+
   /// No description provided for @address.
   ///
   /// In en, this message translates to:
@@ -2365,6 +2371,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Call Technician'**
   String get callServiceProvider;
+
+  /// No description provided for @disable.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable'**
+  String get disable;
+
+  /// No description provided for @biometricEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication enabled'**
+  String get biometricEnabled;
+
+  /// No description provided for @biometricDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication disabled'**
+  String get biometricDisabled;
+
+  /// No description provided for @disableBiometricWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabling biometric authentication will prevent you from logging in using fingerprint.'**
+  String get disableBiometricWarning;
+
+  /// No description provided for @youWillNeedPhoneOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need to use your phone number and OTP to login.'**
+  String get youWillNeedPhoneOtp;
+
+  /// No description provided for @disableBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Biometric?'**
+  String get disableBiometric;
+
+  /// No description provided for @whatWillBeDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'What will be deleted:'**
+  String get whatWillBeDeleted;
+
+  /// No description provided for @personalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal information'**
+  String get personalInfo;
+
+  /// No description provided for @bookingHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking history'**
+  String get bookingHistory;
+
+  /// No description provided for @or.
+  ///
+  /// In en, this message translates to:
+  /// **'OR'**
+  String get or;
+
+  /// No description provided for @documents.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded documents'**
+  String get documents;
+
+  /// No description provided for @allData.
+  ///
+  /// In en, this message translates to:
+  /// **'All associated data'**
+  String get allData;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your account? This action cannot be undone'**
+  String get deleteAccountWarning;
 
   /// No description provided for @invalidOtpCode.
   ///

@@ -271,12 +271,12 @@ class ServiceBookingTile extends StatelessWidget {
                     booking.cancelledAt != null) ...{
                   if(booking.bookingStatusCode !="R") ...{
                   Text(
-                    "${AppLocalizations.of(context)!.canceledOn} : ${formatBookingDateTime(booking.cancelledAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
+                    "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(booking.rejectedAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
                     style: TextStyle(color: AppColors.grey3, fontSize: 12),
                   ),
                 }else... {
                   Text(
-                    "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(booking.cancelledAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
+                    "${AppLocalizations.of(context)!.cancelledOn} : ${formatBookingDateTime(booking.cancelledAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
                     style: TextStyle(color: AppColors.grey3, fontSize: 12),
                   ),
                 }},

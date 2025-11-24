@@ -274,7 +274,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildHeaderImage() {
     return Padding(
-      padding: const EdgeInsets.only(top: 60),
+      padding: const EdgeInsets.only(top: 30),
       child: Center(
         child: Stack(
           alignment: Alignment.center,
@@ -382,11 +382,24 @@ class _LoginPageState extends State<LoginPage> {
     return Center(
       child: GestureDetector(
         onTap: () => _byPassUsingBioAuth(context),
-        child: Image.asset(
-          'assets/images/fingerPrint.png',
-          height: 54,
-          width: 54,
-          color: Colors.white,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white.withOpacity(0.1),
+            border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                'assets/images/fingerPrint.png',
+                height: 60,
+                width: 60,
+                color: Colors.white,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -498,7 +511,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   children: [
                     _buildHeaderImage(),
-                    const SizedBox(height: 35),
+                    const SizedBox(height: 10),
                     Center(
                       child: Text(
                         AppLocalizations.of(context)?.appLoginCaption ?? '',
@@ -515,7 +528,7 @@ class _LoginPageState extends State<LoginPage> {
                       textDirection: TextDirection.ltr,
                       child: LanguageSelectorCard(isInLoginPage: true),
                     ),
-                    const SizedBox(height: 23),
+                    const SizedBox(height: 20),
                     Text(
                       AppLocalizations.of(context)?.mobileNumber ?? '',
                       style: GoogleFonts.dmSans(
@@ -527,21 +540,48 @@ class _LoginPageState extends State<LoginPage> {
                     _buildPhoneInputField(),
                     const SizedBox(height: 6),
                     _buildRememberMeCheckbox(),
-                    if (isCheckUserEnableTwoStepVerification &&
-                        isUserLogout &&
-                        customerLastUid != null)
-                      const SizedBox(height: 12),
-                    if (isCheckUserEnableTwoStepVerification &&
-                        isUserLogout &&
-                        customerLastUid != null)
-                      _buildFingerprintAuth(),
                     const SizedBox(height: 10),
                     _buildLoginButton(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     _buildSignUpLaterButton(),
+
+                    if (isCheckUserEnableTwoStepVerification &&
+                        customerLastUid != null &&
+                        customerLastUid!.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: Colors.white.withOpacity(0.5),
+                              thickness: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              AppLocalizations.of(context)?.or ?? 'OR',
+                              style: GoogleFonts.dmSans(
+                                color: Colors.white.withOpacity(0.7),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.white.withOpacity(0.5),
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      _buildFingerprintAuth(),
+                    ],
                     const SizedBox(height: 20),
                     _buildTermsAndPrivacyText(),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 60),
                   ],
                 ),
               ),

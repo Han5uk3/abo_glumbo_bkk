@@ -101,9 +101,10 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           if (!_isGuest) ...[
             _buildTermsAndConditions(),
             _buildFAQSection(),
+            _buildAuthSection(),
             _buildDangerZone(),
-          ], // Add this line (if not guest)
-          _buildAuthSection(),
+          ],
+          if (_isGuest) _buildAuthSection(),
         ],
       ),
     );
@@ -263,9 +264,11 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
   Widget _buildDangerZone() {
     return AccountListTile(
+      textcolor: Colors.red,
       title: AppLocalizations.of(context)?.deleteAccount ?? '',
-      onTap: () => _showDeleteAccountConfirmationDialog(),
+      onTap: () => _showDeleteAccountConfirmation(),
       dense: true,
+      trailing: Icon(Icons.delete, color: Colors.red),
     );
   }
 
@@ -375,16 +378,128 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
   Future<void> _handleBiometricToggle(bool value) async {
     if (value) {
+      // Enabling biometric - authenticate first
       final authenticated = await BiometricService.authenticate(context);
       if (authenticated && mounted) {
         setState(() => _isBiometricEnabled = true);
-        await BiometricService.setBiometricEnabled(true);
+        BiometricService.setBiometricEnabled(true);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)?.biometricEnabled ??
+                    'Biometric authentication enabled',
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       }
     } else {
-      if (mounted) {
+      // Disabling biometric - show confirmation dialog
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, color: Colors.orange),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(dialogContext)?.disableBiometric ??
+                        'Disable Biometric?',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(dialogContext)?.disableBiometricWarning ??
+                      'Disabling biometric authentication will prevent you from logging in using fingerprint or face recognition.',
+                  style: GoogleFonts.dmSans(fontSize: 14),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(
+                                dialogContext,
+                              )?.youWillNeedPhoneOtp ??
+                              'You will need to use your phone number and OTP to login.',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 13,
+                            color: Colors.blue.shade700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(
+                  AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
+                  style: GoogleFonts.dmSans(
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(
+                  AppLocalizations.of(dialogContext)?.disable ?? 'Disable',
+                  style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+
+      // If user confirmed, disable biometric
+      if (confirmed == true && mounted) {
         setState(() => _isBiometricEnabled = false);
+        BiometricService.setBiometricEnabled(false);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)?.biometricDisabled ??
+                    'Biometric authentication disabled',
+              ),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
       }
-      await BiometricService.setBiometricEnabled(false);
     }
   }
 
@@ -406,53 +521,150 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
     );
   }
 
-  void _showDeleteAccountConfirmationDialog() {
-    showDialog(
+  Future<void> _showDeleteAccountConfirmation() async {
+    final confirmed = await showDialog<bool>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text(
-            AppLocalizations.of(context)?.deleteAccount ?? 'Delete Account',
-            style: GoogleFonts.dmSans(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: AppColors.red,
-            ),
+          title: Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.red),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(dialogContext)?.deleteAccount ??
+                      'Delete Account?',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+            ],
           ),
-          content: Text(
-            AppLocalizations.of(context)?.areYouSureYouWantToDeleteAccount ??
-                'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.',
-            style: GoogleFonts.dmSans(fontSize: 16),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(dialogContext)?.deleteAccountWarning ??
+                    'This action cannot be undone. All your data will be permanently deleted.',
+                style: GoogleFonts.dmSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red.withOpacity(0.3)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.info_outline,
+                          color: Colors.red,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            AppLocalizations.of(
+                                  dialogContext,
+                                )?.whatWillBeDeleted ??
+                                'What will be deleted:',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red.shade700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    _buildDeleteItem(
+                      dialogContext,
+                      AppLocalizations.of(dialogContext)?.personalInfo ??
+                          'Personal information',
+                    ),
+                    _buildDeleteItem(
+                      dialogContext,
+                      AppLocalizations.of(dialogContext)?.bookingHistory ??
+                          'Booking history',
+                    ),
+                    _buildDeleteItem(
+                      dialogContext,
+                      AppLocalizations.of(dialogContext)?.documents ??
+                          'Uploaded documents',
+                    ),
+                    _buildDeleteItem(
+                      dialogContext,
+                      AppLocalizations.of(dialogContext)?.allData ??
+                          'All associated data',
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-              },
+              onPressed: () => Navigator.of(dialogContext).pop(false),
               child: Text(
-                AppLocalizations.of(context)?.cancel ?? 'Cancel',
+                AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
                 style: GoogleFonts.dmSans(
-                  color: Colors.grey[600],
+                  color: Colors.grey.shade600,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop(); // Close dialog
-                await _performDeleteAccount();
-              },
+            ElevatedButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
               child: Text(
-                AppLocalizations.of(context)?.deleteAccount ?? 'Delete',
-                style: GoogleFonts.dmSans(
-                  color: AppColors.red,
-                  fontWeight: FontWeight.bold,
-                ),
+                AppLocalizations.of(dialogContext)?.deleteAccount ??
+                    'Delete Account',
+                style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
               ),
             ),
           ],
         );
       },
+    );
+
+    if (confirmed == true && mounted) {
+      await _performDeleteAccount();
+    }
+  }
+   Widget _buildDeleteItem(BuildContext context, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, top: 4),
+      child: Row(
+        children: [
+          Icon(Icons.check_circle, size: 16, color: Colors.red.shade700),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
+                color: Colors.red.shade700,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
