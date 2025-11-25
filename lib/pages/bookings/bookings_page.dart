@@ -268,6 +268,8 @@ class _BookingsPageState extends State<BookingsPage> {
                 );
               }
             },
+            isWarranty:
+                state.selectedStatus == BookingStatusType.onWarranty,
           );
         },
       );
@@ -299,6 +301,8 @@ class _BookingsPageState extends State<BookingsPage> {
         return locn.paymentPending.toUpperCase();
       case "cancelled":
         return locn.cancelled.toUpperCase();
+      case "onWarranty":
+        return locn.onWarranty.toUpperCase();
       default:
         return "Error";
     }
@@ -317,6 +321,8 @@ class _BookingsPageState extends State<BookingsPage> {
         return locn.paymentPending.toLowerCase();
       case "cancelled":
         return locn.cancelled.toLowerCase();
+      case "onWarranty":
+        return locn.onWarranty.toLowerCase();
       default:
         return "Error";
     }

@@ -2432,6 +2432,126 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get delete;
 
+  /// No description provided for @onWarranty.
+  ///
+  /// In en, this message translates to:
+  /// **'On Warranty'**
+  String get onWarranty;
+
+  /// No description provided for @warrantyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Details'**
+  String get warrantyDetails;
+
+  /// No description provided for @warrantyAppliedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Applied On'**
+  String get warrantyAppliedOn;
+
+  /// No description provided for @repairRequestedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair Requested Successfully'**
+  String get repairRequestedSuccessfully;
+
+  /// No description provided for @expiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires On'**
+  String get expiresOn;
+
+  /// No description provided for @expiredOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired On'**
+  String get expiredOn;
+
+  /// No description provided for @requestedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested On'**
+  String get requestedOn;
+
+  /// No description provided for @requestRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Repair'**
+  String get requestRepair;
+
+  /// No description provided for @importantInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Important Information'**
+  String get importantInformation;
+
+  /// No description provided for @dayLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Day Left'**
+  String get dayLeft;
+
+  /// No description provided for @daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Days Left'**
+  String get daysLeft;
+
+  /// No description provided for @repairRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair Requested'**
+  String get repairRequested;
+
+  /// No description provided for @requested.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get requested;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get expired;
+
+  /// No description provided for @claimStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim Started'**
+  String get claimStarted;
+
+  /// No description provided for @claimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed'**
+  String get claimed;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @appliedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied On'**
+  String get appliedOn;
+
   /// No description provided for @loadingChat.
   ///
   /// In en, this message translates to:

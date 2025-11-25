@@ -1206,6 +1206,66 @@ class AppLocalizationsAr extends AppLocalizations {
   String get delete => 'حذف';
 
   @override
+  String get onWarranty => 'على الضمان';
+
+  @override
+  String get warrantyDetails => 'تفاصيل الضمان';
+
+  @override
+  String get warrantyAppliedOn => 'تم تطبيق الضمان';
+
+  @override
+  String get repairRequestedSuccessfully => 'تم طلب الإصلاح بنجاح';
+
+  @override
+  String get expiresOn => 'ينتهي في';
+
+  @override
+  String get expiredOn => 'انتهى في';
+
+  @override
+  String get requestedOn => 'طُلب في';
+
+  @override
+  String get requestRepair => 'طلب إصلاح';
+
+  @override
+  String get importantInformation => 'معلومات مهمة';
+
+  @override
+  String get dayLeft => 'يوم متبقٍ';
+
+  @override
+  String get daysLeft => 'أيام متبقية';
+
+  @override
+  String get repairRequested => 'تم طلب الإصلاح';
+
+  @override
+  String get requested => 'تم الطلب';
+
+  @override
+  String get yes => 'نعم';
+
+  @override
+  String get active => 'نشط';
+
+  @override
+  String get expired => 'منتهي';
+
+  @override
+  String get claimStarted => 'تم بدء المطالبة';
+
+  @override
+  String get claimed => 'تمت المطالبة';
+
+  @override
+  String get status => 'الحالة';
+
+  @override
+  String get appliedOn => 'تم التقديم في';
+
+  @override
   String get loadingChat => 'جاري تحميل الدردشة';
 
   @override

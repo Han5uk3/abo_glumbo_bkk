@@ -1220,6 +1220,66 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
+  String get onWarranty => 'On Warranty';
+
+  @override
+  String get warrantyDetails => 'Warranty Details';
+
+  @override
+  String get warrantyAppliedOn => 'Warranty Applied On';
+
+  @override
+  String get repairRequestedSuccessfully => 'Repair Requested Successfully';
+
+  @override
+  String get expiresOn => 'Expires On';
+
+  @override
+  String get expiredOn => 'Expired On';
+
+  @override
+  String get requestedOn => 'Requested On';
+
+  @override
+  String get requestRepair => 'Request Repair';
+
+  @override
+  String get importantInformation => 'Important Information';
+
+  @override
+  String get dayLeft => 'Day Left';
+
+  @override
+  String get daysLeft => 'Days Left';
+
+  @override
+  String get repairRequested => 'Repair Requested';
+
+  @override
+  String get requested => 'Requested';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get expired => 'Expired';
+
+  @override
+  String get claimStarted => 'Claim Started';
+
+  @override
+  String get claimed => 'Claimed';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get appliedOn => 'Applied On';
+
+  @override
   String get loadingChat => 'Loading Chat';
 
   @override

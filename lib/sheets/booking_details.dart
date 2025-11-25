@@ -22,24 +22,30 @@ Future<void> showBookingDetailsBottomSheet(
   BuildContext context, {
   required BookingModel booking,
   VoidCallback? onRefresh,
+  bool isWarranty = false,
 }) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (context) =>
-        BookingDetailsBottomSheet(booking: booking, onRefresh: onRefresh),
+    builder: (context) => BookingDetailsBottomSheet(
+      booking: booking,
+      onRefresh: onRefresh,
+      isWarranty: isWarranty,
+    ),
   );
 }
 
 class BookingDetailsBottomSheet extends StatelessWidget {
   final BookingModel booking;
   final VoidCallback? onRefresh;
+  final bool isWarranty;
 
   const BookingDetailsBottomSheet({
     super.key,
     required this.booking,
     this.onRefresh,
+    this.isWarranty = false,
   });
 
   @override
@@ -143,21 +149,22 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _buildSectionCard(
-                    context: context,
-                    hasChat: false,
-                    title: localization.schedule,
-                    icon: Icons.schedule_rounded,
-                    children: [
-                      _buildInfoRow(
-                        localization.dateAndTime,
-                        formatDateTime(
-                          booking.bookingDateTime.toDate(),
-                          AppLocalizations.of(context)?.localeName ?? '',
+                  if (!isWarranty)
+                    _buildSectionCard(
+                      context: context,
+                      hasChat: false,
+                      title: localization.schedule,
+                      icon: Icons.schedule_rounded,
+                      children: [
+                        _buildInfoRow(
+                          localization.dateAndTime,
+                          formatDateTime(
+                            booking.bookingDateTime.toDate(),
+                            AppLocalizations.of(context)?.localeName ?? '',
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                   if ((booking.issueImage != null &&
                           booking.issueImage!.isNotEmpty) ||
                       (booking.issueVideo != null &&
@@ -374,6 +381,11 @@ class BookingDetailsBottomSheet extends StatelessWidget {
 
                   const SizedBox(height: 16),
                   _buildCompletionDataCard(context),
+                  // if (isWarranty)...{
+                  const SizedBox(height: 16),
+                  if (booking.warranty != null) _buildWarrantyDataCard(context),
+
+                  // },
                   const SizedBox(height: 32),
                 ],
               ),
@@ -432,7 +444,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
           'customer',
         );
 
-       await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+        await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
           'chatroomId': chatId,
         });
       }
@@ -475,6 +487,110 @@ class BookingDetailsBottomSheet extends StatelessWidget {
         );
       }
     }
+  }
+
+  Widget _buildWarrantyDataCard(BuildContext context) {
+    return _buildSectionCard(
+      context: context,
+      hasChat: false,
+      title: AppLocalizations.of(context)!.warrantyDetails,
+      icon: Icons.verified_user,
+      children: [
+        _buildInfoRow(
+          AppLocalizations.of(context)!.status,
+          getWarrantyStatus(booking.warranty!.warrantyStatusCode, context),
+        ),
+        _buildInfoRow(
+          AppLocalizations.of(context)!.appliedOn,
+          formatDateTime(
+            booking.warranty!.createdAt!,
+            AppLocalizations.of(context)?.localeName ?? '',
+          ),
+        ),
+
+        if (booking.warranty!.warrantyStatusCode != 'E')
+          _buildInfoRow(
+            AppLocalizations.of(context)!.expiresOn,
+            formatDateTime(
+              getExpiryDate(booking.warranty!.createdAt!),
+              AppLocalizations.of(context)?.localeName ?? '',
+            ),
+          ),
+
+        // _buildInfoRow(
+        //   AppLocalizations.of(context)!.repairRequested,
+        //   booking.warranty!.claimrequested ?? false
+        //       ? AppLocalizations.of(context)!.yes
+        //       : AppLocalizations.of(context)!.no,
+        // ),
+        if (booking.warranty!.warrantyStatusCode == 'S' &&
+            booking.warranty!.acceptedOn != null) ...[
+          _buildInfoRow(
+            AppLocalizations.of(context)!.acceptedOn,
+            formatDateTime(
+              booking.warranty!.acceptedOn!,
+              AppLocalizations.of(context)?.localeName ?? '',
+            ),
+          ),
+        ],
+
+        if (booking.warranty!.warrantyStatusCode == 'E' &&
+            booking.warranty!.requestedOn != null) ...[
+          _buildInfoRow(
+            AppLocalizations.of(context)!.expiredOn,
+            formatDateTime(
+              booking.warranty!.expiredOn!,
+              AppLocalizations.of(context)?.localeName ?? '',
+            ),
+          ),
+        ],
+
+        if (booking.warranty!.warrantyStatusCode == 'R' &&
+            booking.warranty!.requestedOn != null) ...[
+          _buildInfoRow(
+            AppLocalizations.of(context)!.requestedOn,
+            formatDateTime(
+              booking.warranty!.requestedOn!,
+              AppLocalizations.of(context)?.localeName ?? '',
+            ),
+          ),
+        ],
+        if (booking.warranty!.warrantyStatusCode == 'C' &&
+            booking.warranty!.completedOn != null) ...[
+          _buildInfoRow(
+            AppLocalizations.of(context)!.completedOn,
+            formatDateTime(
+              booking.warranty!.completedOn!,
+              AppLocalizations.of(context)?.localeName ?? '',
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  String getWarrantyStatus(String status, BuildContext context) {
+    switch (status.toLowerCase()) {
+      case 'a':
+        return AppLocalizations.of(context)!.active;
+      case 'r':
+        return AppLocalizations.of(context)!.requested;
+      case 's':
+        return AppLocalizations.of(context)!.accepted;
+      case 'c':
+        return AppLocalizations.of(context)!.claimed;
+      case 'e':
+        return AppLocalizations.of(context)!.expired;
+      case 'x':
+        return AppLocalizations.of(context)!.rejected;
+      default:
+        return AppLocalizations.of(context)!.unknown;
+    }
+  }
+
+  DateTime getExpiryDate(DateTime createdAt) {
+    final expiryDate = createdAt.add(const Duration(days: 7));
+    return expiryDate;
   }
 
   Widget _buildCompletionDataCard(BuildContext context) {

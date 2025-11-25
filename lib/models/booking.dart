@@ -10,24 +10,6 @@ class BookingModel {
   late Timestamp bookingDateTime;
   late String bookingStatusCode;
 
-  /// generate booking status string based on booking status code
-  String get bookingStatusGen {
-    switch (bookingStatusCode) {
-      case 'P':
-        return 'Pending';
-      case 'A':
-        return 'Accepted';
-      case 'R':
-        return 'Rejected';
-      case 'C':
-        return 'Completed';
-      case 'XC':
-      case 'X':
-        return 'Cancelled';
-      default:
-        return 'Unknown';
-    }
-  }
 
   late String notes;
   late String? issueImage;
@@ -36,21 +18,6 @@ class BookingModel {
   CompletionDataModel? completionData;
   late String paymentModeCode;
   String chatroomId = '';
-
-  /// generate payment mode string based on payment mode code
-  String get paymentModeGen {
-    switch (paymentModeCode) {
-      case 'C':
-        return 'Cards';
-      case 'A':
-        return 'Apple Pay';
-      case 'O':
-        return 'Cash On Hands';
-      default:
-        return 'Unknown';
-    }
-  }
-
   ReviewModel? review;
 
   UserModel? agent;
@@ -112,9 +79,9 @@ class BookingModel {
       review = data['review'] != null
           ? ReviewModel.fromMap(data['review'])
           : null,
-      warranty = data['warranty'] != null
-          ? WarrantyModel.fromJson(data['warranty'])
-          : null,
+    warranty = (data['warranty'] is Map<String, dynamic>)
+    ? WarrantyModel.fromJson(data['warranty'])
+    : null,
       agent = data['agent'] != null ? UserModel.fromJson(data['agent']) : null,
       createdAt = data['createdAt'],
       updatedAt = data['updatedAt'],
@@ -266,6 +233,7 @@ enum BookingStatusType {
   pendingPayment,
   completed,
   cancelled,
+  onWarranty
 }
 
 class BookingServiceItem {

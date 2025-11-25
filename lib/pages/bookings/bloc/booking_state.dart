@@ -39,14 +39,14 @@ class BookingsLoaded extends BookingState {
       case BookingStatusType.completed:
         final completed = allBookings.where((e) {
           final isCompleted = e.bookingStatusCode == 'C' && e.paymentCompleted;
-        
+
           return isCompleted;
         }).toList();
         return completed;
       case BookingStatusType.pendingPayment:
         final pending = allBookings.where((e) {
           final isPending = e.bookingStatusCode == 'C' && !e.paymentCompleted;
-      
+
           return isPending;
         }).toList();
         return pending;
@@ -56,6 +56,12 @@ class BookingsLoaded extends BookingState {
               (e) => e.bookingStatusCode == 'R' || e.bookingStatusCode == 'XC',
             )
             .toList();
+      case BookingStatusType.onWarranty:
+        return allBookings.where((e) {
+          final completed = e.bookingStatusCode == 'C' && e.paymentCompleted;
+          final warranty = e.warranty != null;
+          return completed && warranty;
+        }).toList();
     }
   }
 

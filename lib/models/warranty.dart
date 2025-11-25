@@ -2,72 +2,88 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class WarrantyModel {
   String? id;
-  String? bookingId;
-  String? customerId;
   String? assignedTechnicianId;
-  String? technicianId;
-  bool? availability;
-  bool? claimStatus;
+  String warrantyStatusCode;
+  bool? claimrequested;
   List<RejectedTechnicianModel>? rejectedTechnicians;
   DateTime? createdAt;
   DateTime? updatedAt;
-  bool isTracking = false;
-  bool completed = false;
+  DateTime? requestedOn;
+  DateTime? completedOn;
+  DateTime? acceptedOn;
+  DateTime? rejectedOn;
+  DateTime? expiredOn;
 
   WarrantyModel({
     this.id,
-    this.bookingId,
-    this.customerId,
     this.assignedTechnicianId,
-    this.technicianId,
-    this.availability,
-    this.claimStatus,
+    this.warrantyStatusCode = 'A',
+    this.claimrequested,
+    this.rejectedTechnicians = const [],
     this.createdAt,
-    this.rejectedTechnicians,
     this.updatedAt,
-    this.isTracking = false,
-    this.completed = false,
+    this.requestedOn,
+    this.completedOn,
+    this.acceptedOn,
+    this.rejectedOn,
+    this.expiredOn,
   });
 
   factory WarrantyModel.fromJson(Map<String, dynamic> json) {
     return WarrantyModel(
       id: json['id'],
-      bookingId: json['bookingId'],
-      customerId: json['customerId'],
       assignedTechnicianId: json['assignedTechnicianId'],
-      technicianId: json['technicianId'],
-      availability: json['availability'],
-      isTracking: json['isTracking'],
-      completed: json['completed'],
-      claimStatus: json['claimStatus'],
-      createdAt: (json['createdAt'] is Timestamp)
+      warrantyStatusCode: json['warrantyStatusCode']?.toString() ?? 'A',
+      claimrequested: json['claimrequested'] as bool?,
+      createdAt: json['createdAt'] is Timestamp
           ? (json['createdAt'] as Timestamp).toDate()
-          : (json['createdAt'] as DateTime?),
-      updatedAt: (json['updatedAt'] is Timestamp)
+          : json['createdAt'] as DateTime?,
+      updatedAt: json['updatedAt'] is Timestamp
           ? (json['updatedAt'] as Timestamp).toDate()
-          : (json['updatedAt'] as DateTime?),
-      rejectedTechnicians: json['rejectedTechnicians'] != null
+          : json['updatedAt'] as DateTime?,
+      requestedOn: json['requestedOn'] is Timestamp
+          ? (json['requestedOn'] as Timestamp).toDate()
+          : json['requestedOn'] as DateTime?,
+      completedOn: json['completedOn'] is Timestamp
+          ? (json['completedOn'] as Timestamp).toDate()
+          : json['completedOn'] as DateTime?,
+      acceptedOn: json['acceptedOn'] is Timestamp
+          ? (json['acceptedOn'] as Timestamp).toDate()
+          : json['acceptedOn'] as DateTime?,
+      rejectedOn: json['rejectedOn'] is Timestamp
+          ? (json['rejectedOn'] as Timestamp).toDate()
+          : json['rejectedOn'] as DateTime?,
+      expiredOn: json['expiredOn'] is Timestamp
+          ? (json['expiredOn'] as Timestamp).toDate()
+          : json['expiredOn'] as DateTime?,
+      rejectedTechnicians: (json['rejectedTechnicians'] is List)
           ? (json['rejectedTechnicians'] as List)
-                .map((e) => RejectedTechnicianModel.fromJson(e))
+                .map(
+                  (e) => RejectedTechnicianModel.fromJson(
+                    e as Map<String, dynamic>,
+                  ),
+                )
                 .toList()
-          : null,
+          : [],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'bookingId': bookingId,
-      'customerId': customerId,
       'assignedTechnicianId': assignedTechnicianId,
-      'technicianId': technicianId,
-      'availability': availability,
-      'claimStatus': claimStatus,
+      'warrantyStatusCode': warrantyStatusCode,
+      'claimrequested': claimrequested,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
-      'rejectedTechnicians': rejectedTechnicians,
-      'isTracking': isTracking,
-      'completed': completed,
+      'requestedOn': requestedOn,
+      'completedOn': completedOn,
+      'acceptedOn': acceptedOn,
+      'rejectedOn': rejectedOn,
+      'expiredOn': expiredOn,
+      'rejectedTechnicians': rejectedTechnicians
+          ?.map((e) => e.toJson())
+          .toList(),
     };
   }
 

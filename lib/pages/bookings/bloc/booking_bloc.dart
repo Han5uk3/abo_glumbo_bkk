@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:bloc/bloc.dart';
@@ -36,6 +38,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
           );
         },
         onError: (error, stackTrace) {
+          log(stackTrace.toString());
           return BookingsError(
             message: error.toString(),
             selectedStatus: statusToUse,
