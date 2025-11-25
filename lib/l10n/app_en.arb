@@ -391,6 +391,8 @@
   "onWarranty": "On Warranty",
   "warrantyDetails": "Warranty Details",
   "warrantyAppliedOn": "Warranty Applied On",
+  "warrantyRequestEscalated": "Warranty Request Escalated",
+  "submitComplaint": "Submit Complaint",
   "repairRequestedSuccessfully": "Repair Requested Successfully",
   "expiresOn": "Expires On",
   "expiredOn": "Expired On",
@@ -559,5 +561,7 @@
   "fetching": "Fetching",
   "issueVideo": "Issue Video",
   "hours": "hrs",
-  "locationError": "Location Error"
+  "locationError": "Location Error",
+  "escalateWarrantyConfirmation": "Are you sure you want to escalate this warranty issue? This will notify the admin about the delay or rejection.",
+  "complaintSubmittedSuccessfully": "Complaint submitted successfully"
 }

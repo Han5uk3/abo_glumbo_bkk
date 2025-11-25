@@ -1229,6 +1229,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warrantyAppliedOn => 'Warranty Applied On';
 
   @override
+  String get warrantyRequestEscalated => 'Warranty Request Escalated';
+
+  @override
+  String get submitComplaint => 'Submit Complaint';
+
+  @override
   String get repairRequestedSuccessfully => 'Repair Requested Successfully';
 
   @override
@@ -1702,4 +1708,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get locationError => 'Location Error';
+
+  @override
+  String get escalateWarrantyConfirmation =>
+      'Are you sure you want to escalate this warranty issue? This will notify the admin about the delay or rejection.';
+
+  @override
+  String get complaintSubmittedSuccessfully =>
+      'Complaint submitted successfully';
 }

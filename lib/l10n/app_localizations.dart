@@ -2450,6 +2450,18 @@ abstract class AppLocalizations {
   /// **'Warranty Applied On'**
   String get warrantyAppliedOn;
 
+  /// No description provided for @warrantyRequestEscalated.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Request Escalated'**
+  String get warrantyRequestEscalated;
+
+  /// No description provided for @submitComplaint.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Complaint'**
+  String get submitComplaint;
+
   /// No description provided for @repairRequestedSuccessfully.
   ///
   /// In en, this message translates to:
@@ -3349,6 +3361,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Location Error'**
   String get locationError;
+
+  /// No description provided for @escalateWarrantyConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to escalate this warranty issue? This will notify the admin about the delay or rejection.'**
+  String get escalateWarrantyConfirmation;
+
+  /// No description provided for @complaintSubmittedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint submitted successfully'**
+  String get complaintSubmittedSuccessfully;
 }
 
 class _AppLocalizationsDelegate

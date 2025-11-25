@@ -1215,6 +1215,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get warrantyAppliedOn => 'تم تطبيق الضمان';
 
   @override
+  String get warrantyRequestEscalated => 'تم تصعيد طلب الضمان';
+
+  @override
+  String get submitComplaint => 'تقديم شكوى';
+
+  @override
   String get repairRequestedSuccessfully => 'تم طلب الإصلاح بنجاح';
 
   @override
@@ -1685,4 +1691,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get locationError => 'خطأ في الموقع';
+
+  @override
+  String get escalateWarrantyConfirmation =>
+      'هل أنت متأكد أنك تريد تصعيد طلب الضمان؟';
+
+  @override
+  String get complaintSubmittedSuccessfully => 'تم تقديم الشكوى بنجاح';
 }

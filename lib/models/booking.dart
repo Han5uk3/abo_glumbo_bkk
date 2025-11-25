@@ -9,7 +9,8 @@ class BookingModel {
   late ServiceModel service;
   late Timestamp bookingDateTime;
   late String bookingStatusCode;
-
+  bool? isEscalated;
+  Timestamp? escalatedAt;
 
   late String notes;
   late String? issueImage;
@@ -47,6 +48,8 @@ class BookingModel {
     this.isStartTracking,
     this.chatroomId = '',
     this.review,
+    this.isEscalated = false,
+    this.escalatedAt,
     this.agent,
     this.createdAt,
     this.updatedAt,
@@ -66,6 +69,8 @@ class BookingModel {
       completionData = data['completionData'] != null
           ? CompletionDataModel.fromMap(data['completionData'])
           : null,
+      isEscalated = data['isEscalated'] ?? false,
+      escalatedAt = data['escalatedAt'],
       chatroomId = data['chatroomId'] ?? '',
       bookingDateTime = data['bookingDateTime'],
       bookingStatusCode = data['bookingStatusCode'],
@@ -79,9 +84,9 @@ class BookingModel {
       review = data['review'] != null
           ? ReviewModel.fromMap(data['review'])
           : null,
-    warranty = (data['warranty'] is Map<String, dynamic>)
-    ? WarrantyModel.fromJson(data['warranty'])
-    : null,
+      warranty = (data['warranty'] is Map<String, dynamic>)
+          ? WarrantyModel.fromJson(data['warranty'])
+          : null,
       agent = data['agent'] != null ? UserModel.fromJson(data['agent']) : null,
       createdAt = data['createdAt'],
       updatedAt = data['updatedAt'],
@@ -115,6 +120,8 @@ class BookingModel {
       'bookingDateTime': bookingDateTime,
       'bookingStatusCode': bookingStatusCode,
       'notes': notes,
+      'isEscalated': isEscalated ?? false,
+      'escalatedAt': escalatedAt,
       'issueImage': issueImage,
       'issueVideo': issueVideo,
       'chatroomId': chatroomId,
@@ -233,7 +240,7 @@ enum BookingStatusType {
   pendingPayment,
   completed,
   cancelled,
-  onWarranty
+  onWarranty,
 }
 
 class BookingServiceItem {

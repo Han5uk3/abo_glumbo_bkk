@@ -264,6 +264,145 @@ class ServiceBookingTile extends StatelessWidget {
                 if (isWarranty) _buildWarrantyStatusBadge(context),
               ],
             ),
+
+            if (isWarranty && _shouldShowComplaintButton())
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: GestureDetector(
+                  onTap: () async {
+                    // Show confirmation dialog
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext dialogContext) {
+                        return AlertDialog(
+                          actionsAlignment: MainAxisAlignment.start,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: Row(
+                            children: [
+                              Icon(
+                                Icons.warning_amber_rounded,
+                                color: Colors.orange,
+                                size: 28,
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  AppLocalizations.of(context)!.submitComplaint,
+                                  style: GoogleFonts.dmSans(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.escalateWarrantyConfirmation,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 14,
+                              height: 1.5,
+                            ),
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(true),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.yes,
+                                style: GoogleFonts.dmSans(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(false),
+                              child: Text(
+                                AppLocalizations.of(context)!.cancel,
+                                style: GoogleFonts.dmSans(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    // If user confirmed, proceed with escalation
+                    if (confirmed == true) {
+                      try {
+                        // Update booking document with isEscalated: true
+                        await AppFirestore.bookingsCollectionRef
+                            .doc(booking.id)
+                            .update({
+                              'isEscalated': true,
+                              'escalatedAt': DateTime.now(),
+                            });
+
+                        if (context.mounted) {
+                          showSnackBar(
+                            AppLocalizations.of(
+                              context,
+                            )!.complaintSubmittedSuccessfully,
+                            context,
+                            backgroundColor: Colors.green,
+                          );
+                          // Refresh the page to reflect changes
+                          onRefresh.call();
+                        }
+                      } catch (e) {
+                        log('Error escalating complaint: $e');
+                        if (context.mounted) {
+                          showSnackBar(
+                            "${AppLocalizations.of(context)!.error}: $e",
+                            context,
+                            backgroundColor: Colors.red,
+                          );
+                        }
+                      }
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          offset: const Offset(0, 2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        AppLocalizations.of(context)!.submitComplaint,
+                        style: GoogleFonts.dmSans(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: AppColors.bgWhite,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -982,6 +1121,43 @@ class ServiceBookingTile extends StatelessWidget {
     final dateFormat = DateFormat.yMMMMd(locale); // e.g., ١٩ يونيو، ٢٠٢٥
     final timeFormat = DateFormat.jm(locale); // e.g., ٢:٣٠ م or 2:30 PM
     return '${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}';
+  }
+
+  /// Checks if the warranty status hasn't been updated for more than 2 days
+  /// OR if the original technician has rejected the warranty request
+  bool _shouldShowComplaintButton() {
+    final warranty = booking.warranty;
+    if (warranty == null) return false;
+
+    // Only show for specific warranty statuses (Requested or Accepted)
+    if (warranty.warrantyStatusCode != 'R' &&
+        warranty.warrantyStatusCode != 'S') {
+      return false;
+    }
+
+    // Check if the original technician has rejected the warranty request
+    final originalTechnicianId = booking.agent?.uid;
+    if (originalTechnicianId != null &&
+        warranty.rejectedTechnicians != null &&
+        warranty.rejectedTechnicians!.isNotEmpty) {
+      final hasOriginalTechRejected = warranty.rejectedTechnicians!.any(
+        (rejectedTech) => rejectedTech.uid == originalTechnicianId,
+      );
+      if (hasOriginalTechRejected) {
+        return true; // Show button immediately if original tech rejected
+      }
+    }
+
+    // Check if updatedAt exists for time-based condition
+    if (warranty.updatedAt == null) return false;
+
+    // Calculate the difference in days
+    final daysSinceUpdate = DateTime.now()
+        .difference(warranty.updatedAt!)
+        .inDays;
+
+    // Show button if more than 2 days have passed
+    return daysSinceUpdate > 2;
   }
 
   calculateDaysLeft() {
