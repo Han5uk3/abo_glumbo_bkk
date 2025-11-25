@@ -1693,9 +1693,140 @@ class AppLocalizationsAr extends AppLocalizations {
   String get locationError => 'خطأ في الموقع';
 
   @override
+  String get bookingTimeline => 'Booking Timeline';
+
+  @override
   String get escalateWarrantyConfirmation =>
       'هل أنت متأكد أنك تريد تصعيد طلب الضمان؟';
 
   @override
   String get complaintSubmittedSuccessfully => 'تم تقديم الشكوى بنجاح';
+
+  @override
+  String get createdAt => 'تاريخ الإنشاء';
+
+  @override
+  String get customerSubmittedBookingRequest => 'قدم العميل طلب حجز';
+
+  @override
+  String get originalServiceCompleted => 'اكتملت الخدمة الأصلية';
+
+  @override
+  String get serviceHasBeenSuccessfullyCompleted => 'تم إكمال الخدمة بنجاح';
+
+  @override
+  String get warrantyRepairRequested => 'تم طلب إصلاح الضمان';
+
+  @override
+  String get customerRequestedRepairUnderWarranty =>
+      'طلب العميل إصلاحًا تحت الضمان';
+
+  @override
+  String get warrantyRepairAccepted => 'تم قبول إصلاح الضمان';
+
+  @override
+  String get technicianAcceptedTheRequest => 'قبل الفني الطلب';
+
+  @override
+  String get trackingStartedAt => 'بدأ التتبع في';
+
+  @override
+  String get serviceTrackingInitiated => 'تم بدء تتبع الخدمة';
+
+  @override
+  String get trackingStoppedAt => 'توقف التتبع في';
+
+  @override
+  String get serviceTrackingStopped => 'تم إيقاف تتبع الخدمة';
+
+  @override
+  String get warrantyRepairCompleted => 'اكتمل إصلاح الضمان';
+
+  @override
+  String get technicianCompletedTheRequest => 'أكمل الفني الطلب';
+
+  @override
+  String get unknownTechnician => 'فني غير معروف';
+
+  @override
+  String get technicianCancelled => 'ألغى الفني';
+
+  @override
+  String get cancelledByTechnician => 'تم الإلغاء بواسطة الفني';
+
+  @override
+  String get warrantyRejectedByAdmin => 'تم رفض الضمان من قبل المسؤول';
+
+  @override
+  String get cancelledByYou => 'تم الإلغاء من قبلك';
+
+  @override
+  String get youCancelledThisBooking => 'لقد ألغيت هذا الحجز';
+
+  @override
+  String get waitingForYourPayment => 'بانتظار دفعتك';
+
+  @override
+  String get warrantyRejectedByTechnician => 'تم رفض الضمان من قبل الفني';
+
+  @override
+  String get paymentCompleted => 'اكتمل الدفع';
+
+  @override
+  String get paymentSuccessfullyCompleted => 'تم إتمام الدفع بنجاح';
+
+  @override
+  String get warrantyRequestWasRejectedByAdmin =>
+      'تم رفض طلب الضمان من قبل المسؤول';
+
+  @override
+  String get youSubmittedTheBookingRequest => 'قدمت طلب الحجز';
+
+  @override
+  String get warrantyRequestWasRejectedByTechnician =>
+      'تم رفض طلب الضمان من قبل الفني';
+
+  @override
+  String get acceptedAt => 'تم القبول في';
+
+  @override
+  String get serviceProviderConfirmedAppointment => 'أكد مقدم الخدمة الموعد';
+
+  @override
+  String get completedAt => 'اكتمل في';
+
+  @override
+  String get rejectedAt => 'تم الرفض في';
+
+  @override
+  String get bookingWasRejectedByServiceProvider =>
+      'تم رفض الحجز من قبل مقدم الخدمة';
+
+  @override
+  String get cancelledByCustomer => 'تم الإلغاء من قبل العميل';
+
+  @override
+  String get bookingWasCancelledByCustomer => 'تم إلغاء الحجز من قبل العميل';
+
+  @override
+  String get serviceInProgress => 'الخدمة قيد التنفيذ';
+
+  @override
+  String get current => 'الحالي';
+
+  @override
+  String get serviceIsCurrentlyBeingPerformed => 'يتم تنفيذ الخدمة حاليًا';
+
+  @override
+  String get waitingForServiceProvider => 'في انتظار مقدم الخدمة';
+
+  @override
+  String get waitingForTechnicianToStartService =>
+      'في انتظار الفني لبدء الخدمة';
+
+  @override
+  String get waitingForServiceProviderResponse => 'في انتظار رد مقدم الخدمة';
+
+  @override
+  String get waitingForAcceptance => 'في انتظار القبول';
 }

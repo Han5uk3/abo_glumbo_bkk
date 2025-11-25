@@ -3362,6 +3362,12 @@ abstract class AppLocalizations {
   /// **'Location Error'**
   String get locationError;
 
+  /// No description provided for @bookingTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Timeline'**
+  String get bookingTimeline;
+
   /// No description provided for @escalateWarrantyConfirmation.
   ///
   /// In en, this message translates to:
@@ -3373,6 +3379,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complaint submitted successfully'**
   String get complaintSubmittedSuccessfully;
+
+  /// No description provided for @createdAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Created At'**
+  String get createdAt;
+
+  /// No description provided for @customerSubmittedBookingRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer submitted booking request'**
+  String get customerSubmittedBookingRequest;
+
+  /// No description provided for @originalServiceCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Original Service Completed'**
+  String get originalServiceCompleted;
+
+  /// No description provided for @serviceHasBeenSuccessfullyCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Service has been successfully completed'**
+  String get serviceHasBeenSuccessfullyCompleted;
+
+  /// No description provided for @warrantyRepairRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Repair Requested'**
+  String get warrantyRepairRequested;
+
+  /// No description provided for @customerRequestedRepairUnderWarranty.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer requested repair under warranty'**
+  String get customerRequestedRepairUnderWarranty;
+
+  /// No description provided for @warrantyRepairAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Repair Accepted'**
+  String get warrantyRepairAccepted;
+
+  /// No description provided for @technicianAcceptedTheRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician accepted the request'**
+  String get technicianAcceptedTheRequest;
+
+  /// No description provided for @trackingStartedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking Started At'**
+  String get trackingStartedAt;
+
+  /// No description provided for @serviceTrackingInitiated.
+  ///
+  /// In en, this message translates to:
+  /// **'Service tracking initiated'**
+  String get serviceTrackingInitiated;
+
+  /// No description provided for @trackingStoppedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking Stopped At'**
+  String get trackingStoppedAt;
+
+  /// No description provided for @serviceTrackingStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Service tracking stopped'**
+  String get serviceTrackingStopped;
+
+  /// No description provided for @warrantyRepairCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Repair Completed'**
+  String get warrantyRepairCompleted;
+
+  /// No description provided for @technicianCompletedTheRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician completed the request'**
+  String get technicianCompletedTheRequest;
+
+  /// No description provided for @unknownTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Technician'**
+  String get unknownTechnician;
+
+  /// No description provided for @technicianCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician Cancelled'**
+  String get technicianCancelled;
+
+  /// No description provided for @cancelledByTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by Technician'**
+  String get cancelledByTechnician;
+
+  /// No description provided for @warrantyRejectedByAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Rejected by Admin'**
+  String get warrantyRejectedByAdmin;
+
+  /// No description provided for @cancelledByYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by You'**
+  String get cancelledByYou;
+
+  /// No description provided for @youCancelledThisBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'You cancelled this booking'**
+  String get youCancelledThisBooking;
+
+  /// No description provided for @waitingForYourPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Your Payment'**
+  String get waitingForYourPayment;
+
+  /// No description provided for @warrantyRejectedByTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Rejected by Technician'**
+  String get warrantyRejectedByTechnician;
+
+  /// No description provided for @paymentCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Completed'**
+  String get paymentCompleted;
+
+  /// No description provided for @paymentSuccessfullyCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment has been successfully completed'**
+  String get paymentSuccessfullyCompleted;
+
+  /// No description provided for @warrantyRequestWasRejectedByAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty request was rejected by admin'**
+  String get warrantyRequestWasRejectedByAdmin;
+
+  /// No description provided for @youSubmittedTheBookingRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'You submitted the booking request'**
+  String get youSubmittedTheBookingRequest;
+
+  /// No description provided for @warrantyRequestWasRejectedByTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty request was rejected by technician'**
+  String get warrantyRequestWasRejectedByTechnician;
+
+  /// No description provided for @acceptedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted At'**
+  String get acceptedAt;
+
+  /// No description provided for @serviceProviderConfirmedAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Service provider confirmed appointment'**
+  String get serviceProviderConfirmedAppointment;
+
+  /// No description provided for @completedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed At'**
+  String get completedAt;
+
+  /// No description provided for @rejectedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected At'**
+  String get rejectedAt;
+
+  /// No description provided for @bookingWasRejectedByServiceProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking was rejected by service provider'**
+  String get bookingWasRejectedByServiceProvider;
+
+  /// No description provided for @cancelledByCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by Customer'**
+  String get cancelledByCustomer;
+
+  /// No description provided for @bookingWasCancelledByCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking was cancelled by customer'**
+  String get bookingWasCancelledByCustomer;
+
+  /// No description provided for @serviceInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Service In Progress'**
+  String get serviceInProgress;
+
+  /// No description provided for @current.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get current;
+
+  /// No description provided for @serviceIsCurrentlyBeingPerformed.
+  ///
+  /// In en, this message translates to:
+  /// **'Service is currently being performed'**
+  String get serviceIsCurrentlyBeingPerformed;
+
+  /// No description provided for @waitingForServiceProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Service Provider'**
+  String get waitingForServiceProvider;
+
+  /// No description provided for @waitingForTechnicianToStartService.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for technician to start service'**
+  String get waitingForTechnicianToStartService;
+
+  /// No description provided for @waitingForServiceProviderResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for service provider response'**
+  String get waitingForServiceProviderResponse;
+
+  /// No description provided for @waitingForAcceptance.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Acceptance'**
+  String get waitingForAcceptance;
 }
 
 class _AppLocalizationsDelegate

@@ -41,11 +41,10 @@ class NewNotificationsPage extends StatelessWidget {
                       onPressed: () => Navigator.pop(context, true),
                       child: Text(
                         AppLocalizations.of(context)?.delete ?? 'Delete',
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                     const SizedBox(width: 8),
-
                     TextButton(
                       onPressed: () => Navigator.pop(context, false),
                       child: Text(
@@ -58,15 +57,18 @@ class NewNotificationsPage extends StatelessWidget {
 
               if (confirm == true) {
                 await AppServices.deleteAllFirestoreNotifications();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      isAr
-                          ? 'تم حذف جميع الإشعارات'
-                          : 'All notifications deleted',
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.green,
+                      content: Text(
+                        isAr
+                            ? 'تم حذف جميع الإشعارات'
+                            : 'All notifications deleted',
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               }
             },
           ),
@@ -95,6 +97,7 @@ class NewNotificationsPage extends StatelessWidget {
             itemCount: notifications.length,
             itemBuilder: (context, index) {
               final notification = notifications[index];
+              
               // Use fallback if specific language content is missing
               final title = isAr
                   ? (notification.titleAr.isNotEmpty

@@ -23,17 +23,21 @@ class BookingModel {
 
   UserModel? agent;
   bool? isStartTracking;
-
+  List<CancelledWorkers> cancelledWorkers;
   Timestamp? createdAt;
   Timestamp? updatedAt;
   Timestamp? acceptedAt;
   Timestamp? rejectedAt;
   Timestamp? completedAt;
+  Timestamp? trackingStartedAt;
+  Timestamp? trackingStoppedAt;
   Timestamp? cancelledAt;
   String? cancellationReason;
   bool paymentCompleted = false;
   String? orderId;
   WarrantyModel? warranty;
+
+  List<String>? cancelledWorkerUids;
 
   BookingModel({
     required this.id,
@@ -48,9 +52,13 @@ class BookingModel {
     this.isStartTracking,
     this.chatroomId = '',
     this.review,
+    this.cancelledWorkers = const [],
     this.isEscalated = false,
     this.escalatedAt,
     this.agent,
+    this.completionData, // Add this
+    this.trackingStartedAt,
+    this.trackingStoppedAt,
     this.createdAt,
     this.updatedAt,
     this.acceptedAt,
@@ -59,7 +67,7 @@ class BookingModel {
     this.cancelledAt,
     this.cancellationReason,
     this.orderId,
-    this.completionData,
+    this.cancelledWorkerUids,
     this.paymentCompleted = false,
     this.warranty,
   });
@@ -70,6 +78,11 @@ class BookingModel {
           ? CompletionDataModel.fromMap(data['completionData'])
           : null,
       isEscalated = data['isEscalated'] ?? false,
+      cancelledWorkers = data['cancelledWorkers'] != null
+          ? (data['cancelledWorkers'] as List)
+                .map((e) => CancelledWorkers.fromMap(e))
+                .toList()
+          : [],
       escalatedAt = data['escalatedAt'],
       chatroomId = data['chatroomId'] ?? '',
       bookingDateTime = data['bookingDateTime'],
@@ -84,6 +97,11 @@ class BookingModel {
       review = data['review'] != null
           ? ReviewModel.fromMap(data['review'])
           : null,
+      cancelledWorkerUids = data['cancelledWorkerUids'] != null
+          ? List<String>.from(data['cancelledWorkerUids'])
+          : null,
+      trackingStartedAt = data['trackingStartedAt'],
+      trackingStoppedAt = data['trackingStoppedAt'],
       warranty = (data['warranty'] is Map<String, dynamic>)
           ? WarrantyModel.fromJson(data['warranty'])
           : null,
@@ -120,6 +138,10 @@ class BookingModel {
       'bookingDateTime': bookingDateTime,
       'bookingStatusCode': bookingStatusCode,
       'notes': notes,
+      'cancelledWorkers': cancelledWorkers.map((e) => e.toJson()).toList(),
+      'trackingStartedAt': trackingStartedAt,
+      'trackingStoppedAt': trackingStoppedAt,
+      'cancelledWorkerUids': cancelledWorkerUids,
       'isEscalated': isEscalated ?? false,
       'escalatedAt': escalatedAt,
       'issueImage': issueImage,
@@ -234,6 +256,30 @@ class ReviewModel {
   }
 }
 
+class CancelledWorkers {
+  String uid;
+  String agentName;
+  Timestamp cancelledAt;
+
+  CancelledWorkers({
+    required this.uid,
+    required this.agentName,
+    required this.cancelledAt,
+  });
+
+  factory CancelledWorkers.fromMap(Map<String, dynamic> data) {
+    return CancelledWorkers(
+      uid: data['uid'],
+      agentName: data['agentName'],
+      cancelledAt: data['cancelledAt'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'uid': uid, 'agentName': agentName, 'cancelledAt': cancelledAt};
+  }
+}
+
 enum BookingStatusType {
   pending,
   confirmed,
@@ -266,6 +312,7 @@ class CompletionDataModel {
   final double serviceCost;
   final double totalCost;
   final List<BookingServiceItem> serviceItems;
+  final double inspectionFee;
 
   CompletionDataModel({
     required this.fileUrls, // Changed
@@ -274,10 +321,13 @@ class CompletionDataModel {
     required this.serviceCost,
     required this.totalCost,
     required this.serviceItems,
+    required this.inspectionFee,
   });
 
   factory CompletionDataModel.fromMap(Map<String, dynamic> data) {
     return CompletionDataModel(
+      inspectionFee: data['inspectionFee']?.toDouble() ?? 0.0,
+
       fileUrls: data['fileUrls'] != null
           ? List<String>.from(data['fileUrls'])
           : (data['imageUrls'] != null
@@ -310,6 +360,8 @@ class CompletionDataModel {
       'paymentMethod': paymentMethod,
       'serviceCost': serviceCost,
       'totalCost': totalCost,
+      'inspectionFee': inspectionFee,
+
       'serviceItems': serviceItems.map((e) => e.toMap()).toList(),
     };
   }

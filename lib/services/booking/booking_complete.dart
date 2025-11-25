@@ -204,7 +204,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                   bottomRight: Radius.circular(24),
                 ),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 24),
+              padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 24),
               child: Column(
                 children: [
                   // Animated check mark
@@ -490,7 +490,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
 
             // Bottom Actions with animation
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 60),
               child: ScaleTransition(
                 scale: CurvedAnimation(
                   parent: _buttonController,

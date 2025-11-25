@@ -598,6 +598,13 @@ class ServiceBookingTile extends StatelessWidget {
           textColor: Colors.green,
           borderOnly: true,
         );
+      case "X":
+        return _buildWarrantyBadge(
+          label: AppLocalizations.of(context)?.rejected ?? '',
+          color: Colors.red,
+          textColor: Colors.red,
+          borderOnly: true,
+        );
       default:
         return SizedBox.shrink();
     }

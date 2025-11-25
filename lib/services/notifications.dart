@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,6 +11,7 @@ import 'app_services.dart';
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+  debugPrint('📨 Background message received: ${message.messageId}');
 
   // Set persistence in background isolate too (with try-catch)
   try {
@@ -26,105 +26,62 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class NotificationServices {
   static bool _isInitialized = false;
   static bool _tokenRefreshListenerSet = false;
-  static bool _permissionRequestInProgress = false;
-  static Completer<NotificationSettings>? _permissionCompleter;
+  static bool _isRequestingPermission = false; // Prevent duplicate requests
 
   static final FirebaseMessaging _firebaseMessaging =
       FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin
   _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
+  /// Initialize local notifications
   static Future<void> initializeNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const DarwinInitializationSettings initializationSettingsDarwin =
-        DarwinInitializationSettings(
-          requestAlertPermission: true,
-          requestBadgePermission: true,
-          requestSoundPermission: true,
-        );
-
-    const InitializationSettings initializationSettings =
-        InitializationSettings(
-          android: initializationSettingsAndroid,
-          iOS: initializationSettingsDarwin,
-        );
-
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-    if (Platform.isIOS) {
-      await _flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin
-          >()
-          ?.requestPermissions(alert: true, badge: true, sound: true);
-    }
-  }
-
-  static Future<void> setupFCMListeners() async {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      if (notification != null) {
-        showNotification(
-          id: notification.hashCode,
-          title: notification.title ?? 'Notification',
-          body: notification.body ?? '',
-          payload: json.encode(message.data),
-        );
-        AppServices.storeNotificationInFirestore(message);
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        AppServices.storeNotificationInFirestore(message);
-      }
-    });
-  }
-
-  // Safe permission request that prevents duplicate calls
-  static Future<NotificationSettings> _requestPermissionSafe() async {
-    // If a request is already in progress, wait for it
-    if (_permissionRequestInProgress && _permissionCompleter != null) {
-      debugPrint('⏳ Permission request already in progress, waiting...');
-      return _permissionCompleter!.future;
-    }
-
-    _permissionRequestInProgress = true;
-    _permissionCompleter = Completer<NotificationSettings>();
-
     try {
-      final settings = await _firebaseMessaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
+      const AndroidInitializationSettings initializationSettingsAndroid =
+          AndroidInitializationSettings('@mipmap/ic_launcher');
+
+      const DarwinInitializationSettings initializationSettingsDarwin =
+          DarwinInitializationSettings(
+            requestAlertPermission: false, // We'll request manually
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+          );
+
+      const InitializationSettings initializationSettings =
+          InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsDarwin,
+          );
+
+      await _flutterLocalNotificationsPlugin.initialize(
+        initializationSettings,
+        onDidReceiveNotificationResponse: (NotificationResponse response) {
+          debugPrint('👆 Notification tapped: ${response.payload}');
+        },
       );
-      _permissionCompleter!.complete(settings);
-      return settings;
+
+      debugPrint('✅ Local notifications initialized');
     } catch (e) {
-      // If permission request fails, try to get current settings instead
-      debugPrint('⚠️ Permission request failed, getting current settings: $e');
-      try {
-        final settings = await _firebaseMessaging.getNotificationSettings();
-        _permissionCompleter!.complete(settings);
-        return settings;
-      } catch (e2) {
-        _permissionCompleter!.completeError(e2);
-        rethrow;
-      }
-    } finally {
-      _permissionRequestInProgress = false;
+      debugPrint('❌ Error initializing local notifications: $e');
     }
   }
 
-  static Future<void> initializeFCM() async {
+  /// Setup FCM listeners with duplicate request prevention
+  static Future<void> setupFCMListeners() async {
+    // Prevent duplicate permission requests
+    if (_isRequestingPermission) {
+      debugPrint('⚠️ Permission request already in progress, skipping...');
+      return;
+    }
+
     if (_isInitialized) {
-      debugPrint('FCM already initialized, skipping...');
+      debugPrint('⚠️ FCM already initialized, skipping...');
       return;
     }
 
     try {
+      _isRequestingPermission = true;
+
+      // Set foreground notification options
       await FirebaseMessaging.instance
           .setForegroundNotificationPresentationOptions(
             alert: true,
@@ -132,30 +89,69 @@ class NotificationServices {
             sound: true,
           );
 
-      // Use safe permission request
-      NotificationSettings settings = await _requestPermissionSafe();
+      // Request permission
+      NotificationSettings settings = await _firebaseMessaging
+          .requestPermission(alert: true, badge: true, sound: true);
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized ||
           settings.authorizationStatus == AuthorizationStatus.provisional) {
+        debugPrint('✅ FCM permission granted');
+
+        // Get FCM token
         await _getFCMTokenAndUpdate();
+
+        // Setup token refresh listener
         _setupTokenRefreshListener();
+
+        // Setup message handlers
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+          debugPrint('📨 Foreground message received: ${message.messageId}');
+          RemoteNotification? notification = message.notification;
+          if (notification != null) {
+            showNotification(
+              id: notification.hashCode,
+              title: notification.title ?? 'Notification',
+              body: notification.body ?? '',
+              payload: json.encode(message.data),
+            );
+            AppServices.storeNotificationInFirestore(message);
+          }
+        });
+
+        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+          debugPrint('👆 Message opened from background: ${message.messageId}');
+          if (message.notification != null) {
+            AppServices.storeNotificationInFirestore(message);
+          }
+        });
+
         _isInitialized = true;
-        debugPrint('✅ FCM initialized successfully');
+        debugPrint('✅ FCM listeners setup complete');
       } else {
-        debugPrint(
-          '⚠️ Notification permissions not granted: ${settings.authorizationStatus}',
-        );
+        debugPrint('❌ FCM permission denied');
       }
     } catch (e) {
-      debugPrint('❌ Error initializing FCM: $e');
+      debugPrint('❌ Error setting up FCM: $e');
+
+      // Handle "already running" error gracefully
+      if (e.toString().contains('already running')) {
+        debugPrint(
+          '⚠️ Permission request already running - marking as initialized',
+        );
+        _isInitialized = true;
+      }
+    } finally {
+      _isRequestingPermission = false;
     }
   }
 
+  /// Get FCM token and update in Firestore
   static Future<void> _getFCMTokenAndUpdate() async {
     try {
       String? token;
 
       if (Platform.isIOS) {
+        // Wait for APNS token with timeout on iOS
         await _waitForAPNSToken();
         token = await _firebaseMessaging.getToken();
       } else {
@@ -163,61 +159,56 @@ class NotificationServices {
       }
 
       if (token != null && token.isNotEmpty) {
+        debugPrint('🔑 FCM Token: ${token.substring(0, 20)}...');
         await AppServices.updateFCMToken(token);
+      } else {
+        debugPrint('⚠️ No FCM token available');
       }
     } catch (e) {
       debugPrint('❌ Error getting FCM token: $e');
     }
   }
 
+  /// Wait for APNS token on iOS
   static Future<void> _waitForAPNSToken() async {
     try {
       String? apnsToken = await _firebaseMessaging.getAPNSToken();
-
-      if (apnsToken != null) {
-        debugPrint('📱 APNS Token already available');
-        return;
-      }
-
-      debugPrint('⏳ Waiting for APNS token...');
-
       int attempts = 0;
-      while (attempts < 20) {
+
+      while (apnsToken == null && attempts < 20) {
         await Future.delayed(const Duration(milliseconds: 500));
         apnsToken = await _firebaseMessaging.getAPNSToken();
-        if (apnsToken != null) {
-          debugPrint('✅ APNS Token received after ${attempts * 500}ms');
-          return;
-        }
         attempts++;
       }
 
-      debugPrint(
-        '⚠️ APNS Token not received within timeout, proceeding anyway',
-      );
+      if (apnsToken != null) {
+        debugPrint('✅ APNS token obtained');
+      } else {
+        debugPrint('⚠️ APNS token not available after 10 seconds');
+      }
     } catch (e) {
       debugPrint('❌ Error waiting for APNS token: $e');
     }
   }
 
+  /// Setup token refresh listener
   static void _setupTokenRefreshListener() {
     if (_tokenRefreshListenerSet) {
-      debugPrint('🔄 Token refresh listener already set up');
+      debugPrint('⚠️ Token refresh listener already set');
       return;
     }
 
     _firebaseMessaging.onTokenRefresh.listen(
       (fcmToken) {
-        debugPrint('🔄 FCM Token refreshed: ${fcmToken.substring(0, 20)}...');
         if (fcmToken.isNotEmpty) {
+          debugPrint('🔄 FCM Token refreshed: ${fcmToken.substring(0, 20)}...');
           AppServices.updateFCMToken(fcmToken)
-              .then(
-                (_) => debugPrint('✅ Refreshed FCM Token updated successfully'),
-              )
-              .catchError(
-                (error) =>
-                    debugPrint('❌ Error updating refreshed FCM token: $error'),
-              );
+              .then((_) {
+                debugPrint('✅ Refreshed FCM Token updated successfully');
+              })
+              .catchError((error) {
+                debugPrint('❌ Error updating refreshed FCM token: $error');
+              });
         }
       },
       onError: (error) {
@@ -226,18 +217,27 @@ class NotificationServices {
     );
 
     _tokenRefreshListenerSet = true;
-    debugPrint('🔄 Token refresh listener set up successfully');
+    debugPrint('✅ Token refresh listener set up');
   }
 
+  /// Manually refresh FCM token (use sparingly)
   static Future<void> refreshFCMToken() async {
+    if (_isRequestingPermission) {
+      debugPrint('⚠️ Cannot refresh token - permission request in progress');
+      return;
+    }
+
     try {
       debugPrint('🔄 Manually refreshing FCM token...');
+      await _firebaseMessaging.deleteToken();
+      await Future.delayed(const Duration(milliseconds: 500));
       await _getFCMTokenAndUpdate();
     } catch (e) {
       debugPrint('❌ Error manually refreshing FCM token: $e');
     }
   }
 
+  /// Get current FCM token
   static Future<String?> getCurrentFCMToken() async {
     try {
       String? token = await _firebaseMessaging.getToken();
@@ -253,6 +253,7 @@ class NotificationServices {
     }
   }
 
+  /// Delete FCM token
   static Future<void> deleteFCMToken() async {
     try {
       await _firebaseMessaging.deleteToken();
@@ -263,14 +264,13 @@ class NotificationServices {
     }
   }
 
+  /// Debug FCM status
   static Future<void> debugFCMStatus() async {
     try {
       debugPrint('🔍 FCM Debug Status:');
       debugPrint('   - Initialized: $_isInitialized');
       debugPrint('   - Token refresh listener set: $_tokenRefreshListenerSet');
-      debugPrint(
-        '   - Permission request in progress: $_permissionRequestInProgress',
-      );
+      debugPrint('   - Requesting permission: $_isRequestingPermission');
 
       String? token = await getCurrentFCMToken();
       if (token != null) {
@@ -295,32 +295,28 @@ class NotificationServices {
     }
   }
 
+  /// Show local notification
   static Future<void> showNotification({
     required int id,
     required String title,
     required String body,
     String? payload,
   }) async {
-    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'abo_glumbo_channel',
-      'Abo Glumbo Notifications',
-      channelDescription:
-          'Notifications related to Abo Glumbo tasks and updates',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: true,
-      enableVibration: true,
-      playSound: true,
-      visibility: NotificationVisibility.public,
-      enableLights: true,
-      icon: '@mipmap/ic_launcher',
-      styleInformation: BigTextStyleInformation(
-        body,
-        contentTitle: title,
-        summaryText: '',
-        htmlFormatBigText: false,
-      ),
-    );
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'abo_glumbo_channel',
+          'Abo Glumbo Notifications',
+          channelDescription:
+              'Notifications related to Abo Glumbo tasks and updates',
+          importance: Importance.max,
+          priority: Priority.high,
+          showWhen: true,
+          enableVibration: true,
+          playSound: true,
+          visibility: NotificationVisibility.public,
+          enableLights: true,
+          icon: '@mipmap/ic_launcher',
+        );
 
     const DarwinNotificationDetails iOSDetails = DarwinNotificationDetails(
       presentAlert: true,
@@ -329,7 +325,7 @@ class NotificationServices {
       sound: 'default',
     );
 
-    NotificationDetails platformDetails = NotificationDetails(
+    const NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
       iOS: iOSDetails,
     );
@@ -343,14 +339,37 @@ class NotificationServices {
     );
   }
 
+  /// Check for initial message (app opened from terminated state)
   static Future<void> checkForInitialMessage() async {
-    RemoteMessage? initialMessage = await FirebaseMessaging.instance
-        .getInitialMessage();
+    try {
+      RemoteMessage? initialMessage = await FirebaseMessaging.instance
+          .getInitialMessage();
 
-    if (initialMessage != null) {
-      if (initialMessage.notification != null) {
-        AppServices.storeNotificationInFirestore(initialMessage);
+      if (initialMessage != null) {
+        debugPrint('📬 Initial message found: ${initialMessage.messageId}');
+        if (initialMessage.notification != null) {
+          AppServices.storeNotificationInFirestore(initialMessage);
+        }
       }
+
+      // Also listen for future message opens
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        debugPrint('👆 Message opened from notification: ${message.messageId}');
+        if (message.notification != null) {
+          AppServices.storeNotificationInFirestore(message);
+        }
+      });
+    } catch (e) {
+      debugPrint('❌ Error checking initial message: $e');
+    }
+  }
+
+  /// Initialize FCM (legacy method - keeping for compatibility)
+  static Future<void> initializeFCM() async {
+    try {
+      await setupFCMListeners();
+    } catch (e) {
+      debugPrint('❌ Error initializing FCM: $e');
     }
   }
 }

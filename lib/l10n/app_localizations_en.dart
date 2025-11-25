@@ -1710,10 +1710,150 @@ class AppLocalizationsEn extends AppLocalizations {
   String get locationError => 'Location Error';
 
   @override
+  String get bookingTimeline => 'Booking Timeline';
+
+  @override
   String get escalateWarrantyConfirmation =>
       'Are you sure you want to escalate this warranty issue? This will notify the admin about the delay or rejection.';
 
   @override
   String get complaintSubmittedSuccessfully =>
       'Complaint submitted successfully';
+
+  @override
+  String get createdAt => 'Created At';
+
+  @override
+  String get customerSubmittedBookingRequest =>
+      'Customer submitted booking request';
+
+  @override
+  String get originalServiceCompleted => 'Original Service Completed';
+
+  @override
+  String get serviceHasBeenSuccessfullyCompleted =>
+      'Service has been successfully completed';
+
+  @override
+  String get warrantyRepairRequested => 'Warranty Repair Requested';
+
+  @override
+  String get customerRequestedRepairUnderWarranty =>
+      'Customer requested repair under warranty';
+
+  @override
+  String get warrantyRepairAccepted => 'Warranty Repair Accepted';
+
+  @override
+  String get technicianAcceptedTheRequest => 'Technician accepted the request';
+
+  @override
+  String get trackingStartedAt => 'Tracking Started At';
+
+  @override
+  String get serviceTrackingInitiated => 'Service tracking initiated';
+
+  @override
+  String get trackingStoppedAt => 'Tracking Stopped At';
+
+  @override
+  String get serviceTrackingStopped => 'Service tracking stopped';
+
+  @override
+  String get warrantyRepairCompleted => 'Warranty Repair Completed';
+
+  @override
+  String get technicianCompletedTheRequest =>
+      'Technician completed the request';
+
+  @override
+  String get unknownTechnician => 'Unknown Technician';
+
+  @override
+  String get technicianCancelled => 'Technician Cancelled';
+
+  @override
+  String get cancelledByTechnician => 'Cancelled by Technician';
+
+  @override
+  String get warrantyRejectedByAdmin => 'Warranty Rejected by Admin';
+
+  @override
+  String get cancelledByYou => 'Cancelled by You';
+
+  @override
+  String get youCancelledThisBooking => 'You cancelled this booking';
+
+  @override
+  String get waitingForYourPayment => 'Waiting for Your Payment';
+
+  @override
+  String get warrantyRejectedByTechnician => 'Warranty Rejected by Technician';
+
+  @override
+  String get paymentCompleted => 'Payment Completed';
+
+  @override
+  String get paymentSuccessfullyCompleted =>
+      'Payment has been successfully completed';
+
+  @override
+  String get warrantyRequestWasRejectedByAdmin =>
+      'Warranty request was rejected by admin';
+
+  @override
+  String get youSubmittedTheBookingRequest =>
+      'You submitted the booking request';
+
+  @override
+  String get warrantyRequestWasRejectedByTechnician =>
+      'Warranty request was rejected by technician';
+
+  @override
+  String get acceptedAt => 'Accepted At';
+
+  @override
+  String get serviceProviderConfirmedAppointment =>
+      'Service provider confirmed appointment';
+
+  @override
+  String get completedAt => 'Completed At';
+
+  @override
+  String get rejectedAt => 'Rejected At';
+
+  @override
+  String get bookingWasRejectedByServiceProvider =>
+      'Booking was rejected by service provider';
+
+  @override
+  String get cancelledByCustomer => 'Cancelled by Customer';
+
+  @override
+  String get bookingWasCancelledByCustomer =>
+      'Booking was cancelled by customer';
+
+  @override
+  String get serviceInProgress => 'Service In Progress';
+
+  @override
+  String get current => 'Current';
+
+  @override
+  String get serviceIsCurrentlyBeingPerformed =>
+      'Service is currently being performed';
+
+  @override
+  String get waitingForServiceProvider => 'Waiting for Service Provider';
+
+  @override
+  String get waitingForTechnicianToStartService =>
+      'Waiting for technician to start service';
+
+  @override
+  String get waitingForServiceProviderResponse =>
+      'Waiting for service provider response';
+
+  @override
+  String get waitingForAcceptance => 'Waiting for Acceptance';
 }

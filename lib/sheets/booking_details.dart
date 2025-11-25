@@ -6,6 +6,7 @@ import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/timeline.dart';
 import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -381,11 +382,19 @@ class BookingDetailsBottomSheet extends StatelessWidget {
 
                   const SizedBox(height: 16),
                   _buildCompletionDataCard(context),
-                  // if (isWarranty)...{
-                  const SizedBox(height: 16),
-                  if (booking.warranty != null) _buildWarrantyDataCard(context),
+                  if (isWarranty) ...{
+                    const SizedBox(height: 16),
+                    if (booking.warranty != null)
+                      _buildWarrantyDataCard(context),
+                  },
 
-                  // },
+                  buildBookingTimelineCard(
+                    context,
+                    textTheme,
+                    colorScheme,
+                    isWarranty,
+                    booking,
+                  ),
                   const SizedBox(height: 32),
                 ],
               ),

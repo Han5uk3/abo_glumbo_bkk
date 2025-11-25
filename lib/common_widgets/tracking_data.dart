@@ -55,7 +55,7 @@ class TrackingData extends StatelessWidget {
       String chatId;
 
       // Check if chatroom exists
-      if (booking.chatroomId.isNotEmpty) {
+      if (booking.chatroomId != null && booking.chatroomId.isNotEmpty) {
         chatId = booking.chatroomId;
       } else {
         // Create new chatroom
@@ -74,7 +74,7 @@ class TrackingData extends StatelessWidget {
           'customer',
         );
 
-       await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+        await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
           'chatroomId': chatId,
         });
       }
