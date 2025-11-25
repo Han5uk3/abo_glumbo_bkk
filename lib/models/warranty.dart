@@ -9,9 +9,9 @@ class WarrantyModel {
   DateTime? createdAt;
   DateTime? updatedAt;
   DateTime? requestedOn;
-  DateTime? completedOn;
-  DateTime? acceptedOn;
-  DateTime? rejectedOn;
+  DateTime? completedAt;
+  DateTime? acceptedAt;
+  DateTime? rejectedAt;
   DateTime? expiredOn;
 
   WarrantyModel({
@@ -23,9 +23,9 @@ class WarrantyModel {
     this.createdAt,
     this.updatedAt,
     this.requestedOn,
-    this.completedOn,
-    this.acceptedOn,
-    this.rejectedOn,
+    this.completedAt,
+    this.acceptedAt,
+    this.rejectedAt,
     this.expiredOn,
   });
 
@@ -44,15 +44,18 @@ class WarrantyModel {
       requestedOn: json['requestedOn'] is Timestamp
           ? (json['requestedOn'] as Timestamp).toDate()
           : json['requestedOn'] as DateTime?,
-      completedOn: json['completedOn'] is Timestamp
-          ? (json['completedOn'] as Timestamp).toDate()
-          : json['completedOn'] as DateTime?,
-      acceptedOn: json['acceptedOn'] is Timestamp
-          ? (json['acceptedOn'] as Timestamp).toDate()
-          : json['acceptedOn'] as DateTime?,
-      rejectedOn: json['rejectedOn'] is Timestamp
-          ? (json['rejectedOn'] as Timestamp).toDate()
-          : json['rejectedOn'] as DateTime?,
+      completedAt: json['completedAt'] is Timestamp
+          ? (json['completedAt'] as Timestamp).toDate()
+          : json['completedAt'] as DateTime?,
+      acceptedAt: json['acceptedAt'] is Timestamp
+          ? (json['acceptedAt'] as Timestamp).toDate()
+          : (json['acceptedAt'] as DateTime?) ??
+                (json['acceptedOn'] is Timestamp
+                    ? (json['acceptedOn'] as Timestamp).toDate()
+                    : json['acceptedOn'] as DateTime?),
+      rejectedAt: json['rejectedAt'] is Timestamp
+          ? (json['rejectedAt'] as Timestamp).toDate()
+          : json['rejectedAt'] as DateTime?,
       expiredOn: json['expiredOn'] is Timestamp
           ? (json['expiredOn'] as Timestamp).toDate()
           : json['expiredOn'] as DateTime?,
@@ -77,9 +80,9 @@ class WarrantyModel {
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'requestedOn': requestedOn,
-      'completedOn': completedOn,
-      'acceptedOn': acceptedOn,
-      'rejectedOn': rejectedOn,
+      'completedAt': completedAt,
+      'acceptedAt': acceptedAt,
+      'rejectedAt': rejectedAt,
       'expiredOn': expiredOn,
       'rejectedTechnicians': rejectedTechnicians
           ?.map((e) => e.toJson())
@@ -90,26 +93,34 @@ class WarrantyModel {
   static WarrantyModel fromDocumentSnapshot(QueryDocumentSnapshot doc) {
     return WarrantyModel.fromJson(doc.data() as Map<String, dynamic>);
   }
+
+  @override
+  String toString() {
+    return 'WarrantyModel(id: $id, status: $warrantyStatusCode, '
+        'assignedTo: $assignedTechnicianId, '
+        'requestedOn: $requestedOn, acceptedAt: $acceptedAt, '
+        'completedAt: $completedAt, rejectedAt: $rejectedAt)';
+  }
 }
 
 class RejectedTechnicianModel {
   String? uid;
   String? name;
-  DateTime? rejectedOn;
+  DateTime? rejectedAt;
 
-  RejectedTechnicianModel({this.uid, this.name, this.rejectedOn});
+  RejectedTechnicianModel({this.uid, this.name, this.rejectedAt});
 
   factory RejectedTechnicianModel.fromJson(Map<String, dynamic> json) {
     return RejectedTechnicianModel(
       uid: json['uid'],
       name: json['name'],
-      rejectedOn: (json['rejectedOn'] is Timestamp)
-          ? (json['rejectedOn'] as Timestamp).toDate()
-          : (json['rejectedOn'] as DateTime?),
+      rejectedAt: (json['rejectedAt'] is Timestamp)
+          ? (json['rejectedAt'] as Timestamp).toDate()
+          : (json['rejectedAt'] as DateTime?),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'uid': uid, 'name': name, 'rejectedOn': rejectedOn};
+    return {'uid': uid, 'name': name, 'rejectedAt': rejectedAt};
   }
 }

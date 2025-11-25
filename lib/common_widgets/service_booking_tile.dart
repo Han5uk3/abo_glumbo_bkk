@@ -245,84 +245,8 @@ class ServiceBookingTile extends StatelessWidget {
                           ),
                         ),
                       ),
-                    } else if (isWarranty &&
-                        booking.warranty?.warrantyStatusCode == "A") ...{
+                    } else if (isWarranty) ...{
                       SizedBox.shrink(),
-                    } else if (isWarranty &&
-                        booking.warranty?.warrantyStatusCode == "E") ...{
-                      Container(
-                        height: 23,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.darkGrey),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        alignment: Alignment.center,
-                        child: Text(
-                          AppLocalizations.of(context)?.expired ?? '',
-                          style: GoogleFonts.dmSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: AppColors.darkGrey,
-                          ),
-                        ),
-                      ),
-                    } else if (isWarranty &&
-                        booking.warranty?.warrantyStatusCode == "R") ...{
-                      Container(
-                        height: 23,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.red),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        alignment: Alignment.center,
-                        child: Text(
-                          AppLocalizations.of(context)?.requested ?? '',
-                          style: GoogleFonts.dmSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: AppColors.red,
-                          ),
-                        ),
-                      ),
-                    } else if (isWarranty &&
-                        booking.warranty?.warrantyStatusCode == "C") ...{
-                      Container(
-                        height: 23,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.green),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        alignment: Alignment.center,
-                        child: Text(
-                          AppLocalizations.of(context)?.completed ?? '',
-                          style: GoogleFonts.dmSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: AppColors.green,
-                          ),
-                        ),
-                      ),
-                    } else if (booking.bookingStatusCode == "S") ...{
-                      Container(
-                        height: 23,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.orange),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        alignment: Alignment.center,
-                        child: Text(
-                          AppLocalizations.of(context)?.accepted ?? '',
-                          style: GoogleFonts.dmSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: Colors.orange,
-                          ),
-                        ),
-                      ),
                     },
                   ],
                 ),
@@ -332,194 +256,241 @@ class ServiceBookingTile extends StatelessWidget {
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (booking.bookingStatusCode == "P" &&
-                    booking.createdAt != null &&
-                    !isWarranty) ...{
-                  Text(
-                    "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
-                    style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                  ),
-                },
-                if (booking.acceptedAt != null &&
-                    booking.bookingStatusCode == "A" &&
-                    !isWarranty) ...{
-                  Text(
-                    "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(booking.acceptedAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
-                    style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                  ),
-                },
-                if (booking.completedAt != null &&
-                    booking.bookingStatusCode == "C" &&
-                    !isWarranty) ...{
-                  Text(
-                    "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(booking.completedAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
-                    style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                  ),
-                },
-                if ((booking.bookingStatusCode == "X" ||
-                    booking.bookingStatusCode == "XC" ||
-                    booking.bookingStatusCode == "R")) ...{
-                  if (booking.bookingStatusCode != "R") ...{
-                    Text(
-                      "${AppLocalizations.of(context)!.cancelledOn} : ${formatBookingDateTime(booking.cancelledAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
-                      style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                    ),
-                  } else ...{
-                    Text(
-                      "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(booking.rejectedAt!.toDate(), AppLocalizations.of(context)?.localeName ?? 'en')}",
-                      style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                    ),
-                  },
-                } else if (isWarranty && booking.warranty != null) ...{
-                  if (booking.warranty?.warrantyStatusCode == "A" &&
-                      booking.warranty?.createdAt != null) ...{
-                    Text(
-                      "${AppLocalizations.of(context)!.warrantyAppliedOn} : ${formatBookingDateTime(booking.warranty!.createdAt!, AppLocalizations.of(context)?.localeName ?? 'en')}",
-                      style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                    ),
-                  } else if (booking.warranty?.warrantyStatusCode == "C" &&
-                      booking.warranty?.completedOn != null) ...{
-                    Text(
-                      "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(booking.warranty!.completedOn!, AppLocalizations.of(context)?.localeName ?? 'en')}",
-                      style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                    ),
-                  } else if (booking.warranty?.warrantyStatusCode == "E" &&
-                      booking.warranty?.expiredOn != null) ...{
-                    Text(
-                      "${AppLocalizations.of(context)!.expiredOn} : ${formatBookingDateTime(booking.warranty!.expiredOn!, AppLocalizations.of(context)?.localeName ?? 'en')}",
-                      style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                    ),
-                  } else if (booking.warranty?.warrantyStatusCode == "X" &&
-                      booking.warranty?.rejectedOn != null) ...{
-                    Text(
-                      "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(booking.warranty!.rejectedOn!, AppLocalizations.of(context)?.localeName ?? 'en')}",
-                      style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                    ),
-                  } else if (booking.warranty?.warrantyStatusCode == "R" &&
-                      booking.warranty?.requestedOn != null) ...{
-                    Text(
-                      "${AppLocalizations.of(context)!.requestedOn} : ${formatBookingDateTime(booking.warranty!.requestedOn!, AppLocalizations.of(context)?.localeName ?? 'en')}",
-                      style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                    ),
-                  } else if (booking.warranty?.warrantyStatusCode == "S" &&
-                      booking.warranty?.acceptedOn != null) ...{
-                    Text(
-                      "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(booking.warranty!.acceptedOn!, AppLocalizations.of(context)?.localeName ?? 'en')}",
-                      style: TextStyle(color: AppColors.grey3, fontSize: 10.5),
-                    ),
-                  },
-                },
-
-                if (booking.bookingStatusCode == "C" && !isWarranty) ...{
-                  Row(
-                    children: [
-                      if (booking.paymentCompleted == false) ...{
-                        GestureDetector(
-                          child: SizedBox(
-                            height: 23,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.orange),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                AppLocalizations.of(context)?.completePayment ??
-                                    '',
-                                style: GoogleFonts.dmSans(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 10,
-                                  color: Colors.orange,
-                                ),
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            showPaymentBottomSheet(
-                              context,
-                              agent: booking.agent!,
-                              service: booking.service,
-                              customerData: booking.customer,
-                              booking: booking,
-                            );
-                          },
-                        ),
-                        SizedBox(width: 4),
-                      },
-                      if (booking.paymentCompleted == true && !isWarranty) ...{
-                        SizedBox(
-                          height: 23,
-                          child: FilledButton(
-                            style: FilledButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              backgroundColor: AppColors.yellow,
-                            ),
-                            onPressed: booking.review == null
-                                ? onReviewButtonPressed
-                                : null,
-                            child: Text(
-                              booking.review == null
-                                  ? AppLocalizations.of(
-                                          context,
-                                        )?.writeAReview ??
-                                        ''
-                                  : AppLocalizations.of(
-                                          context,
-                                        )?.reviewSubmitted ??
-                                        '',
-                              style: GoogleFonts.dmSans(
-                                color: Colors.black,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      },
-                    ],
-                  ),
-                } else if (isWarranty) ...{
-                  if (booking.warranty?.warrantyStatusCode == "A") ...{
-                    GestureDetector(
-                      child: SizedBox(
-                        height: 23,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.orange,
-                            border: Border.all(color: Colors.orange),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)?.repairUnderWarranty ??
-                                '',
-                            style: GoogleFonts.dmSans(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      onTap: () {
-                        showWarrantyClaimedBottomSheet(context, booking);
-                      },
-                    ),
-                  },
-                },
+                _buildTimestampText(context),
+                if (!isWarranty && booking.bookingStatusCode == "C")
+                  _buildBookingActionButtons(context),
+                if (isWarranty) _buildWarrantyStatusBadge(context),
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimestampText(BuildContext context) {
+    if (isWarranty) {
+      return _buildWarrantyTimestamp(context);
+    }
+    return _buildBookingTimestamp(context);
+  }
+
+  Widget _buildBookingTimestamp(BuildContext context) {
+    final locale = AppLocalizations.of(context)?.localeName ?? 'en';
+
+    if (booking.bookingStatusCode == "P" && booking.createdAt != null) {
+      return _timestampText(
+        "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), locale)}",
+      );
+    }
+
+    if (booking.acceptedAt != null && booking.bookingStatusCode == "A") {
+      return _timestampText(
+        "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(booking.acceptedAt!.toDate(), locale)}",
+      );
+    }
+
+    if (booking.completedAt != null && booking.bookingStatusCode == "C") {
+      return _timestampText(
+        "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(booking.completedAt!.toDate(), locale)}",
+      );
+    }
+
+    if (booking.bookingStatusCode == "X" ||
+        booking.bookingStatusCode == "XC" ||
+        booking.bookingStatusCode == "R") {
+      if (booking.bookingStatusCode != "R") {
+        return _timestampText(
+          "${AppLocalizations.of(context)!.cancelledOn} : ${formatBookingDateTime(booking.cancelledAt!.toDate(), locale)}",
+        );
+      }
+      return _timestampText(
+        "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(booking.rejectedAt!.toDate(), locale)}",
+      );
+    }
+
+    return SizedBox.shrink();
+  }
+
+  Widget _buildWarrantyTimestamp(BuildContext context) {
+    final warranty = booking.warranty;
+    if (warranty == null) return SizedBox.shrink();
+
+    final locale = AppLocalizations.of(context)?.localeName ?? 'en';
+    final statusCode = warranty.warrantyStatusCode;
+
+    final timestampMap = {
+      "A": (warranty.createdAt != null)
+          ? "${AppLocalizations.of(context)!.warrantyAppliedOn} : ${formatBookingDateTime(warranty.createdAt!, locale)}"
+          : null,
+      "C": (warranty.completedAt != null)
+          ? "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(warranty.completedAt!, locale)}"
+          : null,
+      "E": (warranty.expiredOn != null)
+          ? "${AppLocalizations.of(context)!.expiredOn} : ${formatBookingDateTime(warranty.expiredOn!, locale)}"
+          : null,
+      "X": (warranty.rejectedAt != null)
+          ? "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(warranty.rejectedAt!, locale)}"
+          : null,
+      "R": (warranty.requestedOn != null)
+          ? "${AppLocalizations.of(context)!.requestedOn} : ${formatBookingDateTime(warranty.requestedOn!, locale)}"
+          : null,
+      "S": (warranty.acceptedAt != null)
+          ? "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(warranty.acceptedAt!, locale)}"
+          : null,
+    };
+
+    final text = timestampMap[statusCode];
+    return text != null ? _timestampText(text) : SizedBox.shrink();
+  }
+
+  Widget _timestampText(String text) {
+    return Text(text, style: TextStyle(color: AppColors.grey3, fontSize: 10.5));
+  }
+
+  Widget _buildBookingActionButtons(BuildContext context) {
+    return Row(
+      children: [
+        if (booking.paymentCompleted == false) _buildPaymentButton(context),
+        if (booking.paymentCompleted == false) SizedBox(width: 4),
+        if (booking.paymentCompleted == true) _buildReviewButton(context),
+      ],
+    );
+  }
+
+  Widget _buildPaymentButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        showPaymentBottomSheet(
+          context,
+          agent: booking.agent!,
+          service: booking.service,
+          customerData: booking.customer,
+          booking: booking,
+        );
+      },
+      child: SizedBox(
+        height: 23,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.orange),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          alignment: Alignment.center,
+          child: Text(
+            AppLocalizations.of(context)?.completePayment ?? '',
+            style: GoogleFonts.dmSans(
+              fontWeight: FontWeight.w500,
+              fontSize: 10,
+              color: Colors.orange,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReviewButton(BuildContext context) {
+    return SizedBox(
+      height: 23,
+      child: FilledButton(
+        style: FilledButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          backgroundColor: AppColors.yellow,
+        ),
+        onPressed: booking.review == null ? onReviewButtonPressed : null,
+        child: Text(
+          booking.review == null
+              ? AppLocalizations.of(context)?.writeAReview ?? ''
+              : AppLocalizations.of(context)?.reviewSubmitted ?? '',
+          style: GoogleFonts.dmSans(
+            color: Colors.black,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWarrantyStatusBadge(BuildContext context) {
+    final warranty = booking.warranty;
+    if (warranty == null) return SizedBox.shrink();
+
+    final statusCode = warranty.warrantyStatusCode;
+
+    switch (statusCode) {
+      case "A":
+        return _buildWarrantyBadge(
+          label: AppLocalizations.of(context)?.repairUnderWarranty ?? '',
+          color: AppColors.primary,
+          textColor: Colors.white,
+          onTap: () => showWarrantyClaimedBottomSheet(context, booking),
+        );
+      case "E":
+        return _buildWarrantyBadge(
+          label: AppLocalizations.of(context)?.expired ?? '',
+          color: Colors.red,
+          textColor: Colors.red,
+          borderOnly: true,
+        );
+      case "R":
+        return _buildWarrantyBadge(
+          label: AppLocalizations.of(context)?.requested ?? '',
+          color: Colors.orange,
+          textColor: Colors.orange,
+          borderOnly: true,
+        );
+      case "S":
+        return _buildWarrantyBadge(
+          label: AppLocalizations.of(context)?.accepted ?? '',
+          color: AppColors.secondary,
+          textColor: AppColors.secondary,
+          borderOnly: true,
+        );
+      case "C":
+        return _buildWarrantyBadge(
+          label: AppLocalizations.of(context)?.completed ?? '',
+          color: Colors.green,
+          textColor: Colors.green,
+          borderOnly: true,
+        );
+      default:
+        return SizedBox.shrink();
+    }
+  }
+
+  Widget _buildWarrantyBadge({
+    required String label,
+    required Color color,
+    required Color textColor,
+    bool borderOnly = false,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        height: 23,
+        child: Container(
+          decoration: BoxDecoration(
+            color: borderOnly ? Colors.white : color,
+            border: Border.all(color: color),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: GoogleFonts.dmSans(
+              fontWeight: FontWeight.w500,
+              fontSize: 10,
+              color: textColor,
+            ),
+          ),
         ),
       ),
     );

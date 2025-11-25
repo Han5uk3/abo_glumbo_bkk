@@ -640,17 +640,54 @@ class AppServices {
         return [];
       }
 
-      final snapshot = await AppFirestore.bookingsCollectionRef
+      // 1. Normal Active Bookings
+      final activeBookingsFuture = AppFirestore.bookingsCollectionRef
           .where('customer.uid', isEqualTo: currentUid)
           .where('bookingStatusCode', isEqualTo: 'A')
           .where('isStarted', isEqualTo: true)
           .orderBy('createdAt', descending: true)
           .get();
-      return snapshot.docs
-          .map(
-            (doc) => BookingModel.fromJson(doc.data() as Map<String, dynamic>),
-          )
-          .toList();
+
+      // 2. Active Warranty Bookings (Accepted & Started)
+      final warrantyBookingsFuture = AppFirestore.bookingsCollectionRef
+          .where('customer.uid', isEqualTo: currentUid)
+          .where('warranty.warrantyStatusCode', isEqualTo: 'S')
+          .where('isStarted', isEqualTo: true)
+          .get();
+
+      final results = await Future.wait([
+        activeBookingsFuture,
+        warrantyBookingsFuture,
+      ]);
+
+      final Map<String, BookingModel> bookingMap = {};
+
+      // Process normal active bookings
+      for (var doc in results[0].docs) {
+        final booking = BookingModel.fromJson(
+          doc.data() as Map<String, dynamic>,
+        );
+        bookingMap[booking.id] = booking;
+      }
+
+      // Process active warranty bookings
+      for (var doc in results[1].docs) {
+        final booking = BookingModel.fromJson(
+          doc.data() as Map<String, dynamic>,
+        );
+        bookingMap[booking.id] = booking;
+      }
+
+      final combined = bookingMap.values.toList();
+
+      // Sort by createdAt descending
+      combined.sort((a, b) {
+        final aTime = a.createdAt?.toDate() ?? DateTime(0);
+        final bTime = b.createdAt?.toDate() ?? DateTime(0);
+        return bTime.compareTo(aTime);
+      });
+
+      return combined;
     } catch (e) {
       debugPrint('❌ Error getting active bookings: $e');
       return [];
@@ -1140,7 +1177,7 @@ class AppServices {
     await batch.commit();
   }
 
- static Stream<int> getUnreadNotificationsCountStream() {
+  static Stream<int> getUnreadNotificationsCountStream() {
     String userId = LocalStoreHelper.getUID() ?? '';
     if (userId.isEmpty) return Stream.value(0);
 
@@ -1151,7 +1188,6 @@ class AppServices {
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
   }
-
 }
 
 class WorkerWithStats {

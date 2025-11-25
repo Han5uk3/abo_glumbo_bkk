@@ -516,19 +516,12 @@ class BookingDetailsBottomSheet extends StatelessWidget {
               AppLocalizations.of(context)?.localeName ?? '',
             ),
           ),
-
-        // _buildInfoRow(
-        //   AppLocalizations.of(context)!.repairRequested,
-        //   booking.warranty!.claimrequested ?? false
-        //       ? AppLocalizations.of(context)!.yes
-        //       : AppLocalizations.of(context)!.no,
-        // ),
         if (booking.warranty!.warrantyStatusCode == 'S' &&
-            booking.warranty!.acceptedOn != null) ...[
+            booking.warranty!.acceptedAt != null) ...[
           _buildInfoRow(
             AppLocalizations.of(context)!.acceptedOn,
             formatDateTime(
-              booking.warranty!.acceptedOn!,
+              booking.warranty!.acceptedAt!,
               AppLocalizations.of(context)?.localeName ?? '',
             ),
           ),
@@ -556,11 +549,11 @@ class BookingDetailsBottomSheet extends StatelessWidget {
           ),
         ],
         if (booking.warranty!.warrantyStatusCode == 'C' &&
-            booking.warranty!.completedOn != null) ...[
+            booking.warranty!.completedAt != null) ...[
           _buildInfoRow(
             AppLocalizations.of(context)!.completedOn,
             formatDateTime(
-              booking.warranty!.completedOn!,
+              booking.warranty!.completedAt!,
               AppLocalizations.of(context)?.localeName ?? '',
             ),
           ),
@@ -1152,7 +1145,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
-              if (hasChat) ...{
+              if ((hasChat && booking.bookingStatusCode == 'A') ||
+                  (hasChat && booking.warranty != null)) ...{
                 const Spacer(),
 
                 StreamBuilder<int>(
