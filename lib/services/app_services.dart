@@ -43,53 +43,45 @@ class AppServices {
         }
       }
 
-      // ✅ If still empty, this is a background notification
-      // Store with a fallback identifier
+      // ✅ If still empty, cannot store notification
       if (userId.isEmpty) {
         debugPrint(
-          '⚠️ Background notification received - userId not available, checking targetRole',
+          '❌ Cannot store notification: No userId available in message or Hive',
         );
-
-        // For background notifications, use targetRole to determine storage
-        String targetRole = message.data['targetRole'] ?? 'unknown';
-
-        // Log the message for debugging
-        debugPrint(
-          '📨 Background notification: role=$targetRole, category=${message.data['category']}',
-        );
-
-        // If we truly can't get userId, the notification might be lost
-        // Try one more time to extract it from data
-        if (userId.isEmpty) {
-          debugPrint(
-            '❌ Cannot store notification: No userId available in message or Hive',
-          );
-          return;
-        }
+        return;
       }
 
-      debugPrint('📝 Storing notification for userId: $userId');
+      debugPrint('📝 Storing notification for customerId: $userId');
 
+      String title =
+          message.notification?.title ??
+          message.data['title'] ??
+          'New Notification';
+      String body =
+          message.notification?.body ??
+          message.data['body'] ??
+          'You have a new notification';
+
+      // Store notification data matching Cloud Functions format
       Map<String, dynamic> notificationData = {
-        'userId': userId,
-        'title': message.notification?.title ?? message.data['title'] ?? '',
-        'body': message.notification?.body ?? message.data['body'] ?? '',
-        'data': message.data,
-        'messageId': message.messageId ?? '',
-        'sentTime': message.sentTime != null
-            ? Timestamp.fromDate(message.sentTime!)
-            : Timestamp.now(),
+        'titleEn': message.data['titleEn'] ?? title,
+        'titleAr': message.data['titleAr'] ?? title,
+        'bodyEn': message.data['bodyEn'] ?? body,
+        'bodyAr': message.data['bodyAr'] ?? body,
+        'data': message.data.isNotEmpty ? message.data : {},
+        'read': false,
         'createdAt': Timestamp.now(),
-        'isRead': false,
-        'category': message.data['category'] ?? 'general',
-        'action': message.data['action'] ?? '',
-        'platform': message.data['platform'] ?? 'unknown',
-        'targetRole': message.data['targetRole'] ?? 'customer',
       };
 
-      await AppFirestore.notificationsCollectionRef.add(notificationData);
+      // Store in customer-specific subcollection: customers/{customerId}/notifications
+      await AppFirestore.customersCollectionRef
+          .doc(userId)
+          .collection('notifications')
+          .add(notificationData);
 
-      debugPrint('✅ Notification stored successfully');
+      debugPrint(
+        '✅ Notification stored in customers/$userId/notifications subcollection',
+      );
     } catch (e) {
       debugPrint('❌ Error storing notification in Firestore: $e');
     }
@@ -104,7 +96,7 @@ class AppServices {
       }
 
       debugPrint('📤 Updating FCM token for user: $currentUid');
-      debugPrint('🔑 Token: ${token.substring(0, 20)}...');
+      debugPrint('🔑 Token: $token');
 
       await AppFirestore.customersCollectionRef.doc(currentUid).update({
         'fcmToken': token,
@@ -1239,7 +1231,7 @@ class AppServices {
     String userId = LocalStoreHelper.getUID() ?? '';
     if (userId.isEmpty) return Stream.value([]);
 
-    return AppFirestore.usersCollectionRef
+    return AppFirestore.customersCollectionRef
         .doc(userId)
         .collection('notifications')
         .orderBy('createdAt', descending: true)
@@ -1257,7 +1249,7 @@ class AppServices {
     String userId = LocalStoreHelper.getUID() ?? '';
     if (userId.isEmpty) return;
 
-    await AppFirestore.usersCollectionRef
+    await AppFirestore.customersCollectionRef
         .doc(userId)
         .collection('notifications')
         .doc(notificationId)
@@ -1268,7 +1260,7 @@ class AppServices {
     String userId = LocalStoreHelper.getUID() ?? '';
     if (userId.isEmpty) return;
 
-    final collection = AppFirestore.usersCollectionRef
+    final collection = AppFirestore.customersCollectionRef
         .doc(userId)
         .collection('notifications');
 
@@ -1286,7 +1278,7 @@ class AppServices {
     String userId = LocalStoreHelper.getUID() ?? '';
     if (userId.isEmpty) return Stream.value(0);
 
-    return AppFirestore.usersCollectionRef
+    return AppFirestore.customersCollectionRef
         .doc(userId)
         .collection('notifications')
         .where('read', isEqualTo: false)
