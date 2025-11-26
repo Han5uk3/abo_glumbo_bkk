@@ -92,16 +92,20 @@ Future<void> main() async {
       // Continue anyway - notifications are not critical for app launch
     }
 
-    // 6. System UI setup
+    // 6. System UI setup (with One UI 8 fix)
     try {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       SystemChrome.setSystemUIOverlayStyle(
         const SystemUiOverlayStyle(
           systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarDividerColor: Colors.transparent,
+          systemNavigationBarContrastEnforced: false,
           statusBarColor: Colors.transparent,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.dark,
         ),
       );
-      debugPrint('✅ System UI configured');
+      debugPrint('✅ System UI configured (One UI 8 compatible)');
     } catch (e) {
       debugPrint('⚠️ System UI setup failed (non-critical): $e');
       // Continue anyway
@@ -185,15 +189,19 @@ class MyApp extends StatelessWidget {
                 }
                 return supportedLocales.first;
               },
+
+
+
               builder: (context, child) {
-                final mediaQuery = MediaQuery.of(context);
-                // Check if there's a bottom system inset (nav bar/home indicator)
+                final mq = MediaQuery.of(context);
+                final bottom = mq.padding.bottom;
+
+                // Samsung OneUI gesture nav bug → returns 0 bottom inset
+                final fixedBottom = bottom == 0 ? 16.0 : bottom;
 
                 return MediaQuery(
-                  data: mediaQuery.copyWith(
-                    padding: mediaQuery.padding.copyWith(
-                      bottom: mediaQuery.padding.bottom + 10,
-                    ),
+                  data: mq.copyWith(
+                    padding: mq.padding.copyWith(bottom: fixedBottom),
                   ),
                   child: Directionality(
                     textDirection: state.locale.languageCode == 'ar'
@@ -203,6 +211,7 @@ class MyApp extends StatelessWidget {
                   ),
                 );
               },
+             
               theme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
                 scaffoldBackgroundColor: AppColors.bgWhite,

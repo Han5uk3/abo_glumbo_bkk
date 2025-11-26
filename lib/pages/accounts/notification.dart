@@ -1,4 +1,3 @@
-import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/notification.dart';
@@ -6,8 +5,56 @@ import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class NewNotificationsPage extends StatelessWidget {
+class NewNotificationsPage extends StatefulWidget {
   const NewNotificationsPage({super.key});
+
+  @override
+  State<NewNotificationsPage> createState() => _NewNotificationsPageState();
+}
+
+class _NewNotificationsPageState extends State<NewNotificationsPage> {
+  final ScrollController _scrollController = ScrollController();
+  final int _itemsPerPage = 30;
+  int _currentlyDisplayed = 30;
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      _loadMore();
+    }
+  }
+
+  void _loadMore() {
+    if (!_isLoadingMore) {
+      setState(() {
+        _isLoadingMore = true;
+      });
+
+      // Simulate a small delay for smooth UX
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (mounted) {
+          setState(() {
+            _currentlyDisplayed += _itemsPerPage;
+            _isLoadingMore = false;
+          });
+        }
+      });
+    }
+  }
 
   String _getRelativeTime(DateTime dateTime, bool isAr) {
     final now = DateTime.now();
@@ -221,11 +268,33 @@ class NewNotificationsPage extends StatelessWidget {
             );
           }
 
+          // Get the notifications to display (limited by pagination)
+          final displayedNotifications = notifications
+              .take(_currentlyDisplayed)
+              .toList();
+          final hasMore = notifications.length > _currentlyDisplayed;
+
           return ListView.builder(
+            controller: _scrollController,
             padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: notifications.length,
+            itemCount: displayedNotifications.length + (hasMore ? 1 : 0),
             itemBuilder: (context, index) {
-              final notification = notifications[index];
+              // Show loading indicator at the bottom
+              if (index == displayedNotifications.length) {
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  alignment: Alignment.center,
+                  child: _isLoadingMore
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const SizedBox.shrink(),
+                );
+              }
+
+              final notification = displayedNotifications[index];
 
               // Use fallback if specific language content is missing
               final title = isAr
