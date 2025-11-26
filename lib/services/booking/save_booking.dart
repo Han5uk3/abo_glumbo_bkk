@@ -198,28 +198,7 @@ class BookingUtils {
     }
   }
 
-  static Future<bool> updateBalance({
-    required String? workerId,
-    required double amount,
-  }) async {
-    try {
-      if (workerId == null) return false;
-      final user = AppFirestore.usersCollectionRef.doc(workerId).get();
-      final balance = (await user).get("availableBalance");
-      balance == null
-          ? await AppFirestore.usersCollectionRef.doc(workerId).update({
-              "availableBalance": amount,
-            })
-          : await AppFirestore.usersCollectionRef.doc(workerId).update({
-              "availableBalance": FieldValue.increment(amount),
-            });
-
-      return true;
-    } catch (e) {
-      debugPrint("Error updating balance: $e");
-      return false;
-    }
-  }
+ 
 
   static Future<bool> saveTipToSubcollection({
     required String workerId,

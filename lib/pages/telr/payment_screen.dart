@@ -171,7 +171,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                   if (widget.isFromBooking) {
                     saveBooking();
                     saveTransaction();
-                    updateBalance();
+                   
                   }
                   if (widget.isFromBooking == false) {
                     saveReview();
@@ -221,16 +221,6 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     }
   }
 
-  Future<bool> updateBalance() async {
-    return await BookingUtils.updateBalance(
-      workerId: widget.booking?.agent?.uid,
-      amount:
-          double.tryParse(
-            widget.booking?.completionData?.totalCost.toString() ?? '0.00',
-          ) ??
-          0.00,
-    );
-  }
 
   Future<bool> saveToTipping() async {
     return await BookingUtils.saveToTipping(

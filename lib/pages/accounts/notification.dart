@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/notification.dart';
@@ -17,6 +18,9 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
   final int _itemsPerPage = 30;
   int _currentlyDisplayed = 30;
   bool _isLoadingMore = false;
+
+  // Cache the notifications list
+  List<NotificationModel> _cachedNotifications = [];
 
   @override
   void initState() {
@@ -39,7 +43,7 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
   }
 
   void _loadMore() {
-    if (!_isLoadingMore) {
+    if (!_isLoadingMore && _cachedNotifications.length > _currentlyDisplayed) {
       setState(() {
         _isLoadingMore = true;
       });
@@ -127,93 +131,92 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_sweep_rounded),
-            tooltip: isAr ? 'حذف الكل' : 'Delete All',
-            onPressed: () async {
-              // Show confirmation dialog
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  constraints: const BoxConstraints(maxWidth: 320),
-                  backgroundColor: Colors.white,
-                  title: Row(
-                    children: [
-                      Icon(Icons.warning_amber_rounded, color: Colors.orange),
-                      const SizedBox(width: 12),
-                      Text(
-                        isAr ? 'حذف الكل' : 'Delete All',
-                        style: const TextStyle(fontSize: 18),
+          if (_cachedNotifications.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.delete_sweep_rounded),
+              tooltip: isAr ? 'حذف الكل' : 'Delete All',
+              onPressed: () async {
+                // Show confirmation dialog
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    actionsAlignment: MainAxisAlignment.start,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    constraints: const BoxConstraints(maxWidth: 320),
+                    backgroundColor: Colors.white,
+                    title: Row(
+                      children: [
+                        Icon(Icons.warning_amber_rounded, color: Colors.orange),
+                        const SizedBox(width: 12),
+                        Text(
+                          isAr ? 'حذف الكل' : 'Delete All',
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                    content: Text(
+                      isAr
+                          ? 'هل أنت متأكد أنك تريد حذف جميع الإشعارات؟'
+                          : 'Are you sure you want to delete all notifications?',
+                      style: TextStyle(color: Colors.grey[700], fontSize: 15),
+                    ),
+                    actions: [
+                      eButton(
+                        context: context,
+                        backgroundColor: Colors.white,
+                        onPressed: () => Navigator.pop(context, false),
+                        widget: Text(
+                          AppLocalizations.of(context)?.cancel ?? 'Cancel',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      eButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        context: context,
+                        backgroundColor: Colors.red,
+                        text: AppLocalizations.of(context)?.delete ?? 'Delete',
+                        textColor: Colors.white,
                       ),
                     ],
                   ),
-                  content: Text(
-                    isAr
-                        ? 'هل أنت متأكد أنك تريد حذف جميع الإشعارات؟'
-                        : 'Are you sure you want to delete all notifications?',
-                    style: TextStyle(color: Colors.grey[700], fontSize: 15),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: Text(
-                        AppLocalizations.of(context)?.cancel ?? 'Cancel',
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
+                );
+
+                if (confirm == true) {
+                  await AppServices.deleteAllFirestoreNotifications();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.green,
+                        behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
+                        content: Row(
+                          children: [
+                            const Icon(Icons.check_circle, color: Colors.white),
+                            const SizedBox(width: 12),
+                            Text(
+                              isAr
+                                  ? 'تم حذف جميع الإشعارات'
+                                  : 'All notifications deleted',
+                            ),
+                          ],
+                        ),
                       ),
-                      child: Text(
-                        AppLocalizations.of(context)?.delete ?? 'Delete',
-                      ),
-                    ),
-                  ],
-                ),
-              );
-
-              if (confirm == true) {
-                await AppServices.deleteAllFirestoreNotifications();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.green,
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      content: Row(
-                        children: [
-                          const Icon(Icons.check_circle, color: Colors.white),
-                          const SizedBox(width: 12),
-                          Text(
-                            isAr
-                                ? 'تم حذف جميع الإشعارات'
-                                : 'All notifications deleted',
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                    );
+                  }
                 }
-              }
-            },
-          ),
+              },
+            ),
         ],
       ),
       body: StreamBuilder<List<NotificationModel>>(
         stream: AppServices.getNotificationsStream(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              _cachedNotifications.isEmpty) {
             return const Center(
               child: CircularProgressIndicator(strokeWidth: 3),
             );
@@ -235,9 +238,12 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
             );
           }
 
-          final notifications = snapshot.data ?? [];
+          // Update cached notifications when new data arrives
+          if (snapshot.hasData) {
+            _cachedNotifications = snapshot.data!;
+          }
 
-          if (notifications.isEmpty) {
+          if (_cachedNotifications.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -269,10 +275,10 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
           }
 
           // Get the notifications to display (limited by pagination)
-          final displayedNotifications = notifications
+          final displayedNotifications = _cachedNotifications
               .take(_currentlyDisplayed)
               .toList();
-          final hasMore = notifications.length > _currentlyDisplayed;
+          final hasMore = _cachedNotifications.length > _currentlyDisplayed;
 
           return ListView.builder(
             controller: _scrollController,
