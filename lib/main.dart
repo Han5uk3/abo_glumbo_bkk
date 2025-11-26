@@ -35,36 +35,121 @@ Future<void> _initializeFirebaseDatabase() async {
 }
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    debugPrint('✅ Flutter binding initialized');
 
-  // 1. Initialize Firebase FIRST
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    // 1. Initialize Firebase FIRST
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      debugPrint('✅ Firebase initialized successfully');
+    } catch (e, stackTrace) {
+      debugPrint('❌ CRITICAL: Firebase initialization failed: $e');
+      debugPrint('Stack trace: $stackTrace');
+      // Firebase is critical - rethrow to show error screen
+      rethrow;
+    }
 
-  // 2. Set database persistence IMMEDIATELY after Firebase init, before ANY database usage
-  await _initializeFirebaseDatabase();
+    // 2. Set database persistence (non-critical, can fail gracefully)
+    try {
+      await _initializeFirebaseDatabase();
+    } catch (e) {
+      debugPrint('⚠️ Database persistence setup failed (non-critical): $e');
+      // Continue anyway - app can work without persistence
+    }
 
-  // 3. Set background message handler
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    // 3. Set background message handler
+    try {
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+      debugPrint('✅ Background message handler set');
+    } catch (e) {
+      debugPrint('⚠️ Background message handler setup failed: $e');
+      // Continue anyway
+    }
 
-  // 4. Initialize Hive
-  await Hive.initFlutter();
-  await Hive.openBox(hiveBoxName);
+    // 4. Initialize Hive
+    try {
+      await Hive.initFlutter();
+      await Hive.openBox(hiveBoxName);
+      debugPrint('✅ Hive initialized successfully');
+    } catch (e, stackTrace) {
+      debugPrint('❌ CRITICAL: Hive initialization failed: $e');
+      debugPrint('Stack trace: $stackTrace');
+      // Hive is critical for app state - rethrow
+      rethrow;
+    }
 
-  // 5. Initialize notifications (non-blocking for permissions)
-  await NotificationServices.initializeNotifications();
-  NotificationServices.setupFCMListeners(); // Don't await - let it run async
-  NotificationServices.checkForInitialMessage(); // Don't await
+    // 5. Initialize notifications (non-blocking for permissions)
+    try {
+      await NotificationServices.initializeNotifications();
+      NotificationServices.setupFCMListeners(); // Don't await - let it run async
+      NotificationServices.checkForInitialMessage(); // Don't await
+      debugPrint('✅ Notification services initialized');
+    } catch (e) {
+      debugPrint('⚠️ Notification setup failed (non-critical): $e');
+      // Continue anyway - notifications are not critical for app launch
+    }
 
-  // 6. System UI setup
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.transparent,
-      statusBarColor: Colors.transparent,
-    ),
-  );
+    // 6. System UI setup
+    try {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.transparent,
+          statusBarColor: Colors.transparent,
+        ),
+      );
+      debugPrint('✅ System UI configured');
+    } catch (e) {
+      debugPrint('⚠️ System UI setup failed (non-critical): $e');
+      // Continue anyway
+    }
 
-  runApp(MyApp(navigatorKey: navigatorKey));
+    debugPrint('🚀 App initialization complete - launching app');
+    runApp(MyApp(navigatorKey: navigatorKey));
+  } catch (e, stackTrace) {
+    debugPrint('❌ FATAL: App initialization failed completely: $e');
+    debugPrint('Stack trace: $stackTrace');
+
+    // Show error screen instead of white screen
+    runApp(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'App Initialization Failed',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error: $e',
+                    style: const TextStyle(fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Please reinstall the app or contact support.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {

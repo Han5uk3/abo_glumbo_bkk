@@ -9,7 +9,8 @@ import Firebase
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    FirebaseApp.configure()
+    // ✅ Firebase is initialized by Flutter in main.dart
+    // Removed FirebaseApp.configure() to prevent double initialization crash
     GeneratedPluginRegistrant.register(with: self)
     GMSServices.provideAPIKey("AIzaSyBl4RQBYM_v-u2Oik_ENyxcGxnvyZGxL2o")
 
