@@ -55,7 +55,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get technicianIsBusy => 'الفني مشغول';
 
   @override
-  String get technicianIsBusyatThisTime => 'الفني مشغول في هذا الوقت';
+  String get technicianIsBusyatThisTime => 'الفني مشغول في هذا الوقت';
 
   @override
   String get yourTechnicianIsMovingToYourLocation => 'الفني في طريقه إلى موقعك';
@@ -1698,7 +1698,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get locationError => 'خطأ في الموقع';
 
   @override
-  String get bookingTimeline => 'Booking Timeline';
+  String get bookingTimeline => 'تتبع الحجز';
 
   @override
   String get escalateWarrantyConfirmation =>
