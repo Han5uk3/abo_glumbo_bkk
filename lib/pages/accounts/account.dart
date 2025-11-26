@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/helpers/constants.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -402,6 +403,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         context: context,
         builder: (BuildContext dialogContext) {
           return AlertDialog(
+            backgroundColor: Colors.white,
             actionsAlignment: MainAxisAlignment.start,
             title: Row(
               children: [
@@ -458,27 +460,19 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
               ],
             ),
             actions: [
-              ElevatedButton(
-                onPressed: () => Navigator.of(dialogContext).pop(true),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                ),
-                child: Text(
-                  AppLocalizations.of(dialogContext)?.disable ?? 'Disable',
-                  style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(width: 8),
-              TextButton(
+              eButton(
                 onPressed: () => Navigator.of(dialogContext).pop(false),
-                child: Text(
-                  AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
-                  style: GoogleFonts.dmSans(
-                    color: Colors.grey.shade600,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                context: dialogContext,
+                backgroundColor: Colors.grey,
+                text: AppLocalizations.of(dialogContext)?.cancel,
+                textColor: Colors.white,
+              ),
+              eButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                context: dialogContext,
+                backgroundColor: Colors.red,
+                text: AppLocalizations.of(dialogContext)?.disable,
+                textColor: Colors.white,
               ),
             ],
           );
@@ -528,6 +522,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           actionsAlignment: MainAxisAlignment.start,
           title: Row(
             children: [
@@ -619,28 +614,22 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
             ],
           ),
           actions: [
-            ElevatedButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(
-                AppLocalizations.of(dialogContext)?.deleteAccount ??
-                    'Delete Account',
-                style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(width: 8),
-            TextButton(
+            eButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: Text(
-                AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
-                style: GoogleFonts.dmSans(
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              context: context,
+              backgroundColor: Colors.white,
+              textColor: Colors.black,
+              text: AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
+            ),
+
+            eButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              context: context,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              text:
+                  AppLocalizations.of(dialogContext)?.deleteAccount ??
+                  'Delete Account',
             ),
           ],
         );
@@ -716,6 +705,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           actionsAlignment: MainAxisAlignment.start,
           title: Text(
             AppLocalizations.of(context)?.logout ?? 'Logout',
@@ -730,32 +720,25 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
             style: GoogleFonts.dmSans(fontSize: 16),
           ),
           actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
+            eButton(
+              context: context,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
               onPressed: () async {
                 Navigator.of(context).pop();
                 await _performLogout();
               },
-              child: Text(
-                AppLocalizations.of(context)?.logout ?? 'Logout',
-                style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
-              ),
+              text: AppLocalizations.of(context)?.logout ?? 'Logout',
             ),
             SizedBox(width: 8),
-            TextButton(
+            eButton(
+              context: context,
+              backgroundColor: Colors.white,
+              textColor: Colors.black,
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(
-                AppLocalizations.of(context)?.cancel ?? 'Cancel',
-                style: GoogleFonts.dmSans(
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              text: AppLocalizations.of(context)?.cancel ?? 'Cancel',
             ),
           ],
         );

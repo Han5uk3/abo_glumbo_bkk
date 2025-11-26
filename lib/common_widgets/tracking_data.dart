@@ -35,8 +35,8 @@ class TrackingData extends StatelessWidget {
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          constraints: BoxConstraints(minWidth: 100),
           backgroundColor: Colors.white,
+          constraints: BoxConstraints(minWidth: 100),
           content: SizedBox(
             height: 70,
             child: Center(

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -127,6 +128,7 @@ class _HomeState extends State<Home> {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
+              backgroundColor: Colors.white,
               actionsAlignment: MainAxisAlignment.start,
               title: Text(locale?.exitAppTitle ?? 'Exit App'),
               content: Text(
@@ -134,14 +136,19 @@ class _HomeState extends State<Home> {
                     'Are you sure you want to exit the app?',
               ),
               actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text(locale?.exit ?? 'Exit'),
-                ),
-                SizedBox(width: 8),
-                TextButton(
+                eButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text(locale?.cancel ?? 'Cancel'),
+                  context: context,
+                  backgroundColor: Colors.grey,
+                  textColor: Colors.white,
+                  text: locale?.cancel ?? 'Cancel',
+                ),
+                eButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  context: context,
+                  backgroundColor: AppColors.red,
+                  textColor: Colors.white,
+                  text: locale?.exit ?? 'Exit',
                 ),
               ],
             ),
@@ -472,6 +479,7 @@ class _HomeState extends State<Home> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           actionsAlignment: MainAxisAlignment.start,
           title: Text(
             AppLocalizations.of(context)?.logout ?? 'Logout',
@@ -486,31 +494,24 @@ class _HomeState extends State<Home> {
             style: GoogleFonts.dmSans(fontSize: 16),
           ),
           actions: [
-            TextButton(
+            eButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+              },
+              context: context,
+              backgroundColor: Colors.white,
+              textColor: Colors.black,
+              text: AppLocalizations.of(context)?.cancel ?? 'Cancel',
+            ),
+            eButton(
               onPressed: () async {
                 Navigator.of(context).pop();
                 await _performLogout();
               },
-              child: Text(
-                AppLocalizations.of(context)?.logout ?? 'Logout',
-                style: GoogleFonts.dmSans(
-                  color: AppColors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(width: 8),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                AppLocalizations.of(context)?.cancel ?? 'Cancel',
-                style: GoogleFonts.dmSans(
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              context: context,
+              backgroundColor: AppColors.red,
+              textColor: Colors.white,
+              text: AppLocalizations.of(context)?.logout ?? 'Logout',
             ),
           ],
         );

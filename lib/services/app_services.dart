@@ -1256,6 +1256,17 @@ class AppServices {
         .update({'read': true});
   }
 
+  static Future<void> deleteFirestoreNotification(String notificationId) async {
+    String userId = LocalStoreHelper.getUID() ?? '';
+    if (userId.isEmpty) return;
+
+    await AppFirestore.customersCollectionRef
+        .doc(userId)
+        .collection('notifications')
+        .doc(notificationId)
+        .delete();
+  }
+
   static Future<void> deleteAllFirestoreNotifications() async {
     String userId = LocalStoreHelper.getUID() ?? '';
     if (userId.isEmpty) return;

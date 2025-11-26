@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
@@ -130,6 +131,7 @@ class _SignupPageState extends State<SignupPage> {
         return PopScope(
           canPop: false,
           child: AlertDialog(
+            backgroundColor: Colors.white,
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -240,6 +242,7 @@ class _SignupPageState extends State<SignupPage> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           actionsAlignment: MainAxisAlignment.start,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -285,26 +288,19 @@ class _SignupPageState extends State<SignupPage> {
             ),
           ),
           actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
+            eButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: Text(
-                locale.accept,
-                style: GoogleFonts.dmSans(color: Colors.white),
-              ),
+              context: context,
+              backgroundColor: AppColors.secondary,
+              textColor: Colors.white,
+              text: locale.cancel,
             ),
-            SizedBox(width: 8),
-            TextButton(
+            eButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: Text(
-                locale.cancel,
-                style: GoogleFonts.dmSans(color: Colors.black54),
-              ),
+              context: context,
+              backgroundColor: Colors.grey,
+              textColor: Colors.white,
+              text: locale.cancel,
             ),
           ],
         );

@@ -19,7 +19,6 @@ class LanguageSelectionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      
       backgroundColor: Colors.white,
       title: Text(title),
       content: Column(

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:abo_glumbo_bbk/apis/telr_apple_pay.dart';
+import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -792,6 +793,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
         barrierDismissible: false, // User must tap a button
         builder: (BuildContext dialogContext) {
           return AlertDialog(
+            backgroundColor: Colors.white,
             actionsAlignment: MainAxisAlignment.start,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
@@ -880,36 +882,24 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
               ],
             ),
             actions: [
-              ElevatedButton(
+              eButton(
                 onPressed: () {
-                  Navigator.of(dialogContext).pop(true); // Return true
+                  Navigator.of(dialogContext).pop(true);
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.confirm,
-                  style: GoogleFonts.dmSans(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                context: context,
+                backgroundColor: AppColors.primary,
+                textColor: Colors.white,
+                text: AppLocalizations.of(context)!.confirm,
               ),
-              SizedBox(width: 8),
-              TextButton(
+
+              eButton(
                 onPressed: () {
-                  Navigator.of(dialogContext).pop(false); // Return false
+                  Navigator.of(dialogContext).pop(false);
                 },
-                child: Text(
-                  AppLocalizations.of(context)!.cancel,
-                  style: GoogleFonts.dmSans(
-                    color: Colors.grey.shade700,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                context: context,
+                backgroundColor: Colors.grey,
+                textColor: Colors.white,
+                text: AppLocalizations.of(context)!.cancel,
               ),
             ],
           );

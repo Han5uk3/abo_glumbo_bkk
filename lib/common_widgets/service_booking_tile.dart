@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/date_formatter.dart';
@@ -275,6 +276,7 @@ class ServiceBookingTile extends StatelessWidget {
                       context: context,
                       builder: (BuildContext dialogContext) {
                         return AlertDialog(
+                          backgroundColor: Colors.white,
                           actionsAlignment: MainAxisAlignment.start,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -308,32 +310,28 @@ class ServiceBookingTile extends StatelessWidget {
                             ),
                           ),
                           actions: [
-                            ElevatedButton(
+                            eButton(
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(false),
+                              context: context,
+                              backgroundColor: Colors.grey,
+                              text: AppLocalizations.of(context)!.cancel,
+                              textColor: Colors.white,
+                            ),
+
+                            eButton(
                               onPressed: () =>
                                   Navigator.of(dialogContext).pop(true),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Text(
+                              context: context,
+                              backgroundColor: AppColors.primary,
+                              text: AppLocalizations.of(context)!.yes,
+                              textColor: Colors.white,
+
+                              widget: Text(
                                 AppLocalizations.of(context)!.yes,
                                 style: GoogleFonts.dmSans(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            TextButton(
-                              onPressed: () =>
-                                  Navigator.of(dialogContext).pop(false),
-                              child: Text(
-                                AppLocalizations.of(context)!.cancel,
-                                style: GoogleFonts.dmSans(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
