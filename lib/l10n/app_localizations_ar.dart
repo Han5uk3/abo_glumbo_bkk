@@ -52,8 +52,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get image => 'صورة';
 
   @override
-  String get yourTechnicianIsMovingToYourLocation =>
-      'الفنّي في طريقه إلى موقعك';
+  String get technicianIsBusy => 'الفني مشغول';
+
+  @override
+  String get technicianIsBusyatThisTime => 'الفني مشغول في هذا الوقت';
+
+  @override
+  String get yourTechnicianIsMovingToYourLocation => 'الفني في طريقه إلى موقعك';
 
   @override
   String get issueImage => 'مشكلة في الصورة';

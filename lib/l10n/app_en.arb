@@ -13,6 +13,8 @@
   "failedToLoadImage": "Failed to load image",
   "issueMedia": "Issue Media",
   "image": "Image",
+  "technicianIsBusy": "Technician is busy",
+  "technicianIsBusyatThisTime": "Technician is busy at this time",
   "yourTechnicianIsMovingToYourLocation": "Your technician is moving to your location.",
   "issueImage": "Issue Image",
   "loadingVideo": "Loading Video",

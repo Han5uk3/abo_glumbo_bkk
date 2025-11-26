@@ -182,6 +182,18 @@ abstract class AppLocalizations {
   /// **'Image'**
   String get image;
 
+  /// No description provided for @technicianIsBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician is busy'**
+  String get technicianIsBusy;
+
+  /// No description provided for @technicianIsBusyatThisTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician is busy at this time'**
+  String get technicianIsBusyatThisTime;
+
   /// No description provided for @yourTechnicianIsMovingToYourLocation.
   ///
   /// In en, this message translates to:

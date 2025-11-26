@@ -52,6 +52,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get image => 'Image';
 
   @override
+  String get technicianIsBusy => 'Technician is busy';
+
+  @override
+  String get technicianIsBusyatThisTime => 'Technician is busy at this time';
+
+  @override
   String get yourTechnicianIsMovingToYourLocation =>
       'Your technician is moving to your location.';
 

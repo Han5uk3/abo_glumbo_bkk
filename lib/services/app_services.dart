@@ -16,7 +16,6 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -1018,20 +1017,23 @@ class AppServices {
   }
 
   // Get count of unread notifications
+  // Get unread notification count from subcollection
   static Stream<int> getUnreadNotificationCount() {
     String currentUid = LocalStoreHelper.getUID() ?? '';
     if (currentUid.isEmpty) {
       return Stream.value(0);
     }
 
-    return AppFirestore.notificationsCollectionRef
-        .where('userId', isEqualTo: currentUid)
-        .where('isRead', isEqualTo: false)
+    return AppFirestore.customersCollectionRef
+        .doc(currentUid)
+        .collection('notifications')
+        .where('read', isEqualTo: false)
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
   }
 
   // Mark single notification as read
+  // Mark single notification as read from subcollection
   static Future<void> markNotificationAsRead(String notificationId) async {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
@@ -1040,33 +1042,71 @@ class AppServices {
         return;
       }
 
-      await AppFirestore.notificationsCollectionRef.doc(notificationId).update({
-        'isRead': true,
-        'readAt': FieldValue.serverTimestamp(),
-      });
+      await AppFirestore.customersCollectionRef
+          .doc(currentUid)
+          .collection('notifications')
+          .doc(notificationId)
+          .update({'read': true, 'readAt': FieldValue.serverTimestamp()});
       debugPrint('✅ Notification marked as read: $notificationId');
     } catch (e) {
       debugPrint('❌ Error marking notification as read: $e');
     }
   }
 
+  // Delete all notifications from subcollection
+  static Future<bool> deleteAllNotifications() async {
+    try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot delete notifications: User ID is empty');
+        return false;
+      }
+
+      final snapshot = await AppFirestore.customersCollectionRef
+          .doc(currentUid)
+          .collection('notifications')
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        debugPrint('✅ No notifications to delete');
+        return true;
+      }
+
+      // Batch delete operation
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      for (var doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      await batch.commit();
+      debugPrint('✅ All ${snapshot.docs.length} notifications deleted');
+      return true;
+    } catch (e) {
+      debugPrint('❌ Error deleting all notifications: $e');
+      return false;
+    }
+  }
+
   // Mark all notifications as read (batch operation)
-  static Future<void> markAllNotificationsAsRead() async {
+  static Future<bool> markAllNotificationsAsRead() async {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
         debugPrint('❌ Cannot mark all as read: User ID is empty');
-        return;
+        return false;
       }
 
-      final snapshot = await AppFirestore.notificationsCollectionRef
-          .where('userId', isEqualTo: currentUid)
-          .where('isRead', isEqualTo: false)
+      // Query from subcollection: customers/{userId}/notifications
+      final snapshot = await AppFirestore.customersCollectionRef
+          .doc(currentUid)
+          .collection('notifications')
+          .where('read', isEqualTo: false)
           .get();
 
       if (snapshot.docs.isEmpty) {
         debugPrint('✅ No unread notifications to mark');
-        return;
+        return true;
       }
 
       // Batch write operation
@@ -1074,15 +1114,80 @@ class AppServices {
 
       for (var doc in snapshot.docs) {
         batch.update(doc.reference, {
-          'isRead': true,
+          'read': true,
           'readAt': FieldValue.serverTimestamp(),
         });
       }
 
       await batch.commit();
       debugPrint('✅ All ${snapshot.docs.length} notifications marked as read');
+      return true;
     } catch (e) {
       debugPrint('❌ Error marking all notifications as read: $e');
+      return false;
+    }
+  }
+
+  // Get user notifications with role-based filtering
+  static Future<List<Map<String, dynamic>>> getUserNotifications({
+    int limit = 20,
+    bool onlyUnread = false,
+  }) async {
+    try {
+      String userId = LocalStoreHelper.getUID() ?? '';
+      if (userId.isEmpty) {
+        if (kDebugMode) {
+          print('⚠️ No user logged in, cannot retrieve notifications');
+        }
+        return [];
+      }
+
+      // Query from subcollection: customers/{userId}/notifications
+      Query query = AppFirestore.customersCollectionRef
+          .doc(userId)
+          .collection('notifications')
+          .orderBy('createdAt', descending: true);
+
+      if (onlyUnread) {
+        query = query.where('read', isEqualTo: false);
+      }
+
+      QuerySnapshot querySnapshot = await query.limit(limit).get();
+
+      List<Map<String, dynamic>> notifications = querySnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+
+        // Convert to format expected by notifications page
+        // Cloud Functions store: titleEn, titleAr, bodyEn, bodyAr
+        // Notifications page expects: title, body (single language)
+        return {
+          'id': doc.id,
+          'title': data['titleEn'] ?? data['titleAr'] ?? '',
+          'body': data['bodyEn'] ?? data['bodyAr'] ?? '',
+          'titleEn': data['titleEn'] ?? '',
+          'titleAr': data['titleAr'] ?? '',
+          'bodyEn': data['bodyEn'] ?? '',
+          'bodyAr': data['bodyAr'] ?? '',
+          'data': data['data'] ?? {},
+          'isRead': data['read'] ?? false,
+          'createdAt': data['createdAt'],
+          'category':
+              (data['data'] as Map<String, dynamic>?)?['category'] ?? 'general',
+        };
+      }).toList();
+
+      if (kDebugMode) {
+        print(
+          '📱 Retrieved ${notifications.length} notifications for customer from subcollection',
+        );
+      }
+
+      return notifications;
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error retrieving notifications: $e');
+      }
+      return [];
     }
   }
 

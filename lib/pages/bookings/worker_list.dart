@@ -1114,7 +1114,9 @@ class _WorkerListViewState extends State<_WorkerListView>
                   if (busyAgentIds.contains(statData.worker.uid)) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Technician is busy at this time'),
+                        content: Text(
+                          AppLocalizations.of(context)!.technicianIsBusyatThisTime,
+                        ),
                       ),
                     );
                     return;

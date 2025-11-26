@@ -87,7 +87,7 @@ class WorkerCard extends StatelessWidget {
                   Icon(Icons.check_circle, color: AppColors.primary, size: 24),
                 if (isBusy)
                   Text(
-                    'Technician is busy',
+                    AppLocalizations.of(context)!.technicianIsBusy,
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 12,
