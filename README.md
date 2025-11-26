@@ -1,113 +1,110 @@
-# Abo Glumbo (abo_glumbo_bbk)
+# Abo Glumbo (Customer App)
 
-A Flutter mobile application with Firebase integration. This repository contains the app source, Firebase configuration, assets and platform-specific build files.
+The official customer application for the Abo Glumbo service platform. This Flutter-based mobile app allows users to easily discover, book, and manage various home and professional services.
 
-## Contents
+## 🚀 Features
 
-- `lib/` — Flutter source code and generated Firebase options (`lib/firebase_options.dart`).
-- `android/`, `ios/` — platform folders and native build configuration.
-- `assets/`, `images/`, `map_styles/`, `svg/` — images, icons and map style assets.
+- **Service Discovery**: Browse a wide range of service categories and find the right professional for the job.
+- **Easy Booking**: Seamless booking process with date/time selection and location pinning.
+- **Real-time Tracking**: Track the status of your bookings and the location of assigned technicians.
+- **Secure Payments**: Integrated payment gateways (Telr) for safe and convenient transactions.
+- **In-App Chat**: Communicate directly with assigned technicians for coordination.
+- **Warranty Management**: View and manage warranties for completed services.
+- **Multi-Language Support**: Fully localized for **English** and **Arabic** users.
+- **Account Management**: Manage profile details, saved addresses, and booking history.
 
-## Quick start
+## 🛠 Tech Stack
 
-Prerequisites:
+- **Framework**: [Flutter](https://flutter.dev/) (Dart)
+- **State Management**: [Flutter Bloc](https://pub.dev/packages/flutter_bloc)
+- **Local Storage**: [Hive](https://pub.dev/packages/hive)
+- **Networking**: [Dio](https://pub.dev/packages/dio)
+- **Maps**: [Google Maps Flutter](https://pub.dev/packages/google_maps_flutter)
+- **Backend**: [Firebase](https://firebase.google.com/) (Auth, Firestore, Storage, Messaging)
+- **Payments**: Telr
 
-- Flutter SDK (stable channel). See https://docs.flutter.dev/get-started/install
-- Android SDK / Android Studio for Android builds
-- Xcode and CocoaPods (macOS only) for iOS builds
+## 📋 Prerequisites
 
-Clone and fetch packages:
+- **Flutter SDK**: Version `^3.8.1`
+- **Dart SDK**: Compatible with Flutter version
+- **CocoaPods**: For iOS dependencies (Mac only)
+- **Android Studio / VS Code**: Recommended IDEs
 
-```powershell
-git clone <repo-url>
-cd abo-glumbo-bbk
-flutter pub get
-```
+## ⚙️ Installation
 
-Run on a connected device or emulator:
+1.  **Clone the repository:**
 
-```powershell
+    ```bash
+    git clone <repository-url>
+    cd abo-glumbo-bbk
+    ```
+
+2.  **Install dependencies:**
+
+    ```bash
+    flutter pub get
+    ```
+
+3.  **Setup Firebase:**
+
+    - Ensure `google-services.json` (Android) and `GoogleService-Info.plist` (iOS) are placed in their respective directories (`android/app` and `ios/Runner`).
+
+4.  **API Keys:**
+    - Configure Google Maps API keys in `AndroidManifest.xml` and `AppDelegate.swift`.
+
+## 📱 Running the Application
+
+To run the app on a connected device or emulator:
+
+```bash
 flutter run
 ```
 
-Run specific platform/device:
+### Build for Production
 
-```powershell
-flutter devices           # list available devices
-flutter run -d <deviceId> # replace <deviceId> with one from the list
+- **Android APK:**
+
+  ```bash
+  flutter build apk --release
+  ```
+
+- **Android App Bundle:**
+
+  ```bash
+  flutter build appbundle --release
+  ```
+
+- **iOS (Mac only):**
+  ```bash
+  flutter build ios --release
+  ```
+
+## 📂 Project Structure
+
+```
+abo-glumbo-bbk/
+├── android/            # Android native code
+├── assets/             # Images, SVGs, icons, and map styles
+├── ios/                # iOS native code
+├── lib/                # Main Flutter application code
+│   ├── apis/           # API providers
+│   ├── common_widgets/ # Reusable UI components
+│   ├── helpers/        # Utility functions
+│   ├── l10n/           # Localization files
+│   ├── models/         # Data models
+│   ├── pages/          # Application screens (Home, Bookings, etc.)
+│   ├── services/       # App services (Auth, Location, etc.)
+│   ├── sheets/         # Bottom sheets
+│   ├── styles/         # App theming
+│   └── main.dart       # Application entry point
+├── pubspec.yaml        # Flutter dependencies and configuration
+└── README.md           # Project documentation
 ```
 
-Build release for Android (AAB):
+## 🤝 Contributing
 
-```powershell
-flutter build appbundle --release
-```
-
-Build for iOS (macOS required):
-
-```powershell
-flutter build ipa --export-options-plist=ios/ExportOptions.plist
-```
-
-## Firebase configuration
-
-This project already contains Firebase configuration helpers and generated options in `lib/firebase_options.dart`. Platform files are present for Android at `android/app/google-services.json`. If you need to reconfigure or re-generate Firebase options use the FlutterFire CLI:
-
-```powershell
-dart pub global activate flutterfire_cli
-flutterfire configure
-```
-
-Notes:
-
-- If you change Firebase projects, make sure to replace platform config files (`google-services.json` for Android and `GoogleService-Info.plist` for iOS) and regenerate `lib/firebase_options.dart`.
-- Android signing keys and properties are present in `android/key.properties` and `android/app/upload-key.jks`. Keep signing keys secret and do not commit new private keys to the repo.
-
-## Local setup and environment
-
-- `local.properties` contains your Android SDK path and is typically machine-specific — do not commit it.
-- `key.properties` should exist for release signing. If you don't have one, create it and update `android/app/build.gradle.kts` accordingly.
-
-## Testing
-
-Run unit and widget tests with:
-
-```powershell
-flutter test
-```
-
-## Linting & formatting
-
-Format Dart code:
-
-```powershell
-dart format .
-```
-
-Analyze (static analysis):
-
-```powershell
-flutter analyze
-```
-
-## Contributing
-
-Contributions are welcome. Typical workflow:
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feat/your-feature`
-3. Commit changes and push
-4. Open a Pull Request describing the change
-
-Please follow existing code style and add tests for new logic where appropriate.
-
-## Troubleshooting
-
-- If you encounter build issues on Android, run `flutter clean` then `flutter pub get` and rebuild.
-- For iOS builds, ensure CocoaPods are installed and run `pod install` inside `ios/`.
-
-## License & contact
-
-This repository does not currently include a license file. Add an appropriate `LICENSE` file if you plan to open-source this project.
-
-For questions contact the project owner or open an issue in this repository.
+1.  Fork the repository.
+2.  Create a feature branch (`git checkout -b feature/new-feature`).
+3.  Commit your changes (`git commit -m 'Add new feature'`).
+4.  Push to the branch (`git push origin feature/new-feature`).
+5.  Open a Pull Request.
