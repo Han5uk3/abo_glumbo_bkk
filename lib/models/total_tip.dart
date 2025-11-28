@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AllTipsModel {
-  DateTime? createdAt;
-  DateTime? updatedAt;
+  Timestamp? createdAt;
+  Timestamp? updatedAt;
   String? paymentMethod;
   String? agentId;
   String? id;
@@ -23,13 +23,13 @@ class AllTipsModel {
     return AllTipsModel(
       createdAt: json['createdAt'] != null
           ? (json['createdAt'] is Timestamp
-                ? (json['createdAt'] as Timestamp).toDate()
-                : json['createdAt'] as DateTime)
+                ? (json['createdAt'] as Timestamp)
+                : json['createdAt'] as Timestamp)
           : null,
       updatedAt: json['updatedAt'] != null
           ? (json['updatedAt'] is Timestamp
-                ? (json['updatedAt'] as Timestamp).toDate()
-                : json['updatedAt'] as DateTime)
+                ? (json['updatedAt'] as Timestamp)
+                : json['updatedAt'] as Timestamp)
           : null,
       agentId: json['agentId'] as String?,
       id: json['id'] as String?,
@@ -48,8 +48,8 @@ class AllTipsModel {
   Map<String, dynamic> toJson() {
     return {
       'agentId': agentId,
-      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
-      'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
       'id': id,
       'Amount': totalTipAmount,
       'proofs': proofs,

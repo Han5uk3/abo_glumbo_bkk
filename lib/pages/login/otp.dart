@@ -10,7 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class OtpPage extends StatefulWidget {
   final String? phoneNumber;
@@ -376,7 +376,7 @@ class _OtpPageState extends State<OtpPage> {
               : () => Navigator.pop(context),
           label: Text(
             AppLocalizations.of(context)?.back ?? '',
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               color: _isMigratingCustomerData
                   ? Colors.grey
                   : AppColors.secondary,
@@ -404,7 +404,7 @@ class _OtpPageState extends State<OtpPage> {
                 const SizedBox(height: 20),
                 Text(
                   locn.otpVerification,
-                  style: GoogleFonts.dmSans(
+                  style: DMSansFont.textStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 28,
                     color: Colors.black,
@@ -417,7 +417,7 @@ class _OtpPageState extends State<OtpPage> {
                       child: RichText(
                         text: TextSpan(
                           text: locn.enterTheOtpSentToTheNumber,
-                          style: GoogleFonts.dmSans(
+                          style: DMSansFont.textStyle(
                             color: Colors.black54,
                             fontSize: 16,
                           ),
@@ -428,7 +428,7 @@ class _OtpPageState extends State<OtpPage> {
                                 textDirection: TextDirection.ltr,
                                 child: Text(
                                   " ${widget.phoneNumber} ",
-                                  style: GoogleFonts.dmSans(
+                                  style: DMSansFont.textStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                     color: Colors.black87,
@@ -445,7 +445,7 @@ class _OtpPageState extends State<OtpPage> {
                 const SizedBox(height: 40),
                 Text(
                   locn.enterOtp,
-                  style: GoogleFonts.dmSans(
+                  style: DMSansFont.textStyle(
                     color: Colors.black87,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -461,7 +461,7 @@ class _OtpPageState extends State<OtpPage> {
                     maxLength: 6,
                     obscureText: true,
                     obscuringCharacter: "*",
-                    style: GoogleFonts.dmSans(
+                    style: DMSansFont.textStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -502,7 +502,7 @@ class _OtpPageState extends State<OtpPage> {
                       _remainingTime > 0
                           ? '${locn.resend} ($_formattedTime)'
                           : AppLocalizations.of(context)!.didntreciveCode,
-                      style: GoogleFonts.dmSans(
+                      style: DMSansFont.textStyle(
                         color: Colors.black54,
                         fontSize: 14,
                       ),
@@ -527,7 +527,7 @@ class _OtpPageState extends State<OtpPage> {
                               )
                             : Text(
                                 locn.resend,
-                                style: GoogleFonts.dmSans(
+                                style: DMSansFont.textStyle(
                                   color: AppColors.green,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
@@ -558,7 +558,7 @@ class _OtpPageState extends State<OtpPage> {
                         ? Loader(color: Colors.white, size: 24)
                         : Text(
                             locn.verifyOtp,
-                            style: GoogleFonts.dmSans(
+                            style: DMSansFont.textStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -623,7 +623,7 @@ class _OtpPageState extends State<OtpPage> {
             const SizedBox(height: 28),
             Text(
               AppLocalizations.of(context)!.migratingData,
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -634,7 +634,7 @@ class _OtpPageState extends State<OtpPage> {
             Text(
               AppLocalizations.of(context)!.weAreMigratingYourData,
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
                 color: Colors.black54,
@@ -679,7 +679,7 @@ class _OtpPageState extends State<OtpPage> {
                   Expanded(
                     child: Text(
                       AppLocalizations.of(context)!.pleaseDontCloseTheApp,
-                      style: GoogleFonts.dmSans(
+                      style: DMSansFont.textStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: Colors.orange.shade700,
@@ -693,7 +693,7 @@ class _OtpPageState extends State<OtpPage> {
             const SizedBox(height: 24),
             Text(
               AppLocalizations.of(context)!.transferringData,
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: Colors.grey.shade600,

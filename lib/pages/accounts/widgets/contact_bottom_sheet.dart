@@ -5,7 +5,7 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -65,7 +65,7 @@ class ContactBottomSheet extends StatelessWidget {
             children: [
               Text(
                 AppLocalizations.of(context)?.contactSupportOptions ?? "",
-                style: GoogleFonts.dmSans(
+                style: DMSansFont.textStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -174,7 +174,7 @@ class _ContactOption extends StatelessWidget {
       leading: Icon(icon, color: iconColor),
       title: Text(
         title,
-        style: GoogleFonts.dmSans(fontSize: 16, color: AppColors.black1),
+        style: DMSansFont.textStyle(fontSize: 16, color: AppColors.black1),
       ),
       onTap: onTap,
     );

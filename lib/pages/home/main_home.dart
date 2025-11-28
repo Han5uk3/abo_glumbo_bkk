@@ -18,7 +18,7 @@ import 'package:abo_glumbo_bbk/styles/app_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -53,7 +53,7 @@ class _HomeState extends State<Home> {
 
     _pages = [
       const HomePage(),
-      const CategoriesPage(),
+      // const CategoriesPage(),
       if (!(_isGuest ?? false)) const BookingsPage(),
     ];
 
@@ -112,7 +112,7 @@ class _HomeState extends State<Home> {
 
   Widget _buildScaffold(AppLocalizations? locale, dynamic customerData) {
     Widget getCurrentPage() {
-      final accountIndex = (_isGuest ?? false) ? 2 : 3;
+      final accountIndex = (_isGuest ?? false) ? 1 : 2;
 
       if (currentIndex == accountIndex) {
         return AccountPage(customerData: customerData);
@@ -183,20 +183,20 @@ class _HomeState extends State<Home> {
               ),
               label: locale?.home ?? '',
             ),
-            NavigationDestination(
-              icon: SvgPicture.asset(
-                AppIcons.categoriesNav,
-                colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
-              ),
-              selectedIcon: SvgPicture.asset(
-                AppIcons.categoriesNav,
-                colorFilter: ColorFilter.mode(
-                  AppColors.secondary,
-                  BlendMode.srcIn,
-                ),
-              ),
-              label: locale?.categories ?? '',
-            ),
+            // NavigationDestination(
+            //   icon: SvgPicture.asset(
+            //     AppIcons.categoriesNav,
+            //     colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+            //   ),
+            //   selectedIcon: SvgPicture.asset(
+            //     AppIcons.categoriesNav,
+            //     colorFilter: ColorFilter.mode(
+            //       AppColors.secondary,
+            //       BlendMode.srcIn,
+            //     ),
+            //   ),
+            //   label: locale?.categories ?? '',
+            // ),
             if (!(_isGuest ?? false))
               NavigationDestination(
                 icon: SvgPicture.asset(
@@ -483,7 +483,7 @@ class _HomeState extends State<Home> {
           actionsAlignment: MainAxisAlignment.start,
           title: Text(
             AppLocalizations.of(context)?.logout ?? 'Logout',
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
@@ -491,7 +491,7 @@ class _HomeState extends State<Home> {
           content: Text(
             AppLocalizations.of(context)?.areYouSureYouWantToLogout ??
                 'Are you sure you want to logout?',
-            style: GoogleFonts.dmSans(fontSize: 16),
+            style: DMSansFont.textStyle(fontSize: 16),
           ),
           actions: [
             eButton(

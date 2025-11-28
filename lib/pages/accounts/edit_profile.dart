@@ -18,7 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class EditProfilePage extends StatefulWidget {
   final CustomerModel customer;
@@ -178,7 +178,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         SnackBar(
           content: Text(
             message,
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               color: backgroundColor == AppColors.yellow
                   ? Colors.grey.shade800
                   : Colors.white,
@@ -399,7 +399,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     // ✅ Location Section Header
                     Text(
                       locale?.location ?? 'Location',
-                      style: GoogleFonts.dmSans(
+                      style: DMSansFont.textStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: AppColors.secondary,
@@ -500,7 +500,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 ? Loader(size: 20, color: Colors.white)
                                 : Text(
                                     locale?.update ?? 'Update',
-                                    style: GoogleFonts.dmSans(
+                                    style: DMSansFont.textStyle(
                                       color: Colors.white,
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,

@@ -14,7 +14,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -776,7 +776,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                         const SizedBox(width: 16),
                         Text(
                           AppLocalizations.of(context)!.liveTracking,
-                          style: GoogleFonts.dmSans(
+                          style: DMSansFont.textStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                             color: Colors.white,

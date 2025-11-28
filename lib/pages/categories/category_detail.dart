@@ -10,7 +10,7 @@ import 'package:abo_glumbo_bbk/sheets/sign_up_alert.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class CategoryDetail extends StatefulWidget {
   final CategoryModel? category;
@@ -163,7 +163,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                           children: [
                             Text(
                               '${AppLocalizations.of(context)?.availableServices ?? ''} (${filteredServices.length})',
-                              style: GoogleFonts.dmSans(
+                              style: DMSansFont.textStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
                                 color: Colors.black87,
@@ -190,7 +190,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                             Flexible(
                               child: Text(
                                 AppLocalizations.of(context)!.costDisclaimer,
-                                style: GoogleFonts.dmSans(
+                                style: DMSansFont.textStyle(
                                   color: AppColors.secondary,
                                   fontSize: 12,
                                 ),

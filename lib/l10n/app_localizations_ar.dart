@@ -1508,7 +1508,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String noBookingFound(String type) {
-    return 'لم يتم العثور على حجوزات $type';
+    return 'لا توجد حجوزات $type';
   }
 
   @override
@@ -1592,7 +1592,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get issuethree => 'نفس العطل الأصلي الذي تم إصلاحه.';
 
   @override
-  String get issuefour => 'صالحة لمدة 7 أيام من تاريخ الإكمال.';
+  String get issuefour => 'صالح لمرة واحدة خلال ٧ أيام من تاريخ الإكمال';
 
   @override
   String get whatsNotCovered => 'ما لا يغطيه الضمان';
@@ -1615,7 +1615,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get claimText =>
-      'ملاحظة: للمطالبة بالضمان، قدّم طلباً عبر التطبيق خلال 7 أيام من إكمال الخدمة.';
+      'للمطالبة بالضمان، قدّم طلبًا عبر التطبيق خلال ٧ أيام من إتمام الخدمة. ويمكن المطالبة بالضمان مرة واحدة فقط.';
 
   @override
   String get warrantyAlertContent =>
@@ -1837,4 +1837,52 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get waitingForAcceptance => 'في انتظار القبول';
+
+  @override
+  String get introduction => 'مقدمة';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get termsOfUse => 'شروط الاستخدام';
+
+  @override
+  String get and => 'و';
+
+  @override
+  String get termsIntroduction =>
+      'يُعد استخدامك للتطبيق قبولاً كاملاً وغير مشروط لهذه الشروط. التطبيق هو منصة وساطة إلكترونية تربطك بمقدمي الخدمات الفنية فقط.';
+
+  @override
+  String get terms1 =>
+      'المسؤولية عن الطلب: تلتزم بتقديم وصف دقيق وكافٍ للمشكلة (نص، صورة، فيديو) وموقع الخدمة لتمكين الفني من الاستجابة.';
+
+  @override
+  String get terms2 =>
+      'رسوم المعاينة: أنت مسؤول عن دفع رسوم المعاينة/الفحص المحددة (إذا وجدت) بمجرد قبول الفني للطلب وتوجهه إلى الموقع. هذه الرسوم غير قابلة للاسترداد عادةً.';
+
+  @override
+  String get terms3 =>
+      'الدفع والتكلفة النهائية: يتم الاتفاق على التكلفة الإجمالية للخدمة مباشرة مع الفني بعد المعاينة، وتتم الموافقة عليها عبر التطبيق قبل بدء العمل. أنت مسؤول عن سداد المبلغ المتفق عليه كاملاً.';
+
+  @override
+  String get terms4 =>
+      'الضمان (الكفالة): يخضع العمل المنجز لـ \"سياسة الضمان\" الخاصة بالمنصة، والتي يمكنك الاطلاع على تفاصيلها الكاملة عبر الرابط المخصص.';
+
+  @override
+  String get terms5 =>
+      'التقييم: يحق لك تقييم أداء الفني بعد إتمام الخدمة، وتلتزم بأن تكون التقييمات صادقة وموضوعية.';
+
+  @override
+  String get policy1 =>
+      'البيانات التي نجمعها: الاسم، رقم الهاتف، البريد الإلكتروني، عنوان الموقع الدقيق لتلقي الخدمة، سجل الطلبات، تقييمات الفنيين.';
+
+  @override
+  String get policy2 =>
+      'كيفية الاستخدام: تستخدم لربطك بالفنيين، وتسهيل عملية الحجز والدفع، وإرسال إشعارات الطلبات.';
+
+  @override
+  String get policy3 =>
+      'المشاركة: يتم مشاركة الاسم ورقم الهاتف وعنوان الموقع فقط مع الفني الذي تم قبول طلبه لتمكينه من أداء الخدمة.';
 }

@@ -20,7 +20,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -211,7 +211,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         children: [
           Text(
             AppLocalizations.of(context)?.jobCategories ?? '',
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: Colors.black87,
@@ -301,7 +301,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         padding: const EdgeInsets.all(16.0),
         child: Text(
           message,
-          style: GoogleFonts.dmSans(color: Colors.red),
+          style: DMSansFont.textStyle(color: Colors.red),
           textAlign: TextAlign.center,
         ),
       ),
@@ -343,7 +343,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         'Error loading active bookings: ${state.error}',
-                        style: GoogleFonts.dmSans(color: Colors.red),
+                        style: DMSansFont.textStyle(color: Colors.red),
                         textAlign: TextAlign.center,
                       ),
                     ),

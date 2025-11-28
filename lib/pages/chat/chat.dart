@@ -4,7 +4,7 @@ import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -146,7 +146,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       widget.participantName.isNotEmpty
                           ? widget.participantName[0].toUpperCase()
                           : 'T',
-                      style: GoogleFonts.dmSans(
+                      style: DMSansFont.textStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -161,7 +161,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   Text(
                     widget.participantName,
-                    style: GoogleFonts.dmSans(
+                    style: DMSansFont.textStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -169,7 +169,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   Text(
                     localization.technician,
-                    style: GoogleFonts.dmSans(
+                    style: DMSansFont.textStyle(
                       fontSize: 12,
                       color: Colors.white.withOpacity(0.9),
                     ),
@@ -211,7 +211,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         const SizedBox(height: 16),
                         Text(
                           localization.errorLoadingMessages,
-                          style: GoogleFonts.dmSans(
+                          style: DMSansFont.textStyle(
                             fontSize: 16,
                             color: Colors.grey[600],
                           ),
@@ -235,7 +235,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         const SizedBox(height: 16),
                         Text(
                           localization.noMessages,
-                          style: GoogleFonts.dmSans(
+                          style: DMSansFont.textStyle(
                             fontSize: 16,
                             color: Colors.grey[600],
                           ),
@@ -243,7 +243,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         const SizedBox(height: 8),
                         Text(
                           localization.startConversation,
-                          style: GoogleFonts.dmSans(
+                          style: DMSansFont.textStyle(
                             fontSize: 14,
                             color: Colors.grey[500],
                           ),
@@ -355,7 +355,7 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               dateText,
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 12,
                 color: Colors.grey[600],
                 fontWeight: FontWeight.w500,
@@ -402,7 +402,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Text(
               message,
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 15,
                 color: isMe ? Colors.white : Colors.black87,
                 height: 1.4,
@@ -411,7 +411,7 @@ class _ChatScreenState extends State<ChatScreen> {
             const SizedBox(height: 4),
             Text(
               _formatTime(timestamp),
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 11,
                 color: isMe ? Colors.white.withOpacity(0.8) : Colors.grey[600],
               ),
@@ -450,10 +450,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
                   onSubmitted: (_) => _sendMessage(),
-                  style: GoogleFonts.dmSans(fontSize: 15),
+                  style: DMSansFont.textStyle(fontSize: 15),
                   decoration: InputDecoration(
                     hintText: localization.typeMessage,
-                    hintStyle: GoogleFonts.dmSans(
+                    hintStyle: DMSansFont.textStyle(
                       fontSize: 15,
                       color: Colors.grey[500],
                     ),

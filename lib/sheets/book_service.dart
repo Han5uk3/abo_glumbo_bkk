@@ -17,9 +17,11 @@ import 'package:abo_glumbo_bbk/services/booking/bloc/booking_event.dart';
 import 'package:abo_glumbo_bbk/services/booking/bloc/booking_state.dart';
 import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
+import 'package:abo_glumbo_bbk/utils/mulish_font.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 showBookServiceBottomSheet(
@@ -325,7 +327,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                               context,
                                             )?.chooseYourTechnician ??
                                             '',
-                                  style: GoogleFonts.dmSans(
+                                  style: DMSansFont.textStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                     color: Colors.white,
@@ -398,7 +400,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                 },
                 child: Text(
                   AppLocalizations.of(context)?.back ?? '',
-                  style: GoogleFonts.dmSans(
+                  style: DMSansFont.textStyle(
                     color: Colors.black87,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -464,7 +466,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                         ? Loader()
                         : Text(
                             AppLocalizations.of(context)?.completeBooking ?? '',
-                            style: GoogleFonts.dmSans(
+                            style: DMSansFont.textStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -503,7 +505,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
               },
               child: Text(
                 AppLocalizations.of(context)?.back ?? '',
-                style: GoogleFonts.dmSans(
+                style: DMSansFont.textStyle(
                   color: Colors.black87,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -549,7 +551,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                 },
                 child: Text(
                   AppLocalizations.of(context)?.continueText ?? '',
-                  style: GoogleFonts.dmSans(
+                  style: DMSansFont.textStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -611,7 +613,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
           },
           child: Text(
             AppLocalizations.of(context)?.continueText ?? '',
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -675,7 +677,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
           ),
           child: Text(
             AppLocalizations.of(context)?.addNotes ?? '',
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               fontSize: 13,
               color: Colors.black87,
               fontWeight: FontWeight.w500,
@@ -719,7 +721,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
           padding: const EdgeInsets.only(left: 16, right: 16, bottom: 18),
           child: Text(
             AppLocalizations.of(context)?.selectDate ?? '',
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               fontSize: 13,
               color: Colors.black87,
               fontWeight: FontWeight.w500,
@@ -738,7 +740,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
             headerStyle: HeaderStyle(
               formatButtonVisible: false,
               titleCentered: true,
-              titleTextStyle: GoogleFonts.poppins(
+              titleTextStyle: PoppinsFont.textStyle(
                 color: AppColors.black4,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -753,12 +755,12 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.blue2, width: 2),
               ),
-              selectedTextStyle: GoogleFonts.mulish(
+              selectedTextStyle: MulishFont.textStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
                 fontSize: 11,
               ),
-              todayTextStyle: GoogleFonts.mulish(
+              todayTextStyle: MulishFont.textStyle(
                 color: AppColors.blue2,
                 fontWeight: FontWeight.w600,
                 fontSize: 11,
@@ -776,7 +778,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
           child: Text(
             AppLocalizations.of(context)?.availableTimeSlot ?? '',
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               color: Colors.black87,
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -828,7 +830,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                       child: Center(
                         child: Text(
                           _getLocalizedTimeCategory(timeSlots[index]["label"]),
-                          style: GoogleFonts.dmSans(
+                          style: DMSansFont.textStyle(
                             color: isDisabled
                                 ? Colors.grey.shade600
                                 : selectedTimeCategory == index
@@ -892,7 +894,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                         ),
                         child: Text(
                           "${(timeSlots[selectedTimeCategory]["values"] as List<Map>)[i]["label"].toString().substring(0, 5)} ${_getLocalizedTimeSlots((timeSlots[selectedTimeCategory]["values"] as List<Map>)[i]["label"])}",
-                          style: GoogleFonts.dmSans(
+                          style: DMSansFont.textStyle(
                             color: isPast
                                 ? Colors.grey.shade500
                                 : selectedTimeSlot == i

@@ -1,7 +1,7 @@
 import 'package:abo_glumbo_bbk/helpers/constants.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class AccountListTile extends StatelessWidget {
   final String title;
@@ -41,7 +41,7 @@ class AccountListTile extends StatelessWidget {
       onTap: onTap,
       trailing: Text(
         trailingText,
-        style: GoogleFonts.dmSans(
+        style: DMSansFont.textStyle(
           fontSize: 13,
           color: textColor ?? AppColors.black1,
           fontWeight: FontWeight.w600,
@@ -57,7 +57,7 @@ class AccountListTile extends StatelessWidget {
       onTap: onTap,
       title: Text(
         title,
-        style: GoogleFonts.dmSans(
+        style: DMSansFont.textStyle(
           fontSize: dense ? 15 : 16,
           color: textcolor ?? AppColors.black1,
         ),
@@ -78,7 +78,7 @@ class SectionHeader extends StatelessWidget {
       padding: AccountPageConstants.horizontalPadding,
       child: Text(
         title,
-        style: GoogleFonts.dmSans(
+        style: DMSansFont.textStyle(
           fontSize: 12,
           fontWeight: FontWeight.w500,
           color: AppColors.lightGrey,

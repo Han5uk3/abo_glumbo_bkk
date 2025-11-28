@@ -262,13 +262,16 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
   }
 
   _getPaymentMethod(String method) {
-    switch (method) {
-      case 'O':
-        return AppLocalizations.of(context)!.cashInHand;
-      case 'C':
-        return AppLocalizations.of(context)!.cards;
-      default:
-        return AppLocalizations.of(context)!.unknown;
+    if (method.contains("cash")) {
+      return AppLocalizations.of(context)!.cashInHand;
+    } else if (method.contains("card")) {
+      return AppLocalizations.of(context)!.cards;
+    } else if (method.toLowerCase() == "o") {
+      return AppLocalizations.of(context)!.cashInHand;
+    } else if (method.toLowerCase() == "c") {
+      return AppLocalizations.of(context)!.cards;
+    } else {
+      return AppLocalizations.of(context)!.unknown;
     }
   }
 

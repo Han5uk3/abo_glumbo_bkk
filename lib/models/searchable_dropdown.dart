@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class SearchableDropdown<T extends Object> extends StatefulWidget {
   final String label;
@@ -70,7 +70,7 @@ class _SearchableDropdownState<T extends Object>
       children: [
         Text(
           widget.label,
-          style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w500),
+          style: DMSansFont.textStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         LayoutBuilder(
@@ -187,7 +187,7 @@ class _SearchableDropdownState<T extends Object>
                                 padding: const EdgeInsets.all(16.0),
                                 child: Text(
                                   widget.itemLabel(option),
-                                  style: GoogleFonts.dmSans(fontSize: 14),
+                                  style: DMSansFont.textStyle(fontSize: 14),
                                 ),
                               ),
                             );

@@ -3,9 +3,10 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/address_result.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
+import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class AddressSaveSheet extends StatefulWidget {
   Function(AddressModel)? onAddressSelected;
@@ -104,7 +105,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                     child: Text(
                       AppLocalizations.of(context)?.savedAddresses ??
                           'Pick the address where you need the service.',
-                      style: GoogleFonts.poppins(
+                      style: PoppinsFont.textStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                       ),
@@ -187,7 +188,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                           )
                         : Text(
                             AppLocalizations.of(context)?.addNew ?? 'Add New',
-                            style: GoogleFonts.poppins(
+                            style: PoppinsFont.textStyle(
                               color: const Color.fromARGB(255, 28, 143, 243),
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
@@ -320,7 +321,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                           children: [
                                             Text(
                                               address.fullName,
-                                              style: GoogleFonts.poppins(
+                                              style: PoppinsFont.textStyle(
                                                 fontWeight: isSelected
                                                     ? FontWeight.w600
                                                     : FontWeight.w500,
@@ -333,7 +334,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                             const SizedBox(height: 2),
                                             Text(
                                               address.streetName ?? '',
-                                              style: GoogleFonts.poppins(
+                                              style: PoppinsFont.textStyle(
                                                 color: isSelected
                                                     ? Colors.blue[600]
                                                     : Colors.grey[500],
@@ -382,7 +383,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                                           )?.removeAddress ??
                                                           "",
                                                       style:
-                                                          GoogleFonts.poppins(
+                                                          PoppinsFont.textStyle(
                                                             fontSize: 14,
                                                             color:
                                                                 Colors.red[400],
@@ -442,7 +443,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                   child: Text(
                     AppLocalizations.of(context)?.pleaseAddANewAddress ??
                         'Please add a new address.',
-                    style: GoogleFonts.poppins(
+                    style: PoppinsFont.textStyle(
                       color: const Color.fromARGB(255, 79, 79, 79),
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -481,7 +482,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                 Expanded(
                   child: Text(
                     AppLocalizations.of(context)?.selectServiceAddress ?? '',
-                    style: GoogleFonts.poppins(
+                    style: PoppinsFont.textStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),

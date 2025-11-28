@@ -1,11 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TransactionModel {
   final double amount;
   final String customerId;
   final String workerId;
   final String paymentStatus;
   final String paymentMethod;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final Timestamp createdAt;
+  final Timestamp updatedAt;
   final String bookingId;
   final String orderId;
 
@@ -30,8 +32,8 @@ class TransactionModel {
       'paymentMethod': paymentMethod,
       'customerId': customerId,
       'workerId': workerId,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
       'bookingId': bookingId,
       'orderId': orderId,
     };
@@ -39,14 +41,14 @@ class TransactionModel {
 
   factory TransactionModel.fromMap(Map<String, dynamic> map) {
     return TransactionModel(
-      DateTime.parse(map['updatedAt']),
+      Timestamp.fromDate(map['updatedAt']),
       amount: map['amount'],
       bookingId: map['bookingId'],
       customerId: map['customerId'],
       workerId: map['workerId'],
       paymentStatus: map['paymentStatus'],
       paymentMethod: map['paymentMethod'],
-      createdAt: DateTime.parse(map['createdAt']),
+      createdAt: Timestamp.fromDate(map['createdAt']),
       
       orderId: map['orderId'],
     );

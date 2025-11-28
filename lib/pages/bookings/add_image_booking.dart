@@ -8,10 +8,11 @@ import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
 import 'package:abo_glumbo_bbk/services/location_service.dart';
 import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddIssueImageAndVideo extends StatefulWidget {
@@ -326,7 +327,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
       children: [
         Text(
           heading,
-          style: GoogleFonts.poppins(
+          style: PoppinsFont.textStyle(
             color: const Color.fromARGB(255, 79, 79, 79),
             fontSize: 11,
             fontWeight: FontWeight.w600,
@@ -334,7 +335,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
         ),
         Text(
           subtitle,
-          style: GoogleFonts.poppins(
+          style: PoppinsFont.textStyle(
             color: Colors.black,
             fontSize: 9,
             fontWeight: FontWeight.w400,
@@ -400,7 +401,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                         Expanded(
                           child: Text(
                             AppLocalizations.of(context)!.serviceto,
-                            style: GoogleFonts.poppins(
+                            style: PoppinsFont.textStyle(
                               color: Colors.black,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
@@ -427,7 +428,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                             ),
                             child: Text(
                               AppLocalizations.of(context)?.change ?? 'Change',
-                              style: GoogleFonts.poppins(
+                              style: PoppinsFont.textStyle(
                                 color: Colors.white,
                                 fontSize: 9,
                                 fontWeight: FontWeight.w600,
@@ -441,7 +442,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
 
                     Text(
                       selectedAddress.fullName,
-                      style: GoogleFonts.poppins(
+                      style: PoppinsFont.textStyle(
                         color: const Color(0xFF2C2C2C),
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -456,7 +457,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                           : selectedAddress.buildingNumber.isNotEmpty
                           ? selectedAddress.buildingNumber
                           : "Address location",
-                      style: GoogleFonts.poppins(
+                      style: PoppinsFont.textStyle(
                         color: const Color(0xFF959595),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -474,7 +475,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                                   context,
                                 )?.chooseServiceAddress ??
                                 'Choose Service Address'),
-                      style: GoogleFonts.poppins(
+                      style: PoppinsFont.textStyle(
                         color: const Color(0xFF4F4F4F),
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -490,7 +491,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                                 'Select from your saved addresses or add a new one.')
                           : (AppLocalizations.of(context)?.pickServiceAddress ??
                                 'Pick the address where you need the service.'),
-                      style: GoogleFonts.poppins(
+                      style: PoppinsFont.textStyle(
                         color: const Color(0xFF959595),
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
@@ -577,7 +578,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                               'Select Video Source')
                         : (AppLocalizations.of(context)?.selectImageSource ??
                               'Select Image Source'),
-                    style: GoogleFonts.poppins(
+                    style: PoppinsFont.textStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF1A1A1A),
@@ -591,7 +592,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
               // Subtitle
               Text(
                 AppLocalizations.of(context)?.chooseSource ?? 'Choose a source',
-                style: GoogleFonts.poppins(
+                style: PoppinsFont.textStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                   color: Colors.grey[600],
@@ -678,7 +679,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
             const SizedBox(height: 14),
             Text(
               label,
-              style: GoogleFonts.poppins(
+              style: PoppinsFont.textStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: const Color(0xFF2C2C2C),

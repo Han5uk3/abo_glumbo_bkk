@@ -36,6 +36,7 @@ class BookingModel {
   bool paymentCompleted = false;
   String? orderId;
   WarrantyModel? warranty;
+  Timestamp? paymentCompletedAt;
 
   List<String>? cancelledWorkerUids;
 
@@ -52,6 +53,7 @@ class BookingModel {
     this.isStartTracking,
     this.chatroomId = '',
     this.review,
+    this.paymentCompletedAt,
     this.cancelledWorkers = const [],
     this.isEscalated = false,
     this.escalatedAt,
@@ -83,6 +85,7 @@ class BookingModel {
                 .map((e) => CancelledWorkers.fromMap(e))
                 .toList()
           : [],
+      paymentCompletedAt = data['paymentCompletedAt'],
       escalatedAt = data['escalatedAt'],
       chatroomId = data['chatroomId'] ?? '',
       bookingDateTime = data['bookingDateTime'],
@@ -138,6 +141,7 @@ class BookingModel {
       'bookingDateTime': bookingDateTime,
       'bookingStatusCode': bookingStatusCode,
       'notes': notes,
+      'paymentCompletedAt': paymentCompletedAt,
       'cancelledWorkers': cancelledWorkers.map((e) => e.toJson()).toList(),
       'trackingStartedAt': trackingStartedAt,
       'trackingStoppedAt': trackingStoppedAt,

@@ -8,7 +8,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import '../models/booking.dart';
 
 Future<bool?> showWriteReviewBottomSheet(
@@ -167,8 +167,8 @@ class _WriteReviewBottomSheetWidgetState
         agentId: workerId,
         totalTipAmount: _selectedTip,
         paymentMethod: 'cash',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
         proofs: [],
       );
 
@@ -188,13 +188,9 @@ class _WriteReviewBottomSheetWidgetState
         "agentId": widget.booking.agent?.uid ?? "",
         "agentName": widget.booking.agent?.name ?? "",
         "agentPhone": widget.booking.agent?.phone ?? "",
-        "cardtip": FieldValue.increment(
-         _selectedTip
-        ),
-        "lastUpdated": DateTime.now().toString(),
-        "cashtip": FieldValue.increment(
-        0.00
-        ),
+        "cardtip": FieldValue.increment(_selectedTip),
+        "lastUpdated": Timestamp.now(),
+        "cashtip": FieldValue.increment(0.00),
         "walletId": widget.booking.agent?.uid ?? "",
         "payoutRequested": false,
       }),
@@ -294,7 +290,7 @@ class _WriteReviewBottomSheetWidgetState
         children: [
           Text(
             l10n?.submitAReview ?? 'Submit Review',
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -360,7 +356,7 @@ class _WriteReviewBottomSheetWidgetState
             maxLength: 500,
             decoration: InputDecoration(
               hintText: l10n?.writeYourReviewHere ?? 'Share your experience...',
-              hintStyle: GoogleFonts.dmSans(
+              hintStyle: DMSansFont.textStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: Colors.black54,
@@ -442,7 +438,7 @@ class _WriteReviewBottomSheetWidgetState
             children: [
               Text(
                 l10n?.thankTheTechnician ?? 'Thank the Technician',
-                style: GoogleFonts.dmSans(
+                style: DMSansFont.textStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -450,7 +446,7 @@ class _WriteReviewBottomSheetWidgetState
               ),
               Text(
                 l10n?.showAppreciationWithTip ?? 'Show appreciation with a tip',
-                style: GoogleFonts.dmSans(
+                style: DMSansFont.textStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
                   color: Colors.black54,
@@ -480,7 +476,7 @@ class _WriteReviewBottomSheetWidgetState
         ),
         child: Text(
           '${l10n?.sar ?? 'SAR '} ${amount.toInt()}',
-          style: GoogleFonts.dmSans(
+          style: DMSansFont.textStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: isSelected ? Colors.white : Colors.black87,
@@ -515,7 +511,7 @@ class _WriteReviewBottomSheetWidgetState
             const SizedBox(width: 4),
             Text(
               l10n?.custom ?? 'Custom',
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: _showCustomTip ? Colors.white : Colors.black87,
@@ -544,9 +540,9 @@ class _WriteReviewBottomSheetWidgetState
           ],
           decoration: InputDecoration(
             hintText: l10n?.enterCustomTipAmount ?? 'Enter custom tip amount',
-            hintStyle: GoogleFonts.dmSans(fontSize: 14, color: Colors.black54),
+            hintStyle: DMSansFont.textStyle(fontSize: 14, color: Colors.black54),
             prefixText: l10n?.sar ?? 'SAR ',
-            prefixStyle: GoogleFonts.dmSans(
+            prefixStyle: DMSansFont.textStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: Colors.black87,
@@ -590,7 +586,7 @@ class _WriteReviewBottomSheetWidgetState
         const SizedBox(height: 16),
         Text(
           l10n?.selectPaymentMethod ?? 'Select Payment Method',
-          style: GoogleFonts.dmSans(
+          style: DMSansFont.textStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: Colors.black87,
@@ -650,7 +646,7 @@ class _WriteReviewBottomSheetWidgetState
             Flexible(
               child: Text(
                 label,
-                style: GoogleFonts.dmSans(
+                style: DMSansFont.textStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: isSelected ? color : Colors.black87,
@@ -685,7 +681,7 @@ class _WriteReviewBottomSheetWidgetState
             Expanded(
               child: Text(
                 '${l10n?.tip ?? 'Tip'}: ${l10n?.sar ?? 'SAR '} ${_selectedTip.toStringAsFixed(2)} (${_tipPaymentMethod == 'card' ? l10n?.card ?? 'Card' : l10n?.cash ?? 'Cash'})',
-                style: GoogleFonts.dmSans(
+                style: DMSansFont.textStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: Colors.green.shade700,
@@ -726,7 +722,7 @@ class _WriteReviewBottomSheetWidgetState
                   onPressed: () => Navigator.pop(context, false),
                   child: Text(
                     l10n?.cancel ?? 'Cancel',
-                    style: GoogleFonts.dmSans(
+                    style: DMSansFont.textStyle(
                       color: Colors.black87,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -776,7 +772,7 @@ class _WriteReviewBottomSheetWidgetState
           _processingTip
               ? l10n?.processing ?? 'Processing...'
               : l10n?.submitting ?? 'Submitting...',
-          style: GoogleFonts.dmSans(
+          style: DMSansFont.textStyle(
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -791,7 +787,7 @@ class _WriteReviewBottomSheetWidgetState
       _selectedTip > 0
           ? '${l10n?.submitReviewAndTip ?? 'Submit Review & Tip'} (${l10n?.sar ?? 'SAR '} ${_selectedTip.toStringAsFixed(2)})'
           : l10n?.submitReview ?? 'Submit Review',
-      style: GoogleFonts.dmSans(
+      style: DMSansFont.textStyle(
         color: Colors.white,
         fontSize: 14,
         fontWeight: FontWeight.w600,
@@ -805,7 +801,7 @@ class _WriteReviewBottomSheetWidgetState
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSans(
+          style: DMSansFont.textStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -813,7 +809,7 @@ class _WriteReviewBottomSheetWidgetState
         ),
         Text(
           ' *',
-          style: GoogleFonts.dmSans(
+          style: DMSansFont.textStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.red,

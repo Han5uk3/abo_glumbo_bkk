@@ -1,6 +1,6 @@
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 void showSnackBar(
   String message,
@@ -12,7 +12,7 @@ void showSnackBar(
     SnackBar(
       content: Text(
         message,
-        style: GoogleFonts.dmSans(
+        style: DMSansFont.textStyle(
           color: backgroundColor == AppColors.yellow
               ? Colors.grey.shade800
               : Colors.white,

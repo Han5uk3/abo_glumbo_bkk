@@ -3011,7 +3011,7 @@ abstract class AppLocalizations {
   /// Message shown when no bookings are found for a specific type
   ///
   /// In en, this message translates to:
-  /// **'No {type} bookings found'**
+  /// **'No {type} bookings'**
   String noBookingFound(String type);
 
   /// Message explaining the inspection fee amount and payment terms
@@ -3173,7 +3173,7 @@ abstract class AppLocalizations {
   /// No description provided for @issuefour.
   ///
   /// In en, this message translates to:
-  /// **'Valid for 7 days from completion date'**
+  /// **'Valid for one time, within 7 days from completion date'**
   String get issuefour;
 
   /// No description provided for @whatsNotCovered.
@@ -3215,7 +3215,7 @@ abstract class AppLocalizations {
   /// No description provided for @claimText.
   ///
   /// In en, this message translates to:
-  /// **'To claim warranty, submit a request through the app within 7 days from service completion.'**
+  /// **'To claim warranty, submit a request through the app within 7 days from service completion. The warranty can be claimed only once.'**
   String get claimText;
 
   /// No description provided for @warrantyAlertContent.
@@ -3643,6 +3643,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Waiting for Acceptance'**
   String get waitingForAcceptance;
+
+  /// No description provided for @introduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Introduction'**
+  String get introduction;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @termsOfUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get termsOfUse;
+
+  /// No description provided for @and.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get and;
+
+  /// No description provided for @termsIntroduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Your use of the Application constitutes full and unconditional acceptance of these terms. The Application acts solely as an electronic intermediary platform connecting you with service providers (Technicians).'**
+  String get termsIntroduction;
+
+  /// No description provided for @terms1.
+  ///
+  /// In en, this message translates to:
+  /// **'Responsibility for the Request: You are committed to providing an accurate and sufficient description of the issue (text, photo, video) and the service location to enable the Technician to respond.'**
+  String get terms1;
+
+  /// No description provided for @terms2.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection Fees: You are responsible for paying the determined inspection/call-out fees (if applicable) immediately upon the Technician accepting the request and proceeding to the location. These fees are generally non-refundable.'**
+  String get terms2;
+
+  /// No description provided for @terms3.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment and Final Cost: The total cost of the service is agreed upon directly with the Technician after inspection, and must be approved via the Application before work commences. You are responsible for paying the agreed-upon amount in full.'**
+  String get terms3;
+
+  /// No description provided for @terms4.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty (Guarantee): Completed work is subject to the Platform\'s \"Warranty Policy\", the full details of which can be reviewed via the dedicated link.'**
+  String get terms4;
+
+  /// No description provided for @terms5.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating: You have the right to rate the Technician\'s performance after service completion, and you must ensure that ratings are honest and objective.'**
+  String get terms5;
+
+  /// No description provided for @policy1.
+  ///
+  /// In en, this message translates to:
+  /// **'Data We Collect: Name, phone number, email address, the precise service location address, order history, and Technician ratings.'**
+  String get policy1;
+
+  /// No description provided for @policy2.
+  ///
+  /// In en, this message translates to:
+  /// **'How We Use It: Used to match you with Technicians, facilitate the booking and payment process, and send order notifications.'**
+  String get policy2;
+
+  /// No description provided for @policy3.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing: Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.'**
+  String get policy3;
 }
 
 class _AppLocalizationsDelegate

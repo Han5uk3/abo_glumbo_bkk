@@ -9,6 +9,7 @@ import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/location_selection.dart'; // ✅ Add this
 import 'package:abo_glumbo_bbk/models/searchable_dropdown.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/pages/SignUp/terms_and_conditions_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -16,8 +17,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class SignupPage extends StatefulWidget {
   final String uid;
@@ -140,7 +140,7 @@ class _SignupPageState extends State<SignupPage> {
                 Text(
                   AppLocalizations.of(dialogContext)?.creatingAccount ??
                       'Creating your account...',
-                  style: GoogleFonts.dmSans(
+                  style: DMSansFont.textStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -249,7 +249,7 @@ class _SignupPageState extends State<SignupPage> {
           ),
           title: Text(
             locale!.termsAndConditions,
-            style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
+            style: DMSansFont.textStyle(fontWeight: FontWeight.bold),
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -257,23 +257,21 @@ class _SignupPageState extends State<SignupPage> {
               children: [
                 Text(
                   locale.byCreatingAnAccountYouAgreeToOur,
-                  style: GoogleFonts.dmSans(),
+                  style: DMSansFont.textStyle(),
                 ),
                 const SizedBox(height: 16),
                 GestureDetector(
-                  onTap: () async {
-                    final url = 'https://example.com/terms';
-                    final uri = Uri.tryParse(url);
-                    if (uri != null && await canLaunchUrl(uri)) {
-                      await launchUrl(
-                        uri,
-                        mode: LaunchMode.externalApplication,
-                      );
-                    }
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const TermsAndConditionsPage(isFromLogin: false),
+                      ),
+                    );
                   },
                   child: Text(
-                    'https://example.com/terms',
-                    style: GoogleFonts.dmSans(
+                    locale.termsAndConditions,
+                    style: DMSansFont.textStyle(
                       color: AppColors.secondary,
                       decoration: TextDecoration.underline,
                     ),
@@ -282,7 +280,7 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(height: 16),
                 Text(
                   locale.doYouAccept,
-                  style: GoogleFonts.dmSans(fontWeight: FontWeight.w500),
+                  style: DMSansFont.textStyle(fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -347,7 +345,7 @@ class _SignupPageState extends State<SignupPage> {
             const SizedBox(height: 25),
             Text(
               locale?.createAccount ?? 'Create Account',
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 24,
                 color: Colors.black,
@@ -357,7 +355,7 @@ class _SignupPageState extends State<SignupPage> {
             Text(
               locale?.pleaseFillTheInputBelowHereToContinue ??
                   'Please fill the input below here to continue',
-              style: GoogleFonts.dmSans(color: Colors.black45, fontSize: 14),
+              style: DMSansFont.textStyle(color: Colors.black45, fontSize: 14),
             ),
             const SizedBox(height: 34),
 
@@ -401,7 +399,7 @@ class _SignupPageState extends State<SignupPage> {
             // ✅ Location Section Header
             Text(
               locale?.location ?? 'Location',
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppColors.secondary,
@@ -500,7 +498,7 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 child: Text(
                   locale?.createAccount ?? 'Create Account',
-                  style: GoogleFonts.dmSans(
+                  style: DMSansFont.textStyle(
                     color: Colors.white,
                     fontSize: 17,
                     fontWeight: FontWeight.bold,

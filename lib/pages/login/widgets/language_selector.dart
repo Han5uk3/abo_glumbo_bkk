@@ -2,7 +2,7 @@ import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class LanguageSelectorCard extends StatelessWidget {
   final bool isInLoginPage;
@@ -133,7 +133,7 @@ class LanguageSelectorCard extends StatelessWidget {
         child: Center(
           child: AnimatedDefaultTextStyle(
             duration: const Duration(milliseconds: 200),
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               color: isInLoginPage
                   ? isSelected
                         ? Colors.white

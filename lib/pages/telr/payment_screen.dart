@@ -16,6 +16,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/telr_config.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -230,7 +231,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         "agentName": widget.agent?.name ?? "",
         "agentPhone": widget.agent?.phone ?? "",
         "cardtip": widget.review?.tipAmount ?? 0.00, // ✅ Pass actual number
-        "lastUpdated": DateTime.now().toString(),
+        "lastUpdated": Timestamp.now(),
         "cashtip": 0.00, // ✅ Pass actual number
         "walletId": widget.agent?.uid ?? "",
         "payoutRequested": false,
@@ -246,11 +247,11 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         0.00;
 
     TransactionModel transaction = TransactionModel(
-      DateTime.now(),
+      Timestamp.now(),
       amount: amount,
       paymentStatus: "completed",
       paymentMethod: widget.selectedPayment ?? "Cards",
-      createdAt: DateTime.now(),
+      createdAt: Timestamp.now(),
       orderId: orderId ?? "",
       customerId: widget.customerData.uid ?? "",
       workerId: widget.booking?.agent?.uid ?? "",
@@ -273,8 +274,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       await BookingUtils.saveTipToSubcollection(
         workerId: widget.review?.workerId ?? "",
         tipData: AllTipsModel(
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
           totalTipAmount: widget.review?.tipAmount,
 
           proofs: [],

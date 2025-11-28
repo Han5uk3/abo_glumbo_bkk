@@ -2,9 +2,10 @@ import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart' as intl;
 
 Widget buildBookingTimelineCard(
@@ -345,7 +346,8 @@ Widget buildBookingTimelineCard(
 
       if (isWarranty) {
         if (booking.warranty?.completedAt == null &&
-            booking.warranty?.rejectedAt == null) {
+            booking.warranty?.rejectedAt == null &&
+            booking.warranty!.warrantyStatusCode.toUpperCase() != 'A') {
           if (isInProgress) {
             timelineItems.add({
               'title': AppLocalizations.of(context)!.serviceInProgress,
@@ -456,7 +458,7 @@ Widget buildBookingTimelineCard(
                   const SizedBox(width: 12),
                   Text(
                     AppLocalizations.of(context)!.bookingTimeline,
-                    style: GoogleFonts.poppins(
+                    style: PoppinsFont.textStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,
@@ -607,7 +609,7 @@ Widget _buildTimelineItem({
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.poppins(
+                    style: PoppinsFont.textStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: status == 'pending'
@@ -620,7 +622,7 @@ Widget _buildTimelineItem({
               const SizedBox(height: 4),
               Text(
                 description,
-                style: GoogleFonts.poppins(
+                style: PoppinsFont.textStyle(
                   fontSize: 12,
                   color: status == 'pending'
                       ? colorScheme.onSurface.withOpacity(0.4)
@@ -629,7 +631,7 @@ Widget _buildTimelineItem({
               ),
               Text(
                 time,
-                style: GoogleFonts.poppins(
+                style: PoppinsFont.textStyle(
                   fontSize: 12,
                   color: colorScheme.onSurface.withOpacity(0.5),
                 ),

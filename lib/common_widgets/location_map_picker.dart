@@ -8,10 +8,11 @@ import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
+import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -523,7 +524,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                   ),
                   Text(
                     AppLocalizations.of(context)?.serviceto ?? 'Service to',
-                    style: GoogleFonts.poppins(
+                    style: PoppinsFont.textStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -547,7 +548,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     keyboardType: TextInputType.text,
                     hint: Text(
                       "${AppLocalizations.of(context)?.buildingName ?? 'Building Name'} (${AppLocalizations.of(context)!.optional})",
-                      style: GoogleFonts.poppins(
+                      style: PoppinsFont.textStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -568,7 +569,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     },
                     hint: Text(
                       AppLocalizations.of(context)?.fullName ?? 'Full Name',
-                      style: GoogleFonts.poppins(
+                      style: PoppinsFont.textStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -583,7 +584,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     hint: Text(
                       AppLocalizations.of(context)?.phoneNumber ??
                           'Phone Number',
-                      style: GoogleFonts.poppins(
+                      style: PoppinsFont.textStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -634,7 +635,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                           : Text(
                               AppLocalizations.of(context)?.saveAddress ??
                                   'Save Address',
-                              style: GoogleFonts.poppins(
+                              style: PoppinsFont.textStyle(
                                 fontSize: 16,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
@@ -935,7 +936,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
         children: [
           Text(
             AppLocalizations.of(context)?.serviceto ?? 'Service to',
-            style: GoogleFonts.poppins(
+            style: PoppinsFont.textStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -965,7 +966,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
               child: Text(
                 AppLocalizations.of(context)?.addAddressDetails ??
                     'Add Address Details',
-                style: GoogleFonts.poppins(
+                style: PoppinsFont.textStyle(
                   fontSize: 14,
                   color: Colors.white,
                   fontWeight: FontWeight.w500,

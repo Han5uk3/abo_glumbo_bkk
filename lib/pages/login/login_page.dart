@@ -1,6 +1,8 @@
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
+import 'package:abo_glumbo_bbk/pages/SignUp/privacy_policy_page.dart';
+import 'package:abo_glumbo_bbk/pages/SignUp/terms_and_conditions_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/login/otp.dart';
@@ -10,10 +12,11 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/styles/app_images.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:local_auth/error_codes.dart' as local_auth_error;
 import 'package:local_auth/local_auth.dart';
 
@@ -325,7 +328,7 @@ class _LoginPageState extends State<LoginPage> {
         textInputAction: TextInputAction.done,
         keyboardType: TextInputType.number,
         inputFormatters: [LengthLimitingTextInputFormatter(9)],
-        style: GoogleFonts.dmSans(
+        style: DMSansFont.textStyle(
           color: Colors.black,
           fontSize: 16,
           fontWeight: FontWeight.bold,
@@ -340,7 +343,7 @@ class _LoginPageState extends State<LoginPage> {
                 textDirection: TextDirection.ltr,
                 child: Text(
                   "+966",
-                  style: GoogleFonts.dmSans(
+                  style: DMSansFont.textStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                     color: Colors.black,
@@ -367,7 +370,7 @@ class _LoginPageState extends State<LoginPage> {
         contentPadding: const EdgeInsets.all(0),
         title: Text(
           AppLocalizations.of(context)?.rememberMe ?? '',
-          style: GoogleFonts.dmSans(color: Colors.white, fontSize: 14),
+          style: DMSansFont.textStyle(color: Colors.white, fontSize: 14),
         ),
         side: const BorderSide(color: Colors.white),
         activeColor: Colors.blue,
@@ -424,7 +427,7 @@ class _LoginPageState extends State<LoginPage> {
               ? const Loader(size: 20, color: Colors.white)
               : Text(
                   AppLocalizations.of(context)?.continueText ?? '',
-                  style: GoogleFonts.dmSans(
+                  style: DMSansFont.textStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -441,7 +444,7 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: _signUpLater,
         child: Text(
           AppLocalizations.of(context)?.signUpLater ?? '',
-          style: GoogleFonts.dmSans(
+          style: DMSansFont.textStyle(
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -460,13 +463,44 @@ class _LoginPageState extends State<LoginPage> {
             TextSpan(
               text:
                   AppLocalizations.of(context)?.byContinuingYouAgreeToOur ?? '',
-              style: GoogleFonts.dmSans(fontSize: 11, color: Colors.white60),
+              style: DMSansFont.textStyle(fontSize: 11, color: Colors.white60),
             ),
             TextSpan(
-              text:
-                  AppLocalizations.of(context)?.termsOfUseAndPrivacyPolicy ??
-                  '',
-              style: GoogleFonts.dmSans(fontSize: 11, color: Colors.blue),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          TermsAndConditionsPage(isFromLogin: true),
+                    ),
+                  );
+                },
+              text: AppLocalizations.of(context)?.termsOfUse ?? '',
+              style: DMSansFont.textStyle(
+                fontSize: 11,
+                color: Colors.blue,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+            TextSpan(
+              text: " ${AppLocalizations.of(context)!.and} ",
+              style: DMSansFont.textStyle(fontSize: 11, color: Colors.white60),
+            ),
+            TextSpan(
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => PrivacyPolicyPage(),
+                    ),
+                  );
+                },
+              text: AppLocalizations.of(context)?.privacyPolicy ?? '',
+              style: DMSansFont.textStyle(
+                fontSize: 11,
+                color: Colors.blue,
+                decoration: TextDecoration.underline,
+              ),
             ),
           ],
         ),
@@ -516,7 +550,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: Text(
                         AppLocalizations.of(context)?.appLoginCaption ?? '',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.dmSans(
+                        style: DMSansFont.textStyle(
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                           fontSize: 24,
@@ -531,7 +565,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 20),
                     Text(
                       AppLocalizations.of(context)?.mobileNumber ?? '',
-                      style: GoogleFonts.dmSans(
+                      style: DMSansFont.textStyle(
                         color: Colors.white.withOpacity(.7),
                         fontSize: 14,
                       ),
@@ -561,7 +595,7 @@ class _LoginPageState extends State<LoginPage> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
                               AppLocalizations.of(context)?.or ?? 'OR',
-                              style: GoogleFonts.dmSans(
+                              style: DMSansFont.textStyle(
                                 color: Colors.white.withOpacity(0.7),
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,

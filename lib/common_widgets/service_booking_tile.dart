@@ -12,9 +12,10 @@ import 'package:abo_glumbo_bbk/sheets/cancel_booking_dialog.dart';
 import 'package:abo_glumbo_bbk/sheets/payment.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 class ServiceBookingTile extends StatelessWidget {
@@ -102,7 +103,7 @@ class ServiceBookingTile extends StatelessWidget {
                             '',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSans(
+                        style: DMSansFont.textStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
                           color: Colors.black,
@@ -115,7 +116,7 @@ class ServiceBookingTile extends StatelessWidget {
                                   'en',
                             ) ??
                             '',
-                        style: GoogleFonts.dmSans(
+                        style: DMSansFont.textStyle(
                           color: Colors.black45,
                           fontSize: 12,
                         ),
@@ -131,7 +132,7 @@ class ServiceBookingTile extends StatelessWidget {
                   children: [
                     Text(
                       "${booking.bookingStatusCode == "C" ? booking.completionData?.totalCost : booking.service.price} ${AppLocalizations.of(context)!.sar}",
-                      style: GoogleFonts.dmSans(
+                      style: DMSansFont.textStyle(
                         color: AppColors.green1,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
@@ -181,7 +182,7 @@ class ServiceBookingTile extends StatelessWidget {
                           },
                           child: Text(
                             AppLocalizations.of(context)?.cancel ?? '',
-                            style: GoogleFonts.dmSans(
+                            style: DMSansFont.textStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 10,
                               color: AppColors.grey3,
@@ -202,7 +203,7 @@ class ServiceBookingTile extends StatelessWidget {
                         alignment: Alignment.center,
                         child: Text(
                           AppLocalizations.of(context)?.completed ?? '',
-                          style: GoogleFonts.dmSans(
+                          style: DMSansFont.textStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 10,
                             color: AppColors.green2,
@@ -221,7 +222,7 @@ class ServiceBookingTile extends StatelessWidget {
                         alignment: Alignment.center,
                         child: Text(
                           AppLocalizations.of(context)?.canceled ?? '',
-                          style: GoogleFonts.dmSans(
+                          style: DMSansFont.textStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 10,
                             color: AppColors.red,
@@ -239,7 +240,7 @@ class ServiceBookingTile extends StatelessWidget {
                         alignment: Alignment.center,
                         child: Text(
                           AppLocalizations.of(context)?.rejected ?? '',
-                          style: GoogleFonts.dmSans(
+                          style: DMSansFont.textStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 10,
                             color: AppColors.darkGrey,
@@ -292,7 +293,7 @@ class ServiceBookingTile extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   AppLocalizations.of(context)!.submitComplaint,
-                                  style: GoogleFonts.dmSans(
+                                  style: DMSansFont.textStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
@@ -304,7 +305,7 @@ class ServiceBookingTile extends StatelessWidget {
                             AppLocalizations.of(
                               context,
                             )!.escalateWarrantyConfirmation,
-                            style: GoogleFonts.dmSans(
+                            style: DMSansFont.textStyle(
                               fontSize: 14,
                               height: 1.5,
                             ),
@@ -329,7 +330,7 @@ class ServiceBookingTile extends StatelessWidget {
 
                               widget: Text(
                                 AppLocalizations.of(context)!.yes,
-                                style: GoogleFonts.dmSans(
+                                style: DMSansFont.textStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -348,7 +349,7 @@ class ServiceBookingTile extends StatelessWidget {
                             .doc(booking.id)
                             .update({
                               'isEscalated': true,
-                              'escalatedAt': DateTime.now(),
+                              'escalatedAt': Timestamp.now(),
                             });
 
                         if (context.mounted) {
@@ -391,7 +392,7 @@ class ServiceBookingTile extends StatelessWidget {
                     child: Center(
                       child: Text(
                         AppLocalizations.of(context)!.submitComplaint,
-                        style: GoogleFonts.dmSans(
+                        style: DMSansFont.textStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
                           color: AppColors.bgWhite,
@@ -519,7 +520,7 @@ class ServiceBookingTile extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             AppLocalizations.of(context)?.completePayment ?? '',
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               fontWeight: FontWeight.w500,
               fontSize: 10,
               color: Colors.orange,
@@ -544,7 +545,7 @@ class ServiceBookingTile extends StatelessWidget {
           booking.review == null
               ? AppLocalizations.of(context)?.writeAReview ?? ''
               : AppLocalizations.of(context)?.reviewSubmitted ?? '',
-          style: GoogleFonts.dmSans(
+          style: DMSansFont.textStyle(
             color: Colors.black,
             fontSize: 10,
             fontWeight: FontWeight.w500,
@@ -629,7 +630,7 @@ class ServiceBookingTile extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             label,
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               fontWeight: FontWeight.w500,
               fontSize: 10,
               color: textColor,
@@ -717,7 +718,7 @@ class ServiceBookingTile extends StatelessWidget {
                                       context,
                                     )?.requestRepairUnderWarranty ??
                                     '',
-                                style: GoogleFonts.dmSans(
+                                style: DMSansFont.textStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -733,7 +734,7 @@ class ServiceBookingTile extends StatelessWidget {
                                           'en',
                                     ) ??
                                     '',
-                                style: GoogleFonts.dmSans(
+                                style: DMSansFont.textStyle(
                                   fontSize: 13,
                                   color: Colors.white.withOpacity(0.9),
                                 ),
@@ -778,7 +779,7 @@ class ServiceBookingTile extends StatelessWidget {
 
                           Text(
                             '$daysLeft ${daysLeft == 1 ? AppLocalizations.of(context)?.dayLeft ?? '' : AppLocalizations.of(context)?.daysLeft ?? ''}',
-                            style: GoogleFonts.dmSans(
+                            style: DMSansFont.textStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -891,7 +892,7 @@ class ServiceBookingTile extends StatelessWidget {
                                           context,
                                         )?.importantInformation ??
                                         '',
-                                    style: GoogleFonts.dmSans(
+                                    style: DMSansFont.textStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFF1565C0),
@@ -901,7 +902,7 @@ class ServiceBookingTile extends StatelessWidget {
                                   Text(
                                     AppLocalizations.of(context)?.claimText ??
                                         '',
-                                    style: GoogleFonts.dmSans(
+                                    style: DMSansFont.textStyle(
                                       fontSize: 13,
                                       color: Color(0xFF424242),
                                       height: 1.4,
@@ -945,10 +946,10 @@ class ServiceBookingTile extends StatelessWidget {
                                         .doc(booking.id)
                                         .update({
                                           'warranty.warrantyStatusCode': 'R',
-                                          'warranty.updatedAt': DateTime.now(),
+                                          'warranty.updatedAt': Timestamp.now(),
                                           'warranty.claimrequested': true,
                                           ' warranty.requestedOn':
-                                              DateTime.now(),
+                                              Timestamp.now(),
                                           'warranty.assignedTechnicianId':
                                               booking.agent!.uid,
                                         });
@@ -988,7 +989,7 @@ class ServiceBookingTile extends StatelessWidget {
                                             context,
                                           )?.requestRepair ??
                                           '',
-                                      style: GoogleFonts.dmSans(
+                                      style: DMSansFont.textStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -1077,7 +1078,7 @@ class ServiceBookingTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: GoogleFonts.dmSans(
+                  style: DMSansFont.textStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
                     color: titleColor,
@@ -1106,7 +1107,7 @@ class ServiceBookingTile extends StatelessWidget {
                   Expanded(
                     child: Text(
                       item,
-                      style: GoogleFonts.dmSans(
+                      style: DMSansFont.textStyle(
                         fontSize: 13,
                         color: Color(0xFF424242),
                         height: 1.5,

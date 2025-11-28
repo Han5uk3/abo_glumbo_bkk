@@ -1,7 +1,7 @@
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class TextFormWidget extends StatelessWidget {
   TextFormWidget({
@@ -42,7 +42,7 @@ class TextFormWidget extends StatelessWidget {
         if (isNeedLabel)
           Text(
             label,
-            style: GoogleFonts.dmSans(fontSize: 16),
+            style: DMSansFont.textStyle(fontSize: 16),
           ),
         const SizedBox(height: 5),
         TextFormField(
@@ -73,7 +73,7 @@ class TextFormWidget extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(12)),
             ),
           ),
-          style: GoogleFonts.dmSans(fontSize: 16, color: Colors.black),
+          style: DMSansFont.textStyle(fontSize: 16, color: Colors.black),
           controller: controller,
           keyboardType: keyboardType,
           textInputAction: textInputAction,

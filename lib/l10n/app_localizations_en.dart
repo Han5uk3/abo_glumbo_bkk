@@ -1526,7 +1526,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String noBookingFound(String type) {
-    return 'No $type bookings found';
+    return 'No $type bookings';
   }
 
   @override
@@ -1611,7 +1611,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get issuethree => 'Same original fault that was repaired';
 
   @override
-  String get issuefour => 'Valid for 7 days from completion date';
+  String get issuefour =>
+      'Valid for one time, within 7 days from completion date';
 
   @override
   String get whatsNotCovered => 'What\'s Not Covered';
@@ -1633,7 +1634,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get claimText =>
-      'To claim warranty, submit a request through the app within 7 days from service completion.';
+      'To claim warranty, submit a request through the app within 7 days from service completion. The warranty can be claimed only once.';
 
   @override
   String get warrantyAlertContent =>
@@ -1866,4 +1867,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get waitingForAcceptance => 'Waiting for Acceptance';
+
+  @override
+  String get introduction => 'Introduction';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get termsOfUse => 'Terms of Use';
+
+  @override
+  String get and => 'and';
+
+  @override
+  String get termsIntroduction =>
+      'Your use of the Application constitutes full and unconditional acceptance of these terms. The Application acts solely as an electronic intermediary platform connecting you with service providers (Technicians).';
+
+  @override
+  String get terms1 =>
+      'Responsibility for the Request: You are committed to providing an accurate and sufficient description of the issue (text, photo, video) and the service location to enable the Technician to respond.';
+
+  @override
+  String get terms2 =>
+      'Inspection Fees: You are responsible for paying the determined inspection/call-out fees (if applicable) immediately upon the Technician accepting the request and proceeding to the location. These fees are generally non-refundable.';
+
+  @override
+  String get terms3 =>
+      'Payment and Final Cost: The total cost of the service is agreed upon directly with the Technician after inspection, and must be approved via the Application before work commences. You are responsible for paying the agreed-upon amount in full.';
+
+  @override
+  String get terms4 =>
+      'Warranty (Guarantee): Completed work is subject to the Platform\'s \"Warranty Policy\", the full details of which can be reviewed via the dedicated link.';
+
+  @override
+  String get terms5 =>
+      'Rating: You have the right to rate the Technician\'s performance after service completion, and you must ensure that ratings are honest and objective.';
+
+  @override
+  String get policy1 =>
+      'Data We Collect: Name, phone number, email address, the precise service location address, order history, and Technician ratings.';
+
+  @override
+  String get policy2 =>
+      'How We Use It: Used to match you with Technicians, facilitate the booking and payment process, and send order notifications.';
+
+  @override
+  String get policy3 =>
+      'Sharing: Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.';
 }

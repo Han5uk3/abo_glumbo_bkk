@@ -10,11 +10,12 @@ import 'package:abo_glumbo_bbk/pages/bookings/timeline.dart';
 import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -89,7 +90,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                 Expanded(
                   child: Text(
                     localization.bookingDetails,
-                    style: GoogleFonts.dmSans(
+                    style: DMSansFont.textStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
@@ -192,7 +193,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                           ),
                           child: Text(
                             booking.notes,
-                            style: GoogleFonts.dmSans(
+                            style: DMSansFont.textStyle(
                               fontSize: 14,
                               color: Colors.black87,
                               height: 1.4,
@@ -637,7 +638,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
         if (completionData.fileUrls.isNotEmpty) ...[
           Text(
             AppLocalizations.of(context)!.uploadFilesTitle,
-            style: GoogleFonts.poppins(
+            style: PoppinsFont.textStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -651,7 +652,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context)!.serviceItems,
-            style: GoogleFonts.poppins(
+            style: PoppinsFont.textStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -681,7 +682,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                                 flex: 12,
                                 child: Text(
                                   entry.value.name,
-                                  style: GoogleFonts.poppins(
+                                  style: PoppinsFont.textStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -691,7 +692,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                                 flex: 2,
                                 child: Text(
                                   'x${entry.value.quantity.toInt()}',
-                                  style: GoogleFonts.poppins(
+                                  style: PoppinsFont.textStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -702,7 +703,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                                 flex: 5,
                                 child: Text(
                                   '${AppLocalizations.of(context)!.sar} ${entry.value.price.toStringAsFixed(2)}',
-                                  style: GoogleFonts.poppins(
+                                  style: PoppinsFont.textStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.green,
@@ -759,14 +760,14 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                 booking.paymentCompleted
                     ? AppLocalizations.of(context)!.amountPaid
                     : AppLocalizations.of(context)!.amountToBePaid,
-                style: GoogleFonts.poppins(
+                style: PoppinsFont.textStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 '${AppLocalizations.of(context)!.sar} ${completionData.totalCost.toStringAsFixed(2)}',
-                style: GoogleFonts.poppins(
+                style: PoppinsFont.textStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Colors.green,
@@ -790,11 +791,11 @@ class BookingDetailsBottomSheet extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500),
+          style: PoppinsFont.textStyle(fontSize: 13, fontWeight: FontWeight.w500),
         ),
         Text(
           '${AppLocalizations.of(context)!.sar} ${amount.toStringAsFixed(2)}',
-          style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600),
+          style: PoppinsFont.textStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
       ],
     );
@@ -824,7 +825,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                     Expanded(
                       child: Text(
                         _getFileName(entry.value),
-                        style: GoogleFonts.poppins(
+                        style: PoppinsFont.textStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -906,7 +907,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   AppLocalizations.of(context)!.issueMedia,
-                  style: GoogleFonts.poppins(
+                  style: PoppinsFont.textStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: colorScheme.onSurface,
@@ -934,7 +935,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                       SizedBox(width: 6),
                       Text(
                         AppLocalizations.of(context)!.image,
-                        style: GoogleFonts.poppins(
+                        style: PoppinsFont.textStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey[600]!,
@@ -972,7 +973,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         AppLocalizations.of(context)!.video,
-                        style: GoogleFonts.poppins(
+                        style: PoppinsFont.textStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey[600]!,
@@ -1099,7 +1100,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             statusText,
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: statusColor,
@@ -1148,7 +1149,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: GoogleFonts.dmSans(
+                style: DMSansFont.textStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -1228,7 +1229,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
             width: 100,
             child: Text(
               label,
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.grey[600],
@@ -1239,7 +1240,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 14,
                 fontWeight: isHighlighted ? FontWeight.w600 : FontWeight.w400,
                 color: isHighlighted ? AppColors.blue1 : Colors.black87,
@@ -1282,7 +1283,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
             width: 100,
             child: Text(
               label,
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.grey[600],
@@ -1307,7 +1308,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   '(${rating.toStringAsFixed(1)})',
-                  style: GoogleFonts.dmSans(
+                  style: DMSansFont.textStyle(
                     fontSize: 14,
                     color: Colors.grey[600],
                   ),
@@ -1342,7 +1343,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
             width: 100,
             child: Text(
               label,
-              style: GoogleFonts.dmSans(
+              style: DMSansFont.textStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.grey[600],
@@ -1367,7 +1368,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                     Expanded(
                       child: Text(
                         value,
-                        style: GoogleFonts.dmSans(
+                        style: DMSansFont.textStyle(
                           fontSize: 14,
                           fontWeight: isHighlighted
                               ? FontWeight.w600

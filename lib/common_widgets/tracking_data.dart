@@ -8,7 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -152,7 +152,7 @@ class TrackingData extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     timeTakenToArrive ?? '--',
-                    style: GoogleFonts.dmSans(
+                    style: DMSansFont.textStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
@@ -171,7 +171,7 @@ class TrackingData extends StatelessWidget {
                       Directionality.of(context) == TextDirection.rtl
                           ? remainingKm ?? '--'
                           : "${remainingKm ?? '--'} away",
-                      style: GoogleFonts.dmSans(
+                      style: DMSansFont.textStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: Colors.grey[700],
@@ -188,7 +188,7 @@ class TrackingData extends StatelessWidget {
           // Status Message
           Text(
             AppLocalizations.of(context)!.yourTechnicianIsMovingToYourLocation,
-            style: GoogleFonts.dmSans(
+            style: DMSansFont.textStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: Colors.black87,
@@ -250,7 +250,7 @@ class TrackingData extends StatelessWidget {
                   children: [
                     Text(
                       worker?.name ?? 'Technician',
-                      style: GoogleFonts.dmSans(
+                      style: DMSansFont.textStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -259,7 +259,7 @@ class TrackingData extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       worker?.role ?? 'Service Provider',
-                      style: GoogleFonts.dmSans(
+                      style: DMSansFont.textStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: Colors.grey[600],

@@ -1,6 +1,6 @@
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class LanguageSelectionDialog extends StatelessWidget {
   final String title;
@@ -64,7 +64,7 @@ class _LanguageOption extends StatelessWidget {
     return ListTile(
       title: Text(
         language,
-        style: GoogleFonts.dmSans(fontSize: 16, color: AppColors.black1),
+        style: DMSansFont.textStyle(fontSize: 16, color: AppColors.black1),
       ),
       trailing: isSelected
           ? Icon(Icons.check, color: AppColors.primary, size: 20)

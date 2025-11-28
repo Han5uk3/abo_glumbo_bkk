@@ -33,15 +33,48 @@ class BookingsLoaded extends BookingState {
   List<BookingModel> get filteredBookings {
     switch (selectedStatus) {
       case BookingStatusType.pending:
-        return allBookings.where((e) => e.bookingStatusCode == 'P').toList();
+        final pending = allBookings
+            .where((e) => e.bookingStatusCode == 'P')
+            .toList();
+        // Sort by createdAt in descending order (newest first)
+        pending.sort((a, b) {
+          if (a.createdAt == null && b.createdAt == null) return 0;
+          if (a.createdAt == null) return 1;
+          if (b.createdAt == null) return -1;
+          return b.createdAt!.compareTo(a.createdAt!);
+        });
+        return pending;
       case BookingStatusType.confirmed:
-        return allBookings.where((e) => e.bookingStatusCode == 'A').toList();
+        final confirmed = allBookings
+            .where((e) => e.bookingStatusCode == 'A')
+            .toList();
+        // Sort by acceptedAt in descending order (newest first)
+        confirmed.sort((a, b) {
+          if (a.acceptedAt == null && b.acceptedAt == null) return 0;
+          if (a.acceptedAt == null) return 1;
+          if (b.acceptedAt == null) return -1;
+          return b.acceptedAt!.compareTo(a.acceptedAt!);
+        });
+        return confirmed;
       case BookingStatusType.completed:
         final completed = allBookings.where((e) {
           final isCompleted = e.bookingStatusCode == 'C' && e.paymentCompleted;
 
           return isCompleted;
         }).toList();
+        // Sort by paymentCompletedAt in descending order (newest first)
+        completed.sort((a, b) {
+          if (a.paymentCompletedAt == null && b.paymentCompletedAt == null) {
+            return 0;
+          }
+          if (a.paymentCompletedAt == null) {
+            return 1;
+          }
+          if (b.paymentCompletedAt == null) {
+            return -1;
+          }
+          return b.paymentCompletedAt!.compareTo(a.paymentCompletedAt!);
+        });
         return completed;
       case BookingStatusType.pendingPayment:
         final pending = allBookings.where((e) {
@@ -49,6 +82,13 @@ class BookingsLoaded extends BookingState {
 
           return isPending;
         }).toList();
+        // Sort by completedAt in descending order (newest first)
+        pending.sort((a, b) {
+          if (a.completedAt == null && b.completedAt == null) return 0;
+          if (a.completedAt == null) return 1;
+          if (b.completedAt == null) return -1;
+          return b.completedAt!.compareTo(a.completedAt!);
+        });
         return pending;
       case BookingStatusType.cancelled:
         return allBookings

@@ -174,6 +174,7 @@ class BookingUtils {
       await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
         "paymentCompleted": isCompleted,
         "paymentModeCode": paymentModeCode,
+        "paymentCompletedAt": Timestamp.now(),
         "orderId": orderId,
         "updatedAt": Timestamp.now(),
       });

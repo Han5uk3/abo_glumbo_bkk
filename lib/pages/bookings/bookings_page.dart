@@ -9,7 +9,7 @@ import 'package:abo_glumbo_bbk/sheets/write_review.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BookingsPage extends StatefulWidget {
@@ -132,7 +132,7 @@ class _BookingsPageState extends State<BookingsPage> {
                   ),
                   child: Text(
                     _getLocalizedStatusNames(status.name, context),
-                    style: GoogleFonts.dmSans(
+                    style: DMSansFont.textStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: selectedStatus == status
@@ -221,24 +221,11 @@ class _BookingsPageState extends State<BookingsPage> {
                         ) ??
                         '',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSans(
-                      color: Colors.black87,
+                    style: DMSansFont.textStyle(
+                      color: Colors.grey.shade400,
                       fontSize: 18,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    _getEmptyStateMessage(state.selectedStatus.name, context),
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSans(
-                      color: Colors.black54,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
                 ],
               ),
             ),
@@ -268,8 +255,7 @@ class _BookingsPageState extends State<BookingsPage> {
                 );
               }
             },
-            isWarranty:
-                state.selectedStatus == BookingStatusType.onWarranty,
+            isWarranty: state.selectedStatus == BookingStatusType.onWarranty,
           );
         },
       );
@@ -345,26 +331,26 @@ class _BookingsPageState extends State<BookingsPage> {
     }
   }
 
-  String _getEmptyStateMessage(String name, BuildContext context) {
-    switch (name) {
-      case "pending":
-        return AppLocalizations.of(context)?.noPendingBookingsMessage ??
-            'You have no pending bookings at the moment. New booking requests will appear here.';
-      case "confirmed":
-        return AppLocalizations.of(context)?.noConfirmedBookingsMessage ??
-            'No confirmed bookings yet. Once technicians accept your requests, they will show up here.';
-      case "completed":
-        return AppLocalizations.of(context)?.noCompletedBookingsMessage ??
-            'Your completed bookings will appear here once services are finished.';
-      case "pendingPayment":
-        return AppLocalizations.of(context)?.noPendingPaymentBookingsMessage ??
-            'You have no pending payment bookings. This is great!';
-      case "cancelled":
-        return AppLocalizations.of(context)?.noCancelledBookingsMessage ??
-            'You have no cancelled bookings. This is great!';
-      default:
-        return AppLocalizations.of(context)?.noBookingsMessage ??
-            'You have no bookings at the moment.';
-    }
-  }
+  // String _getEmptyStateMessage(String name, BuildContext context) {
+  //   switch (name) {
+  //     case "pending":
+  //       return AppLocalizations.of(context)?.noPendingBookingsMessage ??
+  //           'You have no pending bookings at the moment. New booking requests will appear here.';
+  //     case "confirmed":
+  //       return AppLocalizations.of(context)?.noConfirmedBookingsMessage ??
+  //           'No confirmed bookings yet. Once technicians accept your requests, they will show up here.';
+  //     case "completed":
+  //       return AppLocalizations.of(context)?.noCompletedBookingsMessage ??
+  //           'Your completed bookings will appear here once services are finished.';
+  //     case "pendingPayment":
+  //       return AppLocalizations.of(context)?.noPendingPaymentBookingsMessage ??
+  //           'You have no pending payment bookings. This is great!';
+  //     case "cancelled":
+  //       return AppLocalizations.of(context)?.noCancelledBookingsMessage ??
+  //           'You have no cancelled bookings. This is great!';
+  //     default:
+  //       return AppLocalizations.of(context)?.noBookingsMessage ??
+  //           'You have no bookings at the moment.';
+  //   }
+  // }
 }
