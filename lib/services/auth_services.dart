@@ -85,7 +85,7 @@ class AuthServices {
       await _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: forceResendingToken,
-        timeout: const Duration(seconds: 120), // Increased timeout for iOS
+        timeout: const Duration(seconds: 120), // Maximum supported by Firebase
         verificationCompleted: (PhoneAuthCredential credential) async {
           // Auto-retrieval or instant verification
           try {
@@ -127,10 +127,14 @@ class AuthServices {
     } catch (e) {
       if (e is FirebaseAuthException) {
         log("Firebase Auth error: ${e.code} - ${e.message}");
+        debugPrint("Firebase Auth error: ${e.code} - ${e.message}");
 
         // Special handling for reCAPTCHA errors
         if (e.code == 'recaptcha-sdk-not-linked') {
           log("reCAPTCHA SDK not linked - this might be a configuration issue");
+          debugPrint(
+            "reCAPTCHA SDK not linked - this might be a configuration issue",
+          );
           // You can choose to continue or show a specific error message
         }
 
@@ -162,7 +166,7 @@ class AuthServices {
       await _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: resendToken,
-        timeout: const Duration(seconds: 120), // Increased timeout for iOS
+        timeout: const Duration(seconds: 120), // Maximum supported by Firebase
         verificationCompleted: (PhoneAuthCredential credential) async {
           await _auth.signInWithCredential(credential);
         },

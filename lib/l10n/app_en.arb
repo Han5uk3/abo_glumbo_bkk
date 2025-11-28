@@ -583,6 +583,7 @@
   "technicianCompletedTheRequest": "Technician completed the request",
   "unknownTechnician": "Unknown Technician",
   "technicianCancelled": "Technician Cancelled",
+  "tryAdjustingYourSearchOrFilters": "Try adjusting your search or filters",
   "cancelledByTechnician": "Cancelled by Technician",
   "warrantyRejectedByAdmin": "Warranty Rejected by Admin",
   "cancelledByYou": "Cancelled by You",

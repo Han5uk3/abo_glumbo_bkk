@@ -217,7 +217,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                           customerSelectedAddress.buildingNumber,
                         ),
                         _buildInfoRow(
-                          localization.streetName,
+                          localization.location,
                           customerSelectedAddress.streetName ?? 'N/A',
                         ),
                       ],

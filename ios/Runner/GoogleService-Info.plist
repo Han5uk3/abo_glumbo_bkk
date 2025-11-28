@@ -32,5 +32,7 @@
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:629201660527:ios:975df7f9cab623bc2dfb9a</string>
+	<key>DATABASE_URL</key>
+	<string>https://worker-app-tnext-default-rtdb.firebaseio.com</string>
 </dict>
 </plist>

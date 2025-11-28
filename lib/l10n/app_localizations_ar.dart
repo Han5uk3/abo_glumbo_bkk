@@ -1757,6 +1757,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get technicianCancelled => 'ألغى الفني';
 
   @override
+  String get tryAdjustingYourSearchOrFilters => 'حاول تعديل البحث أو الفلاتر';
+
+  @override
   String get cancelledByTechnician => 'تم الإلغاء بواسطة الفني';
 
   @override

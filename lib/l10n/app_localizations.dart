@@ -3488,6 +3488,12 @@ abstract class AppLocalizations {
   /// **'Technician Cancelled'**
   String get technicianCancelled;
 
+  /// No description provided for @tryAdjustingYourSearchOrFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search or filters'**
+  String get tryAdjustingYourSearchOrFilters;
+
   /// No description provided for @cancelledByTechnician.
   ///
   /// In en, this message translates to:

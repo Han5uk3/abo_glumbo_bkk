@@ -1779,6 +1779,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get technicianCancelled => 'Technician Cancelled';
 
   @override
+  String get tryAdjustingYourSearchOrFilters =>
+      'Try adjusting your search or filters';
+
+  @override
   String get cancelledByTechnician => 'Cancelled by Technician';
 
   @override

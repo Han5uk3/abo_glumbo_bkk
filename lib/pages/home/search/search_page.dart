@@ -305,7 +305,7 @@ class _SearchPageState extends State<SearchPage> {
               ),
               const SizedBox(height: 12),
               Text(
-                'Try adjusting your search or filters',
+                AppLocalizations.of(context)?.tryAdjustingYourSearchOrFilters ?? 'Try adjusting your search or filters',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(color: Colors.grey[500]),
@@ -388,7 +388,7 @@ class _SearchPageState extends State<SearchPage> {
                   Icon(Icons.search_rounded, size: 18, color: Colors.grey[600]),
                   const SizedBox(width: 8),
                   Text(
-                    '${filteredServices.length} ${filteredServices.length == 1 ? 'service found' : 'services found'}',
+                    '${filteredServices.length} ${filteredServices.length == 1 ? AppLocalizations.of(context)?.serviceFound ?? 'service found' : AppLocalizations.of(context)?.servicesFound ?? 'services found'}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.grey[700],
                       fontWeight: FontWeight.w500,

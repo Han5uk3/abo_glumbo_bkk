@@ -562,6 +562,7 @@
   "loginWithBiometric": "تسجيل الدخول باستخدام البصمة",
   "disableBiometric": "تعطيل البصمة",
   "createdAt": "تاريخ الإنشاء",
+  "tryAdjustingYourSearchOrFilters": "حاول تعديل البحث أو الفلاتر",
   "customerSubmittedBookingRequest": "قدم العميل طلب حجز",
   "originalServiceCompleted": "اكتملت الخدمة الأصلية",
   "serviceHasBeenSuccessfullyCompleted": "تم إكمال الخدمة بنجاح",
