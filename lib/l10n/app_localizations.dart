@@ -3716,6 +3716,12 @@ abstract class AppLocalizations {
   /// **'Rating'**
   String get terms5title;
 
+  /// No description provided for @phoneNumberUpdateInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter phone number starting with \'05\' for updating phone number'**
+  String get phoneNumberUpdateInfo;
+
   /// No description provided for @termsIntroduction.
   ///
   /// In en, this message translates to:
@@ -3740,34 +3746,46 @@ abstract class AppLocalizations {
   /// **'Payment and Final Cost: The total cost of the service is agreed upon directly with the Technician after inspection, and must be approved via the Application before work commences. You are responsible for paying the agreed-upon amount in full.'**
   String get terms3;
 
-  /// No description provided for @terms4.
+  /// No description provided for @terms4p1.
   ///
   /// In en, this message translates to:
-  /// **'Warranty (Guarantee): Completed work is subject to the Platform\'s \"Warranty Policy\", the full details of which can be reviewed via the dedicated link.'**
-  String get terms4;
+  /// **'Warranty (Guarantee): Completed work is subject to the Platform\'s'**
+  String get terms4p1;
+
+  /// No description provided for @warrantyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Policy'**
+  String get warrantyPolicy;
+
+  /// No description provided for @terms4p2.
+  ///
+  /// In en, this message translates to:
+  /// **'the full details of which can be reviewed via the dedicated link.'**
+  String get terms4p2;
 
   /// No description provided for @terms5.
   ///
   /// In en, this message translates to:
-  /// **'Rating: You have the right to rate the Technician\'s performance after service completion, and you must ensure that ratings are honest and objective.'**
+  /// **'You have the right to rate the Technician\'s performance after service completion, and you must ensure that ratings are honest and objective.'**
   String get terms5;
 
   /// No description provided for @policy1.
   ///
   /// In en, this message translates to:
-  /// **'Data We Collect: Name, phone number, email address, the precise service location address, order history, and Technician ratings.'**
+  /// **'Name, phone number, email address, the precise service location address, order history, and Technician ratings.'**
   String get policy1;
 
   /// No description provided for @policy2.
   ///
   /// In en, this message translates to:
-  /// **'How We Use It: Used to match you with Technicians, facilitate the booking and payment process, and send order notifications.'**
+  /// **'Used to match you with Technicians, facilitate the booking and payment process, and send order notifications.'**
   String get policy2;
 
   /// No description provided for @policy3.
   ///
   /// In en, this message translates to:
-  /// **'Sharing: Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.'**
+  /// **'Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.'**
   String get policy3;
 }
 

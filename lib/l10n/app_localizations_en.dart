@@ -1905,6 +1905,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get terms5title => 'Rating';
 
   @override
+  String get phoneNumberUpdateInfo =>
+      'Enter phone number starting with \'05\' for updating phone number';
+
+  @override
   String get termsIntroduction =>
       'Your use of the Application constitutes full and unconditional acceptance of these terms. The Application acts solely as an electronic intermediary platform connecting you with service providers (Technicians).';
 
@@ -1921,22 +1925,29 @@ class AppLocalizationsEn extends AppLocalizations {
       'Payment and Final Cost: The total cost of the service is agreed upon directly with the Technician after inspection, and must be approved via the Application before work commences. You are responsible for paying the agreed-upon amount in full.';
 
   @override
-  String get terms4 =>
-      'Warranty (Guarantee): Completed work is subject to the Platform\'s \"Warranty Policy\", the full details of which can be reviewed via the dedicated link.';
+  String get terms4p1 =>
+      'Warranty (Guarantee): Completed work is subject to the Platform\'s';
+
+  @override
+  String get warrantyPolicy => 'Warranty Policy';
+
+  @override
+  String get terms4p2 =>
+      'the full details of which can be reviewed via the dedicated link.';
 
   @override
   String get terms5 =>
-      'Rating: You have the right to rate the Technician\'s performance after service completion, and you must ensure that ratings are honest and objective.';
+      'You have the right to rate the Technician\'s performance after service completion, and you must ensure that ratings are honest and objective.';
 
   @override
   String get policy1 =>
-      'Data We Collect: Name, phone number, email address, the precise service location address, order history, and Technician ratings.';
+      'Name, phone number, email address, the precise service location address, order history, and Technician ratings.';
 
   @override
   String get policy2 =>
-      'How We Use It: Used to match you with Technicians, facilitate the booking and payment process, and send order notifications.';
+      'Used to match you with Technicians, facilitate the booking and payment process, and send order notifications.';
 
   @override
   String get policy3 =>
-      'Sharing: Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.';
+      'Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.';
 }

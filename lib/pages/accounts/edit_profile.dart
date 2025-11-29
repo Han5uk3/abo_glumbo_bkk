@@ -395,7 +395,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       },
                     ),
                     Text(
-                      "Enter phone number starting with '05' for updating phone number",
+                      AppLocalizations.of(context)
+                              ?.phoneNumberUpdateInfo ??
+                          'To update phone number, please click the "Update" button.',
                       style: DMSansFont.textStyle(
                         fontSize: 12,
                         color: AppColors.secondary,

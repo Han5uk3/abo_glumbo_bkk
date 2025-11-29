@@ -9,7 +9,7 @@ class PrivacyPolicyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(locale.privacyPolicy)),
+      appBar: AppBar(title: Text(locale.privacyPolicy), centerTitle: true),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
