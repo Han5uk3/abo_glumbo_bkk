@@ -3671,49 +3671,49 @@ abstract class AppLocalizations {
   /// No description provided for @policy1title.
   ///
   /// In en, this message translates to:
-  /// **'1. Data We Collect'**
+  /// **'Data We Collect'**
   String get policy1title;
 
   /// No description provided for @policy2title.
   ///
   /// In en, this message translates to:
-  /// **'2. How We Use It'**
+  /// **'How We Use It'**
   String get policy2title;
 
   /// No description provided for @policy3title.
   ///
   /// In en, this message translates to:
-  /// **'3. Data Sharing'**
+  /// **'Data Sharing'**
   String get policy3title;
 
   /// No description provided for @terms1title.
   ///
   /// In en, this message translates to:
-  /// **'1. Responsibility for the Request'**
+  /// **'Responsibility for the Request'**
   String get terms1title;
 
   /// No description provided for @terms2title.
   ///
   /// In en, this message translates to:
-  /// **'2. Inspection Fees'**
+  /// **'Inspection Fees'**
   String get terms2title;
 
   /// No description provided for @terms3title.
   ///
   /// In en, this message translates to:
-  /// **'3. Payment and Final Cost'**
+  /// **'Payment and Final Cost'**
   String get terms3title;
 
   /// No description provided for @terms4title.
   ///
   /// In en, this message translates to:
-  /// **'4. Warranty (Guarantee)'**
+  /// **'Warranty (Guarantee)'**
   String get terms4title;
 
   /// No description provided for @terms5title.
   ///
   /// In en, this message translates to:
-  /// **'5. Rating'**
+  /// **'Rating'**
   String get terms5title;
 
   /// No description provided for @termsIntroduction.

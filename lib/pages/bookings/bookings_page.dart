@@ -164,20 +164,9 @@ class _BookingsPageState extends State<BookingsPage> {
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                const SizedBox(height: 16),
-                Text(
-                  AppLocalizations.of(
-                        context,
-                      )?.failedToLoadDataPleaseTryAgainLater ??
-                      '',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ],
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: Loader(color: AppColors.primary),
             ),
           ),
         ),

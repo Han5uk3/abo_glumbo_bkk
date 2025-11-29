@@ -394,6 +394,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         return null;
                       },
                     ),
+                    Text(
+                      "Enter phone number starting with '05' for updating phone number",
+                      style: DMSansFont.textStyle(
+                        fontSize: 12,
+                        color: AppColors.secondary,
+                      ),
+                    ),
                     const SizedBox(height: 16),
 
                     // ✅ Location Section Header

@@ -1851,28 +1851,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get and => 'و';
 
   @override
-  String get policy1title => '1. البيانات التي نجمعها';
+  String get policy1title => 'البيانات التي نجمعها';
 
   @override
-  String get policy2title => '2. كيفية الاستخدام';
+  String get policy2title => 'كيفية الاستخدام';
 
   @override
-  String get policy3title => '3. مشاركة البيانات';
+  String get policy3title => 'مشاركة البيانات';
 
   @override
-  String get terms1title => '1. المسؤولية عن الطلب';
+  String get terms1title => 'المسؤولية عن الطلب';
 
   @override
-  String get terms2title => '2. رسوم المعاينة';
+  String get terms2title => 'رسوم المعاينة';
 
   @override
-  String get terms3title => '3. الدفع والتكلفة النهائية';
+  String get terms3title => 'الدفع والتكلفة النهائية';
 
   @override
-  String get terms4title => '4. الضمان (الكفالة)';
+  String get terms4title => 'الضمان (الكفالة)';
 
   @override
-  String get terms5title => '5. التقييم';
+  String get terms5title => 'التقييم';
 
   @override
   String get termsIntroduction =>
