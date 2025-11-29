@@ -39,8 +39,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   bool _isLoading = false;
   int _lastMessageCount = 0;
-  bool _hasScrolledToBottom = false;
+  bool _shouldScrollToBottom = true;
   late final String _currentUserId;
+
+  double _previousKeyboardHeight = 0;
 
   @override
   void initState() {
@@ -48,37 +50,57 @@ class _ChatScreenState extends State<ChatScreen> {
     _currentUserId = _chatService.currentUserId;
     _chatService.markAsRead(widget.chatId, userType);
 
-    // Only scroll once on initial load
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_hasScrolledToBottom) {
-        _scrollToBottom(animate: false);
-        _hasScrolledToBottom = true;
+      _scrollToBottom();
+    });
+
+    // Listen to scroll position to determine if user is viewing older messages
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Listen for keyboard changes
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    if (keyboardHeight != _previousKeyboardHeight) {
+      _previousKeyboardHeight = keyboardHeight;
+
+      // If keyboard is opening (height > 0), scroll to bottom
+      if (keyboardHeight > 0) {
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (mounted) {
+            _scrollToBottom(force: true);
+          }
+        });
+      }
+    }
+  }
+
+  void _onScroll() {
+    if (_scrollController.hasClients) {
+      final maxScroll = _scrollController.position.maxScrollExtent;
+      final currentScroll = _scrollController.position.pixels;
+      // If user is within 100 pixels of bottom, auto-scroll on new messages
+      final shouldScroll = (maxScroll - currentScroll) < 100;
+
+      // Only update state if the value actually changed
+      if (_shouldScrollToBottom != shouldScroll) {
+        _shouldScrollToBottom = shouldScroll;
+      }
+    }
+  }
+
+  void _scrollToBottom({bool force = false}) {
+    if (!_scrollController.hasClients) return;
+    if (!force && !_shouldScrollToBottom) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
     });
-  }
-
-  void _scrollToBottom({bool animate = true}) {
-    if (!_scrollController.hasClients) return;
-
-    if (animate) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    } else {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    }
-  }
-
-  void _scrollToBottomIfNeeded(int messageCount) {
-    // Only auto-scroll if new messages arrived
-    if (messageCount > _lastMessageCount) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToBottom();
-      });
-      _lastMessageCount = messageCount;
-    }
   }
 
   Future<void> _sendMessage() async {
@@ -103,7 +125,15 @@ class _ChatScreenState extends State<ChatScreen> {
         widget.bookingId,
       );
 
-      // Scroll will happen automatically via StreamBuilder update
+      // Scroll to bottom after message is sent
+      if (mounted) {
+        // Use a small delay to ensure the message is rendered
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            _scrollToBottom(force: true);
+          }
+        });
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -125,6 +155,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final localization = AppLocalizations.of(context)!;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         elevation: 1,
@@ -180,152 +211,167 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<DatabaseEvent>(
-              stream: _chatService.getMessagesStream(widget.chatId),
-              builder: (context, snapshot) {
-                // Only show loading on first load, not on updates
-                if (snapshot.connectionState == ConnectionState.waiting &&
-                    !snapshot.hasData) {
-                  return Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: Loader(color: AppColors.primary, size: 20),
-                    ),
-                  );
-                }
-
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: Colors.red[300],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          localization.errorLoadingMessages,
-                          style: DMSansFont.textStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                if (!snapshot.hasData ||
-                    snapshot.data!.snapshot.value == null) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline,
-                          size: 64,
-                          color: Colors.grey[300],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          localization.noMessages,
-                          style: DMSansFont.textStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          localization.startConversation,
-                          style: DMSansFont.textStyle(
-                            fontSize: 14,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                final messagesMap = snapshot.data!.snapshot.value as Map;
-                final messagesList = messagesMap.entries.toList()
-                  ..sort(
-                    (a, b) => (a.value['timestamp'] ?? 0).compareTo(
-                      b.value['timestamp'] ?? 0,
-                    ),
-                  );
-
-                // Only scroll if message count changed
-                _scrollToBottomIfNeeded(messagesList.length);
-
-                return ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                  itemCount: messagesList.length,
-                  itemBuilder: (context, index) {
-                    final messageEntry = messagesList[index];
-                    final message = messageEntry.value as Map;
-
-                    final senderId = message['senderId'] as String? ?? '';
-
-                    String text = message['text'] as String? ?? '';
-                    if (text.isEmpty) {
-                      text = message['message'] as String? ?? '';
-                    }
-                    if (text.isEmpty) {
-                      final mediaUrl = message['mediaUrl'] as String?;
-                      if (mediaUrl != null && mediaUrl.isNotEmpty) {
-                        final mediaType = message['mediaType'] as String? ?? '';
-                        text = mediaType == 'image'
-                            ? '📷 Photo'
-                            : (mediaType == 'video' ? '🎥 Video' : '[Media]');
-                      } else {
-                        text = '[Empty message]';
-                      }
-                    }
-
-                    final timestamp = message['timestamp'] as int? ?? 0;
-                    final isMe = senderId == _currentUserId;
-
-                    bool showDateSeparator = false;
-                    if (index == 0) {
-                      showDateSeparator = true;
-                    } else {
-                      final prevMessage = messagesList[index - 1].value as Map;
-                      final prevTimestamp =
-                          prevMessage['timestamp'] as int? ?? 0;
-                      if (!_isSameDay(timestamp, prevTimestamp)) {
-                        showDateSeparator = true;
-                      }
-                    }
-
-                    return Column(
-                      children: [
-                        if (showDateSeparator)
-                          _buildDateSeparator(timestamp, localization),
-                        _buildMessageBubble(
-                          message: text,
-                          isMe: isMe,
-                          timestamp: timestamp,
-                        ),
-                      ],
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<DatabaseEvent>(
+                stream: _chatService.getMessagesStream(widget.chatId),
+                builder: (context, snapshot) {
+                  // Only show loading on first load, not on updates
+                  if (snapshot.connectionState == ConnectionState.waiting &&
+                      !snapshot.hasData) {
+                    return Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Loader(color: AppColors.primary, size: 20),
+                      ),
                     );
-                  },
-                );
-              },
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red[300],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            localization.errorLoadingMessages,
+                            style: DMSansFont.textStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  if (!snapshot.hasData ||
+                      snapshot.data!.snapshot.value == null) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.chat_bubble_outline,
+                            size: 64,
+                            color: Colors.grey[300],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            localization.noMessages,
+                            style: DMSansFont.textStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            localization.startConversation,
+                            style: DMSansFont.textStyle(
+                              fontSize: 14,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  final messagesMap = snapshot.data!.snapshot.value as Map;
+                  final messagesList = messagesMap.entries.toList()
+                    ..sort(
+                      (a, b) => (a.value['timestamp'] ?? 0).compareTo(
+                        b.value['timestamp'] ?? 0,
+                      ),
+                    );
+
+                  // Only scroll if message count changed
+                  final currentMessageCount = messagesList.length;
+                  if (currentMessageCount > _lastMessageCount &&
+                      _shouldScrollToBottom) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _scrollToBottom();
+                    });
+                  }
+                  // Update count directly without setState to avoid rebuild loop
+                  _lastMessageCount = currentMessageCount;
+
+                  return ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 16,
+                      bottom: 16,
+                    ),
+                    itemCount: messagesList.length,
+                    itemBuilder: (context, index) {
+                      final messageEntry = messagesList[index];
+                      final message = messageEntry.value as Map;
+
+                      final senderId = message['senderId'] as String? ?? '';
+
+                      String text = message['text'] as String? ?? '';
+                      if (text.isEmpty) {
+                        text = message['message'] as String? ?? '';
+                      }
+                      if (text.isEmpty) {
+                        final mediaUrl = message['mediaUrl'] as String?;
+                        if (mediaUrl != null && mediaUrl.isNotEmpty) {
+                          final mediaType =
+                              message['mediaType'] as String? ?? '';
+                          text = mediaType == 'image'
+                              ? '📷 Photo'
+                              : (mediaType == 'video' ? '🎥 Video' : '[Media]');
+                        } else {
+                          text = '[Empty message]';
+                        }
+                      }
+
+                      final timestamp = message['timestamp'] as int? ?? 0;
+                      final isMe = senderId == _currentUserId;
+
+                      bool showDateSeparator = false;
+                      if (index == 0) {
+                        showDateSeparator = true;
+                      } else {
+                        final prevMessage =
+                            messagesList[index - 1].value as Map;
+                        final prevTimestamp =
+                            prevMessage['timestamp'] as int? ?? 0;
+                        if (!_isSameDay(timestamp, prevTimestamp)) {
+                          showDateSeparator = true;
+                        }
+                      }
+
+                      return Column(
+                        children: [
+                          if (showDateSeparator)
+                            _buildDateSeparator(timestamp, localization),
+                          _buildMessageBubble(
+                            message: text,
+                            isMe: isMe,
+                            timestamp: timestamp,
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-          _buildMessageInput(localization),
-        ],
+            _buildMessageInput(localization),
+          ],
+        ),
       ),
     );
   }
@@ -424,7 +470,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessageInput(AppLocalizations localization) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 12,
+        bottom: 12 + MediaQuery.of(context).padding.bottom,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -435,60 +486,60 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: TextField(
-                  controller: _messageController,
-                  textInputAction: TextInputAction.send,
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  onSubmitted: (_) => _sendMessage(),
-                  style: DMSansFont.textStyle(fontSize: 15),
-                  decoration: InputDecoration(
-                    hintText: localization.typeMessage,
-                    hintStyle: DMSansFont.textStyle(
-                      fontSize: 15,
-                      color: Colors.grey[500],
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: TextField(
+                controller: _messageController,
+                textInputAction: TextInputAction.send,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                onSubmitted: (_) => _sendMessage(),
+                style: DMSansFont.textStyle(fontSize: 15),
+                decoration: InputDecoration(
+                  hintText: localization.typeMessage,
+                  hintStyle: DMSansFont.textStyle(
+                    fontSize: 15,
+                    color: Colors.grey[500],
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 8),
-            Container(
-              decoration: BoxDecoration(
-                color: _isLoading ? Colors.grey[400] : AppColors.blue1,
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: _isLoading
-                    ? SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Loader(color: AppColors.bgWhite, size: 16),
-                      )
-                    : const Icon(
-                        Icons.send_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                onPressed: _isLoading ? null : _sendMessage,
-              ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            decoration: BoxDecoration(
+              color: _isLoading ? Colors.grey[400] : AppColors.blue1,
+              shape: BoxShape.circle,
             ),
-          ],
-        ),
+            child: IconButton(
+              icon: _isLoading
+                  ? SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Loader(color: AppColors.bgWhite, size: 16),
+                    )
+                  : const Icon(
+                      Icons.send_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+              onPressed: _isLoading ? null : _sendMessage,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
+import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:io' show Platform;
 import 'app_services.dart';
+import '../main.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -56,6 +60,7 @@ class NotificationServices {
         initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse response) {
           debugPrint('👆 Notification tapped: ${response.payload}');
+          _handleNotificationTap(response.payload);
         },
       );
 
@@ -122,6 +127,8 @@ class NotificationServices {
           debugPrint('👆 Message opened from background: ${message.messageId}');
           if (message.notification != null) {
             AppServices.storeNotificationInFirestore(message);
+            // Handle navigation
+            _handleNotificationTap(json.encode(message.data));
           }
         });
 
@@ -349,18 +356,98 @@ class NotificationServices {
         debugPrint('📬 Initial message found: ${initialMessage.messageId}');
         if (initialMessage.notification != null) {
           AppServices.storeNotificationInFirestore(initialMessage);
+          // Handle navigation for initial message with delay to ensure app is ready
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            _handleNotificationTap(json.encode(initialMessage.data));
+          });
         }
       }
 
-      // Also listen for future message opens
-      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        debugPrint('👆 Message opened from notification: ${message.messageId}');
-        if (message.notification != null) {
-          AppServices.storeNotificationInFirestore(message);
-        }
-      });
+      // Note: onMessageOpenedApp listener is already set up in setupFCMListeners()
+      // No need to add it here again to avoid duplicate navigation
     } catch (e) {
       debugPrint('❌ Error checking initial message: $e');
+    }
+  }
+
+  /// Handle notification tap and navigate accordingly
+  static void _handleNotificationTap(String? payload) {
+    if (payload == null || payload.isEmpty) {
+      debugPrint('⚠️ No payload in notification');
+      return;
+    }
+
+    try {
+      final data = json.decode(payload) as Map<String, dynamic>;
+      debugPrint('📱 Full notification payload: $data');
+
+      final type = data['type'] as String?;
+      final chatId = data['chatId'] as String?;
+
+      debugPrint('📱 Notification type: $type, chatId: $chatId');
+
+      // Check if this is a chat notification (either by type or presence of chatId)
+      if (type == 'chat' || (chatId != null && chatId.isNotEmpty)) {
+        // Extract chat data from payload
+        final participantName =
+            data['participantName'] as String? ?? 'Technician';
+        final participantId = data['participantId'] as String? ?? '';
+        final participantPhoto = data['participantPhoto'] as String? ?? '';
+        final customerName = data['customerName'] as String? ?? '';
+        final customerPhoto = data['customerPhoto'] as String? ?? '';
+        final bookingId = data['bookingId'] as String? ?? '';
+
+        debugPrint('💬 Chat notification detected!');
+        debugPrint('   chatId: $chatId');
+        debugPrint('   participantName: $participantName');
+        debugPrint('   participantId: $participantId');
+
+        if (chatId != null && chatId.isNotEmpty) {
+          debugPrint('🚀 Starting navigation to chat screen...');
+
+          // Use the global navigator key to navigate
+          if (navigatorKey?.currentState != null) {
+            debugPrint('✅ Navigator is available');
+
+            // Clear stack and set up: Home -> ChatScreen
+            // This ensures back button from chat goes directly to home
+            navigatorKey!.currentState!.pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const Home()),
+              (route) => false,
+            );
+
+            // Immediately push chat screen on top of home
+            navigatorKey!.currentState!
+                .push(
+                  MaterialPageRoute(
+                    builder: (context) => ChatScreen(
+                      chatId: chatId,
+                      participantName: participantName,
+                      participantId: participantId,
+                      participantPhoto: participantPhoto,
+                      customerName: customerName,
+                      customerPhoto: customerPhoto,
+                      bookingId: bookingId,
+                    ),
+                  ),
+                )
+                .then((_) {
+                  debugPrint('✅ Chat screen navigation completed');
+                })
+                .catchError((error) {
+                  debugPrint('❌ Error pushing chat screen: $error');
+                });
+          } else {
+            debugPrint('⚠️ Navigator key is null, cannot navigate');
+          }
+        } else {
+          debugPrint('⚠️ Chat ID is missing in notification payload');
+        }
+      } else {
+        debugPrint('ℹ️ Not a chat notification, ignoring');
+      }
+    } catch (e) {
+      debugPrint('❌ Error handling notification tap: $e');
     }
   }
 

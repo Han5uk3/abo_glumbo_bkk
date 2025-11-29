@@ -15,7 +15,7 @@ import 'package:abo_glumbo_bbk/pages/home/bloc/home_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/home/search/search_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/widgets/location_showing_widget.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
-import 'package:abo_glumbo_bbk/services/notifications.dart';
+import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
