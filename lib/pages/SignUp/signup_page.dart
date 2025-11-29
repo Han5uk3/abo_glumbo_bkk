@@ -287,18 +287,18 @@ class _SignupPageState extends State<SignupPage> {
           ),
           actions: [
             eButton(
-              onPressed: () => Navigator.of(context).pop(true),
+              onPressed: () => Navigator.of(context).pop(false),
               context: context,
               backgroundColor: AppColors.secondary,
               textColor: Colors.white,
               text: locale.cancel,
             ),
             eButton(
-              onPressed: () => Navigator.of(context).pop(false),
+              onPressed: () => Navigator.of(context).pop(true),
               context: context,
-              backgroundColor: Colors.grey,
+              backgroundColor: Colors.green,
               textColor: Colors.white,
-              text: locale.cancel,
+              text: locale.accept,
             ),
           ],
         );

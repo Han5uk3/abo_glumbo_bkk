@@ -791,11 +791,17 @@ class BookingDetailsBottomSheet extends StatelessWidget {
       children: [
         Text(
           label,
-          style: PoppinsFont.textStyle(fontSize: 13, fontWeight: FontWeight.w500),
+          style: PoppinsFont.textStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         Text(
           '${AppLocalizations.of(context)!.sar} ${amount.toStringAsFixed(2)}',
-          style: PoppinsFont.textStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          style: PoppinsFont.textStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );
@@ -1156,7 +1162,9 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                 ),
               ),
               if ((hasChat && booking.bookingStatusCode == 'A') ||
-                  (hasChat && booking.warranty != null)) ...{
+                  (hasChat &&
+                      booking.warranty != null &&
+                      booking.warranty?.warrantyStatusCode == 'R')) ...{
                 const Spacer(),
 
                 StreamBuilder<int>(

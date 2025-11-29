@@ -7,7 +7,6 @@ class PrivacyPolicyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fontStyle = DMSansFont.textStyle(color: Colors.black);
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.privacyPolicy)),
       body: SingleChildScrollView(

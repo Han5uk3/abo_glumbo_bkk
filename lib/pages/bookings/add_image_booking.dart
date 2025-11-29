@@ -12,7 +12,6 @@ import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddIssueImageAndVideo extends StatefulWidget {

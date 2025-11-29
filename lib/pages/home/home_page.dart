@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
           if (!_isGuest)
             Positioned(
-              top: safePadding.top + 8,
+              top: safePadding.top + 10,
               right: 16,
               left: 16,
               child: Row(
@@ -210,7 +210,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            AppLocalizations.of(context)?.jobCategories ?? '',
+            AppLocalizations.of(context)!.categories,
             style: DMSansFont.textStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,

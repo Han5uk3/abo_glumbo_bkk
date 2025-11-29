@@ -5,7 +5,6 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 
 import 'package:flutter/material.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart' as intl;
 
 Widget buildBookingTimelineCard(

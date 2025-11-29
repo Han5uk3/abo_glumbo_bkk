@@ -27,9 +27,10 @@ class UnreadNotificationBadge extends StatelessWidget {
               final countText = count > 99 ? '99+' : count.toString();
 
               return Positioned(
-                top: -4,
+                top: -2,
                 right: 0,
                 child: Container(
+                  margin: const EdgeInsets.all(0),
                   decoration: BoxDecoration(
                     color: Colors.red,
                     shape: BoxShape.circle,
@@ -41,8 +42,8 @@ class UnreadNotificationBadge extends StatelessWidget {
                     ],
                   ),
                   constraints: const BoxConstraints(
-                    minWidth: 10,
-                    minHeight: 10,
+                    minWidth: 12,
+                    minHeight: 12,
                   ),
                   padding: const EdgeInsets.all(2),
                   child: Center(
@@ -50,7 +51,7 @@ class UnreadNotificationBadge extends StatelessWidget {
                       countText,
                       style: DMSansFont.textStyle(
                         color: Colors.white,
-                        fontSize: 11,
+                        fontSize: 8,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,

@@ -7,7 +7,6 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/account.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bookings_page.dart';
-import 'package:abo_glumbo_bbk/pages/categories/categories_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/home_page.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/pages/login/widgets/language_selector.dart';

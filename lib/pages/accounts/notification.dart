@@ -493,7 +493,7 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                                           color: Colors.grey[700],
                                           height: 1.4,
                                         ),
-                                        maxLines: 2,
+                                        maxLines: 10,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       const SizedBox(height: 8),
