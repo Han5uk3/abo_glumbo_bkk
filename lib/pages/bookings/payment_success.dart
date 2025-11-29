@@ -262,10 +262,10 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
   }
 
   _getPaymentMethod(String method) {
-    log("payment method in suzzess screen $method");
-    if (method.contains("cash")) {
+    log("payment method in success screen $method");
+    if (method.toLowerCase() == "cash") {
       return AppLocalizations.of(context)!.cashInHand;
-    } else if (method.contains("card")) {
+    } else if (method.toLowerCase() == "cards") {
       return AppLocalizations.of(context)!.cards;
     } else if (method.toLowerCase() == "o") {
       return AppLocalizations.of(context)!.cashInHand;

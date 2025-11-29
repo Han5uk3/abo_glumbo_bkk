@@ -1,6 +1,6 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
+import 'package:flutter/material.dart';
 
 class TermsAndConditionsPage extends StatelessWidget {
   const TermsAndConditionsPage({super.key, required this.isFromLogin});
@@ -9,13 +9,11 @@ class TermsAndConditionsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isFromLogin
-              ? AppLocalizations.of(context)!.termsOfUse
-              : AppLocalizations.of(context)?.termsAndConditions ??
-                    'Terms and Conditions',
+          isFromLogin ? locale.termsOfUse : locale.termsAndConditions,
         ),
       ),
       body: SingleChildScrollView(
@@ -25,39 +23,40 @@ class TermsAndConditionsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              "${AppLocalizations.of(context)?.introduction}",
-              style: DMSansFont.textStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            SizedBox(height: 24),
+            _buildText(locale.terms1, locale.terms1title, 1),
             SizedBox(height: 8),
-            Text(
-              "${AppLocalizations.of(context)?.termsIntroduction}",
-              style: DMSansFont.textStyle(color: Colors.black, fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            _buildText(AppLocalizations.of(context)?.terms1 ?? '', 1),
-            SizedBox(height: 6),
-            _buildText(AppLocalizations.of(context)?.terms2 ?? '', 2),
-            SizedBox(height: 6),
-            _buildText(AppLocalizations.of(context)?.terms3 ?? '', 3),
-            SizedBox(height: 6),
-            _buildText(AppLocalizations.of(context)?.terms4 ?? '', 4),
-            SizedBox(height: 6),
-            _buildText(AppLocalizations.of(context)?.terms5 ?? '', 5),
+            _buildText(locale.terms2, locale.terms2title, 2),
+            SizedBox(height: 8),
+            _buildText(locale.terms3, locale.terms3title, 3),
+            SizedBox(height: 8),
+            _buildText(locale.terms4, locale.terms4title, 4),
+            SizedBox(height: 8),
+            _buildText(locale.terms5, locale.terms5title, 5),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildText(String text, int index) {
-    return Text(
-      "$index. $text",
-      style: DMSansFont.textStyle(color: Colors.black, fontSize: 16),
+  Widget _buildText(String text, String title, int index) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "$index. $title",
+          style: DMSansFont.textStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 3),
+        Text(
+          text,
+          style: DMSansFont.textStyle(color: Colors.black, fontSize: 14),
+        ),
+      ],
     );
   }
 }

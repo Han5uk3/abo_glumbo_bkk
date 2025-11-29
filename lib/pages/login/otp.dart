@@ -366,33 +366,7 @@ class _OtpPageState extends State<OtpPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leadingWidth: 90,
-        leading: TextButton.icon(
-          onPressed: _isMigratingCustomerData
-              ? null
-              : () => Navigator.pop(context),
-          label: Text(
-            AppLocalizations.of(context)?.back ?? '',
-            style: DMSansFont.textStyle(
-              color: _isMigratingCustomerData
-                  ? Colors.grey
-                  : AppColors.secondary,
-              fontSize: 16,
-            ),
-          ),
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: _isMigratingCustomerData ? Colors.grey : Colors.black87,
-          ),
-        ),
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-        ),
-      ),
+      appBar: AppBar(centerTitle: true, backgroundColor: AppColors.primary),
       body: AbsorbPointer(
         absorbing: _isMigratingCustomerData,
         child: SafeArea(

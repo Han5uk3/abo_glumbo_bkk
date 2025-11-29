@@ -1851,6 +1851,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get and => 'و';
 
   @override
+  String get policy1title => '1. البيانات التي نجمعها';
+
+  @override
+  String get policy2title => '2. كيفية الاستخدام';
+
+  @override
+  String get policy3title => '3. مشاركة البيانات';
+
+  @override
+  String get terms1title => '1. المسؤولية عن الطلب';
+
+  @override
+  String get terms2title => '2. رسوم المعاينة';
+
+  @override
+  String get terms3title => '3. الدفع والتكلفة النهائية';
+
+  @override
+  String get terms4title => '4. الضمان (الكفالة)';
+
+  @override
+  String get terms5title => '5. التقييم';
+
+  @override
   String get termsIntroduction =>
       'يُعد استخدامك للتطبيق قبولاً كاملاً وغير مشروط لهذه الشروط. التطبيق هو منصة وساطة إلكترونية تربطك بمقدمي الخدمات الفنية فقط.';
 
@@ -1872,7 +1896,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get terms5 =>
-      'التقييم: يحق لك تقييم أداء الفني بعد إتمام الخدمة، وتلتزم بأن تكون التقييمات صادقة وموضوعية.';
+      'التقييم: يحق لك تقييم أداء الفني بعد إتمام الخدمة، وتلتزم بأن تكون التقييمات صادقة وموضوعية.';
 
   @override
   String get policy1 =>
@@ -1884,5 +1908,5 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get policy3 =>
-      'المشاركة: يتم مشاركة الاسم ورقم الهاتف وعنوان الموقع فقط مع الفني الذي تم قبول طلبه لتمكينه من أداء الخدمة.';
+      'المشاركة: يتم مشاركة الاسم ورقم الهاتف وعنوان الموقع فقط مع الفني الذي تم قبول طلبه لتمكينه من أداء الخدمة.';
 }

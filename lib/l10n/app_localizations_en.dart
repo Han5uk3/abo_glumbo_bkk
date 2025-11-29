@@ -1881,6 +1881,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get and => 'and';
 
   @override
+  String get policy1title => '1. Data We Collect';
+
+  @override
+  String get policy2title => '2. How We Use It';
+
+  @override
+  String get policy3title => '3. Data Sharing';
+
+  @override
+  String get terms1title => '1. Responsibility for the Request';
+
+  @override
+  String get terms2title => '2. Inspection Fees';
+
+  @override
+  String get terms3title => '3. Payment and Final Cost';
+
+  @override
+  String get terms4title => '4. Warranty (Guarantee)';
+
+  @override
+  String get terms5title => '5. Rating';
+
+  @override
   String get termsIntroduction =>
       'Your use of the Application constitutes full and unconditional acceptance of these terms. The Application acts solely as an electronic intermediary platform connecting you with service providers (Technicians).';
 

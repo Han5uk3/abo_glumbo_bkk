@@ -4,6 +4,7 @@ import 'package:abo_glumbo_bbk/helpers/constants.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
+import 'package:abo_glumbo_bbk/pages/SignUp/privacy_policy_page.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/terms_and_conditions_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/edit_profile.dart';
@@ -102,6 +103,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           _buildSupportSection(),
           if (!_isGuest) ...[
             _buildTermsAndConditions(),
+            _buildPrivacyPolicy(),
             _buildFAQSection(),
             _buildAuthSection(),
             _buildDangerZone(),
@@ -128,6 +130,17 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
             builder: (context) => TermsAndConditionsPage(isFromLogin: false),
           ),
         );
+      },
+    );
+  }
+
+  Widget _buildPrivacyPolicy() {
+    return AccountListTile.withArrow(
+      title: AppLocalizations.of(context)?.privacyPolicy ?? '',
+      onTap: () {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => PrivacyPolicyPage()));
       },
     );
   }
