@@ -22,7 +22,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     // Already set, ignore
   }
 
-  await AppServices.storeNotificationInFirestore(message);
+  // Note: Notification is already stored by backend Cloud Function
+  // No need to store it again here to avoid duplicates
 }
 
 class NotificationServices {
@@ -117,7 +118,8 @@ class NotificationServices {
               body: notification.body ?? '',
               payload: json.encode(message.data),
             );
-            AppServices.storeNotificationInFirestore(message);
+            // Note: Notification is already stored by backend Cloud Function
+            // No need to store it again here to avoid duplicates
           }
         });
 

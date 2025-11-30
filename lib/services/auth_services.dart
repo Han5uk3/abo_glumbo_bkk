@@ -154,6 +154,9 @@ class AuthServices {
     String sanitizedPhoneNumber = _formatToE164(
       _sanitizePhoneNumber(phoneNumber),
     );
+
+    String? tempVerificationId;
+
     try {
       // iOS specific configuration for reCAPTCHA
       if (Platform.isIOS) {
@@ -168,7 +171,25 @@ class AuthServices {
         forceResendingToken: resendToken,
         timeout: const Duration(seconds: 120), // Maximum supported by Firebase
         verificationCompleted: (PhoneAuthCredential credential) async {
-          await _auth.signInWithCredential(credential);
+          try {
+            debugPrint("Auto-verification completed during resend OTP");
+            await _auth.signInWithCredential(credential);
+            // Use the stored verification ID from codeSent or codeAutoRetrievalTimeout
+            // If we have it, call onCodeSent to reset loading state
+            if (tempVerificationId != null) {
+              _verificationId = tempVerificationId;
+              onCodeSent(tempVerificationId!, resendToken: resendToken);
+            }
+          } catch (e) {
+            debugPrint("Auto verification failed during resend: $e");
+            if (e is FirebaseAuthException) {
+              onError(e);
+            } else {
+              onError(
+                FirebaseAuthException(code: 'unknown', message: e.toString()),
+              );
+            }
+          }
         },
         verificationFailed: (FirebaseAuthException e) {
           debugPrint(
@@ -177,10 +198,15 @@ class AuthServices {
           onError(e);
         },
         codeSent: (String verificationId, int? token) {
+          debugPrint(
+            "Resend OTP code sent successfully. Verification ID: $verificationId",
+          );
+          tempVerificationId = verificationId;
           _verificationId = verificationId;
           onCodeSent(verificationId, resendToken: token);
         },
         codeAutoRetrievalTimeout: (String verificationId) {
+          tempVerificationId = verificationId;
           _verificationId = verificationId;
           debugPrint(
             "Resend auto retrieval timeout for verification ID: $verificationId",

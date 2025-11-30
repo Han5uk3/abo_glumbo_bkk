@@ -76,10 +76,33 @@ class _OtpPageState extends State<OtpPage> {
       isResendingOtp = true;
     });
 
+    // Safety timeout to reset loading state if callbacks don't fire
+    Future.delayed(const Duration(seconds: 30), () {
+      if (mounted && isResendingOtp) {
+        setState(() {
+          isResendingOtp = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Request timeout. Please try again.'),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    });
+
     AuthServices().resendOTP(
       phoneNumber: widget.phoneNumber ?? '',
       resendToken: _resendToken,
       onCodeSent: (verificationId, {int? resendToken}) {
+        if (!mounted) return;
+
         setState(() {
           isResendingOtp = false;
           _verificationId = verificationId;
@@ -102,6 +125,8 @@ class _OtpPageState extends State<OtpPage> {
         startTimer();
       },
       onError: (error) {
+        if (!mounted) return;
+
         setState(() {
           isResendingOtp = false;
         });
