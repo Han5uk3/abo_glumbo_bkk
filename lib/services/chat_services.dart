@@ -35,13 +35,96 @@ class ChatService {
     String currentUserPhoto,
     String currentUserType,
   ) async {
+    debugPrint('[log] 🔄 Initiating new chat...');
+    debugPrint('[log] 📋 Booking ID: $bookingId');
+    debugPrint('[log] 👤 Current User ID: $currentUserId');
+    debugPrint('[log] 👤 Other User ID: $otherUserId');
+    debugPrint('[log] 🏷️ Current User Type: $currentUserType');
+
     final chatId = generateChatId(bookingId, currentUserId, otherUserId);
+    debugPrint('[log] 💬 Generated Chat ID: $chatId');
 
     try {
       final chatRef = _rtdb.child('chats/$chatId');
-      final snapshot = await chatRef.get();
+      debugPrint('[log] 🔍 Checking if chat exists...');
 
-      if (!snapshot.exists) {
+      DataSnapshot? snapshot;
+      bool hasCorruptedData = false;
+
+      try {
+        snapshot = await chatRef.get();
+        debugPrint('[log] ✅ Chat exists check complete: ${snapshot.exists}');
+
+        // Validate the data structure if chat exists
+        if (snapshot.exists) {
+          debugPrint(
+            '[log] 🔍 Snapshot value type: ${snapshot.value.runtimeType}',
+          );
+
+          // Check if the value is a String (corrupted data)
+          if (snapshot.value is String) {
+            debugPrint(
+              '[log] ⚠️ CORRUPTED DATA DETECTED: Chat node contains String instead of Map',
+            );
+            debugPrint('[log] 📝 Corrupted value: ${snapshot.value}');
+            hasCorruptedData = true;
+          } else if (snapshot.value is! Map) {
+            debugPrint(
+              '[log] ⚠️ CORRUPTED DATA DETECTED: Chat node contains ${snapshot.value.runtimeType} instead of Map',
+            );
+            hasCorruptedData = true;
+          }
+        }
+      } catch (e) {
+        // This error occurs when Firebase tries to parse corrupted data
+        if (e.toString().contains('String') && e.toString().contains('Map')) {
+          debugPrint('[log] ⚠️ CORRUPTED DATA DETECTED from exception: $e');
+          hasCorruptedData = true;
+          // Set snapshot to null so we treat it as non-existent
+          snapshot = null;
+        } else {
+          debugPrint('[log] ❌ Error getting chat snapshot: $e');
+          rethrow;
+        }
+      }
+
+      // If data is corrupted, delete it and recreate
+      if (hasCorruptedData) {
+        debugPrint('[log] 🗑️ Attempting to clean corrupted chat data...');
+        try {
+          // Try to delete the corrupted chat node
+          await chatRef.remove();
+          debugPrint('[log] ✅ Corrupted chat node deleted');
+
+          // Delete any corrupted userChats entries
+          await _rtdb.child('userChats/$currentUserId/$chatId').remove();
+          await _rtdb.child('userChats/$otherUserId/$chatId').remove();
+          debugPrint('[log] ✅ Corrupted userChats entries deleted');
+        } catch (deleteError) {
+          debugPrint(
+            '[log] ⚠️ Delete failed (likely permission denied): $deleteError',
+          );
+          debugPrint('[log] 💡 Will overwrite corrupted data instead');
+          // Don't throw - we'll just overwrite the data below
+        }
+
+        // Clear or update the chatroomId in booking
+        try {
+          await _firestore.collection('bookings').doc(bookingId).update({
+            'chatroomId': chatId, // Keep the same chatId
+          });
+          debugPrint('[log] ✅ Updated chatroomId in booking');
+        } catch (firestoreError) {
+          debugPrint('[log] ⚠️ Could not update booking: $firestoreError');
+        }
+
+        // Force snapshot to null to trigger recreation/overwrite
+        snapshot = null;
+      }
+
+      if (snapshot == null || !snapshot.exists || hasCorruptedData) {
+        debugPrint('[log] 🆕 Creating new chat...');
+
         // Create the main chat document
         await chatRef.set({
           'bookingId': bookingId,
@@ -58,6 +141,7 @@ class ChatService {
           'customerUnreadCount': 0,
           'technicianUnreadCount': 0,
         });
+        debugPrint('[log] ✅ Main chat document created');
 
         // Create userChats for current user
         await _rtdb.child('userChats/$currentUserId/$chatId').set({
@@ -72,6 +156,7 @@ class ChatService {
           'lastMessageTime': ServerValue.timestamp,
           'unreadCount': 0,
         });
+        debugPrint('[log] ✅ Current user chat entry created');
 
         // Create userChats for other user
         await _rtdb.child('userChats/$otherUserId/$chatId').set({
@@ -84,52 +169,117 @@ class ChatService {
           'lastMessageTime': ServerValue.timestamp,
           'unreadCount': 0,
         });
+        debugPrint('[log] ✅ Other user chat entry created');
 
         // Update booking with chatRoomId
         await _firestore.collection('bookings').doc(bookingId).update({
           'chatroomId': chatId,
         });
+        debugPrint('[log] ✅ Booking updated with chatroom ID');
       } else {
+        debugPrint('[log] ♻️ Chat already exists with valid data...');
+
         // Ensure userChats entry exists for current user
-        final userChatSnapshot = await _rtdb
-            .child('userChats/$currentUserId/$chatId')
-            .get();
-        if (!userChatSnapshot.exists) {
-          await _rtdb.child('userChats/$currentUserId/$chatId').set({
-            'participantId': otherUserId,
-            'participantName': otherUserName,
-            'participantPhoto': otherUserPhoto,
-            'participantType': currentUserType == 'customer'
-                ? 'technician'
-                : 'customer',
-            'bookingId': bookingId,
-            'lastMessage': '',
-            'lastMessageTime': ServerValue.timestamp,
-            'unreadCount': 0,
-          });
+        debugPrint('[log] 🔍 Checking current user chat entry...');
+        try {
+          final userChatSnapshot = await _rtdb
+              .child('userChats/$currentUserId/$chatId')
+              .get();
+          debugPrint(
+            '[log] ✅ Current user chat entry exists: ${userChatSnapshot.exists}',
+          );
+
+          if (!userChatSnapshot.exists) {
+            debugPrint('[log] 🆕 Creating missing current user chat entry...');
+            await _rtdb.child('userChats/$currentUserId/$chatId').set({
+              'participantId': otherUserId,
+              'participantName': otherUserName,
+              'participantPhoto': otherUserPhoto,
+              'participantType': currentUserType == 'customer'
+                  ? 'technician'
+                  : 'customer',
+              'bookingId': bookingId,
+              'lastMessage': '',
+              'lastMessageTime': ServerValue.timestamp,
+              'unreadCount': 0,
+            });
+            debugPrint('[log] ✅ Current user chat entry created');
+          }
+        } catch (e) {
+          if (e.toString().contains('String') && e.toString().contains('Map')) {
+            debugPrint(
+              '[log] ⚠️ Corrupted current user userChat detected, recreating...',
+            );
+            await _rtdb.child('userChats/$currentUserId/$chatId').set({
+              'participantId': otherUserId,
+              'participantName': otherUserName,
+              'participantPhoto': otherUserPhoto,
+              'participantType': currentUserType == 'customer'
+                  ? 'technician'
+                  : 'customer',
+              'bookingId': bookingId,
+              'lastMessage': '',
+              'lastMessageTime': ServerValue.timestamp,
+              'unreadCount': 0,
+            });
+            debugPrint('[log] ✅ Current user chat entry recreated');
+          } else {
+            rethrow;
+          }
         }
 
         // Ensure userChats entry exists for other user
-        final otherUserChatSnapshot = await _rtdb
-            .child('userChats/$otherUserId/$chatId')
-            .get();
-        if (!otherUserChatSnapshot.exists) {
-          await _rtdb.child('userChats/$otherUserId/$chatId').set({
-            'participantId': currentUserId,
-            'participantName': currentUserName,
-            'participantPhoto': currentUserPhoto,
-            'participantType': currentUserType,
-            'bookingId': bookingId,
-            'lastMessage': '',
-            'lastMessageTime': ServerValue.timestamp,
-            'unreadCount': 0,
-          });
+        debugPrint('[log] 🔍 Checking other user chat entry...');
+        try {
+          final otherUserChatSnapshot = await _rtdb
+              .child('userChats/$otherUserId/$chatId')
+              .get();
+          debugPrint(
+            '[log] ✅ Other user chat entry exists: ${otherUserChatSnapshot.exists}',
+          );
+
+          if (!otherUserChatSnapshot.exists) {
+            debugPrint('[log] 🆕 Creating missing other user chat entry...');
+            await _rtdb.child('userChats/$otherUserId/$chatId').set({
+              'participantId': currentUserId,
+              'participantName': currentUserName,
+              'participantPhoto': currentUserPhoto,
+              'participantType': currentUserType,
+              'bookingId': bookingId,
+              'lastMessage': '',
+              'lastMessageTime': ServerValue.timestamp,
+              'unreadCount': 0,
+            });
+            debugPrint('[log] ✅ Other user chat entry created');
+          }
+        } catch (e) {
+          if (e.toString().contains('String') && e.toString().contains('Map')) {
+            debugPrint(
+              '[log] ⚠️ Corrupted other user userChat detected, recreating...',
+            );
+            await _rtdb.child('userChats/$otherUserId/$chatId').set({
+              'participantId': currentUserId,
+              'participantName': currentUserName,
+              'participantPhoto': currentUserPhoto,
+              'participantType': currentUserType,
+              'bookingId': bookingId,
+              'lastMessage': '',
+              'lastMessageTime': ServerValue.timestamp,
+              'unreadCount': 0,
+            });
+            debugPrint('[log] ✅ Other user chat entry recreated');
+          } else {
+            rethrow;
+          }
         }
       }
 
+      debugPrint('[log] ✅ Chat initialization complete!');
       return chatId;
-    } catch (e) {
-      throw Exception('Failed to create chat: $e');
+    } catch (e, stackTrace) {
+      debugPrint('[log] ❌ Chat error: Exception: $e');
+      debugPrint('[log] 📚 Stack trace: $stackTrace');
+      throw Exception('Failed to initiate chat: $e');
     }
   }
 
@@ -176,15 +326,42 @@ class ChatService {
 
       // Check if receiver's userChats entry exists, create if not
       final receiverChatRef = _rtdb.child('userChats/$receiverId/$chatId');
-      final receiverSnapshot = await receiverChatRef.get();
 
-      if (receiverSnapshot.exists) {
-        await receiverChatRef.update({
-          'lastMessage': message,
-          'lastMessageTime': timestamp,
-          'unreadCount': ServerValue.increment(1),
-        });
-      } else {
+      bool receiverChatExists = false;
+      bool receiverChatCorrupted = false;
+
+      try {
+        final receiverSnapshot = await receiverChatRef.get();
+        receiverChatExists = receiverSnapshot.exists;
+
+        // Check if data is corrupted
+        if (receiverSnapshot.exists && receiverSnapshot.value is String) {
+          receiverChatCorrupted = true;
+        }
+      } catch (e) {
+        if (e.toString().contains('String') && e.toString().contains('Map')) {
+          receiverChatCorrupted = true;
+        } else {
+          rethrow;
+        }
+      }
+
+      if (receiverChatExists && !receiverChatCorrupted) {
+        // Update existing entry
+        try {
+          await receiverChatRef.update({
+            'lastMessage': message,
+            'lastMessageTime': timestamp,
+            'unreadCount': ServerValue.increment(1),
+          });
+        } catch (e) {
+          // If update fails, recreate the entry
+          debugPrint('⚠️ Failed to update receiver chat, recreating: $e');
+          receiverChatCorrupted = true;
+        }
+      }
+
+      if (!receiverChatExists || receiverChatCorrupted) {
         await receiverChatRef.set({
           'participantId': currentUserId,
           'participantName': senderName,

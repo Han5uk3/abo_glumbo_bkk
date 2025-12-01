@@ -7,7 +7,7 @@ import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/telr/request_model.dart';
-import 'package:abo_glumbo_bbk/models/tipping.dart';
+
 import 'package:abo_glumbo_bbk/models/total_tip.dart';
 import 'package:abo_glumbo_bbk/models/transaction.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
@@ -167,18 +167,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           ..setNavigationDelegate(
             NavigationDelegate(
               onNavigationRequest: (NavigationRequest request) {
-                if (request.url.contains('success') ||
-                    request.url.contains('payment/success')) {
-                  if (widget.isFromBooking) {
-                    saveBooking();
-                    saveTransaction();
-                   
-                  }
-                  if (widget.isFromBooking == false) {
-                    saveReview();
-                    saveToTipping();
-                  }
-                }
+                // Logic moved to _handleNavigation to prevent double execution
+
                 return _handleNavigation(request.url, widget.isFromBooking);
               },
               onPageStarted: (String url) {
@@ -220,23 +210,6 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         });
       }
     }
-  }
-
-
-  Future<bool> saveToTipping() async {
-    return await BookingUtils.saveToTipping(
-      workerId: widget.review?.workerId ?? "",
-      tipData: TippingModel.fromJson({
-        "agentId": widget.review?.workerId ?? "",
-        "agentName": widget.agent?.name ?? "",
-        "agentPhone": widget.agent?.phone ?? "",
-        "cardtip": widget.review?.tipAmount ?? 0.00, // ✅ Pass actual number
-        "lastUpdated": Timestamp.now(),
-        "cashtip": 0.00, // ✅ Pass actual number
-        "walletId": widget.agent?.uid ?? "",
-        "payoutRequested": false,
-      }),
-    );
   }
 
   Future<bool> saveTransaction() async {
@@ -287,7 +260,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       // Save the review with tip information
       final success = await BookingUtils.saveReview(
         booking: widget.booking!,
-        review: widget.review,
+        review: widget.review?.copyWith(isTipPaid: true),
       );
 
       return success;
@@ -297,8 +270,15 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     }
   }
 
+  bool isPaymentProcessed = false;
+
   NavigationDecision _handleNavigation(String url, bool isFromBooking) {
     if (url.contains('success') || url.contains('payment/success')) {
+      if (isPaymentProcessed) {
+        return NavigationDecision.prevent;
+      }
+      isPaymentProcessed = true;
+
       if (widget.booking == null) {
         // Handle the case where there's no booking
         Navigator.pushAndRemoveUntil(
@@ -315,6 +295,14 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           ),
         );
       } else {
+        if (widget.isFromBooking) {
+          saveBooking();
+          saveTransaction();
+        }
+        if (widget.isFromBooking == false) {
+          saveReview();
+        }
+
         log('Booking: isFromBooking: $isFromBooking');
         // If we have a booking, proceed to the success page
         Navigator.pushAndRemoveUntil(

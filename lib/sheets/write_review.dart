@@ -1,5 +1,4 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/models/tipping.dart';
 import 'package:abo_glumbo_bbk/models/total_tip.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
@@ -181,21 +180,6 @@ class _WriteReviewBottomSheetWidgetState
     }
   }
 
-  Future<bool> saveToTipping() async {
-    return await BookingUtils.saveToTipping(
-      workerId: widget.booking.agent?.uid ?? "",
-      tipData: TippingModel.fromJson({
-        "agentId": widget.booking.agent?.uid ?? "",
-        "agentName": widget.booking.agent?.name ?? "",
-        "agentPhone": widget.booking.agent?.phone ?? "",
-        "cardtip": FieldValue.increment(_selectedTip),
-        "lastUpdated": Timestamp.now(),
-        "cashtip": FieldValue.increment(0.00),
-        "walletId": widget.booking.agent?.uid ?? "",
-        "payoutRequested": false,
-      }),
-    );
-  }
 
   Future<void> _processTipPayment() async {
     setState(() => _processingTip = true);
