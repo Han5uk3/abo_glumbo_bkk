@@ -19,11 +19,45 @@ class _HomeCarouselWidgetState extends State<HomeCarouselWidget> {
   final CarouselSliderController _controller = CarouselSliderController();
 
   Future<void> _launchURL(String url) async {
-    if (url.isNotEmpty) {
-      final Uri uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (url.isEmpty) {
+      return;
+    }
+
+    try {
+      // Ensure URL has a scheme (http/https)
+      String formattedUrl = url;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        formattedUrl = 'https://$url';
       }
+
+      final Uri uri = Uri.parse(formattedUrl);
+
+      // Try to launch with externalApplication mode first
+      bool launched = false;
+      try {
+        launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (e) {
+        // If externalApplication fails, try with platformDefault
+        launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
+      }
+
+      if (!launched) {
+        _showErrorMessage('Unable to open link');
+      }
+    } catch (e) {
+      _showErrorMessage('Failed to open link');
+    }
+  }
+
+  void _showErrorMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -35,11 +69,13 @@ class _HomeCarouselWidgetState extends State<HomeCarouselWidget> {
 
     // Filter banners with valid images
     final validBanners = widget.banners
-        .where((item) =>
-            item.image != null &&
-            item.image!.isNotEmpty &&
-            Uri.tryParse(item.image!) != null &&
-            Uri.tryParse(item.image!)!.hasAbsolutePath)
+        .where(
+          (item) =>
+              item.image != null &&
+              item.image!.isNotEmpty &&
+              Uri.tryParse(item.image!) != null &&
+              Uri.tryParse(item.image!)!.hasAbsolutePath,
+        )
         .toList();
 
     if (validBanners.isEmpty) {
@@ -50,41 +86,43 @@ class _HomeCarouselWidgetState extends State<HomeCarouselWidget> {
       children: [
         CarouselSlider(
           items: validBanners
-              .map((item) => GestureDetector(
-                    onTap: () => _launchURL(item.url ?? ''),
-                    child: Container(
-                      width: double.maxFinite,
-                      height: 140,
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.grey[200],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: CachedNetworkImage(
-                          imageUrl: item.image!,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
+              .map(
+                (item) => GestureDetector(
+                  onTap: () => _launchURL(item.url ?? ''),
+                  child: Container(
+                    width: double.maxFinite,
+                    height: 140,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.grey[200],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: CachedNetworkImage(
+                        imageUrl: item.image!,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          color: Colors.grey[300],
+                          child: const Center(
+                            child: CircularProgressIndicator(),
                           ),
-                          errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: Icon(
-                                Icons.error_outline,
-                                color: Colors.grey,
-                                size: 32,
-                              ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey[300],
+                          child: const Center(
+                            child: Icon(
+                              Icons.error_outline,
+                              color: Colors.grey,
+                              size: 32,
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ))
+                  ),
+                ),
+              )
               .toList(),
           carouselController: _controller,
           options: CarouselOptions(
