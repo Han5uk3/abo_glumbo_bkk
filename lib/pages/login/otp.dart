@@ -68,102 +68,124 @@ class _OtpPageState extends State<OtpPage> {
     });
   }
 
-  void resendOTP() {
-    if (resendSeconds > 0) return;
+  void resendOTP() async {
+    if (resendSeconds > 0) {
+      debugPrint(
+        '🚫 [CUSTOMER OTP] Cannot resend - timer still active: $resendSeconds seconds remaining',
+      );
+      return;
+    }
+
+    debugPrint('🔄 [CUSTOMER OTP] Starting resend OTP process');
+    debugPrint('📱 [CUSTOMER OTP] Phone number: ${widget.phoneNumber}');
+    debugPrint('🔑 [CUSTOMER OTP] Current resend token: $_resendToken');
+    debugPrint('🆔 [CUSTOMER OTP] Current verification ID: $_verificationId');
 
     setState(() {
       isResendingOtp = true;
     });
+    debugPrint('⏳ [CUSTOMER OTP] Loading state set to TRUE');
 
-    // Safety timeout to reset loading state if callbacks don't fire
-    Future.delayed(const Duration(seconds: 30), () {
-      if (mounted && isResendingOtp) {
-        setState(() {
-          isResendingOtp = false;
-        });
+    try {
+      debugPrint('📞 [CUSTOMER OTP] Calling AuthServices().resendOTP...');
+      await AuthServices().resendOTP(
+        phoneNumber: widget.phoneNumber ?? '',
+        resendToken: _resendToken,
+        onCodeSent: (verificationId, {int? resendToken}) {
+          debugPrint('✅ [CUSTOMER OTP] onCodeSent callback triggered!');
+          debugPrint('🆔 [CUSTOMER OTP] New verification ID: $verificationId');
+          debugPrint('🔑 [CUSTOMER OTP] New resend token: $resendToken');
+
+          if (mounted) {
+            setState(() {
+              _verificationId = verificationId;
+              _resendToken = resendToken;
+            });
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.otpSent),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            );
+
+            startTimer();
+            debugPrint('⏱️ [CUSTOMER OTP] Timer restarted');
+          }
+        },
+        onError: (error) {
+          debugPrint('❌ [CUSTOMER OTP] onError callback triggered');
+          debugPrint('❌ [CUSTOMER OTP] Error code: ${error.code}');
+          debugPrint('❌ [CUSTOMER OTP] Error message: ${error.message}');
+
+          if (mounted) {
+            String errorMessage;
+            switch (error.code) {
+              case 'too-many-requests':
+                errorMessage =
+                    AppLocalizations.of(context)?.tooManyAttempts ??
+                    'Too many attempts. Please wait and try again.';
+                break;
+              case 'quota-exceeded':
+                errorMessage =
+                    AppLocalizations.of(context)?.quotaExceeded ??
+                    'SMS quota exceeded. Try again later.';
+                break;
+              case 'network-request-failed':
+                errorMessage =
+                    AppLocalizations.of(context)?.networkError ??
+                    'Network error. Please check your connection.';
+                break;
+              case 'session-expired':
+                errorMessage =
+                    AppLocalizations.of(context)?.otpExpired ??
+                    'OTP expired. Please request a new OTP.';
+                break;
+              case 'internal-error':
+                errorMessage =
+                    AppLocalizations.of(context)?.internalError ??
+                    'An internal error occurred. Please try again later.';
+                break;
+              default:
+                errorMessage = error.message ?? 'Failed to resend OTP';
+            }
+
+            debugPrint(
+              '📢 [CUSTOMER OTP] Showing error message: $errorMessage',
+            );
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(errorMessage),
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 3),
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            );
+          }
+        },
+      );
+      debugPrint(
+        '✅ [CUSTOMER OTP] AuthServices().resendOTP completed (await finished)',
+      );
+    } catch (e) {
+      debugPrint('💥 [CUSTOMER OTP] Exception caught in try-catch: $e');
+      debugPrint('💥 [CUSTOMER OTP] Exception type: ${e.runtimeType}');
+
+      // Catch any unexpected errors that weren't handled by onError callback
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Request timeout. Please try again.'),
-            backgroundColor: Colors.orange,
-            duration: Duration(seconds: 2),
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.all(16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
-      }
-    });
-
-    AuthServices().resendOTP(
-      phoneNumber: widget.phoneNumber ?? '',
-      resendToken: _resendToken,
-      onCodeSent: (verificationId, {int? resendToken}) {
-        if (!mounted) return;
-
-        setState(() {
-          isResendingOtp = false;
-          _verificationId = verificationId;
-          _resendToken = resendToken;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.otpSent),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.all(16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
-
-        startTimer();
-      },
-      onError: (error) {
-        if (!mounted) return;
-
-        setState(() {
-          isResendingOtp = false;
-        });
-
-        String errorMessage;
-        switch (error.code) {
-          case 'too-many-requests':
-            errorMessage =
-                AppLocalizations.of(context)?.tooManyAttempts ??
-                'Too many attempts. Please wait and try again.';
-            break;
-          case 'quota-exceeded':
-            errorMessage =
-                AppLocalizations.of(context)?.quotaExceeded ??
-                'SMS quota exceeded. Try again later.';
-            break;
-          case 'network-request-failed':
-            errorMessage =
-                AppLocalizations.of(context)?.networkError ??
-                'Network error. Please check your connection.';
-            break;
-          case 'session-expired':
-            errorMessage =
-                AppLocalizations.of(context)?.otpExpired ??
-                'OTP expired. Please request a new OTP.';
-            break;
-          case 'internal-error':
-            errorMessage =
-                AppLocalizations.of(context)?.internalError ??
-                'An internal error occurred. Please try again later.';
-            break;
-          default:
-            errorMessage = error.message ?? 'Failed to resend OTP';
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
+            content: Text('Failed to resend OTP. Please try again.'),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
@@ -173,8 +195,18 @@ class _OtpPageState extends State<OtpPage> {
             ),
           ),
         );
-      },
-    );
+      }
+    } finally {
+      debugPrint('🏁 [CUSTOMER OTP] Finally block executing');
+      // Always reset the loading state, regardless of success or failure
+      if (mounted) {
+        setState(() {
+          isResendingOtp = false;
+        });
+        debugPrint('⏳ [CUSTOMER OTP] Loading state set to FALSE');
+      }
+      debugPrint('🏁 [CUSTOMER OTP] Resend OTP process complete');
+    }
   }
 
   Future<void> migrateUserData(

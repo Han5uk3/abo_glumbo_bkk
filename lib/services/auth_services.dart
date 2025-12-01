@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -67,64 +68,122 @@ class AuthServices {
     required Function(FirebaseAuthException e) onError,
     int? forceResendingToken,
   }) async {
+    debugPrint('🟢 [CUSTOMER AUTH] sendOTP method called');
+    debugPrint('📱 [CUSTOMER AUTH] Phone number: $phoneNumber');
+
     String sanitizedPhoneNumber = _formatToE164(
       _sanitizePhoneNumber(phoneNumber),
     );
-    try {
-      AuthServices.phoneNumber = sanitizedPhoneNumber;
-      _verificationId = null;
+    debugPrint('🔢 [CUSTOMER AUTH] Sanitized number: $sanitizedPhoneNumber');
+    debugPrint(
+      '📱 [CUSTOMER AUTH] Platform: ${Platform.isIOS ? "iOS" : "Android"}',
+    );
 
+    AuthServices.phoneNumber = sanitizedPhoneNumber;
+    _verificationId = null;
+
+    // Create a Completer to wait for the Firebase callbacks
+    final completer = Completer<void>();
+
+    try {
       // iOS specific configuration for reCAPTCHA
       if (Platform.isIOS) {
+        debugPrint(
+          '🍎 [CUSTOMER AUTH] iOS detected - configuring Firebase Auth settings',
+        );
         await FirebaseAuth.instance.setSettings(
           appVerificationDisabledForTesting: false,
           userAccessGroup: null,
         );
+        debugPrint('🍎 [CUSTOMER AUTH] iOS Firebase Auth settings configured');
       }
 
+      debugPrint('📞 [CUSTOMER AUTH] Calling Firebase verifyPhoneNumber...');
       await _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: forceResendingToken,
         timeout: const Duration(seconds: 120), // Maximum supported by Firebase
         verificationCompleted: (PhoneAuthCredential credential) async {
+          debugPrint(
+            '✅ [CUSTOMER AUTH] verificationCompleted callback triggered',
+          );
+          debugPrint('🔐 [CUSTOMER AUTH] Auto-signing in with credential...');
           // Auto-retrieval or instant verification
           try {
             AuthServices.phoneNumber = sanitizedPhoneNumber;
             await _auth.signInWithCredential(credential);
+            debugPrint('✅ [CUSTOMER AUTH] Auto sign-in successful');
+            if (!completer.isCompleted) {
+              completer.complete();
+            }
           } catch (e) {
-            debugPrint("Auto verification failed: $e");
+            debugPrint("❌ [CUSTOMER AUTH] Auto verification failed: $e");
+            if (!completer.isCompleted) {
+              completer.completeError(e);
+            }
           }
         },
         verificationFailed: (FirebaseAuthException e) {
-          debugPrint(
-            "Firebase Auth verification failed: ${e.code} - ${e.message}",
-          );
+          debugPrint('❌ [CUSTOMER AUTH] verificationFailed callback triggered');
+          debugPrint('❌ [CUSTOMER AUTH] Error code: ${e.code}');
+          debugPrint('❌ [CUSTOMER AUTH] Error message: ${e.message}');
 
           // Handle reCAPTCHA specific errors more gracefully
           if (e.code == 'recaptcha-sdk-not-linked') {
             debugPrint(
-              "reCAPTCHA SDK not linked - continuing without reCAPTCHA validation",
+              "⚠️ [CUSTOMER AUTH] reCAPTCHA SDK not linked - continuing without reCAPTCHA validation",
             );
             // For testing purposes, you might want to continue without reCAPTCHA
             // In production, ensure reCAPTCHA Enterprise is properly configured
             return;
           }
 
+          debugPrint('❌ [CUSTOMER AUTH] Calling onError callback');
           onError(e);
+
+          if (!completer.isCompleted) {
+            debugPrint('❌ [CUSTOMER AUTH] Completing with error');
+            completer.completeError(e);
+          }
         },
         codeSent: (String verificationId, int? resendToken) {
-          debugPrint(
-            "OTP code sent successfully. Verification ID: $verificationId",
-          );
+          debugPrint('✅ [CUSTOMER AUTH] codeSent callback triggered');
+          debugPrint('🆔 [CUSTOMER AUTH] Verification ID: $verificationId');
+          debugPrint('🔑 [CUSTOMER AUTH] ResendToken: $resendToken');
+
+          debugPrint('📞 [CUSTOMER AUTH] Calling onCodeSent callback');
           onCodeSent(verificationId, resendToken: resendToken);
+          debugPrint('✅ [CUSTOMER AUTH] onCodeSent callback completed');
+
+          if (!completer.isCompleted) {
+            debugPrint('✅ [CUSTOMER AUTH] Completing successfully');
+            completer.complete();
+          }
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           debugPrint(
-            "Auto retrieval timeout for verification ID: $verificationId",
+            '⏰ [CUSTOMER AUTH] codeAutoRetrievalTimeout callback triggered',
           );
+          debugPrint(
+            '🆔 [CUSTOMER AUTH] Timeout verification ID: $verificationId',
+          );
+          // Don't complete here - this is just a timeout for auto-retrieval, not the whole process
         },
       );
+      debugPrint(
+        '✅ [CUSTOMER AUTH] verifyPhoneNumber call completed (setup done, waiting for callbacks)',
+      );
+
+      // Wait for the completer to be completed by one of the callbacks
+      debugPrint(
+        '⏳ [CUSTOMER AUTH] Waiting for Firebase callbacks to complete...',
+      );
+      await completer.future;
+      debugPrint('✅ [CUSTOMER AUTH] Firebase callbacks completed');
     } catch (e) {
+      debugPrint('💥 [CUSTOMER AUTH] Exception caught in sendOTP: $e');
+      debugPrint('💥 [CUSTOMER AUTH] Exception type: ${e.runtimeType}');
+
       if (e is FirebaseAuthException) {
         log("Firebase Auth error: ${e.code} - ${e.message}");
         debugPrint("Firebase Auth error: ${e.code} - ${e.message}");
@@ -138,11 +197,23 @@ class AuthServices {
           // You can choose to continue or show a specific error message
         }
 
+        debugPrint(
+          '❌ [CUSTOMER AUTH] Calling onError callback from catch block',
+        );
         onError(e);
       } else {
+        debugPrint(
+          '❌ [CUSTOMER AUTH] Unknown error - wrapping in FirebaseAuthException',
+        );
         onError(FirebaseAuthException(code: 'unknown', message: e.toString()));
       }
+
+      if (!completer.isCompleted) {
+        completer.completeError(e);
+      }
+      rethrow;
     }
+    debugPrint('🏁 [CUSTOMER AUTH] sendOTP method complete');
   }
 
   Future<void> resendOTP({
@@ -150,77 +221,139 @@ class AuthServices {
     required int? resendToken,
     required Function(String verificationId, {int? resendToken}) onCodeSent,
     required Function(FirebaseAuthException e) onError,
+    Function(String verificationId)? onAutoRetrievalTimeout,
   }) async {
+    debugPrint('🔵 [CUSTOMER AUTH] resendOTP method called');
+    debugPrint('📱 [CUSTOMER AUTH] Phone number: $phoneNumber');
+    debugPrint('🔑 [CUSTOMER AUTH] Resend token: $resendToken');
+
     String sanitizedPhoneNumber = _formatToE164(
       _sanitizePhoneNumber(phoneNumber),
     );
+    debugPrint(
+      '🔢 [CUSTOMER AUTH] Sanitized phone number: $sanitizedPhoneNumber',
+    );
 
-    String? tempVerificationId;
+    // Create a Completer to wait for the Firebase callbacks
+    final completer = Completer<void>();
 
     try {
       // iOS specific configuration for reCAPTCHA
       if (Platform.isIOS) {
+        debugPrint(
+          '🍎 [CUSTOMER AUTH] iOS detected - configuring Firebase Auth settings',
+        );
         await FirebaseAuth.instance.setSettings(
           appVerificationDisabledForTesting: false,
           userAccessGroup: null,
         );
+        debugPrint('🍎 [CUSTOMER AUTH] iOS Firebase Auth settings configured');
       }
 
+      debugPrint('📞 [CUSTOMER AUTH] Calling Firebase verifyPhoneNumber...');
       await _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: resendToken,
         timeout: const Duration(seconds: 120), // Maximum supported by Firebase
         verificationCompleted: (PhoneAuthCredential credential) async {
+          debugPrint(
+            '✅ [CUSTOMER AUTH] verificationCompleted callback triggered',
+          );
+          debugPrint('🔐 [CUSTOMER AUTH] Auto-signing in with credential...');
           try {
             debugPrint("Auto-verification completed during resend OTP");
             await _auth.signInWithCredential(credential);
-            // Use the stored verification ID from codeSent or codeAutoRetrievalTimeout
-            // If we have it, call onCodeSent to reset loading state
-            if (tempVerificationId != null) {
-              _verificationId = tempVerificationId;
-              onCodeSent(tempVerificationId!, resendToken: resendToken);
+            debugPrint('✅ [CUSTOMER AUTH] Auto sign-in successful');
+            if (!completer.isCompleted) {
+              completer.complete();
             }
           } catch (e) {
-            debugPrint("Auto verification failed during resend: $e");
-            if (e is FirebaseAuthException) {
-              onError(e);
-            } else {
-              onError(
-                FirebaseAuthException(code: 'unknown', message: e.toString()),
-              );
+            debugPrint(
+              "❌ [CUSTOMER AUTH] Auto verification failed during resend: $e",
+            );
+            if (!completer.isCompleted) {
+              completer.completeError(e);
             }
           }
         },
         verificationFailed: (FirebaseAuthException e) {
-          debugPrint(
-            "Firebase Auth resend verification failed: ${e.code} - ${e.message}",
-          );
+          debugPrint('❌ [CUSTOMER AUTH] verificationFailed callback triggered');
+          debugPrint('❌ [CUSTOMER AUTH] Error code: ${e.code}');
+          debugPrint('❌ [CUSTOMER AUTH] Error message: ${e.message}');
+
+          debugPrint('❌ [CUSTOMER AUTH] Calling onError callback');
           onError(e);
+
+          if (!completer.isCompleted) {
+            debugPrint('❌ [CUSTOMER AUTH] Completing with error');
+            completer.completeError(e);
+          }
         },
         codeSent: (String verificationId, int? token) {
-          debugPrint(
-            "Resend OTP code sent successfully. Verification ID: $verificationId",
-          );
-          tempVerificationId = verificationId;
+          debugPrint('✅ [CUSTOMER AUTH] codeSent callback triggered');
+          debugPrint('🆔 [CUSTOMER AUTH] Verification ID: $verificationId');
+          debugPrint('🔑 [CUSTOMER AUTH] New resend token: $token');
+
           _verificationId = verificationId;
+          debugPrint('📞 [CUSTOMER AUTH] Calling onCodeSent callback');
           onCodeSent(verificationId, resendToken: token);
+          debugPrint('✅ [CUSTOMER AUTH] onCodeSent callback completed');
+
+          if (!completer.isCompleted) {
+            debugPrint('✅ [CUSTOMER AUTH] Completing successfully');
+            completer.complete();
+          }
         },
         codeAutoRetrievalTimeout: (String verificationId) {
-          tempVerificationId = verificationId;
-          _verificationId = verificationId;
           debugPrint(
-            "Resend auto retrieval timeout for verification ID: $verificationId",
+            '⏰ [CUSTOMER AUTH] codeAutoRetrievalTimeout callback triggered',
           );
+          debugPrint(
+            '🆔 [CUSTOMER AUTH] Timeout verification ID: $verificationId',
+          );
+
+          _verificationId = verificationId;
+          if (onAutoRetrievalTimeout != null) {
+            debugPrint(
+              '📞 [CUSTOMER AUTH] Calling onAutoRetrievalTimeout callback',
+            );
+            onAutoRetrievalTimeout(verificationId);
+          }
+          // Don't complete here - this is just a timeout for auto-retrieval, not the whole process
         },
       );
+      debugPrint(
+        '✅ [CUSTOMER AUTH] verifyPhoneNumber call completed (setup done, waiting for callbacks)',
+      );
+
+      // Wait for the completer to be completed by one of the callbacks
+      debugPrint(
+        '⏳ [CUSTOMER AUTH] Waiting for Firebase callbacks to complete...',
+      );
+      await completer.future;
+      debugPrint('✅ [CUSTOMER AUTH] Firebase callbacks completed');
     } catch (e) {
-      debugPrint("Error resending OTP: $e");
+      debugPrint('💥 [CUSTOMER AUTH] Exception caught in resendOTP: $e');
+      debugPrint('💥 [CUSTOMER AUTH] Exception type: ${e.runtimeType}');
+
       if (e is FirebaseAuthException) {
+        debugPrint(
+          '❌ [CUSTOMER AUTH] Calling onError callback from catch block',
+        );
         onError(e);
       } else {
+        debugPrint(
+          '❌ [CUSTOMER AUTH] Unknown error - wrapping in FirebaseAuthException',
+        );
         onError(FirebaseAuthException(code: 'unknown', message: e.toString()));
       }
+
+      if (!completer.isCompleted) {
+        completer.completeError(e);
+      }
+      rethrow;
     }
+    debugPrint('🏁 [CUSTOMER AUTH] resendOTP method complete');
   }
 
   Future<UserCredential> verifyOTP(
