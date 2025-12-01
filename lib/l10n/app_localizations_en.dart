@@ -1869,6 +1869,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get waitingForAcceptance => 'Waiting for Acceptance';
 
   @override
+  String get waitingForAdmin => 'Waiting for Admin';
+
+  @override
+  String get waitingForAdminToReassign =>
+      'Waiting for admin to reassign technician';
+
+  @override
   String get introduction => 'Introduction';
 
   @override

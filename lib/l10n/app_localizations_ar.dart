@@ -1839,6 +1839,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get waitingForAcceptance => 'في انتظار القبول';
 
   @override
+  String get waitingForAdmin => 'في انتظار المسؤول';
+
+  @override
+  String get waitingForAdminToReassign =>
+      'في انتظار المسؤول لإعادة تعيين الفني';
+
+  @override
   String get introduction => 'مقدمة';
 
   @override

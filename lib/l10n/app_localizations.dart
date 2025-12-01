@@ -3644,6 +3644,18 @@ abstract class AppLocalizations {
   /// **'Waiting for Acceptance'**
   String get waitingForAcceptance;
 
+  /// No description provided for @waitingForAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Admin'**
+  String get waitingForAdmin;
+
+  /// No description provided for @waitingForAdminToReassign.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for admin to reassign technician'**
+  String get waitingForAdminToReassign;
+
   /// No description provided for @introduction.
   ///
   /// In en, this message translates to:

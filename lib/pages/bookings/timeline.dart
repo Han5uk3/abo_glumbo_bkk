@@ -272,7 +272,10 @@ Widget buildBookingTimelineCard(
           });
         } else if (booking.paymentCompleted == false &&
             (booking.bookingStatusCode != 'P' &&
-                booking.bookingStatusCode != "A")) {
+                booking.bookingStatusCode != "A") &&
+            // Don't show payment pending for rejected or cancelled bookings
+            booking.bookingStatusCode.toLowerCase() != 'r' &&
+            booking.bookingStatusCode.toLowerCase() != 'xc') {
           timelineItems.add({
             'title': AppLocalizations.of(context)!.paymentPending,
             'time': AppLocalizations.of(context)!.pending,
@@ -338,82 +341,112 @@ Widget buildBookingTimelineCard(
         (a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime),
       );
 
-      // Add current/pending status
-      bool isInProgress =
-          booking.trackingStartedAt != null &&
-          booking.trackingStoppedAt == null;
+      // Check if the last entry is a rejection (admin rejected or customer cancelled)
+      // If so, don't add any more entries
+      bool hasRejectionOrCancellation =
+          timelineItems.isNotEmpty &&
+          timelineItems.last['status'] == 'rejected';
 
-      if (isWarranty) {
-        if (booking.warranty?.completedAt == null &&
-            booking.warranty?.rejectedAt == null &&
-            booking.warranty!.warrantyStatusCode.toUpperCase() != 'A') {
-          if (isInProgress) {
-            timelineItems.add({
-              'title': AppLocalizations.of(context)!.serviceInProgress,
-              'time': AppLocalizations.of(context)!.current,
-              'description': AppLocalizations.of(
-                context,
-              )!.serviceIsCurrentlyBeingPerformed,
-              'status': 'current',
-              'date': DateTime.now(),
-            });
-          } else if (booking.warranty?.acceptedAt != null) {
-            timelineItems.add({
-              'title': AppLocalizations.of(context)!.waitingForServiceProvider,
-              'time': AppLocalizations.of(context)!.pending,
-              'description': AppLocalizations.of(
-                context,
-              )!.waitingForTechnicianToStartService,
-              'status': 'current',
-              'date': DateTime.now(),
-            });
-          } else {
-            timelineItems.add({
-              'title': AppLocalizations.of(context)!.waitingForServiceProvider,
-              'time': AppLocalizations.of(context)!.pending,
-              'description': AppLocalizations.of(
-                context,
-              )!.waitingForServiceProviderResponse,
-              'status': 'current',
-              'date': DateTime.now(),
-            });
+      // Add current/pending status only if there's no rejection/cancellation
+      if (!hasRejectionOrCancellation) {
+        bool isInProgress =
+            booking.trackingStartedAt != null &&
+            booking.trackingStoppedAt == null;
+
+        if (isWarranty) {
+          if (booking.warranty?.completedAt == null &&
+              booking.warranty?.rejectedAt == null &&
+              booking.warranty!.warrantyStatusCode.toUpperCase() != 'A') {
+            // Check if there are rejected technicians
+            bool hasTechnicianRejection =
+                booking.warranty?.rejectedTechnicians != null &&
+                booking.warranty!.rejectedTechnicians!.isNotEmpty;
+
+            if (isInProgress) {
+              timelineItems.add({
+                'title': AppLocalizations.of(context)!.serviceInProgress,
+                'time': AppLocalizations.of(context)!.current,
+                'description': AppLocalizations.of(
+                  context,
+                )!.serviceIsCurrentlyBeingPerformed,
+                'status': 'current',
+                'date': DateTime.now(),
+              });
+            } else if (booking.warranty?.acceptedAt != null) {
+              timelineItems.add({
+                'title': AppLocalizations.of(
+                  context,
+                )!.waitingForServiceProvider,
+                'time': AppLocalizations.of(context)!.pending,
+                'description': AppLocalizations.of(
+                  context,
+                )!.waitingForTechnicianToStartService,
+                'status': 'current',
+                'date': DateTime.now(),
+              });
+            } else if (hasTechnicianRejection) {
+              // If technician rejected, show "Waiting for Admin" instead
+              timelineItems.add({
+                'title': AppLocalizations.of(context)!.waitingForAdmin,
+                'time': AppLocalizations.of(context)!.pending,
+                'description': AppLocalizations.of(
+                  context,
+                )!.waitingForAdminToReassign,
+                'status': 'current',
+                'date': DateTime.now(),
+              });
+            } else {
+              timelineItems.add({
+                'title': AppLocalizations.of(
+                  context,
+                )!.waitingForServiceProvider,
+                'time': AppLocalizations.of(context)!.pending,
+                'description': AppLocalizations.of(
+                  context,
+                )!.waitingForServiceProviderResponse,
+                'status': 'current',
+                'date': DateTime.now(),
+              });
+            }
           }
-        }
-      } else {
-        if (booking.completedAt == null &&
-            booking.rejectedAt == null &&
-            booking.bookingStatusCode.toLowerCase() != 'xc' &&
-            booking.bookingStatusCode.toLowerCase() != 'r') {
-          if (isInProgress) {
-            timelineItems.add({
-              'title': AppLocalizations.of(context)!.serviceInProgress,
-              'time': AppLocalizations.of(context)!.current,
-              'description': AppLocalizations.of(
-                context,
-              )!.serviceIsCurrentlyBeingPerformed,
-              'status': 'current',
-              'date': DateTime.now(),
-            });
-          } else if (booking.acceptedAt != null) {
-            timelineItems.add({
-              'title': AppLocalizations.of(context)!.waitingForServiceProvider,
-              'time': AppLocalizations.of(context)!.pending,
-              'description': AppLocalizations.of(
-                context,
-              )!.waitingForTechnicianToStartService,
-              'status': 'current',
-              'date': DateTime.now(),
-            });
-          } else {
-            timelineItems.add({
-              'title': AppLocalizations.of(context)!.waitingForAcceptance,
-              'time': AppLocalizations.of(context)!.pending,
-              'description': AppLocalizations.of(
-                context,
-              )!.waitingForServiceProviderResponse,
-              'status': 'current',
-              'date': DateTime.now(),
-            });
+        } else {
+          if (booking.completedAt == null &&
+              booking.rejectedAt == null &&
+              booking.bookingStatusCode.toLowerCase() != 'xc' &&
+              booking.bookingStatusCode.toLowerCase() != 'r') {
+            if (isInProgress) {
+              timelineItems.add({
+                'title': AppLocalizations.of(context)!.serviceInProgress,
+                'time': AppLocalizations.of(context)!.current,
+                'description': AppLocalizations.of(
+                  context,
+                )!.serviceIsCurrentlyBeingPerformed,
+                'status': 'current',
+                'date': DateTime.now(),
+              });
+            } else if (booking.acceptedAt != null) {
+              timelineItems.add({
+                'title': AppLocalizations.of(
+                  context,
+                )!.waitingForServiceProvider,
+                'time': AppLocalizations.of(context)!.pending,
+                'description': AppLocalizations.of(
+                  context,
+                )!.waitingForTechnicianToStartService,
+                'status': 'current',
+                'date': DateTime.now(),
+              });
+            } else {
+              timelineItems.add({
+                'title': AppLocalizations.of(context)!.waitingForAcceptance,
+                'time': AppLocalizations.of(context)!.pending,
+                'description': AppLocalizations.of(
+                  context,
+                )!.waitingForServiceProviderResponse,
+                'status': 'current',
+                'date': DateTime.now(),
+              });
+            }
           }
         }
       }

@@ -603,6 +603,8 @@
   "waitingForTechnicianToStartService": "في انتظار الفني لبدء الخدمة",
   "waitingForServiceProviderResponse": "في انتظار رد مقدم الخدمة",
   "waitingForAcceptance": "في انتظار القبول",
+  "waitingForAdmin": "في انتظار المسؤول",
+  "waitingForAdminToReassign": "في انتظار المسؤول لإعادة تعيين الفني",
   "introduction": "مقدمة",
   "privacyPolicy": "سياسة الخصوصية",
   "termsOfUse": "شروط الاستخدام",

@@ -609,6 +609,8 @@
   "waitingForTechnicianToStartService": "Waiting for technician to start service",
   "waitingForServiceProviderResponse": "Waiting for service provider response",
   "waitingForAcceptance": "Waiting for Acceptance",
+  "waitingForAdmin": "Waiting for Admin",
+  "waitingForAdminToReassign": "Waiting for admin to reassign technician",
   "introduction": "Introduction",
   "privacyPolicy": "Privacy Policy",
   "termsOfUse": "Terms of Use",
