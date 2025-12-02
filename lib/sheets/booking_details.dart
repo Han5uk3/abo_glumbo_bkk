@@ -1162,7 +1162,9 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                 ),
               ),
               if ((hasChat && booking.bookingStatusCode == 'A') ||
-                  (hasChat && booking.warranty?.warrantyStatusCode == 'S')) ...{
+                  (hasChat &&
+                      booking.warranty?.warrantyStatusCode == 'S' &&
+                      isWarranty)) ...{
                 const Spacer(),
 
                 StreamBuilder<int>(
