@@ -948,7 +948,7 @@ class ServiceBookingTile extends StatelessWidget {
                                           'warranty.warrantyStatusCode': 'R',
                                           'warranty.updatedAt': Timestamp.now(),
                                           'warranty.claimrequested': true,
-                                          ' warranty.requestedOn':
+                                          'warranty.requestedOn':
                                               Timestamp.now(),
                                           'warranty.assignedTechnicianId':
                                               booking.agent!.uid,
