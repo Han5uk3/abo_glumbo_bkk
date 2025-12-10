@@ -13,7 +13,7 @@ import 'package:abo_glumbo_bbk/pages/accounts/widgets/account_list_tile.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/contact_bottom_sheet.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/faq_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/language_dialog.dart';
-import 'package:abo_glumbo_bbk/pages/accounts/wishlist.dart';
+// import 'package:abo_glumbo_bbk/pages/accounts/wishlist.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/biometric_service.dart';
@@ -101,13 +101,9 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           if (!_isGuest) ...[_buildAccountSection()],
           _buildGeneralSettings(),
           _buildSupportSection(),
-          if (!_isGuest) ...[
-            _buildTermsAndConditions(),
-            _buildPrivacyPolicy(),
-            _buildFAQSection(),
-            _buildAuthSection(),
-            _buildDangerZone(),
-          ],
+          if (!_isGuest) ...[_buildTermsAndConditions(), _buildPrivacyPolicy()],
+          _buildFAQSection(),
+          if (!_isGuest) ...[_buildAuthSection(), _buildDangerZone()],
           if (_isGuest) _buildAuthSection(),
         ],
       ),
@@ -221,10 +217,10 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           onTap: _handleProfileManagement,
         ),
 
-        AccountListTile.withArrow(
-          title: AppLocalizations.of(context)?.wishlist ?? '',
-          onTap: _handleWishlist,
-        ),
+        // AccountListTile.withArrow(
+        //   title: AppLocalizations.of(context)?.wishlist ?? '',
+        //   onTap: _handleWishlist,
+        // ),
         AccountListTile.withArrow(
           title: AppLocalizations.of(context)?.notifications ?? '',
           onTap: _handleNotifications,
@@ -329,12 +325,12 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
     Navigator.push(context, MaterialPageRoute(builder: (context) => FAQPage()));
   }
 
-  void _handleWishlist() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const WishListPage()),
-    );
-  }
+  // void _handleWishlist() {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => const WishListPage()),
+  //   );
+  // }
 
   void _handleNotifications() {
     Navigator.push(

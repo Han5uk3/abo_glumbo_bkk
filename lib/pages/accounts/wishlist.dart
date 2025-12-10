@@ -5,7 +5,7 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
-import 'package:abo_glumbo_bbk/sheets/sign_up_alert.dart';
+// import 'package:abo_glumbo_bbk/sheets/sign_up_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -104,15 +104,15 @@ class _WishListPageState extends State<WishListPage> {
                       key: ValueKey('wishlist_service_tile_${service.id}'),
                       service: service,
                       isGuestUser: LocalStoreHelper.getGuestUser(),
-                      onFavPressed: () {
-                        if (LocalStoreHelper.getGuestUser()) {
-                          SignUpAlertForGuestUsers().showSignUpAlert(context);
-                        } else {
-                          context.read<AccountBloc>().add(
-                            ToggleFavoriteService(service: service),
-                          );
-                        }
-                      },
+                      // onFavPressed: () {
+                      //   if (LocalStoreHelper.getGuestUser()) {
+                      //     SignUpAlertForGuestUsers().showSignUpAlert(context);
+                      //   } else {
+                      //     context.read<AccountBloc>().add(
+                      //       ToggleFavoriteService(service: service),
+                      //     );
+                    //  }
+                      // },
                     );
                   },
                 );

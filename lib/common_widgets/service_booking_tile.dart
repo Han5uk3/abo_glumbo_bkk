@@ -485,7 +485,17 @@ class ServiceBookingTile extends StatelessWidget {
   }
 
   Widget _timestampText(String text) {
-    return Text(text, style: TextStyle(color: AppColors.grey3, fontSize: 10.5));
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.access_time, size: 10, color: AppColors.secondary),
+        Text(
+          text,
+          style: TextStyle(color: AppColors.secondary, fontSize: 10.5),
+        ),
+      ],
+    );
   }
 
   Widget _buildBookingActionButtons(BuildContext context) {

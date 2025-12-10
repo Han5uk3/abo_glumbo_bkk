@@ -12,8 +12,8 @@ import 'package:abo_glumbo_bbk/models/highlighted_services.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/notification.dart';
 import 'package:abo_glumbo_bbk/pages/home/active_bookings/active_bookings.dart';
 import 'package:abo_glumbo_bbk/pages/home/bloc/home_bloc.dart';
-import 'package:abo_glumbo_bbk/pages/home/search/search_page.dart';
-import 'package:abo_glumbo_bbk/pages/home/widgets/location_showing_widget.dart';
+// import 'package:abo_glumbo_bbk/pages/home/search/search_page.dart';
+// import 'package:abo_glumbo_bbk/pages/home/widgets/location_showing_widget.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               left: 16,
               child: Row(
                 children: [
-                  const LocationShowingWidget(),
+                  // const LocationShowingWidget(),
                   Spacer(),
                   UnreadNotificationBadge(
                     onTap: () => Navigator.of(context).push(
@@ -175,33 +175,31 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               left: 0,
               child: HomeCarouselWidget(banners: primaryBanners),
             ),
-
-          Positioned(bottom: 15, right: 16, left: 16, child: _buildSearchBar()),
         ],
       ),
     );
   }
 
-  Widget _buildSearchBar() {
-    return Column(
-      children: [
-        SearchBar(
-          hintText: AppLocalizations.of(context)?.searchForAService ?? '',
-          onTap: () {
-            FocusScope.of(context).unfocus();
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SearchPage()),
-            );
-          },
-          onSubmitted: (value) {
-            FocusScope.of(context).unfocus();
-          },
-          leading: const Icon(Icons.search, color: Colors.black45),
-        ),
-      ],
-    );
-  }
+  // Widget _buildSearchBar() {
+  //   return Column(
+  //     children: [
+  //       SearchBar(
+  //         hintText: AppLocalizations.of(context)?.searchForAService ?? '',
+  //         onTap: () {
+  //           FocusScope.of(context).unfocus();
+  //           Navigator.push(
+  //             context,
+  //             MaterialPageRoute(builder: (context) => SearchPage()),
+  //           );
+  //         },
+  //         onSubmitted: (value) {
+  //           FocusScope.of(context).unfocus();
+  //         },
+  //         leading: const Icon(Icons.search, color: Colors.black45),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildCategoriesHeader() {
     return Padding(
@@ -209,13 +207,28 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-            AppLocalizations.of(context)!.categories,
-            style: DMSansFont.textStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
+          Column(
+            children: [
+              Text(
+                AppLocalizations.of(context)!.categories,
+                style: DMSansFont.textStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              Flexible(
+                child: Text(
+                  maxLines: 2,
+                  AppLocalizations.of(context)!.categoriesDescription,
+                  style: DMSansFont.textStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

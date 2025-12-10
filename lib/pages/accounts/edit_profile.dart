@@ -33,6 +33,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool isPageLoading = true;
 
   bool isPhoneNumberUpdated = false;
+  bool _isUpdatingPhone = false;
   int? _resendToken;
 
   final _formKey = GlobalKey<FormState>();
@@ -201,6 +202,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _updatePhoneNumber() async {
+    // Prevent multiple clicks
+    if (_isUpdatingPhone) return;
+
     if (!_isValidPhoneNumber(phoneController.text)) {
       _showSnackBar(
         AppLocalizations.of(context)?.pleaseEnterAValidPhoneNumber ??
@@ -210,16 +214,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
 
-    bool isNumberAlreadyExists =
-        await AppServices.checkCustomerPhoneNumberAlredyExist(
-          phoneController.text,
-        );
-
     if (phoneController.text != widget.customer.phone) {
-      if (mounted) setState(() => isLoading = true);
+      if (mounted) {
+        setState(() {
+          isLoading = true;
+          _isUpdatingPhone = true;
+        });
+      }
+
+      bool isNumberAlreadyExists =
+          await AppServices.checkCustomerPhoneNumberAlredyExist(
+            phoneController.text,
+            excludeUid: widget.customer.uid,
+          );
 
       if (isNumberAlreadyExists) {
-        if (mounted) setState(() => isLoading = false);
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+            _isUpdatingPhone = false;
+          });
+        }
         _showSnackBar(
           AppLocalizations.of(context)?.phoneNumberAlreadyExists ?? '',
           backgroundColor: AppColors.yellow,
@@ -240,6 +255,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               setState(() {
                 _resendToken = resendToken;
                 isLoading = false;
+                _isUpdatingPhone = false;
               });
             }
             showSnackBar(
@@ -259,7 +275,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
             );
           },
           onError: (FirebaseAuthException e) {
-            if (mounted) setState(() => isLoading = false);
+            if (mounted) {
+              setState(() {
+                isLoading = false;
+                _isUpdatingPhone = false;
+              });
+            }
             String errorMessage;
             switch (e.code) {
               case 'too-many-requests':
@@ -285,7 +306,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
         );
       }
     } else {
-      if (mounted) setState(() => isLoading = false);
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          _isUpdatingPhone = false;
+        });
+      }
       _showSnackBar(
         AppLocalizations.of(context)?.phoneNumberAlreadyUpdated ?? '',
         backgroundColor: AppColors.yellow,
@@ -382,10 +408,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
                         LengthLimitingTextInputFormatter(10),
                       ],
-                      suffixIcon: TextButton(
-                        onPressed: _updatePhoneNumber,
-                        child: Text(locale?.update ?? 'Update'),
-                      ),
+                      suffixIcon: _isUpdatingPhone
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            )
+                          : TextButton(
+                              onPressed: _isUpdatingPhone
+                                  ? null
+                                  : _updatePhoneNumber,
+                              child: Text(locale?.update ?? 'Update'),
+                            ),
                       textInputAction: TextInputAction.next,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -395,8 +434,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       },
                     ),
                     Text(
-                      AppLocalizations.of(context)
-                              ?.phoneNumberUpdateInfo ??
+                      AppLocalizations.of(context)?.phoneNumberUpdateInfo ??
                           'To update phone number, please click the "Update" button.',
                       style: DMSansFont.textStyle(
                         fontSize: 12,
@@ -418,6 +456,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                     // ✅ Province Dropdown
                     _buildDropdownField<Region>(
+                      hint: AppLocalizations.of(
+                        context,
+                      )!.typeProvinceNameToSearch,
                       label: '${locale?.province ?? 'Region'} *',
                       value: selectedRegion,
                       items: regions,
@@ -443,6 +484,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                       // ✅ City Dropdown
                       _buildDropdownField<City>(
+                        hint: AppLocalizations.of(
+                          context,
+                        )!.typeCityNameToSearch,
                         label: '${locale?.city ?? 'City'} *',
                         value: selectedCity,
                         items: selectedRegion!.cities,
@@ -468,6 +512,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                       // ✅ District Dropdown
                       _buildDropdownField<District>(
+                        hint: AppLocalizations.of(
+                          context,
+                        )!.typeNeighborhoodNameToSearch,
                         label: '${locale?.neighbourhood ?? 'District'} *',
                         value: selectedDistrict,
                         items: selectedCity!.districts,
@@ -528,6 +575,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   // ✅ Dropdown builder
   Widget _buildDropdownField<T extends Object>({
+    required String hint,
     required String label,
     required T? value,
     required List<T> items,
@@ -536,6 +584,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     String? Function(T?)? validator,
   }) {
     return SearchableDropdown<T>(
+      hintText: hint,
       label: label,
       value: value,
       items: items,

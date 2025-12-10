@@ -83,6 +83,25 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
+  // Helper methods to get localized names
+  String _getRegionName(Region region) {
+    final locale = AppLocalizations.of(context)!;
+    final isArabic = locale.localeName == 'ar';
+    return region.getName(isArabic);
+  }
+
+  String _getCityName(City city) {
+    final locale = AppLocalizations.of(context);
+    final isArabic = locale?.localeName == 'ar';
+    return city.getName(isArabic);
+  }
+
+  String _getDistrictName(District district) {
+    final locale = AppLocalizations.of(context);
+    final isArabic = locale?.localeName == 'ar';
+    return district.getName(isArabic);
+  }
+
   Future<void> signup() async {
     if (!_formkey.currentState!.validate()) return;
 
@@ -310,7 +329,6 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     final safePadding = MediaQuery.of(context).padding;
     final locale = AppLocalizations.of(context);
-    final isArabic = locale?.localeName == 'ar';
 
     return Scaffold(
       appBar: AppBar(
@@ -412,7 +430,9 @@ class _SignupPageState extends State<SignupPage> {
               label: '${locale?.province ?? 'Region'} *',
               value: selectedRegion,
               items: regions,
-              itemLabel: (region) => region.getName(isArabic),
+              hint: locale
+                      !.typeProvinceNameToSearch ,
+              itemLabel: _getRegionName,
               onChanged: (region) {
                 setState(() {
                   selectedRegion = region;
@@ -422,8 +442,7 @@ class _SignupPageState extends State<SignupPage> {
               },
               validator: (value) {
                 if (value == null) {
-                  return locale?.pleaseSelectProvince ??
-                      'Please select a region';
+                  return locale.pleaseSelectProvince ;
                 }
                 return null;
               },
@@ -434,10 +453,12 @@ class _SignupPageState extends State<SignupPage> {
 
               // ✅ City Dropdown
               _buildDropdownField<City>(
-                label: '${locale?.city ?? 'City'} *',
+                label: '${locale.city} *',
                 value: selectedCity,
                 items: selectedRegion!.cities,
-                itemLabel: (city) => city.getName(isArabic),
+                 hint: locale
+                      .typeCityNameToSearch ,
+                itemLabel: _getCityName,
                 onChanged: (city) {
                   setState(() {
                     selectedCity = city;
@@ -446,7 +467,7 @@ class _SignupPageState extends State<SignupPage> {
                 },
                 validator: (value) {
                   if (value == null) {
-                    return locale?.pleaseSelectCity ?? 'Please select a city';
+                    return locale.pleaseSelectCity;
                   }
                   return null;
                 },
@@ -458,10 +479,12 @@ class _SignupPageState extends State<SignupPage> {
 
               // ✅ District Dropdown
               _buildDropdownField<District>(
-                label: '${locale?.neighbourhood ?? 'District'} *',
+                label: '${locale.neighbourhood} *',
                 value: selectedDistrict,
                 items: selectedCity!.districts,
-                itemLabel: (district) => district.getName(isArabic),
+                 hint: locale
+                      .typeNeighborhoodNameToSearch ,
+                itemLabel: _getDistrictName,
                 onChanged: (district) {
                   setState(() {
                     selectedDistrict = district;
@@ -469,8 +492,7 @@ class _SignupPageState extends State<SignupPage> {
                 },
                 validator: (value) {
                   if (value == null) {
-                    return locale?.pleaseSelectNeighborhood ??
-                        'Please select a district';
+                    return locale.pleaseSelectNeighborhood;
                   }
                   return null;
                 },
@@ -497,7 +519,7 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 child: Text(
-                  locale?.createAccount ?? 'Create Account',
+                  locale.createAccount,
                   style: DMSansFont.textStyle(
                     color: Colors.white,
                     fontSize: 17,
@@ -514,6 +536,7 @@ class _SignupPageState extends State<SignupPage> {
 
   // ✅ Dropdown builder
   Widget _buildDropdownField<T extends Object>({
+    required String hint,
     required String label,
     required T? value,
     required List<T> items,
@@ -522,6 +545,7 @@ class _SignupPageState extends State<SignupPage> {
     String? Function(T?)? validator,
   }) {
     return SearchableDropdown<T>(
+      hintText: hint,
       label: label,
       value: value,
       items: items,

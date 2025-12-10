@@ -55,6 +55,11 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   Timer? _etaDebounce;
   Timer? _cameraDebounce;
 
+  // Track last ETA/distance update timestamp for cache validation
+  int? _lastETAUpdateTimestamp;
+  String? _lastTrackedAgentUid;
+  static const Duration _etaDataValidityWindow = Duration(minutes: 5);
+
   final bool _useMockData = false;
   final LatLng _mockCustomerLocation = const LatLng(19.0760, 72.8777);
   final LatLng _mockAgentLocation = const LatLng(19.0896, 72.8656);
@@ -74,6 +79,8 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Capture initial delivery address to detect changes on multi-device scenarios
+    _lastTrackedAgentUid = widget.booking?.agent?.uid;
     _initializeTracking();
   }
 
@@ -180,8 +187,38 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     }
   }
 
+  /// Validate that ETA/distance data is still relevant for current booking
+  bool _isETADataStillValid(String agentUid) {
+    // Check if agent UID has changed (different agent assigned)
+    if (_lastTrackedAgentUid != null && _lastTrackedAgentUid != agentUid) {
+      debugPrint(
+        '[ETA_VALIDATION] Agent UID changed from $_lastTrackedAgentUid to $agentUid - clearing cache',
+      );
+      return false;
+    }
+
+    // Check if data is too old
+    if (_lastETAUpdateTimestamp != null) {
+      final dataAge =
+          DateTime.now().millisecondsSinceEpoch - _lastETAUpdateTimestamp!;
+      if (dataAge > _etaDataValidityWindow.inMilliseconds) {
+        debugPrint(
+          '[ETA_VALIDATION] ETA data expired (age: ${dataAge}ms) - forcing refresh',
+        );
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   void _listenToAgentLocation(String agentUid) {
     _agentLocationSubscription?.cancel();
+
+    // Track current agent UID for multi-device safety
+    _lastTrackedAgentUid = agentUid;
+    debugPrint('[MULTI_DEVICE] Now tracking agent: $agentUid');
+
     _agentLocationSubscription = AppServices()
         .getAgentLiveLocationStream(agentUid)
         .listen((user) async {
@@ -225,6 +262,17 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       debugPrint('[LOG] Cannot fetch ETA: Missing coordinates');
       debugPrint('[LOG] Agent: $_agentLatLng, Customer: $_customerLatLng');
       return;
+    }
+
+    // Validate agent UID hasn't changed (multi-device safety check)
+    final currentAgentUid = widget.booking?.agent?.uid;
+    if (currentAgentUid != null && !_isETADataStillValid(currentAgentUid)) {
+      debugPrint('[LOG] ETA data invalid - agent or booking may have changed');
+      // Reset eta and distance to force fresh calculation
+      setState(() {
+        eta = null;
+        distance = null;
+      });
     }
 
     try {
@@ -285,6 +333,10 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           routePoints = [_agentLatLng!, _customerLatLng!];
           debugPrint('[LOG] Using fallback straight line route');
         }
+
+        // Update tracking metadata for multi-device safety
+        _lastETAUpdateTimestamp = DateTime.now().millisecondsSinceEpoch;
+        _lastTrackedAgentUid = widget.booking?.agent?.uid;
       });
 
       if (_isFollowingAgent && _mapController != null) {
@@ -304,6 +356,10 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         debugPrint(
           '[LOG] Created fallback route with ${routePoints.length} points',
         );
+
+        // Update tracking metadata for multi-device safety
+        _lastETAUpdateTimestamp = DateTime.now().millisecondsSinceEpoch;
+        _lastTrackedAgentUid = widget.booking?.agent?.uid;
       });
 
       if (_isFollowingAgent && _mapController != null) {
@@ -735,7 +791,9 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                       remainingKm:
                           distance ??
                           (_agentLatLng == null
-                              ? AppLocalizations.of(context)!.waitingForAgentLocation
+                              ? AppLocalizations.of(
+                                  context,
+                                )!.waitingForAgentLocation
                               : ""),
                       worker: widget.booking?.agent,
                     ),

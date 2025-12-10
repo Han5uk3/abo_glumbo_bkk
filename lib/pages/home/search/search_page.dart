@@ -4,7 +4,7 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/common_widgets/service_tile.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/sheets/sign_up_alert.dart';
+// import 'package:abo_glumbo_bbk/sheets/sign_up_alert.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/home/categories/bloc/categories_bloc.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
@@ -225,44 +225,44 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  Future<void> _setFavorite(ServiceModel service) async {
-    if (isGuestUser) {
-      SignUpAlertForGuestUsers().showSignUpAlert(context);
-      return;
-    }
+  // Future<void> _setFavorite(ServiceModel service) async {
+  //   if (isGuestUser) {
+  //     SignUpAlertForGuestUsers().showSignUpAlert(context);
+  //     return;
+  //   }
 
-    // Check if service ID is valid
-    if (service.id == null || service.id!.isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)?.error ?? 'Service ID is missing',
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-      return;
-    }
+  //   // Check if service ID is valid
+  //   if (service.id == null || service.id!.isEmpty) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(
+  //             AppLocalizations.of(context)?.error ?? 'Service ID is missing',
+  //           ),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //     return;
+  //   }
 
-    final accountState = context.read<AccountBloc>().state;
-    if (accountState is CustomerDataLoaded) {
-      context.read<AccountBloc>().add(ToggleFavoriteService(service: service));
-    } else {
-      // User data not loaded, show error
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)?.error ?? 'Please login first',
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
+  //   final accountState = context.read<AccountBloc>().state;
+  //   if (accountState is CustomerDataLoaded) {
+  //     context.read<AccountBloc>().add(ToggleFavoriteService(service: service));
+  //   } else {
+  //     // User data not loaded, show error
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(
+  //             AppLocalizations.of(context)?.error ?? 'Please login first',
+  //           ),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   }
+  // }
 
   Widget _buildEmptySearchState() {
     return ListView(
@@ -338,7 +338,7 @@ class _SearchPageState extends State<SearchPage> {
           isfromHome: false,
           isGuestUser: isGuestUser,
           service: service,
-          onFavPressed: () => _setFavorite(service),
+          // onFavPressed: () => _setFavorite(service),
         );
       },
     );

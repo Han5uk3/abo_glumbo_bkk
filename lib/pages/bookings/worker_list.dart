@@ -355,6 +355,9 @@ class _WorkerListState extends State<WorkerList> {
                       children: [
                         // Province Dropdown
                         _buildDropdownField<Region>(
+                          hint: AppLocalizations.of(
+                            context,
+                          )!.typeProvinceNameToSearch,
                           label:
                               '${AppLocalizations.of(context)?.province ?? 'Region'} *',
                           value: selectedRegion,
@@ -383,6 +386,10 @@ class _WorkerListState extends State<WorkerList> {
 
                           // ✅ City Dropdown
                           _buildDropdownField<City>(
+                            hint: AppLocalizations.of(
+                              context,
+                            )!.typeCityNameToSearch,
+
                             label:
                                 '${AppLocalizations.of(context)?.city ?? 'City'} *',
                             value: selectedCity,
@@ -411,6 +418,9 @@ class _WorkerListState extends State<WorkerList> {
 
                           // ✅ District Dropdown
                           _buildDropdownField<District>(
+                            hint: AppLocalizations.of(
+                              context,
+                            )!.typeNeighborhoodNameToSearch,
                             label:
                                 '${AppLocalizations.of(context)?.neighbourhood ?? 'District'} *',
                             value: selectedDistrict,
@@ -470,6 +480,7 @@ class _WorkerListState extends State<WorkerList> {
   }
 
   Widget _buildDropdownField<T extends Object>({
+    required String hint,
     required String label,
     required T? value,
     required List<T> items,
@@ -478,6 +489,7 @@ class _WorkerListState extends State<WorkerList> {
     String? Function(T?)? validator,
   }) {
     return SearchableDropdown<T>(
+      hintText: hint,
       label: label,
       value: value,
       items: items,
@@ -1115,7 +1127,9 @@ class _WorkerListViewState extends State<_WorkerListView>
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          AppLocalizations.of(context)!.technicianIsBusyatThisTime,
+                          AppLocalizations.of(
+                            context,
+                          )!.technicianIsBusyatThisTime,
                         ),
                       ),
                     );

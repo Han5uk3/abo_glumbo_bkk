@@ -12,6 +12,7 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
 import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
+import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -918,6 +919,20 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
           orderId: widget.orderId,
         );
         await saveTransaction();
+
+        // Update unified wallet with earnings
+        try {
+          await UnifiedPayoutServices.updateWalletAmounts(
+            workerId: widget.worker.uid ?? '',
+            earningsIncrement: widget.amount,
+          );
+          debugPrint(
+            '✅ Unified wallet updated with earnings: ${widget.amount}',
+          );
+        } catch (e) {
+          debugPrint('❌ Error updating unified wallet: $e');
+          // Don't block the payment flow if wallet update fails
+        }
 
         if (mounted) {
           Navigator.of(context).pushAndRemoveUntil(

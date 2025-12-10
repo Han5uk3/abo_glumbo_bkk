@@ -553,25 +553,46 @@ class AppServices {
   }
 
   static Future<bool> checkCustomerPhoneNumberAlredyExist(
-    String phoneNumber,
-  ) async {
+    String phoneNumber, {
+    String? excludeUid,
+  }) async {
     try {
       String normalizedPhoneNumber = phoneNumber.replaceAll(
         RegExp(r'[^\d+]'),
         '',
       );
-      final customerQuery = await AppFirestore.customersCollectionRef
-          .where('phone', isEqualTo: normalizedPhoneNumber)
-          .limit(1)
-          .get();
-      if (customerQuery.docs.isEmpty) {
-        final customerQueryOriginal = await AppFirestore.customersCollectionRef
-            .where('phone', isEqualTo: phoneNumber)
-            .limit(1)
-            .get();
-        return customerQueryOriginal.docs.isNotEmpty;
+
+      // Query customers with the phone number (normalized)
+      var customerQuery = AppFirestore.customersCollectionRef.where(
+        'phone',
+        isEqualTo: normalizedPhoneNumber,
+      );
+
+      // If excludeUid is provided, exclude the current user
+      if (excludeUid != null) {
+        customerQuery = customerQuery.where('uid', isNotEqualTo: excludeUid);
       }
-      return customerQuery.docs.isNotEmpty;
+
+      final result = await customerQuery.limit(1).get();
+      if (result.docs.isNotEmpty) {
+        return true;
+      }
+
+      // Try with original phoneNumber format
+      var customerQueryOriginal = AppFirestore.customersCollectionRef.where(
+        'phone',
+        isEqualTo: phoneNumber,
+      );
+
+      if (excludeUid != null) {
+        customerQueryOriginal = customerQueryOriginal.where(
+          'uid',
+          isNotEqualTo: excludeUid,
+        );
+      }
+
+      final resultOriginal = await customerQueryOriginal.limit(1).get();
+      return resultOriginal.docs.isNotEmpty;
     } catch (e) {
       return false;
     }

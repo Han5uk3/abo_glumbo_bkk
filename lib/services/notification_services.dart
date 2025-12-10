@@ -365,6 +365,96 @@ class NotificationServices {
     );
   }
 
+  /// Show ongoing tracking notification (non-dismissable)
+  /// This notification will persist in the notification bar while tracking is active
+  static Future<void> showOngoingTrackingNotification({
+    String title = 'Tracking Active',
+    String? serviceName,
+    String body = 'Tracking your technician\'s live location',
+    int? etaMinutes,
+    String? etaTime,
+    String? bookingId,
+  }) async {
+    const int trackingNotificationId = 9999; // Use a fixed ID for tracking
+
+    // Build notification title with service name if available
+    String notificationTitle = title;
+    if (serviceName != null && serviceName.isNotEmpty) {
+      notificationTitle = '$title - $serviceName';
+    }
+
+    // Build notification body with ETA if available
+    String notificationBody = body;
+    if (etaMinutes != null && etaMinutes >= 0) {
+      notificationBody = '$body\nETA: $etaMinutes min';
+      if (etaTime != null) {
+        notificationBody += ' (${etaTime.substring(0, 5)})';
+      }
+    }
+
+    // Create JSON payload with booking ID
+    String? payload;
+    if (bookingId != null && bookingId.isNotEmpty) {
+      payload = jsonEncode({'type': 'tracking', 'bookingId': bookingId});
+    }
+
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'abo_glumbo_channel',
+      'Abo Glumbo Notifications',
+      channelDescription:
+          'Notifications related to Abo Glumbo tasks and updates',
+      importance: Importance.max,
+      priority: Priority.high,
+      ongoing: true, // Make it non-dismissable
+      autoCancel: false, // Prevent auto-cancel
+      showWhen: true,
+      enableVibration: false,
+      playSound: false,
+      visibility: NotificationVisibility.public,
+      enableLights: false,
+      icon: '@mipmap/ic_launcher',
+      styleInformation: BigTextStyleInformation(
+        notificationBody,
+        contentTitle: notificationTitle,
+        htmlFormatBigText: true,
+        htmlFormatContentTitle: true,
+      ),
+    );
+
+    const DarwinNotificationDetails iOSDetails = DarwinNotificationDetails(
+      presentAlert: false,
+      presentBadge: false,
+      presentSound: false,
+    );
+
+    NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iOSDetails,
+    );
+
+    await _flutterLocalNotificationsPlugin.show(
+      trackingNotificationId,
+      notificationTitle,
+      notificationBody,
+      platformDetails,
+      payload: payload,
+    );
+
+    debugPrint('✅ Ongoing tracking notification shown');
+  }
+
+  /// Cancel ongoing tracking notification
+  static Future<void> cancelTrackingNotification() async {
+    const int trackingNotificationId = 9999;
+
+    try {
+      await _flutterLocalNotificationsPlugin.cancel(trackingNotificationId);
+      debugPrint('✅ Tracking notification cancelled');
+    } catch (e) {
+      debugPrint('❌ Error cancelling tracking notification: $e');
+    }
+  }
+
   /// Check for initial message (app opened from terminated state)
   static Future<void> checkForInitialMessage() async {
     try {
@@ -399,11 +489,20 @@ class NotificationServices {
 
       final type = data['type'] as String?;
       final chatId = data['chatId'] as String?;
+      final bookingId = data['bookingId'] as String?;
 
-      debugPrint('📱 Notification type: $type, chatId: $chatId');
+      debugPrint(
+        '📱 Notification type: $type, chatId: $chatId, bookingId: $bookingId',
+      );
 
+      // Check if this is a tracking notification
+      if (type == 'tracking' && bookingId != null && bookingId.isNotEmpty) {
+        debugPrint('📍 Tracking notification detected!');
+        debugPrint('   bookingId: $bookingId');
+        _handleTrackingNotificationTap(bookingId);
+      }
       // Check if this is a chat notification (either by type or presence of chatId)
-      if (type == 'chat' || (chatId != null && chatId.isNotEmpty)) {
+      else if (type == 'chat' || (chatId != null && chatId.isNotEmpty)) {
         // Extract chat data from payload
         final participantName =
             data['participantName'] as String? ?? 'Technician';
@@ -460,10 +559,36 @@ class NotificationServices {
           debugPrint('⚠️ Chat ID is missing in notification payload');
         }
       } else {
-        debugPrint('ℹ️ Not a chat notification, ignoring');
+        debugPrint('ℹ️ Not a recognized notification type, ignoring');
       }
     } catch (e) {
       debugPrint('❌ Error handling notification tap: $e');
+    }
+  }
+
+  /// Handle tracking notification tap - navigate to live tracking
+  static void _handleTrackingNotificationTap(String bookingId) {
+    try {
+      debugPrint(
+        '🚀 Starting navigation to tracking page for booking: $bookingId',
+      );
+
+      // Use the global navigator key to navigate
+      if (navigatorKey?.currentState != null) {
+        debugPrint('✅ Navigator is available for tracking navigation');
+
+        // Navigate to Home which will display ActiveBookingsSection
+        navigatorKey!.currentState!.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const Home()),
+          (route) => false,
+        );
+
+        debugPrint('✅ Navigated to Home to show live tracking');
+      } else {
+        debugPrint('⚠️ Navigator key is null, cannot navigate to tracking');
+      }
+    } catch (e) {
+      debugPrint('❌ Error handling tracking notification tap: $e');
     }
   }
 

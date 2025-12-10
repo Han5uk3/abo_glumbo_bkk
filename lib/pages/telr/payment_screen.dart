@@ -16,6 +16,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/telr_config.dart';
+import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -272,7 +273,10 @@ class _PaymentWebViewState extends State<PaymentWebView> {
 
   bool isPaymentProcessed = false;
 
-  NavigationDecision _handleNavigation(String url, bool isFromBooking) {
+  Future<NavigationDecision> _handleNavigation(
+    String url,
+    bool isFromBooking,
+  ) async {
     if (url.contains('success') || url.contains('payment/success')) {
       if (isPaymentProcessed) {
         return NavigationDecision.prevent;
@@ -298,6 +302,24 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         if (widget.isFromBooking) {
           saveBooking();
           saveTransaction();
+
+          // Update unified wallet with earnings
+          try {
+            final amount =
+                double.tryParse(
+                  widget.booking?.completionData?.totalCost.toString() ??
+                      '0.00',
+                ) ??
+                0.00;
+            await UnifiedPayoutServices.updateWalletAmounts(
+              workerId: widget.booking?.agent?.uid ?? '',
+              earningsIncrement: amount,
+            );
+            debugPrint('✅ Unified wallet updated with earnings: $amount');
+          } catch (e) {
+            debugPrint('❌ Error updating unified wallet: $e');
+            // Don't block the payment flow if wallet update fails
+          }
         }
         if (widget.isFromBooking == false) {
           saveReview();

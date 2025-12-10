@@ -405,7 +405,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'هل أنت متأكد من حذف الحساب نهائيًا؟';
 
   @override
-  String get signUpLater => 'التسجيل لاحقًا';
+  String get signUpLater => 'المتابعة كضيف';
 
   @override
   String get signUp => 'تسجيل';
@@ -1926,4 +1926,30 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get policy3 =>
       'يتم مشاركة الاسم ورقم الهاتف وعنوان الموقع فقط مع الفني الذي تم قبول طلبه لتمكينه من أداء الخدمة.';
+
+  @override
+  String pleaseSelectAValid(Object value) {
+    return 'يرجى اختيار $value بشكل صحيح';
+  }
+
+  @override
+  String showingResults(Object count) {
+    return 'عرض $count من النتائج. اكتب للبحث';
+  }
+
+  @override
+  String get typeProvinceNameToSearch => 'اكتب اسم المنطقة للبحث...';
+
+  @override
+  String get typeCityNameToSearch => 'اكتب اسم المدينة للبحث...';
+
+  @override
+  String get typeNeighborhoodNameToSearch => 'اكتب اسم الحي للبحث...';
+
+  @override
+  String get loginDescription => 'فنيين محترفين وموثوقين. اطلب الخدمة بلمسة!';
+
+  @override
+  String get categoriesDescription =>
+      'اختر التصنيف الرئيسي (الكهربائي/السباك) لتبدأ طلب الخدمة';
 }

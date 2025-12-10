@@ -128,7 +128,7 @@
   "contactUs": "Contact us",
   "deleteAccount": "Delete account",
   "areYouSureYouWantToDeleteAccount": "Are you sure you want to delete the account permenantly",
-  "signUpLater": "Sign up later",
+  "signUpLater": "Continue as Guest",
   "signUp": "Sign up",
   "visualizeYourIssue": "Visualize your issue",
   "upload": "Upload",
@@ -634,5 +634,12 @@
   "terms5": "You have the right to rate the Technician's performance after service completion, and you must ensure that ratings are honest and objective.",
   "policy1": "Name, phone number, email address, the precise service location address, order history, and Technician ratings.",
   "policy2": "Used to match you with Technicians, facilitate the booking and payment process, and send order notifications.",
-  "policy3": "Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery."
+  "policy3": "Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.",
+  "pleaseSelectAValid": "Please select a valid {value}",
+  "showingResults": "Showing {count} results. Type to search",
+  "typeProvinceNameToSearch": "Type province name to search...",
+  "typeCityNameToSearch": "Type city name to search...",
+  "typeNeighborhoodNameToSearch": "Type neighborhood name to search...",
+  "loginDescription": "Trusted, pro technicians. Get service with a tap!",
+  "categoriesDescription": "Choose the main category (Electrician/Plumber) to begin your service request."
 }

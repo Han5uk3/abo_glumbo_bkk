@@ -4,11 +4,11 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/sheets/book_service.dart';
 import 'package:abo_glumbo_bbk/sheets/sign_up_alert.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
+// import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import '../models/service.dart';
 
@@ -17,12 +17,12 @@ class ServiceTile extends StatelessWidget {
     super.key,
     required this.service,
     this.isGuestUser,
-    this.onFavPressed,
+    // this.onFavPressed,
     required this.isfromHome,
   });
 
   final ServiceModel service;
-  final VoidCallback? onFavPressed;
+  // final VoidCallback? onFavPressed;
   final bool? isGuestUser;
 
   final bool isfromHome;
@@ -101,65 +101,65 @@ class ServiceTile extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (!(LocalStoreHelper.getGuestUser()))
-                      BlocBuilder<AccountBloc, AccountState>(
-                        buildWhen: (previous, current) {
-                          // Don't rebuild during favorite updating state to prevent flickering
-                          if (current is FavoriteServiceUpdating) {
-                            return false;
-                          }
+                    // if (!(LocalStoreHelper.getGuestUser()))
+                    //   BlocBuilder<AccountBloc, AccountState>(
+                    //     buildWhen: (previous, current) {
+                    //       // Don't rebuild during favorite updating state to prevent flickering
+                    //       if (current is FavoriteServiceUpdating) {
+                    //         return false;
+                    //       }
 
-                          // Only rebuild if this specific service's favorite status might have changed
-                          if (previous is CustomerDataLoaded &&
-                              current is CustomerDataLoaded) {
-                            final prevIsFavorite = previous
-                                .customerData
-                                .favourites
-                                .contains(service.id);
-                            final currIsFavorite = current
-                                .customerData
-                                .favourites
-                                .contains(service.id);
-                            return prevIsFavorite != currIsFavorite;
-                          }
+                    //       // Only rebuild if this specific service's favorite status might have changed
+                    //       if (previous is CustomerDataLoaded &&
+                    //           current is CustomerDataLoaded) {
+                    //         final prevIsFavorite = previous
+                    //             .customerData
+                    //             .favourites
+                    //             .contains(service.id);
+                    //         final currIsFavorite = current
+                    //             .customerData
+                    //             .favourites
+                    //             .contains(service.id);
+                    //         return prevIsFavorite != currIsFavorite;
+                    //       }
 
-                          // Rebuild if transitioning between different state types (but not updating states)
-                          if (previous is! CustomerDataLoaded &&
-                              current is CustomerDataLoaded) {
-                            return true;
-                          }
+                    //       // Rebuild if transitioning between different state types (but not updating states)
+                    //       if (previous is! CustomerDataLoaded &&
+                    //           current is CustomerDataLoaded) {
+                    //         return true;
+                    //       }
 
-                          return false;
-                        },
-                        builder: (context, state) {
-                          bool isFavorite = false;
-                          if (state is CustomerDataLoaded &&
-                              service.id != null) {
-                            isFavorite = state.customerData.favourites.contains(
-                              service.id!,
-                            );
-                          }
+                    //       return false;
+                    //     },
+                    //     builder: (context, state) {
+                    //       bool isFavorite = false;
+                    //       if (state is CustomerDataLoaded &&
+                    //           service.id != null) {
+                    //         isFavorite = state.customerData.favourites.contains(
+                    //           service.id!,
+                    //         );
+                    //       }
 
-                          return IconButton(
-                            onPressed: onFavPressed,
-                            splashRadius: 20,
-                            icon: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              child: isFavorite
-                                  ? const Icon(
-                                      CupertinoIcons.heart_fill,
-                                      color: Colors.red,
-                                      key: ValueKey('heart_filled'),
-                                    )
-                                  : const Icon(
-                                      CupertinoIcons.heart,
-                                      color: Colors.black45,
-                                      key: ValueKey('heart_empty'),
-                                    ),
-                            ),
-                          );
-                        },
-                      ),
+                    //       return IconButton(
+                    //         onPressed: onFavPressed,
+                    //         splashRadius: 20,
+                    //         icon: AnimatedSwitcher(
+                    //           duration: const Duration(milliseconds: 200),
+                    //           child: isFavorite
+                    //               ? const Icon(
+                    //                   CupertinoIcons.heart_fill,
+                    //                   color: Colors.red,
+                    //                   key: ValueKey('heart_filled'),
+                    //                 )
+                    //               : const Icon(
+                    //                   CupertinoIcons.heart,
+                    //                   color: Colors.black45,
+                    //                   key: ValueKey('heart_empty'),
+                    //                 ),
+                    //         ),
+                    //       );
+                    //     },
+                    //   ),
                   ],
                 ),
                 Text(

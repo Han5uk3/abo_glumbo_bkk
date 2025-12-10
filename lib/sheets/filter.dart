@@ -556,6 +556,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               else ...[
                 const SizedBox(height: 16),
                 SearchableDropdown<Region>(
+                  hintText: AppLocalizations.of(
+                    context,
+                  )!.typeProvinceNameToSearch,
                   label: AppLocalizations.of(context)?.province ?? 'Region',
                   value: selectedRegion,
                   items: regions,
@@ -576,6 +579,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 const SizedBox(height: 16),
                 if (selectedRegion != null)
                   SearchableDropdown<City>(
+                    hintText: AppLocalizations.of(
+                      context,
+                    )!.typeCityNameToSearch,
+
                     label: AppLocalizations.of(context)?.city ?? 'City',
                     value: selectedCity,
                     items: selectedRegion!.cities,

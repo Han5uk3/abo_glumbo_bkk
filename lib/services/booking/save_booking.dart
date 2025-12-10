@@ -11,6 +11,7 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
 
 class BookingUtils {
   static String getPaymentModeCode(String paymentMode) {
@@ -157,6 +158,25 @@ class BookingUtils {
         await userDoc.update({"rating": newRating});
       }
 
+      // Update unified wallet with tip amount
+      if ((review?.tipAmount ?? 0) > 0 &&
+          review?.paymentType?.isNotEmpty == true) {
+        try {
+          final isCashTip = review?.paymentType?.toLowerCase() == 'cash';
+          await UnifiedPayoutServices.updateWalletAmounts(
+            workerId: booking.agent?.uid ?? '',
+            tipsIncrement: review?.tipAmount ?? 0.0,
+            isCashTip: isCashTip,
+          );
+          debugPrint(
+            '✅ Unified wallet updated with tip: ${review?.tipAmount} (${isCashTip ? "Cash" : "Card"})',
+          );
+        } catch (e) {
+          debugPrint('❌ Error updating unified wallet with tip: $e');
+          // Don't block the review flow if wallet update fails
+        }
+      }
+
       return true;
     } catch (e) {
       debugPrint("Error saving review: $e");
@@ -198,8 +218,6 @@ class BookingUtils {
       return false;
     }
   }
-
- 
 
   static Future<bool> saveTipToSubcollection({
     required String workerId,

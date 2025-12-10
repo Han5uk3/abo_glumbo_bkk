@@ -409,7 +409,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Are you sure you want to delete the account permenantly';
 
   @override
-  String get signUpLater => 'Sign up later';
+  String get signUpLater => 'Continue as Guest';
 
   @override
   String get signUp => 'Sign up';
@@ -1957,4 +1957,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get policy3 =>
       'Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.';
+
+  @override
+  String pleaseSelectAValid(Object value) {
+    return 'Please select a valid $value';
+  }
+
+  @override
+  String showingResults(Object count) {
+    return 'Showing $count results. Type to search';
+  }
+
+  @override
+  String get typeProvinceNameToSearch => 'Type province name to search...';
+
+  @override
+  String get typeCityNameToSearch => 'Type city name to search...';
+
+  @override
+  String get typeNeighborhoodNameToSearch =>
+      'Type neighborhood name to search...';
+
+  @override
+  String get loginDescription =>
+      'Trusted, pro technicians. Get service with a tap!';
+
+  @override
+  String get categoriesDescription =>
+      'Choose the main category (Electrician/Plumber) to begin your service request.';
 }

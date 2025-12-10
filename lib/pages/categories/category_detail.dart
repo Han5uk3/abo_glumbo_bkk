@@ -122,28 +122,28 @@ class _CategoryDetailState extends State<CategoryDetail> {
                   pinned: true,
                   primary: true,
                   centerTitle: true,
-                  bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(55),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0).copyWith(top: 0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: SearchBar(
-                              hintText:
-                                  AppLocalizations.of(context)?.searchHere ??
-                                  '',
-                              onChanged: _filterServices,
-                              leading: const Icon(
-                                Icons.search,
-                                color: Colors.black45,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // bottom: PreferredSize(
+                  //   preferredSize: const Size.fromHeight(55),
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(16.0).copyWith(top: 0),
+                  //     child: Row(
+                  //       children: [
+                  //         Expanded(
+                  //           child: SearchBar(
+                  //             hintText:
+                  //                 AppLocalizations.of(context)?.searchHere ??
+                  //                 '',
+                  //             onChanged: _filterServices,
+                  //             leading: const Icon(
+                  //               Icons.search,
+                  //               color: Colors.black45,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                 ),
                 if (isLoading)
                   const SliverToBoxAdapter(child: LinearProgressIndicator()),
@@ -231,17 +231,17 @@ class _CategoryDetailState extends State<CategoryDetail> {
                           key: ValueKey('service_tile_${service.id}'),
                           isGuestUser: LocalStoreHelper.getGuestUser(),
                           service: service,
-                          onFavPressed: () {
-                            if (LocalStoreHelper.getGuestUser()) {
-                              SignUpAlertForGuestUsers().showSignUpAlert(
-                                context,
-                              );
-                            } else {
-                              context.read<AccountBloc>().add(
-                                ToggleFavoriteService(service: service),
-                              );
-                            }
-                          },
+                          // onFavPressed: () {
+                          //   if (LocalStoreHelper.getGuestUser()) {
+                          //     SignUpAlertForGuestUsers().showSignUpAlert(
+                          //       context,
+                          //     );
+                          //   } else {
+                          //     context.read<AccountBloc>().add(
+                          //       ToggleFavoriteService(service: service),
+                          //     );
+                          //   }
+                          // },
                         );
                       },
                     );
@@ -256,30 +256,30 @@ class _CategoryDetailState extends State<CategoryDetail> {
     );
   }
 
-  void _filterServices(String query) {
-    setState(() {
-      searchQuery = query;
-      _applyFilters();
-    });
-  }
+  // void _filterServices(String query) {
+  //   setState(() {
+  //     searchQuery = query;
+  //     _applyFilters();
+  //   });
+  // }
 
-  void _applyFilters() {
-    List<ServiceModel> filtered = allServices;
-    final isArabic = Directionality.of(context) == TextDirection.rtl;
+  // void _applyFilters() {
+  //   List<ServiceModel> filtered = allServices;
+  //   final isArabic = Directionality.of(context) == TextDirection.rtl;
 
-    if (searchQuery.isNotEmpty) {
-      filtered = filtered.where((service) {
-        final query = searchQuery.toLowerCase();
-        final serviceName = isArabic
-            ? service.name_ar?.toLowerCase() ?? ''
-            : service.name?.toLowerCase() ?? '';
-        final serviceDescription = service.description?.toLowerCase() ?? '';
+  //   if (searchQuery.isNotEmpty) {
+  //     filtered = filtered.where((service) {
+  //       final query = searchQuery.toLowerCase();
+  //       final serviceName = isArabic
+  //           ? service.name_ar?.toLowerCase() ?? ''
+  //           : service.name?.toLowerCase() ?? '';
+  //       final serviceDescription = service.description?.toLowerCase() ?? '';
 
-        return serviceName.contains(query) ||
-            serviceDescription.contains(query);
-      }).toList();
-    }
+  //       return serviceName.contains(query) ||
+  //           serviceDescription.contains(query);
+  //     }).toList();
+  //   }
 
-    filteredServices = filtered;
-  }
+  //   filteredServices = filtered;
+  // }
 }

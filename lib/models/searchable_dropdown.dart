@@ -1,5 +1,7 @@
+import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
+import 'package:abo_glumbo_bbk/utils/search_utils.dart';
 
 class SearchableDropdown<T extends Object> extends StatefulWidget {
   final String label;
@@ -8,6 +10,7 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
   final String Function(T) itemLabel;
   final void Function(T?) onChanged;
   final String? Function(T?)? validator;
+  final String hintText;
 
   const SearchableDropdown({
     super.key,
@@ -16,6 +19,7 @@ class SearchableDropdown<T extends Object> extends StatefulWidget {
     required this.items,
     required this.itemLabel,
     required this.onChanged,
+    required this.hintText,
     this.validator,
   });
 
@@ -27,7 +31,9 @@ class _SearchableDropdownState<T extends Object>
     extends State<SearchableDropdown<T>> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
-  bool _showAll = false;
+  bool _showDropdown = false;
+  List<T> _filteredItems = [];
+  final int _maxItemsToShow = 50; // Limit to prevent crashes
 
   @override
   void initState() {
@@ -36,6 +42,7 @@ class _SearchableDropdownState<T extends Object>
       text: widget.value != null ? widget.itemLabel(widget.value!) : '',
     );
     _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChange);
   }
 
   @override
@@ -46,7 +53,6 @@ class _SearchableDropdownState<T extends Object>
           ? widget.itemLabel(widget.value!)
           : '';
       if (_controller.text != newText) {
-        // Schedule the text update after the current frame to avoid setState during build
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && _controller.text != newText) {
             _controller.text = newText;
@@ -56,9 +62,49 @@ class _SearchableDropdownState<T extends Object>
     }
   }
 
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus && _showDropdown) {
+      // Delay hiding to allow tap on items
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (mounted && !_focusNode.hasFocus) {
+          setState(() {
+            _showDropdown = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _filterItems(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredItems = widget.items.take(_maxItemsToShow).toList();
+      } else {
+        _filteredItems = widget.items
+            .where(
+              (item) =>
+                  SearchUtils.matchesSearchQuery(widget.itemLabel(item), query),
+            )
+            .take(_maxItemsToShow)
+            .toList();
+      }
+      _showDropdown = _filteredItems.isNotEmpty;
+    });
+  }
+
+  void _selectItem(T item) {
+    setState(() {
+      _controller.text = widget.itemLabel(item);
+      _showDropdown = false;
+    });
+    _focusNode.unfocus();
+    widget.onChanged(item);
+  }
+
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
     super.dispose();
   }
@@ -70,136 +116,183 @@ class _SearchableDropdownState<T extends Object>
       children: [
         Text(
           widget.label,
-          style: DMSansFont.textStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          style: DMSansFont.textStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: 8),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            return RawAutocomplete<T>(
-              textEditingController: _controller,
+        // Use Column instead of Stack to allow dropdown to push content down
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextFormField(
+              controller: _controller,
               focusNode: _focusNode,
-              optionsBuilder: (TextEditingValue textEditingValue) {
-                if (_showAll) {
-                  return widget.items;
-                }
-                if (textEditingValue.text.isEmpty) {
-                  return const Iterable.empty();
-                }
-                return widget.items.where((T option) {
-                  return widget
-                      .itemLabel(option)
-                      .toLowerCase()
-                      .contains(textEditingValue.text.toLowerCase());
-                });
-              },
-              displayStringForOption: widget.itemLabel,
-              onSelected: (value) {
-                setState(() {
-                  _showAll = false;
-                });
-                widget.onChanged(value);
-              },
-              fieldViewBuilder:
-                  (
-                    context,
-                    textEditingController,
-                    focusNode,
-                    onFieldSubmitted,
-                  ) {
-                    return TextFormField(
-                      controller: textEditingController,
-                      focusNode: focusNode,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.arrow_drop_down),
-                          focusNode: FocusNode(
-                            skipTraversal: true,
-                            canRequestFocus: false,
-                          ),
-                          onPressed: () {
-                            if (_showAll) {
-                              setState(() {
-                                _showAll = false;
-                              });
-                            } else {
-                              setState(() {
-                                _showAll = true;
-                              });
-                              focusNode.requestFocus();
-                              // Force update to trigger options builder
-                              final text = textEditingController.text;
-                              textEditingController.text = '$text ';
-                              textEditingController.text = text;
-                            }
-                          },
-                        ),
-                      ),
-                      validator: (value) {
-                        if (textEditingController.text.isNotEmpty &&
-                            (widget.value == null ||
-                                textEditingController.text !=
-                                    widget.itemLabel(widget.value!))) {
-                          return "No ${widget.label} selected";
-                        }
-                        return widget.validator?.call(widget.value);
-                      },
-                      onChanged: (text) {
-                        if (_showAll) {
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_controller.text.isNotEmpty)
+                      IconButton(
+                        icon: const Icon(Icons.clear, size: 20),
+                        onPressed: () {
                           setState(() {
-                            _showAll = false;
+                            _controller.clear();
+                            _showDropdown = false;
                           });
-                        }
-                        if (text.isEmpty) {
                           widget.onChanged(null);
+                        },
+                      ),
+                    IconButton(
+                      icon: Icon(
+                        _showDropdown
+                            ? Icons.arrow_drop_up
+                            : Icons.arrow_drop_down,
+                      ),
+                      onPressed: () {
+                        if (_showDropdown) {
+                          setState(() {
+                            _showDropdown = false;
+                          });
+                          _focusNode.unfocus();
+                        } else {
+                          _focusNode.requestFocus();
+                          _filterItems(_controller.text);
                         }
                       },
-                    );
-                  },
-              optionsViewBuilder: (context, onSelected, options) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Material(
-                    elevation: 4.0,
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    child: SizedBox(
-                      width: constraints.maxWidth,
-                      height: 200,
-                      child: Scrollbar(
-                        thumbVisibility: true,
-                        child: ListView.builder(
-                          padding: EdgeInsets.zero,
-                          itemCount: options.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final T option = options.elementAt(index);
-                            return InkWell(
-                              onTap: () {
-                                onSelected(option);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  widget.itemLabel(option),
-                                  style: DMSansFont.textStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+              validator: (value) {
+                if (_controller.text.isNotEmpty &&
+                    (widget.value == null ||
+                        _controller.text != widget.itemLabel(widget.value!))) {
+                  return "${AppLocalizations.of(context)?.pleaseSelectAValid(widget.label)}";
+                }
+                return widget.validator?.call(widget.value);
+              },
+              onChanged: (text) {
+                _filterItems(text);
+                if (text.isEmpty) {
+                  widget.onChanged(null);
+                }
+              },
+              onTap: () {
+                _filterItems(_controller.text);
+              },
+            ),
+            // Dropdown list appears below the field
+            if (_showDropdown && _filteredItems.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(top: 4),
+                constraints: const BoxConstraints(maxHeight: 250),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_filteredItems.length >= _maxItemsToShow)
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade50,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              size: 16,
+                              color: Colors.orange.shade700,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '${AppLocalizations.of(context)?.showingResults(_maxItemsToShow)}.',
+                                style: DMSansFont.textStyle(
+                                  fontSize: 12,
+                                  color: Colors.orange.shade700,
                                 ),
                               ),
-                            );
-                          },
+                            ),
+                          ],
                         ),
                       ),
+                    Flexible(
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: _filteredItems.length,
+                        itemBuilder: (context, index) {
+                          final item = _filteredItems[index];
+                          final isSelected = widget.value == item;
+
+                          return InkWell(
+                            onTap: () => _selectItem(item),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? Colors.blue.shade50
+                                    : Colors.transparent,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      widget.itemLabel(item),
+                                      style: DMSansFont.textStyle(
+                                        fontSize: 14,
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                  if (isSelected)
+                                    const Icon(
+                                      Icons.check,
+                                      color: Colors.blue,
+                                      size: 20,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                );
-              },
-            );
-          },
+                  ],
+                ),
+              ),
+          ],
         ),
       ],
     );

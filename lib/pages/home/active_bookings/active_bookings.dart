@@ -10,6 +10,7 @@ import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/home/active_bookings/widgets/active_live_tracking_card.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
@@ -34,6 +35,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   // Store current agent locations with timestamp
   Map<String, Map<String, dynamic>> _agentLiveLocations = {};
 
+  // Track agent UIDs currently being tracked to detect device conflicts
+  Map<String, String> _trackingAgentUids = {};
+
   // PageView controller for auto-scrolling through multiple bookings
   late final PageController _pageController;
   Timer? _autoScrollTimer;
@@ -53,6 +57,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   static const Duration _etaDebounceDelay = Duration(seconds: 2);
   static const Duration _locationTimeout = Duration(seconds: 10);
   static const int _maxRetries = 3;
+  static const Duration _etaDataCacheTimeout = Duration(minutes: 5);
 
   @override
   void initState() {
@@ -62,6 +67,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       initialPage: 0,
     );
     _initializeETACalculations();
+
+    // Show ongoing tracking notification
+    _showTrackingNotification();
 
     // Start auto-scroll only if there are multiple bookings
     if (widget.activeBookings.length > 1) {
@@ -97,6 +105,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   void dispose() {
     _autoScrollTimer?.cancel();
     _pageController.dispose();
+
+    // Cancel tracking notification
+    NotificationServices.cancelTrackingNotification();
 
     // Cancel all agent location subscriptions
     for (final subscription in _agentLocationSubscriptions.values) {
@@ -378,21 +389,61 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     return '$hour:$minute';
   }
 
+  /// Validate cached ETA data for multi-device safety
+  bool _isValidCachedETA(String bookingId, BookingModel currentBooking) {
+    final cachedData = etaData[bookingId];
+    if (cachedData == null) return false;
+
+    final cacheTimestamp = cachedData['timestamp'] as int;
+    final cacheAge = DateTime.now().millisecondsSinceEpoch - cacheTimestamp;
+
+    // Check if cache is expired
+    if (cacheAge > _etaDataCacheTimeout.inMilliseconds) {
+      _log('[ETA] Cache expired for booking $bookingId (age: ${cacheAge}ms)');
+      return false;
+    }
+
+    // Check if this is location error that needs re-validation
+    if (cachedData['isLocationError'] == true) {
+      _log('[ETA] Cache contains location error, forcing recalculation');
+      return false;
+    }
+
+    // Verify the booking data hasn't changed
+    final cachedAgentUid = cachedData['agentUid'] as String?;
+    final currentAgentUid = currentBooking.agent?.uid;
+
+    if (cachedAgentUid != currentAgentUid) {
+      _log(
+        '[ETA] Agent UID mismatch - Cache: $cachedAgentUid, Current: $currentAgentUid',
+      );
+      return false;
+    }
+
+    // Check if delivery address has changed (customer may have changed selected address on another device)
+    final cachedBookingId = cachedData['bookingId'] as String?;
+    final currentBookingId = currentBooking.id;
+
+    if (cachedBookingId != currentBookingId) {
+      _log(
+        '[ETA] Booking ID mismatch - Cache: $cachedBookingId, Current: $currentBookingId (multi-device detection)',
+      );
+      return false;
+    }
+
+    _log(
+      '[ETA] Using valid cached data for booking $bookingId (age: ${cacheAge}ms)',
+    );
+    return true;
+  }
+
   /// Calculate ETA from agent location to customer delivery address with retry logic
   Future<void> _calculateETA(BookingModel booking, [int retryCount = 0]) async {
     final cacheKey = booking.id;
 
     // Check if we have recent valid data
-    final cachedData = etaData[cacheKey];
-    if (cachedData != null) {
-      final cacheTimestamp = cachedData['timestamp'] as int;
-      final cacheAge = DateTime.now().millisecondsSinceEpoch - cacheTimestamp;
-
-      // Use cache if it's less than 2 minutes old
-      if (cacheAge < 120000) {
-        _log('[ETA] Using recent cached data for booking ${booking.id}');
-        return;
-      }
+    if (_isValidCachedETA(cacheKey, booking)) {
+      return;
     }
 
     if (calculatingETAs.contains(booking.id)) {
@@ -403,13 +454,13 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     final agentUid = booking.agent?.uid;
     if (agentUid == null || agentUid.isEmpty) {
       _log('[ETA] ⚠️ No agent UID for booking ${booking.id}');
-      _setFallbackETA(booking.id);
+      _setFallbackETA(booking.id, agentUid: agentUid);
       return;
     }
 
     calculatingETAs.add(booking.id);
     _log(
-      '[ETA] Starting ETA calculation for booking ${booking.id} (attempt ${retryCount + 1})',
+      '[ETA] Starting ETA calculation for booking ${booking.id} with agent $agentUid (attempt ${retryCount + 1})',
     );
 
     try {
@@ -432,8 +483,34 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
 
       if (customerSelectedAddress == null) {
         _log('[ETA] ⚠️ No customer address for booking ${booking.id}');
-        _setFallbackETA(booking.id);
+        _setFallbackETA(booking.id, agentUid: agentUid);
         return;
+      }
+
+      // Validate delivery address hasn't changed (multi-device safety)
+      final cachedData = etaData[booking.id];
+      if (cachedData != null &&
+          cachedData['customerLat'] != null &&
+          cachedData['customerLng'] != null) {
+        final cachedCustomerLat = cachedData['customerLat'] as double;
+        final cachedCustomerLng = cachedData['customerLng'] as double;
+        final currentCustomerLat = customerSelectedAddress.lat ?? 0.0;
+        final currentCustomerLng = customerSelectedAddress.lon ?? 0.0;
+
+        // If address coordinates differ by more than 10 meters, recalculate
+        final addressDistance = _calculateStraightLineDistance(
+          cachedCustomerLat,
+          cachedCustomerLng,
+          currentCustomerLat,
+          currentCustomerLng,
+        );
+
+        if (addressDistance > 0.01) {
+          _log(
+            '[ETA] Delivery address changed (distance: ${addressDistance.toStringAsFixed(3)} km) - recalculating ETA',
+          );
+          etaData.remove(booking.id);
+        }
       }
 
       // Get agent's live location from our tracked locations
@@ -442,7 +519,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         _log(
           '[ETA] ⚠️ No live location available for agent $agentUid (booking ${booking.id})',
         );
-        _setFallbackETA(booking.id);
+        _setFallbackETA(booking.id, agentUid: agentUid);
         return;
       }
 
@@ -456,7 +533,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         _log(
           '[ETA] ⚠️ Invalid agent coordinates for booking ${booking.id}: $agentLat, $agentLng',
         );
-        _setFallbackETA(booking.id);
+        _setFallbackETA(booking.id, agentUid: agentUid);
         return;
       }
 
@@ -464,7 +541,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         _log(
           '[ETA] ⚠️ Invalid customer coordinates for booking ${booking.id}: $customerLat, $customerLng',
         );
-        _setFallbackETA(booking.id);
+        _setFallbackETA(booking.id, agentUid: agentUid);
         return;
       }
 
@@ -488,7 +565,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         _log(
           '[ETA] ⚠️ Agent and customer coordinates are identical or too close for booking ${booking.id}',
         );
-        _setFallbackETA(booking.id, isLocationError: true);
+        _setFallbackETA(booking.id, isLocationError: true, agentUid: agentUid);
         return;
       }
 
@@ -498,7 +575,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         _log(
           '[ETA] ⚠️ Distance too large (${straightLineDistance.toStringAsFixed(1)} km) - possible location error for booking ${booking.id}',
         );
-        _setFallbackETA(booking.id, isLocationError: true);
+        _setFallbackETA(booking.id, isLocationError: true, agentUid: agentUid);
         return;
       }
 
@@ -540,8 +617,16 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
               'minutes': etaMinutes,
               'arrivalTime': arrivalTime,
               'timestamp': DateTime.now().millisecondsSinceEpoch,
+              'agentUid': booking.agent?.uid,
+              'bookingId': booking.id,
+              'isLocationError': false,
+              'customerLat': customerLat,
+              'customerLng': customerLng,
             };
           });
+
+          // Update the tracking notification with new ETA
+          _updateTrackingNotification();
         }
       } else {
         _log('[ETA] ⚠️ No duration found in API response: $result');
@@ -564,7 +649,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
           }
         });
       } else {
-        _setFallbackETA(booking.id);
+        _setFallbackETA(booking.id, agentUid: agentUid);
       }
     } finally {
       calculatingETAs.remove(booking.id);
@@ -572,7 +657,11 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   }
 
   /// Set fallback ETA when calculation fails
-  void _setFallbackETA(String bookingId, {bool isLocationError = false}) {
+  void _setFallbackETA(
+    String bookingId, {
+    bool isLocationError = false,
+    String? agentUid,
+  }) {
     // Use -1 to indicate location error (will be handled in UI)
     final fallbackMinutes = isLocationError ? -1 : 15;
     final fallbackArrivalTime = isLocationError
@@ -586,11 +675,13 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
           'arrivalTime': fallbackArrivalTime,
           'timestamp': DateTime.now().millisecondsSinceEpoch,
           'isLocationError': isLocationError,
+          'agentUid': agentUid,
+          'bookingId': bookingId,
         };
       });
     }
     _log(
-      '[ETA] Set fallback ETA (${isLocationError ? "location error" : "$fallbackMinutes mins"}, arrival: $fallbackArrivalTime) for booking $bookingId',
+      '[ETA] Set fallback ETA (${isLocationError ? "location error" : "$fallbackMinutes mins"}, arrival: $fallbackArrivalTime) for booking $bookingId (agent: $agentUid)',
     );
   }
 
@@ -604,6 +695,94 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       return booking.customer.addresses.isNotEmpty
           ? booking.customer.addresses.first
           : null;
+    }
+  }
+
+  /// Show ongoing tracking notification
+  Future<void> _showTrackingNotification() async {
+    try {
+      final locale = AppLocalizations.of(context);
+
+      // Get booking details
+      int? etaMinutes;
+      String? etaTime;
+      String? serviceName;
+      String? bookingId;
+
+      if (widget.activeBookings.isNotEmpty) {
+        final firstBooking = widget.activeBookings[0];
+        bookingId = firstBooking.id;
+
+        // Get service name based on app language
+        final isArabic = locale?.localeName == 'ar';
+        serviceName = isArabic
+            ? firstBooking.service.name_ar
+            : firstBooking.service.name;
+
+        // Get ETA
+        final firstBookingEta = etaData[firstBooking.id];
+        if (firstBookingEta != null) {
+          etaMinutes = firstBookingEta['minutes'] as int?;
+          etaTime = firstBookingEta['arrivalTime'] as String?;
+        }
+      }
+
+      await NotificationServices.showOngoingTrackingNotification(
+        title: locale?.liveTracking ?? 'Live Tracking',
+        serviceName: serviceName,
+        body:
+            locale?.tapForLiveLocationTracking ??
+            'Tracking your technician\'s live location',
+        etaMinutes: etaMinutes,
+        etaTime: etaTime,
+        bookingId: bookingId,
+      );
+    } catch (e) {
+      debugPrint('❌ Error showing tracking notification: $e');
+    }
+  }
+
+  /// Update tracking notification with latest ETA
+  Future<void> _updateTrackingNotification() async {
+    try {
+      final locale = AppLocalizations.of(context);
+
+      // Get booking details
+      int? etaMinutes;
+      String? etaTime;
+      String? serviceName;
+      String? bookingId;
+
+      if (widget.activeBookings.isNotEmpty) {
+        final firstBooking = widget.activeBookings[0];
+        bookingId = firstBooking.id;
+
+        // Get service name based on app language
+        final isArabic = locale?.localeName == 'ar';
+        serviceName = isArabic
+            ? firstBooking.service.name_ar
+            : firstBooking.service.name;
+
+        // Get ETA
+        final firstBookingEta = etaData[firstBooking.id];
+        if (firstBookingEta != null) {
+          etaMinutes = firstBookingEta['minutes'] as int?;
+          etaTime = firstBookingEta['arrivalTime'] as String?;
+        }
+      }
+
+      await NotificationServices.showOngoingTrackingNotification(
+        title: locale?.liveTracking ?? 'Live Tracking',
+        serviceName: serviceName,
+        body:
+            locale?.tapForLiveLocationTracking ??
+            'Tracking your technician\'s live location',
+        etaMinutes: etaMinutes,
+        etaTime: etaTime,
+        bookingId: bookingId,
+      );
+    } catch (e) {
+      debugPrint('❌ Error updating tracking notification: $e');
     }
   }
 

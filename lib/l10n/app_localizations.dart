@@ -875,7 +875,7 @@ abstract class AppLocalizations {
   /// No description provided for @signUpLater.
   ///
   /// In en, this message translates to:
-  /// **'Sign up later'**
+  /// **'Continue as Guest'**
   String get signUpLater;
 
   /// No description provided for @signUp.
@@ -3799,6 +3799,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.'**
   String get policy3;
+
+  /// No description provided for @pleaseSelectAValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a valid {value}'**
+  String pleaseSelectAValid(Object value);
+
+  /// No description provided for @showingResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing {count} results. Type to search'**
+  String showingResults(Object count);
+
+  /// No description provided for @typeProvinceNameToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Type province name to search...'**
+  String get typeProvinceNameToSearch;
+
+  /// No description provided for @typeCityNameToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Type city name to search...'**
+  String get typeCityNameToSearch;
+
+  /// No description provided for @typeNeighborhoodNameToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Type neighborhood name to search...'**
+  String get typeNeighborhoodNameToSearch;
+
+  /// No description provided for @loginDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Trusted, pro technicians. Get service with a tap!'**
+  String get loginDescription;
+
+  /// No description provided for @categoriesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the main category (Electrician/Plumber) to begin your service request.'**
+  String get categoriesDescription;
 }
 
 class _AppLocalizationsDelegate
