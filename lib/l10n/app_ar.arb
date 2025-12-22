@@ -635,5 +635,8 @@
   "typeCityNameToSearch": "اكتب اسم المدينة للبحث...",
   "typeNeighborhoodNameToSearch": "اكتب اسم الحي للبحث...",
   "loginDescription": "فنيين محترفين وموثوقين. اطلب الخدمة بلمسة!",
-  "categoriesDescription": "اختر التصنيف الرئيسي (الكهربائي/السباك) لتبدأ طلب الخدمة"
+  "categoriesDescription": "اختر التصنيف الرئيسي (الكهربائي/السباك) لتبدأ طلب الخدمة",
+  "newServiceRequest": "طلب خدمة جديدة",
+  "welcomeDescription": "لقد أصبحنا شريكك الجديد لراحة بالك. جاهزون لصيانة منزلك. ابدأ الآن بطلب خدمتك الأولى.",
+  "welcomeToAboGlumbo": "أهلاً بك في ابو جلمبو!"
 }

@@ -1951,5 +1951,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get categoriesDescription =>
-      'اختر التصنيف الرئيسي (الكهربائي/السباك) لتبدأ طلب الخدمة';
+      'اختر التصنيف الرئيسي (الكهربائي/السباك) لتبدأ طلب الخدمة';
+
+  @override
+  String get welcomeToAboGlumbo => 'أهلاً بك في ابو جلمبو!';
+
+  @override
+  String get welcomeDescription =>
+      'لقد أصبحنا شريكك الجديد لراحة بالك. جاهزون لصيانة منزلك. ابدأ الآن بطلب خدمتك الأولى.';
+
+  @override
+  String get newServiceRequest => 'طلب خدمة جديدة';
 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
+import 'package:abo_glumbo_bbk/common_widgets/welcome_modal.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -225,6 +226,12 @@ class _SignupPageState extends State<SignupPage> {
 
         await Future.delayed(const Duration(milliseconds: 500));
 
+        // Show welcome modal
+        if (mounted) {
+          await WelcomeModal.show(context);
+        }
+
+        // Navigate to home
         if (mounted) {
           Navigator.pushAndRemoveUntil(
             context,
@@ -430,8 +437,7 @@ class _SignupPageState extends State<SignupPage> {
               label: '${locale?.province ?? 'Region'} *',
               value: selectedRegion,
               items: regions,
-              hint: locale
-                      !.typeProvinceNameToSearch ,
+              hint: locale!.typeProvinceNameToSearch,
               itemLabel: _getRegionName,
               onChanged: (region) {
                 setState(() {
@@ -442,7 +448,7 @@ class _SignupPageState extends State<SignupPage> {
               },
               validator: (value) {
                 if (value == null) {
-                  return locale.pleaseSelectProvince ;
+                  return locale.pleaseSelectProvince;
                 }
                 return null;
               },
@@ -456,8 +462,7 @@ class _SignupPageState extends State<SignupPage> {
                 label: '${locale.city} *',
                 value: selectedCity,
                 items: selectedRegion!.cities,
-                 hint: locale
-                      .typeCityNameToSearch ,
+                hint: locale.typeCityNameToSearch,
                 itemLabel: _getCityName,
                 onChanged: (city) {
                   setState(() {
@@ -482,8 +487,7 @@ class _SignupPageState extends State<SignupPage> {
                 label: '${locale.neighbourhood} *',
                 value: selectedDistrict,
                 items: selectedCity!.districts,
-                 hint: locale
-                      .typeNeighborhoodNameToSearch ,
+                hint: locale.typeNeighborhoodNameToSearch,
                 itemLabel: _getDistrictName,
                 onChanged: (district) {
                   setState(() {

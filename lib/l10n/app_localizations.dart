@@ -3839,8 +3839,26 @@ abstract class AppLocalizations {
   /// No description provided for @categoriesDescription.
   ///
   /// In en, this message translates to:
-  /// **'Choose the main category (Electrician/Plumber) to begin your service request.'**
+  /// **'Choose the main category (Electrician/Plumber) to begin your service request.'**
   String get categoriesDescription;
+
+  /// No description provided for @welcomeToAboGlumbo.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Abo Glumbo!'**
+  String get welcomeToAboGlumbo;
+
+  /// No description provided for @welcomeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We have become your new partner for your peace of mind. We are ready to maintain your home. Start now by requesting your first service.'**
+  String get welcomeDescription;
+
+  /// No description provided for @newServiceRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'New Service Request'**
+  String get newServiceRequest;
 }
 
 class _AppLocalizationsDelegate

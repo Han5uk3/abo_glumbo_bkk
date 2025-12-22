@@ -641,5 +641,8 @@
   "typeCityNameToSearch": "Type city name to search...",
   "typeNeighborhoodNameToSearch": "Type neighborhood name to search...",
   "loginDescription": "Trusted, pro technicians. Get service with a tap!",
-  "categoriesDescription": "Choose the main category (Electrician/Plumber) to begin your service request."
+  "categoriesDescription": "Choose the main category (Electrician/Plumber) to begin your service request.",
+  "welcomeToAboGlumbo": "Welcome to Abo Glumbo!",
+  "welcomeDescription": "We have become your new partner for your peace of mind. We are ready to maintain your home. Start now by requesting your first service.",
+  "newServiceRequest": "New Service Request"
 }

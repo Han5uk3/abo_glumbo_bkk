@@ -1984,5 +1984,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoriesDescription =>
-      'Choose the main category (Electrician/Plumber) to begin your service request.';
+      'Choose the main category (Electrician/Plumber) to begin your service request.';
+
+  @override
+  String get welcomeToAboGlumbo => 'Welcome to Abo Glumbo!';
+
+  @override
+  String get welcomeDescription =>
+      'We have become your new partner for your peace of mind. We are ready to maintain your home. Start now by requesting your first service.';
+
+  @override
+  String get newServiceRequest => 'New Service Request';
 }
