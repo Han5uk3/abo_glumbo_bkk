@@ -3859,6 +3859,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New Service Request'**
   String get newServiceRequest;
+
+  /// No description provided for @uploadPaymentProof.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Payment Proof'**
+  String get uploadPaymentProof;
+
+  /// No description provided for @paymentProofFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Proof Files'**
+  String get paymentProofFiles;
+
+  /// No description provided for @pleaseSelectAtLeastOneFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one file'**
+  String get pleaseSelectAtLeastOneFile;
+
+  /// No description provided for @pleaseEnterValidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid amount'**
+  String get pleaseEnterValidAmount;
+
+  /// No description provided for @paymentProofUploadedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment proof uploaded successfully'**
+  String get paymentProofUploadedSuccessfully;
+
+  /// No description provided for @selectFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Files'**
+  String get selectFiles;
+
+  /// No description provided for @addMoreFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Add More Files'**
+  String get addMoreFiles;
+
+  /// No description provided for @uploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading...'**
+  String get uploading;
+
+  /// No description provided for @uploadProof.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Proof'**
+  String get uploadProof;
 }
 
 class _AppLocalizationsDelegate

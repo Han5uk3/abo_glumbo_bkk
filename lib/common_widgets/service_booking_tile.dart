@@ -9,7 +9,7 @@ import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/booking_bloc.dart';
 import 'package:abo_glumbo_bbk/sheets/booking_details.dart';
 import 'package:abo_glumbo_bbk/sheets/cancel_booking_dialog.dart';
-import 'package:abo_glumbo_bbk/sheets/payment.dart';
+import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -510,14 +510,15 @@ class ServiceBookingTile extends StatelessWidget {
 
   Widget _buildPaymentButton(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        showPaymentBottomSheet(
+      onTap: () async {
+        final result = await showUploadPaymentProofSheet(
           context,
-          agent: booking.agent!,
-          service: booking.service,
-          customerData: booking.customer,
           booking: booking,
         );
+        if (result == true) {
+          // Refresh the page to show updated status
+          onRefresh.call();
+        }
       },
       child: SizedBox(
         height: 23,
@@ -529,7 +530,8 @@ class ServiceBookingTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           alignment: Alignment.center,
           child: Text(
-            AppLocalizations.of(context)?.completePayment ?? '',
+            AppLocalizations.of(context)?.uploadPaymentProof ??
+                'Upload Payment Proof',
             style: DMSansFont.textStyle(
               fontWeight: FontWeight.w500,
               fontSize: 10,

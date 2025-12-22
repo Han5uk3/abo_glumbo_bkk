@@ -1995,4 +1995,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newServiceRequest => 'New Service Request';
+
+  @override
+  String get uploadPaymentProof => 'Upload Payment Proof';
+
+  @override
+  String get paymentProofFiles => 'Payment Proof Files';
+
+  @override
+  String get pleaseSelectAtLeastOneFile => 'Please select at least one file';
+
+  @override
+  String get pleaseEnterValidAmount => 'Please enter a valid amount';
+
+  @override
+  String get paymentProofUploadedSuccessfully =>
+      'Payment proof uploaded successfully';
+
+  @override
+  String get selectFiles => 'Select Files';
+
+  @override
+  String get addMoreFiles => 'Add More Files';
+
+  @override
+  String get uploading => 'Uploading...';
+
+  @override
+  String get uploadProof => 'Upload Proof';
 }

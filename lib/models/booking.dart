@@ -37,6 +37,8 @@ class BookingModel {
   String? orderId;
   WarrantyModel? warranty;
   Timestamp? paymentCompletedAt;
+  List<String>? paymentProof; // Payment completion proof files
+  double? paidAmount; // Amount paid for job completion
 
   List<String>? cancelledWorkerUids;
 
@@ -72,6 +74,8 @@ class BookingModel {
     this.cancelledWorkerUids,
     this.paymentCompleted = false,
     this.warranty,
+    this.paymentProof,
+    this.paidAmount,
   });
 
   BookingModel.fromMap(Map<String, dynamic> data)
@@ -117,6 +121,10 @@ class BookingModel {
       completedAt = data['completedAt'],
       paymentCompleted = data['paymentCompleted'] ?? false,
       orderId = data['orderId'],
+      paymentProof = data['paymentProof'] != null
+          ? List<String>.from(data['paymentProof'])
+          : null,
+      paidAmount = data['paidAmount']?.toDouble(),
       cancelledAt = data['cancelledAt'];
 
   factory BookingModel.fromJson(Map<String, dynamic> data) {
@@ -163,6 +171,8 @@ class BookingModel {
       'orderId': orderId,
       'cancellationReason': cancellationReason,
       'paymentCompleted': paymentCompleted,
+      'paymentProof': paymentProof,
+      'paidAmount': paidAmount,
     };
 
     map['id'] = id;

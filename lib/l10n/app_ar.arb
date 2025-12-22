@@ -638,5 +638,14 @@
   "categoriesDescription": "اختر التصنيف الرئيسي (الكهربائي/السباك) لتبدأ طلب الخدمة",
   "newServiceRequest": "طلب خدمة جديدة",
   "welcomeDescription": "لقد أصبحنا شريكك الجديد لراحة بالك. جاهزون لصيانة منزلك. ابدأ الآن بطلب خدمتك الأولى.",
-  "welcomeToAboGlumbo": "أهلاً بك في ابو جلمبو!"
+  "welcomeToAboGlumbo": "أهلاً بك في ابو جلمبو!",
+  "uploadPaymentProof": "رفع إثبات الدفع",
+  "paymentProofFiles": "ملفات إثبات الدفع",
+  "pleaseSelectAtLeastOneFile": "يرجى اختيار ملف واحد على الأقل",
+  "pleaseEnterValidAmount": "يرجى إدخال مبلغ صحيح",
+  "paymentProofUploadedSuccessfully": "تم رفع إثبات الدفع بنجاح",
+  "selectFiles": "اختر الملفات",
+  "addMoreFiles": "إضافة المزيد من الملفات",
+  "uploading": "جاري الرفع...",
+  "uploadProof": "رفع الإثبات"
 }

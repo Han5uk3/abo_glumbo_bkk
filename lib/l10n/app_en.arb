@@ -644,5 +644,14 @@
   "categoriesDescription": "Choose the main category (Electrician/Plumber) to begin your service request.",
   "welcomeToAboGlumbo": "Welcome to Abo Glumbo!",
   "welcomeDescription": "We have become your new partner for your peace of mind. We are ready to maintain your home. Start now by requesting your first service.",
-  "newServiceRequest": "New Service Request"
+  "newServiceRequest": "New Service Request",
+  "uploadPaymentProof": "Upload Payment Proof",
+  "paymentProofFiles": "Payment Proof Files",
+  "pleaseSelectAtLeastOneFile": "Please select at least one file",
+  "pleaseEnterValidAmount": "Please enter a valid amount",
+  "paymentProofUploadedSuccessfully": "Payment proof uploaded successfully",
+  "selectFiles": "Select Files",
+  "addMoreFiles": "Add More Files",
+  "uploading": "Uploading...",
+  "uploadProof": "Upload Proof"
 }

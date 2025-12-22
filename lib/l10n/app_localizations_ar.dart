@@ -1962,4 +1962,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get newServiceRequest => 'طلب خدمة جديدة';
+
+  @override
+  String get uploadPaymentProof => 'رفع إثبات الدفع';
+
+  @override
+  String get paymentProofFiles => 'ملفات إثبات الدفع';
+
+  @override
+  String get pleaseSelectAtLeastOneFile => 'يرجى اختيار ملف واحد على الأقل';
+
+  @override
+  String get pleaseEnterValidAmount => 'يرجى إدخال مبلغ صحيح';
+
+  @override
+  String get paymentProofUploadedSuccessfully => 'تم رفع إثبات الدفع بنجاح';
+
+  @override
+  String get selectFiles => 'اختر الملفات';
+
+  @override
+  String get addMoreFiles => 'إضافة المزيد من الملفات';
+
+  @override
+  String get uploading => 'جاري الرفع...';
+
+  @override
+  String get uploadProof => 'رفع الإثبات';
 }
