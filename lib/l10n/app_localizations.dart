@@ -3908,6 +3908,12 @@ abstract class AppLocalizations {
   /// **'Uploading...'**
   String get uploading;
 
+  /// No description provided for @noBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings'**
+  String get noBookings;
+
   /// No description provided for @uploadProof.
   ///
   /// In en, this message translates to:

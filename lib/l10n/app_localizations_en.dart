@@ -2022,5 +2022,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploading => 'Uploading...';
 
   @override
+  String get noBookings => 'No bookings';
+
+  @override
   String get uploadProof => 'Upload Proof';
 }

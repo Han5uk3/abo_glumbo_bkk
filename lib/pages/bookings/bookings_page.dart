@@ -185,30 +185,24 @@ class _BookingsPageState extends State<BookingsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 140,
-                    height: 140,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Icon(
-                        _getEmptyStateIcon(state.selectedStatus.name),
-                        size: 70,
-                        color: Colors.grey.shade400,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
+                  // Container(
+                  //   width: 140,
+                  //   height: 140,
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.grey.shade100,
+                  //     shape: BoxShape.circle,
+                  //   ),
+                  //   child: Center(
+                  //     child: Icon(
+                  //       _getEmptyStateIcon(state.selectedStatus.name),
+                  //       size: 70,
+                  //       color: Colors.grey.shade400,
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 24),
                   Text(
-                    AppLocalizations.of(context)?.noBookingFound(
-                          _getLocalizedNormalStatusNames(
-                            state.selectedStatus.name,
-                            context,
-                          ),
-                        ) ??
-                        '',
+                    AppLocalizations.of(context)!.noBookings,
                     textAlign: TextAlign.center,
                     style: DMSansFont.textStyle(
                       color: Colors.grey.shade400,
@@ -283,42 +277,42 @@ class _BookingsPageState extends State<BookingsPage> {
     }
   }
 
-  String _getLocalizedNormalStatusNames(String name, BuildContext context) {
-    AppLocalizations locn = AppLocalizations.of(context)!;
-    switch (name) {
-      case "pending":
-        return locn.pending.toLowerCase();
-      case "confirmed":
-        return locn.confirmed.toLowerCase();
-      case "completed":
-        return locn.completed.toLowerCase();
-      case "pendingPayment":
-        return locn.paymentPending.toLowerCase();
-      case "cancelled":
-        return locn.cancelled.toLowerCase();
-      case "onWarranty":
-        return locn.onWarranty.toLowerCase();
-      default:
-        return "Error";
-    }
-  }
+  // String _getLocalizedNormalStatusNames(String name, BuildContext context) {
+  //   AppLocalizations locn = AppLocalizations.of(context)!;
+  //   switch (name) {
+  //     case "pending":
+  //       return locn.pending.toLowerCase();
+  //     case "confirmed":
+  //       return locn.confirmed.toLowerCase();
+  //     case "completed":
+  //       return locn.completed.toLowerCase();
+  //     case "pendingPayment":
+  //       return locn.paymentPending.toLowerCase();
+  //     case "cancelled":
+  //       return locn.cancelled.toLowerCase();
+  //     case "onWarranty":
+  //       return locn.onWarranty.toLowerCase();
+  //     default:
+  //       return "Error";
+  //   }
+  // }
 
-  IconData _getEmptyStateIcon(String name) {
-    switch (name) {
-      case "pending":
-        return Icons.schedule_outlined;
-      case "confirmed":
-        return Icons.event_available_outlined;
-      case "pendingPayment":
-        return Icons.wallet;
-      case "completed":
-        return Icons.task_alt_outlined;
-      case "cancelled":
-        return Icons.event_busy_outlined;
-      default:
-        return Icons.calendar_today_outlined;
-    }
-  }
+  // IconData _getEmptyStateIcon(String name) {
+  //   switch (name) {
+  //     case "pending":
+  //       return Icons.schedule_outlined;
+  //     case "confirmed":
+  //       return Icons.event_available_outlined;
+  //     case "pendingPayment":
+  //       return Icons.wallet;
+  //     case "completed":
+  //       return Icons.task_alt_outlined;
+  //     case "cancelled":
+  //       return Icons.event_busy_outlined;
+  //     default:
+  //       return Icons.calendar_today_outlined;
+  //   }
+  // }
 
   // String _getEmptyStateMessage(String name, BuildContext context) {
   //   switch (name) {

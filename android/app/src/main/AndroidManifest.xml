@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
     <uses-feature android:name="android.hardware.fingerprint" android:required="false"/>
     <application
-        android:label="Abo Glumbo"
+        android:label="Abo Glumbo - Customer"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true"

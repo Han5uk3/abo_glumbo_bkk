@@ -647,5 +647,6 @@
   "selectFiles": "اختر الملفات",
   "addMoreFiles": "إضافة المزيد من الملفات",
   "uploading": "جاري الرفع...",
+  "noBookings":"لا يوجد حجوزات",
   "uploadProof": "رفع الإثبات"
 }

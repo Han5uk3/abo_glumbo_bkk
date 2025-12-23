@@ -1988,5 +1988,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get uploading => 'جاري الرفع...';
 
   @override
+  String get noBookings => 'لا يوجد حجوزات';
+
+  @override
   String get uploadProof => 'رفع الإثبات';
 }

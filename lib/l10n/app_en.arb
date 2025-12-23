@@ -653,5 +653,6 @@
   "selectFiles": "Select Files",
   "addMoreFiles": "Add More Files",
   "uploading": "Uploading...",
+  "noBookings": "No bookings",
   "uploadProof": "Upload Proof"
 }

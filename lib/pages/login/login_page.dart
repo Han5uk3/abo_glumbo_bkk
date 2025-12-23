@@ -277,7 +277,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildHeaderImage() {
     return Padding(
-      padding: const EdgeInsets.only(top: 30),
+      padding: const EdgeInsets.only(top: 60),
       child: Center(
         child: Stack(
           alignment: Alignment.center,
@@ -300,12 +300,18 @@ class _LoginPageState extends State<LoginPage> {
                 borderRadius: BorderRadius.circular(32),
               ),
             ),
-            Image.asset(
-              AppImages.workerArtLogin,
-              height: 286,
-              width: 290,
-              fit: BoxFit.cover,
-              alignment: Alignment.center,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: SizedBox(
+                height: 285,
+                width: 290,
+                child: Image.asset(
+                  AppImages.loginImage,
+
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
+                ),
+              ),
             ),
           ],
         ),

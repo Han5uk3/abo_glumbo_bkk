@@ -370,7 +370,6 @@ class PayoutAccountModel {
   String? accountNumber;
   String? bankName;
   String? ifscCode;
-  String? accountType;
   bool isPrimary;
   Timestamp? createdAt;
   Timestamp? updatedAt;
@@ -381,7 +380,6 @@ class PayoutAccountModel {
     this.accountNumber,
     this.bankName,
     this.ifscCode,
-    this.accountType,
     this.isPrimary = false,
     this.createdAt,
     this.updatedAt,
@@ -404,7 +402,6 @@ class PayoutAccountModel {
       accountNumber: accountNumber ?? this.accountNumber,
       bankName: bankName ?? this.bankName,
       ifscCode: ifscCode ?? this.ifscCode,
-      accountType: accountType ?? this.accountType,
       isPrimary: isPrimary ?? this.isPrimary,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -418,7 +415,6 @@ class PayoutAccountModel {
       accountNumber: json['accountNumber'],
       bankName: json['bankName'],
       ifscCode: json['ifscCode'],
-      accountType: json['accountType'],
       isPrimary: json['isPrimary'] ?? false,
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
@@ -432,7 +428,6 @@ class PayoutAccountModel {
       'accountNumber': accountNumber,
       'bankName': bankName,
       'ifscCode': ifscCode,
-      'accountType': accountType,
       'isPrimary': isPrimary,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
@@ -449,7 +444,6 @@ class PayoutAccountModel {
       accountNumber: data?['accountNumber'],
       bankName: data?['bankName'],
       ifscCode: data?['ifscCode'],
-      accountType: data?['accountType'],
       isPrimary: data?['isPrimary'] ?? false,
       createdAt: data?['createdAt'],
       updatedAt: data?['updatedAt'],
@@ -462,7 +456,6 @@ class PayoutAccountModel {
       'accountNumber': accountNumber,
       'bankName': bankName,
       'ifscCode': ifscCode,
-      'accountType': accountType,
       'isPrimary': isPrimary,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
@@ -476,7 +469,6 @@ class PayoutAccountModel {
       accountNumber: map['accountNumber'],
       bankName: map['bankName'],
       ifscCode: map['ifscCode'],
-      accountType: map['accountType'],
       isPrimary: map['isPrimary'] ?? false,
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
