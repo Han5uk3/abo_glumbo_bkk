@@ -1992,4 +1992,42 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get uploadProof => 'رفع الإثبات';
+
+  @override
+  String get customerAboutUsTitle => 'من نحن';
+
+  @override
+  String get customerAboutHeadline => 'راحة بالك تبدأ من هنا';
+
+  @override
+  String get customerAboutIntro =>
+      'نحن ندرك تماماً التحديات التي تواجهك عند البحث عن فنيين مؤهلين وموثوقين للخدمات المنزلية. لهذا السبب، تم إنشاء تطبيقنا ليكون جسرك الوحيد نحو خدمات الصيانة والإصلاح الاحترافية في مجالات الكهرباء، والسباكة، والتكييف، والدهانات، وغيرها.';
+
+  @override
+  String get customerWhyChooseUs => 'لماذا تختارنا؟';
+
+  @override
+  String get customerCertifiedExpertsTitle => 'خبراء معتمدون';
+
+  @override
+  String get customerCertifiedExpertsDesc =>
+      'نتعامل فقط مع فنيين تم التحقق من كفاءتهم وخبرتهم لضمان أعلى مستوى من الجودة.';
+
+  @override
+  String get customerSeamlessExperienceTitle => 'تجربة سلسة';
+
+  @override
+  String get customerSeamlessExperienceDesc =>
+      'وداعاً للبحث والمكالمات المتعددة. يمكنك طلب الخدمة وتحديد موعدها خلال ثوانٍ قليلة عبر واجهة سهلة الاستخدام.';
+
+  @override
+  String get customerTransparencyTitle => 'شفافية تامة';
+
+  @override
+  String get customerTransparencyDesc =>
+      'نحرص على تقديم أسعار واضحة لرسوم الفحص وتفاصيل كاملة للخدمة قبل وبعد التنفيذ، بالإضافة إلى ضمان موثق على أعمالنا.';
+
+  @override
+  String get customerMission =>
+      'مهمتنا هي تحويل مهمة الصيانة المعقدة إلى تجربة بسيطة ومضمونة.';
 }

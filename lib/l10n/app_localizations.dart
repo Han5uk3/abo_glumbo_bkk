@@ -3919,6 +3919,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upload Proof'**
   String get uploadProof;
+
+  /// No description provided for @customerAboutUsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About Us'**
+  String get customerAboutUsTitle;
+
+  /// No description provided for @customerAboutHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Peace of Mind Starts Here'**
+  String get customerAboutHeadline;
+
+  /// No description provided for @customerAboutIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'We fully understand the challenges of finding qualified and reliable technicians for essential home services. That\'s why our application was created to be your single bridge to professional maintenance and repair services across electrical, plumbing, HVAC, painting, and more.'**
+  String get customerAboutIntro;
+
+  /// No description provided for @customerWhyChooseUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Why Choose Us?'**
+  String get customerWhyChooseUs;
+
+  /// No description provided for @customerCertifiedExpertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Certified Experts'**
+  String get customerCertifiedExpertsTitle;
+
+  /// No description provided for @customerCertifiedExpertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'We partner exclusively with technicians whose competence and experience have been thoroughly verified to ensure the highest quality standards.'**
+  String get customerCertifiedExpertsDesc;
+
+  /// No description provided for @customerSeamlessExperienceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Seamless Experience'**
+  String get customerSeamlessExperienceTitle;
+
+  /// No description provided for @customerSeamlessExperienceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Say goodbye to endless searching and phone calls. You can request and schedule your service within a few seconds through our user-friendly interface.'**
+  String get customerSeamlessExperienceDesc;
+
+  /// No description provided for @customerTransparencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Transparency'**
+  String get customerTransparencyTitle;
+
+  /// No description provided for @customerTransparencyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'We ensure clear pricing for inspection fees and provide full details of the service before and after execution, along with a documented warranty on our work.'**
+  String get customerTransparencyDesc;
+
+  /// No description provided for @customerMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Our mission is to transform complicated maintenance tasks into a simple, guaranteed experience.'**
+  String get customerMission;
 }
 
 class _AppLocalizationsDelegate

@@ -654,5 +654,16 @@
   "addMoreFiles": "Add More Files",
   "uploading": "Uploading...",
   "noBookings": "No bookings",
-  "uploadProof": "Upload Proof"
+  "uploadProof": "Upload Proof",
+  "customerAboutUsTitle": "About Us",
+  "customerAboutHeadline": "Your Peace of Mind Starts Here",
+  "customerAboutIntro": "We fully understand the challenges of finding qualified and reliable technicians for essential home services. That's why our application was created to be your single bridge to professional maintenance and repair services across electrical, plumbing, HVAC, painting, and more.",
+  "customerWhyChooseUs": "Why Choose Us?",
+  "customerCertifiedExpertsTitle": "Certified Experts",
+  "customerCertifiedExpertsDesc": "We partner exclusively with technicians whose competence and experience have been thoroughly verified to ensure the highest quality standards.",
+  "customerSeamlessExperienceTitle": "Seamless Experience",
+  "customerSeamlessExperienceDesc": "Say goodbye to endless searching and phone calls. You can request and schedule your service within a few seconds through our user-friendly interface.",
+  "customerTransparencyTitle": "Full Transparency",
+  "customerTransparencyDesc": "We ensure clear pricing for inspection fees and provide full details of the service before and after execution, along with a documented warranty on our work.",
+  "customerMission": "Our mission is to transform complicated maintenance tasks into a simple, guaranteed experience."
 }

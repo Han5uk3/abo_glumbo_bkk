@@ -9,6 +9,7 @@ import 'package:abo_glumbo_bbk/pages/SignUp/terms_and_conditions_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/edit_profile.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/notification.dart';
+import 'package:abo_glumbo_bbk/pages/accounts/widgets/about_us_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/account_list_tile.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/contact_bottom_sheet.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/faq_page.dart';
@@ -103,10 +104,18 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           _buildSupportSection(),
           if (!_isGuest) ...[_buildTermsAndConditions(), _buildPrivacyPolicy()],
           _buildFAQSection(),
+          _buildAboutUsSection(),
           if (!_isGuest) ...[_buildAuthSection(), _buildDangerZone()],
           if (_isGuest) _buildAuthSection(),
         ],
       ),
+    );
+  }
+
+  Widget _buildAboutUsSection() {
+    return AccountListTile.withArrow(
+      title: AppLocalizations.of(context)?.customerAboutUsTitle ?? '',
+      onTap: _handleAboutUsPage,
     );
   }
 
@@ -323,6 +332,13 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       return;
     }
     Navigator.push(context, MaterialPageRoute(builder: (context) => FAQPage()));
+  }
+
+  void _handleAboutUsPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CustomerAboutUsPage()),
+    );
   }
 
   // void _handleWishlist() {

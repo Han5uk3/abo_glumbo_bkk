@@ -2026,4 +2026,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uploadProof => 'Upload Proof';
+
+  @override
+  String get customerAboutUsTitle => 'About Us';
+
+  @override
+  String get customerAboutHeadline => 'Your Peace of Mind Starts Here';
+
+  @override
+  String get customerAboutIntro =>
+      'We fully understand the challenges of finding qualified and reliable technicians for essential home services. That\'s why our application was created to be your single bridge to professional maintenance and repair services across electrical, plumbing, HVAC, painting, and more.';
+
+  @override
+  String get customerWhyChooseUs => 'Why Choose Us?';
+
+  @override
+  String get customerCertifiedExpertsTitle => 'Certified Experts';
+
+  @override
+  String get customerCertifiedExpertsDesc =>
+      'We partner exclusively with technicians whose competence and experience have been thoroughly verified to ensure the highest quality standards.';
+
+  @override
+  String get customerSeamlessExperienceTitle => 'Seamless Experience';
+
+  @override
+  String get customerSeamlessExperienceDesc =>
+      'Say goodbye to endless searching and phone calls. You can request and schedule your service within a few seconds through our user-friendly interface.';
+
+  @override
+  String get customerTransparencyTitle => 'Full Transparency';
+
+  @override
+  String get customerTransparencyDesc =>
+      'We ensure clear pricing for inspection fees and provide full details of the service before and after execution, along with a documented warranty on our work.';
+
+  @override
+  String get customerMission =>
+      'Our mission is to transform complicated maintenance tasks into a simple, guaranteed experience.';
 }

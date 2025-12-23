@@ -171,7 +171,7 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             return MaterialApp(
               navigatorKey: navigatorKey,
-              title: 'Abo Glumbo',
+              title: 'Abo Glumbo - Customer',
               locale: state.locale,
               localizationsDelegates: [
                 AppLocalizations.delegate,
