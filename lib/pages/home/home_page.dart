@@ -139,42 +139,46 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget _buildHeader(EdgeInsets safePadding) {
     final primaryBanners = _getPrimaryBanners();
 
-    return SizedBox(
-      height: 300 + safePadding.top,
-      child: Stack(
+    return Container(
+      color:
+          AppColors.bgWhite, // Using scaffold background color for bottom part
+      child: Column(
         children: [
           Container(
             width: double.maxFinite,
-            height: 250 + safePadding.top,
-            color: AppColors.primary,
-          ),
-
-          if (!_isGuest)
-            Positioned(
+            padding: EdgeInsets.only(
               top: safePadding.top + 10,
-              right: 16,
+              bottom: 20,
               left: 16,
-              child: Row(
-                children: [
-                  // const LocationShowingWidget(),
-                  Spacer(),
-                  UnreadNotificationBadge(
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const NewNotificationsPage(),
-                      ),
-                    ),
-                  ),
-                ],
+              right: 16,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(24),
+                bottomRight: Radius.circular(24),
               ),
             ),
-          if (primaryBanners.isNotEmpty)
-            Positioned(
-              top: safePadding.top + 50,
-              right: 0,
-              left: 0,
-              child: HomeCarouselWidget(banners: primaryBanners),
+            child: Column(
+              children: [
+                if (!_isGuest)
+                  Row(
+                    children: [
+                      const Spacer(),
+                      UnreadNotificationBadge(
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const NewNotificationsPage(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                const SizedBox(height: 20),
+                HomeCarouselWidget(banners: primaryBanners),
+              ],
             ),
+          ),
         ],
       ),
     );
@@ -203,32 +207,33 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Widget _buildCategoriesHeader() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 9),
+      padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Column(
-            children: [
-              Text(
-                AppLocalizations.of(context)!.categories,
-                style: DMSansFont.textStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.categories,
+                  style: DMSansFont.textStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              Flexible(
-                child: Text(
+                Text(
                   maxLines: 2,
                   AppLocalizations.of(context)!.categoriesDescription,
                   style: DMSansFont.textStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: Colors.black54,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

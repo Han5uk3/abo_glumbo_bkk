@@ -300,6 +300,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
   Widget _buildAuthSection() {
     return AccountListTile(
+      trailing: Icon(Icons.logout, size: 20),
       title: _isGuest
           ? (AppLocalizations.of(context)?.signUp ?? '')
           : (AppLocalizations.of(context)?.logout ?? ''),

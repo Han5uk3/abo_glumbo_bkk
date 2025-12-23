@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -64,7 +65,33 @@ class _HomeCarouselWidgetState extends State<HomeCarouselWidget> {
   @override
   Widget build(BuildContext context) {
     if (widget.banners.isEmpty) {
-      return const SizedBox.shrink();
+      return Column(
+        children: [
+          const SizedBox(
+            height: 140,
+            child: Center(child: Loader(color: Colors.white)),
+          ),
+          const SizedBox(height: 15),
+          AnimatedSmoothIndicator(
+            activeIndex: _currentIndex,
+            curve: Curves.linear,
+            count: 1,
+            effect: ExpandingDotsEffect(
+              expansionFactor: 1.1,
+              activeDotColor: AppColors.secondary,
+              dotColor: AppColors.grey1,
+              dotHeight: 3,
+              dotWidth: 15,
+              spacing: 8,
+            ),
+            onDotClicked: (index) {
+              if (mounted) {
+                _controller.animateToPage(index);
+              }
+            },
+          ),
+        ],
+      );
     }
 
     // Filter banners with valid images
@@ -79,7 +106,40 @@ class _HomeCarouselWidgetState extends State<HomeCarouselWidget> {
         .toList();
 
     if (validBanners.isEmpty) {
-      return const SizedBox.shrink();
+      return Column(
+        children: [
+          Container(
+            height: 140,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.grey[200],
+              image: DecorationImage(
+                image: AssetImage("assets/images/living-room-2732939_1280.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(height: 15),
+          AnimatedSmoothIndicator(
+            activeIndex: _currentIndex,
+            curve: Curves.linear,
+            count: 2,
+            effect: ExpandingDotsEffect(
+              expansionFactor: 1.1,
+              activeDotColor: AppColors.secondary,
+              dotColor: AppColors.grey1,
+              dotHeight: 3,
+              dotWidth: 15,
+              spacing: 8,
+            ),
+            onDotClicked: (index) {
+              if (mounted) {
+                _controller.animateToPage(index);
+              }
+            },
+          ),
+        ],
+      );
     }
 
     return Column(

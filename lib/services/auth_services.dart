@@ -424,21 +424,32 @@ class AuthServices {
         return;
       }
       final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
+
+      if (!context.mounted) {
+        debugPrint("Context unmounted after Firestore check in checkUser");
+        return;
+      }
+
       if (userDoc.exists) {
-        LocalStoreHelper.putUID(uid);
-        LocalStoreHelper.putGuestUser(false);
-        LocalStoreHelper.putlogoutStatus(false);
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => Home()),
-          (route) => false,
-        );
+        await LocalStoreHelper.putUID(uid);
+        await LocalStoreHelper.putGuestUser(false);
+        await LocalStoreHelper.putlogoutStatus(false);
+
+        if (context.mounted) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Home()),
+            (route) => false,
+          );
+        }
       } else {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => SignupPage(uid: uid)),
-          (route) => false,
-        );
+        if (context.mounted) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => SignupPage(uid: uid)),
+            (route) => false,
+          );
+        }
       }
     } catch (e) {
       debugPrint("Error in checkUser: $e");

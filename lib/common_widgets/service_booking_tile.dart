@@ -490,6 +490,7 @@ class ServiceBookingTile extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(Icons.access_time, size: 10, color: AppColors.secondary),
+        SizedBox(width: 4),
         Text(
           text,
           style: TextStyle(color: AppColors.secondary, fontSize: 10.5),
@@ -584,8 +585,8 @@ class ServiceBookingTile extends StatelessWidget {
       case "E":
         return _buildWarrantyBadge(
           label: AppLocalizations.of(context)?.expired ?? '',
-          color: Colors.red,
-          textColor: Colors.red,
+          color: Colors.grey,
+          textColor: Colors.grey,
           borderOnly: true,
         );
       case "R":

@@ -89,7 +89,7 @@ class _HomeState extends State<Home> {
       stream: AppServices.listenToCustomerData(widget.byPassedUid ?? uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          Scaffold(
+          return Scaffold(
             body: Center(child: Loader(color: AppColors.primary)),
           );
         }

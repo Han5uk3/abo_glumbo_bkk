@@ -766,16 +766,14 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                             if (routePoints.isNotEmpty)
                               Polyline(
                                 polylineId: const PolylineId("route"),
-                                color: Colors.red, // Red color as requested
+                                color: const Color(
+                                  0xFF4A89F3,
+                                ), // Google Maps Blue
                                 width: 5,
                                 startCap: Cap.roundCap,
                                 endCap: Cap.roundCap,
                                 jointType: JointType.round,
                                 points: routePoints,
-                                patterns: [
-                                  PatternItem.dash(20),
-                                  PatternItem.gap(10),
-                                ],
                               ),
                           },
                         ),
