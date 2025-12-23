@@ -582,6 +582,8 @@
   "serviceTrackingStopped": "تم إيقاف تتبع الخدمة",
   "warrantyRepairCompleted": "اكتمل إصلاح الضمان",
   "technicianCompletedTheRequest": "أكمل الفني الطلب",
+  "warrantyExpired": "انتهت صلاحية الضمان",
+  "warrantyPeriodHasExpired": "انتهت فترة الضمان",
   "unknownTechnician": "فني غير معروف",
   "technicianCancelled": "ألغى الفني",
   "cancelledByTechnician": "تم الإلغاء بواسطة الفني",

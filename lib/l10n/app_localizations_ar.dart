@@ -1751,6 +1751,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get technicianCompletedTheRequest => 'أكمل الفني الطلب';
 
   @override
+  String get warrantyExpired => 'انتهت صلاحية الضمان';
+
+  @override
+  String get warrantyPeriodHasExpired => 'انتهت فترة الضمان';
+
+  @override
   String get unknownTechnician => 'فني غير معروف';
 
   @override

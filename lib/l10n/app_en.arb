@@ -581,6 +581,8 @@
   "serviceTrackingStopped": "Service tracking stopped",
   "warrantyRepairCompleted": "Warranty Repair Completed",
   "technicianCompletedTheRequest": "Technician completed the request",
+  "warrantyExpired": "Warranty Expired",
+  "warrantyPeriodHasExpired": "Warranty period has expired",
   "unknownTechnician": "Unknown Technician",
   "technicianCancelled": "Technician Cancelled",
   "tryAdjustingYourSearchOrFilters": "Try adjusting your search or filters",

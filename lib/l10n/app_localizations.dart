@@ -3476,6 +3476,18 @@ abstract class AppLocalizations {
   /// **'Technician completed the request'**
   String get technicianCompletedTheRequest;
 
+  /// No description provided for @warrantyExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Expired'**
+  String get warrantyExpired;
+
+  /// No description provided for @warrantyPeriodHasExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty period has expired'**
+  String get warrantyPeriodHasExpired;
+
   /// No description provided for @unknownTechnician.
   ///
   /// In en, this message translates to:

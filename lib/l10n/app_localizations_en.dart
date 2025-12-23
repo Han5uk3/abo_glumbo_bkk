@@ -1774,6 +1774,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Technician completed the request';
 
   @override
+  String get warrantyExpired => 'Warranty Expired';
+
+  @override
+  String get warrantyPeriodHasExpired => 'Warranty period has expired';
+
+  @override
   String get unknownTechnician => 'Unknown Technician';
 
   @override

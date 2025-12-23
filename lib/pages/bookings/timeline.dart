@@ -179,6 +179,19 @@ Widget buildBookingTimelineCard(
             'date': booking.warranty!.rejectedAt!,
           });
         }
+
+        // Warranty expired
+        if (booking.warranty?.expiredOn != null) {
+          timelineItems.add({
+            'title': AppLocalizations.of(context)!.warrantyExpired,
+            'time': _formatDateLocalized(booking.warranty!.expiredOn!, context),
+            'description': AppLocalizations.of(
+              context,
+            )!.warrantyPeriodHasExpired,
+            'status': 'rejected',
+            'date': booking.warranty!.expiredOn!,
+          });
+        }
       } else {
         // ==========================================
         // NORMAL BOOKING TIMELINE ONLY
