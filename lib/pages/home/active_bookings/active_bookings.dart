@@ -68,8 +68,12 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     );
     _initializeETACalculations();
 
-    // Show ongoing tracking notification
-    _showTrackingNotification();
+    // Show ongoing tracking notification after a short delay to ensure services are initialized
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        _showTrackingNotification();
+      }
+    });
 
     // Start auto-scroll only if there are multiple bookings
     if (widget.activeBookings.length > 1) {
@@ -592,6 +596,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
 
       // Handle different possible response formats
       String? durationString;
+      String? distanceString;
 
       if (result is Map<String, dynamic>) {
         // Try different possible keys for duration
@@ -599,6 +604,8 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
             result['duration'] as String? ??
             result['duration_text'] as String? ??
             result['text'] as String?;
+
+        distanceString = result['distance'] as String?;
       } else if (result is String) {
         durationString = result as String?;
       }
@@ -608,7 +615,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         final arrivalTime = _calculateArrivalTime(etaMinutes);
 
         _log(
-          '[ETA] ✅ API Success - Duration: "$durationString", Minutes: $etaMinutes, Arrival: $arrivalTime',
+          '[ETA] ✅ API Success - Duration: "$durationString", Distance: "$distanceString", Minutes: $etaMinutes, Arrival: $arrivalTime',
         );
 
         if (mounted) {
@@ -622,6 +629,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
               'isLocationError': false,
               'customerLat': customerLat,
               'customerLng': customerLng,
+              'distance': distanceString,
             };
           });
 
@@ -702,39 +710,46 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   Future<void> _showTrackingNotification() async {
     try {
       final locale = AppLocalizations.of(context);
+      if (locale == null) return;
 
       // Get booking details
-      int? etaMinutes;
-      String? etaTime;
       String? serviceName;
       String? bookingId;
+      String? notificationBody;
 
       if (widget.activeBookings.isNotEmpty) {
         final firstBooking = widget.activeBookings[0];
         bookingId = firstBooking.id;
 
         // Get service name based on app language
-        final isArabic = locale?.localeName == 'ar';
+        final isArabic = locale.localeName == 'ar';
         serviceName = isArabic
             ? firstBooking.service.name_ar
             : firstBooking.service.name;
 
-        // Get ETA
+        // Get ETA and Distance
         final firstBookingEta = etaData[firstBooking.id];
         if (firstBookingEta != null) {
-          etaMinutes = firstBookingEta['minutes'] as int?;
-          etaTime = firstBookingEta['arrivalTime'] as String?;
+          final arrivalTimeFormatted =
+              firstBookingEta['arrivalTime'] as String?;
+          final distance = firstBookingEta['distance'] as String?;
+
+          if (distance != null && arrivalTimeFormatted != null) {
+            // "Your Technician is on the way - 500m away and Arrival Time 15:30"
+            // Using localized strings
+            notificationBody =
+                '${locale.yourTechnicianIsOnTheWay} - $distance ${locale.away} ${locale.and} ${locale.arrivalTime} $arrivalTimeFormatted';
+          }
         }
       }
 
       await NotificationServices.showOngoingTrackingNotification(
-        title: locale?.liveTracking ?? 'Live Tracking',
+        title: locale.liveTracking,
         serviceName: serviceName,
-        body:
-            locale?.tapForLiveLocationTracking ??
-            'Tracking your technician\'s live location',
-        etaMinutes: etaMinutes,
-        etaTime: etaTime,
+        body: notificationBody ?? locale.tapForLiveLocationTracking,
+        // We set etaMinutes to null to avoid the default ETA appending, as we include it in the body now
+        etaMinutes: null,
+        etaTime: null,
         bookingId: bookingId,
       );
     } catch (e) {
@@ -746,39 +761,44 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   Future<void> _updateTrackingNotification() async {
     try {
       final locale = AppLocalizations.of(context);
+      if (locale == null) return;
 
       // Get booking details
-      int? etaMinutes;
-      String? etaTime;
       String? serviceName;
       String? bookingId;
+      String? notificationBody;
 
       if (widget.activeBookings.isNotEmpty) {
         final firstBooking = widget.activeBookings[0];
         bookingId = firstBooking.id;
 
         // Get service name based on app language
-        final isArabic = locale?.localeName == 'ar';
+        final isArabic = locale.localeName == 'ar';
         serviceName = isArabic
             ? firstBooking.service.name_ar
             : firstBooking.service.name;
 
-        // Get ETA
+        // Get ETA and Distance
         final firstBookingEta = etaData[firstBooking.id];
         if (firstBookingEta != null) {
-          etaMinutes = firstBookingEta['minutes'] as int?;
-          etaTime = firstBookingEta['arrivalTime'] as String?;
+          final arrivalTimeFormatted =
+              firstBookingEta['arrivalTime'] as String?;
+          final distance = firstBookingEta['distance'] as String?;
+
+          if (distance != null && arrivalTimeFormatted != null) {
+            notificationBody =
+                '${locale.yourTechnicianIsOnTheWay} - $distance ${locale.away} ${locale.and} ${locale.arrivalTime} $arrivalTimeFormatted';
+          }
         }
       }
 
       await NotificationServices.showOngoingTrackingNotification(
-        title: locale?.liveTracking ?? 'Live Tracking',
+        title: locale.liveTracking,
         serviceName: serviceName,
-        body:
-            locale?.tapForLiveLocationTracking ??
-            'Tracking your technician\'s live location',
-        etaMinutes: etaMinutes,
-        etaTime: etaTime,
+        body: notificationBody ?? locale.tapForLiveLocationTracking,
+        // We set etaMinutes to null to avoid the default ETA appending, as we include it in the body now
+        etaMinutes: null,
+        etaTime: null,
         bookingId: bookingId,
       );
     } catch (e) {

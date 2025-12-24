@@ -38,12 +38,24 @@ class UploadPaymentProofSheet extends StatefulWidget {
 
 class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _transactionIdController =
+      TextEditingController();
   final List<File> _selectedFiles = [];
   bool _isUploading = false;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.booking.completionData != null) {
+      _amountController.text = widget.booking.completionData!.totalCost
+          .toString();
+    }
+  }
+
+  @override
   void dispose() {
     _amountController.dispose();
+    _transactionIdController.dispose();
     super.dispose();
   }
 
@@ -109,6 +121,17 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
       return;
     }
 
+    final transactionId = _transactionIdController.text.trim();
+    if (transactionId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter a transaction ID'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _isUploading = true;
     });
@@ -146,6 +169,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
       await AppFirestore.bookingsCollectionRef.doc(widget.booking.id).update({
         'paymentProof': uploadedUrls,
         'paidAmount': amount,
+        'transactionId': transactionId, // Saving transaction ID
         'paymentCompleted': true,
         'paymentCompletedAt': Timestamp.now(),
       });
@@ -181,13 +205,16 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
   @override
   Widget build(BuildContext context) {
     final safePadding = MediaQuery.of(context).padding;
+    final viewInsets = MediaQuery.of(context).viewInsets;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      padding: EdgeInsets.only(bottom: safePadding.bottom + 16),
+      padding: EdgeInsets.only(
+        bottom: safePadding.bottom + viewInsets.bottom + 16,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,7 +274,42 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                   ],
                   decoration: InputDecoration(
                     hintText: '0.00',
-                    prefixText: 'AED ',
+                    prefixText: " ${AppLocalizations.of(context)!.sar} ",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 16),
+
+                // Transaction ID Input
+                Text(
+                  AppLocalizations.of(context)?.transactionId ??
+                      'Transaction ID',
+                  style: DMSansFont.textStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 8),
+                TextField(
+                  controller: _transactionIdController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    hintText: 'Enter Transaction ID',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -290,7 +352,6 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                         final file = _selectedFiles[index];
                         final fileName = file.path.split('/').last;
                         return Card(
-                          margin: EdgeInsets.only(bottom: 8),
                           child: ListTile(
                             dense: true,
                             leading: Icon(
@@ -328,34 +389,41 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                               'Add More Files'),
                   ),
                   style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusGeometry.circular(8),
+                    ),
                     minimumSize: Size(double.infinity, 48),
                     side: BorderSide(color: AppColors.primary),
                   ),
                 ),
 
-                SizedBox(height: 20),
+                SizedBox(height: 30),
 
                 // Upload Button
-                eButton(
-                  onPressed: _isUploading ? null : _uploadPaymentProof,
-                  context: context,
-                  backgroundColor: AppColors.primary,
-                  text: _isUploading
-                      ? (AppLocalizations.of(context)?.uploading ??
-                            'Uploading...')
-                      : (AppLocalizations.of(context)?.uploadProof ??
-                            'Upload Proof'),
-                  textColor: Colors.white,
-                  widget: _isUploading
-                      ? Loader()
-                      : Text(
-                          AppLocalizations.of(context)?.uploadProof ??
-                              'Upload Proof',
-                          style: DMSansFont.textStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                SizedBox(
+                  height: 54,
+                  width: double.infinity,
+                  child: eButton(
+                    onPressed: _isUploading ? null : _uploadPaymentProof,
+                    context: context,
+                    backgroundColor: AppColors.primary,
+                    text: _isUploading
+                        ? (AppLocalizations.of(context)?.uploading ??
+                              'Uploading...')
+                        : (AppLocalizations.of(context)?.uploadProof ??
+                              'Upload Proof'),
+                    textColor: Colors.white,
+                    widget: _isUploading
+                        ? Loader()
+                        : Text(
+                            AppLocalizations.of(context)?.uploadProof ??
+                                'Upload Proof',
+                            style: DMSansFont.textStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+                  ),
                 ),
               ],
             ),
