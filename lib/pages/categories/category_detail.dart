@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -88,92 +89,77 @@ class _CategoryDetailState extends State<CategoryDetail> {
     final service = allServices.isNotEmpty ? allServices.first : null;
     final imageUrl = service?.image ?? widget.category?.icon ?? '';
 
-    // Header height (70% of screen height)
-    final headerHeight = MediaQuery.of(context).size.height * 0.70;
+    // Header height (Adjusted to 55% to match the deep curve in screenshot)
+    final headerHeight = MediaQuery.of(context).size.height * 0.55;
 
     return Scaffold(
       backgroundColor: AppColors.primary,
-      extendBodyBehindAppBar: true,
+      // 1. Extend body behind AppBar so image goes to top of screen
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.primary, // Transparent AppBar
         elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.all(8),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          widget.category?.nameLocalized(
+                languageCode: AppLocalizations.of(context)?.localeName ?? '',
+              ) ??
+              '',
+          style: const TextStyle(color: Colors.white),
         ),
       ),
 
       body: SingleChildScrollView(
+        // Remove padding here so the image touches edges
         padding: EdgeInsets.zero,
         child: Column(
           children: [
-            // --- HEADER SECTION ---
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-                color: Colors.white,
+            // --- HEADER SECTION WITH CURVE ---
+            ClipPath(
+              clipper:
+                  _HeaderCurveClipper(), // The custom clipper defined below
+              child: Container(
+                height: headerHeight,
+                width: double.infinity,
+                color: Colors.grey[200], // Placeholder color
+                child:
+                    (imageUrl.isNotEmpty &&
+                        Uri.tryParse(imageUrl) != null &&
+                        Uri.tryParse(imageUrl)!.hasAbsolutePath)
+                    ? CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.cover, // Important: fills the curved area
+                        placeholder: (context, url) =>
+                            Center(child: Loader(color: AppColors.primary)),
+                        errorWidget: (context, url, error) => const Center(
+                          child: Icon(
+                            Icons.image,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: Icon(
+                          Icons.image,
+                          size: 60,
+                          color: Colors.grey[400],
+                        ),
+                      ),
               ),
-              height: headerHeight,
-              width: double.infinity,
-              // The White Frame
-              // PADDING: Creates the white border
-              padding: const EdgeInsets.all(16),
-
-              child:
-                  (imageUrl.isNotEmpty &&
-                      Uri.tryParse(imageUrl) != null &&
-                      Uri.tryParse(imageUrl)!.hasAbsolutePath)
-                  ? CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          Center(child: Loader(color: AppColors.primary)),
-                      errorWidget: (context, url, error) => const Center(
-                        child: Icon(Icons.error, color: Colors.grey),
-                      ),
-                    )
-                  : Container(
-                      color: Colors.grey[200],
-                      child: Icon(
-                        Icons.image,
-                        size: 60,
-                        color: Colors.grey[400],
-                      ),
-                    ),
             ),
 
             // --- CONTENT SECTION ---
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 0,
-              ),
+              // Add padding back here for the text content
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Column(
                 children: [
                   if (service != null) ...[
-                    const SizedBox(height: 30),
-                    Text(
-                      service.nameLocalized(
-                            languageCode:
-                                AppLocalizations.of(context)?.localeName ?? '',
-                          ) ??
-                          '',
-                      textAlign: TextAlign.center,
-                      style: DMSansFont.textStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
                     Text(
                       service.descriptionLocalized(
                             languageCode:
@@ -182,12 +168,13 @@ class _CategoryDetailState extends State<CategoryDetail> {
                           '',
                       textAlign: TextAlign.center,
                       style: DMSansFont.textStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
                         fontSize: 14,
-                        height: 1.6,
+                        height: 1.5,
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 18),
 
                     Text(
                       "${AppLocalizations.of(context)?.inspectionFee ?? 'Inspection Fee'}: ${service.price} ${AppLocalizations.of(context)?.sar ?? 'SAR'}",
@@ -197,12 +184,14 @@ class _CategoryDetailState extends State<CategoryDetail> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 50),
 
                     SizedBox(
                       width: double.infinity,
                       height: 56,
-                      child: ElevatedButton(
+
+                      child: eButton(
+                        context: context,
                         onPressed: () {
                           if (LocalStoreHelper.getGuestUser()) {
                             SignUpAlertForGuestUsers().showSignUpAlert(context);
@@ -213,24 +202,21 @@ class _CategoryDetailState extends State<CategoryDetail> {
                             );
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.primary,
-                          shape: const StadiumBorder(),
-                          elevation: 0,
-                        ),
-                        child: Text(
+                        backgroundColor: Colors.white,
+                        textColor: AppColors.primary,
+
+                        widget: Text(
                           AppLocalizations.of(context)?.requestService ??
                               'Request Service',
                           style: DMSansFont.textStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
                             color: AppColors.primary,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 30),
                   ] else ...[
                     Text(
                       AppLocalizations.of(context)?.noServicesFound ??
@@ -247,4 +233,39 @@ class _CategoryDetailState extends State<CategoryDetail> {
       ),
     );
   }
+}
+
+// --- CUSTOM CLIPPER FOR THE CURVED BOTTOM ---
+class _HeaderCurveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+
+    // Start at top-left
+    path.lineTo(0, 0);
+
+    // Go to bottom-left (minus the curve height)
+    path.lineTo(0, size.height - 50);
+
+    // Create the convex curve (bulging downwards)
+    // Control point is in the middle, pushed down below the height
+    var firstControlPoint = Offset(size.width / 2, size.height + 20);
+    var firstEndPoint = Offset(size.width, size.height - 50);
+
+    path.quadraticBezierTo(
+      firstControlPoint.dx,
+      firstControlPoint.dy,
+      firstEndPoint.dx,
+      firstEndPoint.dy,
+    );
+
+    // Go to top-right
+    path.lineTo(size.width, 0);
+
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

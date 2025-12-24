@@ -28,18 +28,36 @@ showBookServiceBottomSheet(
   BuildContext context, {
   required ServiceModel service,
 }) async {
-  await showModalBottomSheet(
-    enableDrag: false,
-    isDismissible: false,
-    constraints: BoxConstraints(
-      maxHeight: MediaQuery.of(context).size.height * 0.95,
+  Navigator.of(context).push(
+    PageRouteBuilder(
+      opaque: false,
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 600),
+      reverseTransitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          body: Align(
+            alignment: Alignment.bottomCenter,
+            child: BookServiceBottomSheet(service: service),
+          ),
+        );
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.easeOutQuart;
+
+        var tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
+
+        return SlideTransition(position: animation.drive(tween), child: child);
+      },
     ),
-    context: context,
-    isScrollControlled: true,
-    clipBehavior: Clip.antiAlias,
-    builder: (context) {
-      return BookServiceBottomSheet(service: service);
-    },
   );
 }
 
@@ -142,6 +160,17 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
     return distance;
   }
 
+  Stream<CustomerModel>? _customerStream;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCustomerAddresses();
+    _customerStream = AppServices.listenToCustomerData(
+      LocalStoreHelper.getUID() ?? '',
+    );
+  }
+
   double _toRadians(double degree) {
     return degree * pi / 180;
   }
@@ -220,13 +249,6 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   }
 
   @override
-  void initState() {
-    fetchCustomerAddresses();
-
-    super.initState();
-  }
-
-  @override
   void dispose() {
     selectedIndexNotifier.dispose();
     super.dispose();
@@ -282,55 +304,85 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
         }
       },
       child: StreamBuilder<CustomerModel>(
-        stream: AppServices.listenToCustomerData(
-          LocalStoreHelper.getUID() ?? '',
-        ),
+        stream: _customerStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             customerData = snapshot.data;
           }
-          return SizedBox(
+          return Container(
             height: MediaQuery.of(context).size.height * 0.95,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            clipBehavior: Clip.antiAlias,
             child: AbsorbPointer(
               absorbing: saving,
               child: PopScope(
                 canPop: !saving,
-                child: Scaffold(
-                  body: Form(
+                child: Material(
+                  color: Colors.white,
+                  child: Form(
                     key: _formKey,
                     child: Column(
                       children: [
                         Container(
+                          width: double.infinity,
                           decoration: BoxDecoration(color: AppColors.primary),
                           child: Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8,
-                              left: 16,
-                              right: 16,
-                              bottom: 8,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  isFirstStep
-                                      ? AppLocalizations.of(
-                                              context,
-                                            )?.selectDateTime ??
-                                            ''
-                                      : isSecondStep
-                                      ? AppLocalizations.of(
-                                              context,
-                                            )?.completeYourBooking ??
-                                            ''
-                                      : AppLocalizations.of(
-                                              context,
-                                            )?.chooseYourTechnician ??
-                                            '',
-                                  style: DMSansFont.textStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white,
+                                AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 300),
+                                  transitionBuilder: (child, animation) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
+                                  layoutBuilder:
+                                      (currentChild, previousChildren) {
+                                        return Stack(
+                                          alignment: Alignment.centerLeft,
+                                          children: <Widget>[
+                                            ...previousChildren,
+                                            if (currentChild != null)
+                                              currentChild,
+                                          ],
+                                        );
+                                      },
+                                  child: Text(
+                                    key: ValueKey<int>(
+                                      isFirstStep
+                                          ? 1
+                                          : isSecondStep
+                                          ? 2
+                                          : 3,
+                                    ),
+                                    isFirstStep
+                                        ? AppLocalizations.of(
+                                                context,
+                                              )?.selectDateTime ??
+                                              ''
+                                        : isSecondStep
+                                        ? AppLocalizations.of(
+                                                context,
+                                              )?.completeYourBooking ??
+                                              ''
+                                        : AppLocalizations.of(
+                                                context,
+                                              )?.chooseYourTechnician ??
+                                              '',
+                                    style: DMSansFont.textStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                                 IconButton(
@@ -346,24 +398,48 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                         ),
 
                         Expanded(
-                          child: isFirstStep
-                              ? _buildFirstStepContent()
-                              : isSecondStep
-                              ? _buildSecondStepContent()
-                              : _buildThirdStepContent(),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: isFirstStep
+                                ? KeyedSubtree(
+                                    key: const ValueKey('step1'),
+                                    child: _buildFirstStepContent(),
+                                  )
+                                : isSecondStep
+                                ? KeyedSubtree(
+                                    key: const ValueKey('step2'),
+                                    child: _buildSecondStepContent(),
+                                  )
+                                : KeyedSubtree(
+                                    key: const ValueKey('step3'),
+                                    child: _buildThirdStepContent(),
+                                  ),
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(
                             bottom: safePadding.bottom + 3,
-                            top: 18,
+                            top: isSecondStep ? 0 : 18,
                             left: 16,
                             right: 16,
                           ),
-                          child: isFirstStep
-                              ? _buildFirstStepBottom()
-                              : isSecondStep
-                              ? _buildSecondStepBottom()
-                              : _buildThirdStepBottom(context),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: isFirstStep
+                                ? KeyedSubtree(
+                                    key: const ValueKey('bottom1'),
+                                    child: _buildFirstStepBottom(),
+                                  )
+                                : isSecondStep
+                                ? KeyedSubtree(
+                                    key: const ValueKey('bottom2'),
+                                    child: _buildSecondStepBottom(),
+                                  )
+                                : KeyedSubtree(
+                                    key: const ValueKey('bottom3'),
+                                    child: _buildThirdStepBottom(context),
+                                  ),
+                          ),
                         ),
                       ],
                     ),
@@ -640,7 +716,24 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
 
   _buildSecondStepContent() {
     return ListView(
+      padding: const EdgeInsets.only(top: 5, bottom: 16),
       children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            bottom: 8,
+            top: 16,
+          ),
+          child: Text(
+            AppLocalizations.of(context)?.selectLocation ?? '',
+            style: DMSansFont.textStyle(
+              color: Colors.black87,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
         BlocProvider(
           create: (context) =>
               AddressBloc(AppServicesAddressRepository())..add(LoadAddresses()),
@@ -670,17 +763,17 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
         ),
         Padding(
           padding: const EdgeInsets.only(
-            top: 10,
+            top: 22,
             left: 16,
             right: 16,
-            bottom: 0,
+            bottom: 8,
           ),
           child: Text(
             AppLocalizations.of(context)?.addNotes ?? '',
             style: DMSansFont.textStyle(
               fontSize: 13,
               color: Colors.black87,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -718,13 +811,13 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
       padding: const EdgeInsets.only(bottom: 16, top: 5),
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 18),
+          padding: const EdgeInsets.all(16.0),
           child: Text(
             AppLocalizations.of(context)?.selectDate ?? '',
             style: DMSansFont.textStyle(
-              fontSize: 13,
               color: Colors.black87,
-              fontWeight: FontWeight.w500,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

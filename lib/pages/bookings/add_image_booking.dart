@@ -155,6 +155,12 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
           ? null
           : () => _showMediaSourcePicker(isVideo: !isImage)),
       child: DottedBorder(
+        options: RoundedRectDottedBorderOptions(
+          radius: Radius.circular(10),
+          color: Colors.black12,
+          strokeWidth: 2,
+          dashPattern: const [6, 2],
+        ),
         child: Container(
           decoration: BoxDecoration(
             color: const Color(0x805C9BE8),
@@ -395,7 +401,6 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                   if (selectedAddress != null) ...[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
                       children: [
                         Expanded(
                           child: Text(
