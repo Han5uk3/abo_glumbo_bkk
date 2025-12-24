@@ -17,6 +17,7 @@ import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/telr_config.dart';
 import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -129,14 +130,15 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           ivp_ref: widget.customerData.uid ?? '',
           ivp_amount: widget.isFromBooking
               ? double.tryParse(
-                      widget.booking?.completionData?.totalCost.toString() ??
-                          '0.00',
+                      widget.booking?.service.price.toString() ?? '0.00',
                     )?.toStringAsFixed(2) ??
                     '0.00'
               : widget.review?.tipAmount?.toStringAsFixed(2) ?? '0.00',
           ivp_desc: widget.notesController?.text.isNotEmpty == true
               ? widget.notesController?.text ?? "No description provided"
               : "No description provided",
+          ivp_currency: TelrConfig.currency,
+          ivp_test: TelrConfig.testMode,
         ),
         return_auth: TelrConfig.returnAuthUrl,
         return_can: TelrConfig.returnCanUrl,
@@ -150,9 +152,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         bill_addr1: selectedAddress.streetName?.isNotEmpty == true
             ? selectedAddress.streetName
             : null,
-        bill_country: widget.customerData.country?.isNotEmpty == true
-            ? widget.customerData.country
-            : null,
+        bill_country: 'Saudi Arabia',
         bill_zip: selectedAddress.buildingNumber.isNotEmpty == true
             ? selectedAddress.buildingNumber
             : null,
@@ -414,9 +414,10 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.payment),
-          backgroundColor: Colors.blue,
+          backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           centerTitle: true,
+          automaticallyImplyLeading: false,
         ),
         body: _isLoading
             ? Center(

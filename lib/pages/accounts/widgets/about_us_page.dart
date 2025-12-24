@@ -1,4 +1,5 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 
 class CustomerAboutUsPage extends StatelessWidget {
@@ -6,7 +7,6 @@ class CustomerAboutUsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final locale = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -19,68 +19,80 @@ class CustomerAboutUsPage extends StatelessWidget {
           ),
 
           SliverPadding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
+                // Hero Section
                 _FadeSlide(
                   delay: 0,
-                  child: Text(
-                    locale.customerAboutHeadline,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        locale.customerAboutHeadline,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+                      _HeroSection(intro: locale.customerAboutIntro),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 32),
 
+                // Why Choose Us Section
                 _FadeSlide(
                   delay: 100,
-                  child: Text(
-                    locale.customerAboutIntro,
-                    style: theme.textTheme.bodyMedium,
+                  child: _SectionHeader(
+                    title: locale.customerWhyChooseUs,
+                    icon: Icons.star_rounded,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
                 _FadeSlide(
                   delay: 200,
-                  child: _SectionTitle(title: locale.customerWhyChooseUs),
+                  child: _FeatureCard(
+                    icon: Icons.verified_user_rounded,
+                    title: locale.customerCertifiedExpertsTitle,
+                    description: locale.customerCertifiedExpertsDesc,
+                    color: Colors.blue,
+                  ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
                 _FadeSlide(
                   delay: 300,
-                  child: _CustomerCard(
-                    title: locale.customerCertifiedExpertsTitle,
-                    description: locale.customerCertifiedExpertsDesc,
+                  child: _FeatureCard(
+                    icon: Icons.touch_app_rounded,
+                    title: locale.customerSeamlessExperienceTitle,
+                    description: locale.customerSeamlessExperienceDesc,
+                    color: Colors.purple,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
                 _FadeSlide(
                   delay: 400,
-                  child: _CustomerCard(
-                    title: locale.customerSeamlessExperienceTitle,
-                    description: locale.customerSeamlessExperienceDesc,
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                _FadeSlide(
-                  delay: 500,
-                  child: _CustomerCard(
+                  child: _FeatureCard(
+                    icon: Icons.visibility_rounded,
                     title: locale.customerTransparencyTitle,
                     description: locale.customerTransparencyDesc,
+                    color: Colors.teal,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
 
+                // Mission Section
                 _FadeSlide(
-                  delay: 600,
-                  child: _CustomerMissionCard(
-                    text: locale.customerMission,
-                  ),
+                  delay: 500,
+                  child: _MissionSection(text: locale.customerMission),
                 ),
+                const SizedBox(height: 20),
               ]),
             ),
           ),
@@ -89,13 +101,67 @@ class CustomerAboutUsPage extends StatelessWidget {
     );
   }
 }
-class _CustomerCard extends StatelessWidget {
+
+class _HeroSection extends StatelessWidget {
+  final String intro;
+
+  const _HeroSection({required this.intro});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          intro,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            height: 1.6,
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  final IconData icon;
+
+  const _SectionHeader({required this.title, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FeatureCard extends StatelessWidget {
+  final IconData icon;
   final String title;
   final String description;
+  final Color color;
 
-  const _CustomerCard({
+  const _FeatureCard({
+    required this.icon,
     required this.title,
     required this.description,
+    required this.color,
   });
 
   @override
@@ -105,39 +171,81 @@ class _CustomerCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 6),
+            color: color.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          children: [
+            // Decorative gradient background
+            Positioned(
+              right: -20,
+              top: -20,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color.withOpacity(0.05),
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            description,
-            style: theme.textTheme.bodyMedium,
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, color: color, size: 28),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          description,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-class _CustomerMissionCard extends StatelessWidget {
+
+class _MissionSection extends StatelessWidget {
   final String text;
 
-  const _CustomerMissionCard({required this.text});
+  const _MissionSection({required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -146,34 +254,51 @@ class _CustomerMissionCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      padding: const EdgeInsets.all(18),
-      child: Text(
-        text,
-        style: theme.textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w500,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.colorScheme.primary.withOpacity(0.1),
+            theme.colorScheme.secondary.withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: theme.colorScheme.primary.withOpacity(0.3),
+          width: 2,
         ),
       ),
-    );
-  }
-}
-class _SectionTitle extends StatelessWidget {
-  final String title;
-
-  const _SectionTitle({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.rocket_launch_rounded,
+              color: theme.colorScheme.primary,
+              size: 32,
+            ),
           ),
+          const SizedBox(height: 16),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              height: 1.6,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+
 class _FadeSlide extends StatefulWidget {
   final Widget child;
   final int delay;
@@ -195,18 +320,18 @@ class _FadeSlideState extends State<_FadeSlide>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 600),
     );
 
     _opacity = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _offset = Tween<Offset>(
-      begin: const Offset(0, 0.1),
+      begin: const Offset(0, 0.15),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     Future.delayed(Duration(milliseconds: widget.delay), () {
       if (mounted) _controller.forward();

@@ -15,7 +15,6 @@ import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/booking/bloc/booking_bloc.dart';
 import 'package:abo_glumbo_bbk/services/booking/bloc/booking_event.dart';
 import 'package:abo_glumbo_bbk/services/booking/bloc/booking_state.dart';
-import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +22,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:abo_glumbo_bbk/utils/mulish_font.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
+import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
 
 showBookServiceBottomSheet(
   BuildContext context, {
@@ -258,28 +259,58 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   Widget build(BuildContext context) {
     final safePadding = MediaQuery.of(context).padding;
     return BlocListener<NewBookingBloc, BookingState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is BookingSuccess) {
-          // Navigate only after successful booking
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => BookingCompletedPage(
-                service: widget.service,
-                worker: selectedWorker,
-                selectedDate: selectedDate!,
-                selectedTime:
-                    timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
-                address:
-                    _selectedAddress ??
-                    AddressModel(
-                      id: '',
-                      fullName: '',
-                      buildingNumber: '',
-                      phoneNumber: '',
-                    ),
+          if (state.bookingId == null) {
+            if (mounted) {
+              setState(() {
+                saving = false;
+              });
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Error: No Booking ID'),
+                backgroundColor: Colors.red,
               ),
-            ),
-          );
+            );
+            return;
+          }
+
+          final booking = await BookingUtils.getBooking(state.bookingId!);
+
+          if (!mounted) return;
+
+          if (booking != null) {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => PaymentWebView(
+                  service: widget.service,
+                  customerData: customerData!,
+                  isFromBooking: true,
+                  booking: booking,
+                  notesController: notesController,
+                ),
+              ),
+            );
+            // If returned, reset saving
+            if (mounted) {
+              setState(() {
+                saving = false;
+              });
+            }
+          } else {
+            if (mounted) {
+              setState(() {
+                saving = false;
+              });
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Error: Could not fetch booking details'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         } else if (state is BookingError) {
           // Show error message
           if (mounted) {

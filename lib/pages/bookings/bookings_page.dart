@@ -176,40 +176,16 @@ class _BookingsPageState extends State<BookingsPage> {
 
       if (filteredBookings.isEmpty) {
         return SliverToBoxAdapter(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 32,
-                vertical: 120,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Container(
-                  //   width: 140,
-                  //   height: 140,
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.grey.shade100,
-                  //     shape: BoxShape.circle,
-                  //   ),
-                  //   child: Center(
-                  //     child: Icon(
-                  //       _getEmptyStateIcon(state.selectedStatus.name),
-                  //       size: 70,
-                  //       color: Colors.grey.shade400,
-                  //     ),
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 24),
-                  Text(
-                    AppLocalizations.of(context)!.noBookings,
-                    textAlign: TextAlign.center,
-                    style: DMSansFont.textStyle(
-                      color: Colors.grey.shade400,
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.75,
+            child: Center(
+              child: Text(
+                AppLocalizations.of(context)!.noBookings,
+                textAlign: TextAlign.center,
+                style: DMSansFont.textStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 18,
+                ),
               ),
             ),
           ),

@@ -165,7 +165,11 @@ class _HomeCarouselWidgetState extends State<HomeCarouselWidget> {
                         placeholder: (context, url) => Container(
                           color: Colors.grey[300],
                           child: const Center(
-                            child: CircularProgressIndicator(),
+                            child: SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: Loader(color: Colors.white),
+                            ),
                           ),
                         ),
                         errorWidget: (context, url, error) => Container(

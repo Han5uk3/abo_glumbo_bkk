@@ -273,4 +273,17 @@ class BookingUtils {
       return false;
     }
   }
+
+  static Future<BookingModel?> getBooking(String bookingId) async {
+    try {
+      final doc = await AppFirestore.bookingsCollectionRef.doc(bookingId).get();
+      if (doc.exists) {
+        return BookingModel.fromJson(doc.data() as Map<String, dynamic>);
+      }
+      return null;
+    } catch (e) {
+      debugPrint("Error fetching booking: $e");
+      return null;
+    }
+  }
 }

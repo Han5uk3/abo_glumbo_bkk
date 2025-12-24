@@ -12,12 +12,12 @@ class BookingInitial extends BookingState {}
 class BookingLoading extends BookingState {}
 
 class BookingSuccess extends BookingState {
-  final bool status;
+  final String? bookingId;
 
-  const BookingSuccess({required this.status});
+  const BookingSuccess({required this.bookingId});
 
   @override
-  List<Object?> get props => [status];
+  List<Object?> get props => [bookingId];
 }
 
 class BookingError extends BookingState {

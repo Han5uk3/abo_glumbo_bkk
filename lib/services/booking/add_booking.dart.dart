@@ -9,7 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class NewBookingUtils {
-  static Future<bool> addBooking({
+  static Future<String?> addBooking({
     required ServiceModel service,
     required DateTime selectedDate,
 
@@ -99,10 +99,10 @@ class NewBookingUtils {
           .doc(bookingId)
           .set(booking.toJson());
 
-      return true;
+      return bookingId;
     } catch (e) {
       debugPrint("Error during booking process: $e");
-      return false;
+      return null;
     }
   }
 

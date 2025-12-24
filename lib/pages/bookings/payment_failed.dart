@@ -1,5 +1,4 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,7 +14,7 @@ class PaymentFailedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: true,
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         body: SafeArea(
@@ -222,25 +221,19 @@ class PaymentFailedScreen extends StatelessWidget {
                       width: double.infinity,
                       height: 52,
                       child: TextButton(
-                        onPressed: () => Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => Home()),
-                          (route) => false,
-                        ),
+                        onPressed: () => Navigator.pop(context),
                         style: TextButton.styleFrom(
                           foregroundColor: Colors.grey[700],
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: Colors.grey.shade300),
+                            side: BorderSide(color: Colors.grey.shade700),
                           ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.home_outlined, size: 20),
-                            const SizedBox(width: 8),
                             Text(
-                              AppLocalizations.of(context)!.goToHome,
+                              AppLocalizations.of(context)!.backtobooking,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,

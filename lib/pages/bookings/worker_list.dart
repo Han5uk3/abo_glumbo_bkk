@@ -1072,65 +1072,74 @@ class _WorkerListViewState extends State<_WorkerListView>
   }
 
   Future<void> _loadCategoryNames() async {
-    // 1. Collect all unique job roles from all workers
-    Set<String> allJobRoles = {};
-    for (var workerStat in widget.workers) {
-      if (workerStat.worker.jobRoles != null) {
-        allJobRoles.addAll(workerStat.worker.jobRoles!);
+    try {
+      // 1. Collect all unique job roles from all workers
+      Set<String> allJobRoles = {};
+      for (var workerStat in widget.workers) {
+        if (workerStat.worker.jobRoles != null) {
+          allJobRoles.addAll(workerStat.worker.jobRoles!);
+        }
       }
-    }
 
-    if (allJobRoles.isEmpty) {
-      setState(() => _isLoadingCategories = false);
-      return;
-    }
-
-    // 2. Get category IDs for all job roles in parallel
-    List<String> jobRolesList = allJobRoles.toList();
-    List<Future<String?>> categoryIdFutures = jobRolesList
-        .map((role) => AppServices.getCategoryIdByJobRoleOnce(role))
-        .toList();
-
-    List<String?> categoryIdResults = await Future.wait(categoryIdFutures);
-
-    // 3. Create jobRole -> categoryId mapping (THIS IS CRITICAL)
-    Map<String, String> roleToIdMap = {};
-    for (int i = 0; i < jobRolesList.length; i++) {
-      if (categoryIdResults[i] != null) {
-        roleToIdMap[jobRolesList[i]] = categoryIdResults[i]!;
+      if (allJobRoles.isEmpty) {
+        if (mounted) setState(() => _isLoadingCategories = false);
+        return;
       }
-    }
 
-    // 4. Get unique category IDs
-    Set<String> uniqueCategoryIds = roleToIdMap.values.toSet();
+      // 2. Get category IDs for all job roles in parallel
+      List<String> jobRolesList = allJobRoles.toList();
+      List<Future<String?>> categoryIdFutures = jobRolesList
+          .map((role) => AppServices.getCategoryIdByJobRoleOnce(role))
+          .toList();
 
-    if (uniqueCategoryIds.isEmpty) {
-      setState(() => _isLoadingCategories = false);
-      return;
-    }
+      List<String?> categoryIdResults = await Future.wait(categoryIdFutures);
 
-    // 5. Batch fetch all categories
-    List<CategoryModel> categories = await AppServices.getCategoriesByIds(
-      uniqueCategoryIds.toList(),
-    );
-
-    // 6. Create categoryId -> names mapping
-    Map<String, Map<String, String>> idToNamesMap = {};
-    for (var category in categories) {
-      if (category.id != null) {
-        idToNamesMap[category.id!] = {
-          'name': category.name ?? '',
-          'name_ar': category.name_ar ?? category.name ?? '',
-        };
+      // 3. Create jobRole -> categoryId mapping (THIS IS CRITICAL)
+      Map<String, String> roleToIdMap = {};
+      for (int i = 0; i < jobRolesList.length; i++) {
+        if (categoryIdResults[i] != null) {
+          roleToIdMap[jobRolesList[i]] = categoryIdResults[i]!;
+        }
       }
-    }
 
-    if (mounted) {
-      setState(() {
-        jobRoleToCategoryId = roleToIdMap;
-        categoryIdToNames = idToNamesMap;
-        _isLoadingCategories = false;
-      });
+      // 4. Get unique category IDs
+      Set<String> uniqueCategoryIds = roleToIdMap.values.toSet();
+
+      if (uniqueCategoryIds.isEmpty) {
+        if (mounted) setState(() => _isLoadingCategories = false);
+        return;
+      }
+
+      // 5. Batch fetch all categories
+      List<CategoryModel> categories = await AppServices.getCategoriesByIds(
+        uniqueCategoryIds.toList(),
+      );
+
+      // 6. Create categoryId -> names mapping
+      Map<String, Map<String, String>> idToNamesMap = {};
+      for (var category in categories) {
+        if (category.id != null) {
+          idToNamesMap[category.id!] = {
+            'name': category.name ?? '',
+            'name_ar': category.name_ar ?? category.name ?? '',
+          };
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          jobRoleToCategoryId = roleToIdMap;
+          categoryIdToNames = idToNamesMap;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading category names: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingCategories = false;
+        });
+      }
     }
   }
 
@@ -1172,6 +1181,9 @@ class _WorkerListViewState extends State<_WorkerListView>
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoadingCategories) {
+      return const _FilteringAnimation();
+    }
     return ListView.builder(
       padding: const EdgeInsets.only(top: 8, bottom: 16),
       itemCount: widget.workers.length,

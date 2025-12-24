@@ -28,7 +28,11 @@ class NewBookingBloc extends Bloc<BookingEvent, BookingState> {
       );
 
       // Emit success with booking ID if needed
-      emit(BookingSuccess(status: bookingId));
+      if (bookingId != null) {
+        emit(BookingSuccess(bookingId: bookingId));
+      } else {
+        emit(BookingError(message: "Failed to create booking"));
+      }
     } catch (e) {
       emit(BookingError(message: e.toString()));
     }

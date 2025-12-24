@@ -188,6 +188,12 @@ abstract class AppLocalizations {
   /// **'Technician is busy'**
   String get technicianIsBusy;
 
+  /// No description provided for @backtobooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to booking'**
+  String get backtobooking;
+
   /// No description provided for @edit.
   ///
   /// In en, this message translates to:

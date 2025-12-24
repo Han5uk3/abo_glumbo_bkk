@@ -55,6 +55,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get technicianIsBusy => 'الفني مشغول';
 
   @override
+  String get backtobooking => 'العودة إلى الحجز';
+
+  @override
   String get edit => 'تعديل';
 
   @override

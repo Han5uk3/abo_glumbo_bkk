@@ -55,6 +55,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get technicianIsBusy => 'Technician is busy';
 
   @override
+  String get backtobooking => 'Back to booking';
+
+  @override
   String get edit => 'Edit';
 
   @override
