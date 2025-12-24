@@ -32,6 +32,7 @@ class UserModel {
   String? highestTier;
   double? totalMonthlyBonus;
   Timestamp? lastBonusDate;
+  String? tier;
 
   UserModel({
     required this.role,
@@ -63,6 +64,7 @@ class UserModel {
     this.totalMonthlyBonus,
     this.lastBonusDate,
     this.paidoutTips,
+    this.tier,
   });
 
   UserModel copyWith({
@@ -96,6 +98,7 @@ class UserModel {
     Timestamp? lastBonusDate,
     double? paidoutTips,
     bool? isOnline,
+    String? tier,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -127,6 +130,7 @@ class UserModel {
       paidoutTips: paidoutTips ?? this.paidoutTips,
       certifications: certifications ?? this.certifications,
       isOnline: isOnline ?? this.isOnline,
+      tier: tier ?? this.tier,
     );
   }
 
@@ -187,6 +191,7 @@ class UserModel {
           ? List<String>.from(json['certifications'])
           : <String>[],
       isOnline: json['isOnline'],
+      tier: json['tier'],
     );
   }
 
@@ -222,6 +227,7 @@ class UserModel {
       'isOnline': isOnline,
       'certifications': certifications,
       'paidoutTips': paidoutTips,
+      'tier': tier,
     };
   }
 
@@ -255,6 +261,7 @@ class UserModel {
       'certifications': certifications,
       'isOnline': isOnline,
       'paidoutTips': paidoutTips,
+      'tier': tier,
     };
   }
 

@@ -16,6 +16,7 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -874,10 +875,10 @@ class AppServices {
   static Stream<List<WorkerWithStats>> getWorkersByRolesWithStatsRealtime(
     String categoryDocId,
   ) async* {
-    // Step 2: Get workers stream
+    // 3. Workers stream
     final workersStream = AppFirestore.usersCollectionRef
         .where('jobRoles', arrayContains: categoryDocId)
-        .where('isAdmin', isEqualTo: false)
+        // .where('isAdmin', isEqualTo: false) // Removed to include admins
         .where('isOnline', isEqualTo: true)
         .where('isVerified', isEqualTo: true)
         .snapshots()
@@ -886,10 +887,22 @@ class AppServices {
               .map(
                 (doc) => UserModel.fromJson(doc.data() as Map<String, dynamic>),
               )
+              .where((user) {
+                // Filter logic for admin roles: Exclude customer service admins
+                if (user.isAdmin == true) {
+                  final r = user.role.toLowerCase();
+                  if (r.contains('customer service') ||
+                      r.contains('support') ||
+                      r == 'customer_service') {
+                    return false;
+                  }
+                }
+                return true;
+              })
               .toList();
         });
 
-    // Step 3: Switch to the combined streams for each worker
+    // 4. Combine with stats (removed busy agent checking from here as it's handled in UI)
     yield* workersStream.switchMap((workers) {
       if (workers.isEmpty) {
         return Stream.value(<WorkerWithStats>[]);

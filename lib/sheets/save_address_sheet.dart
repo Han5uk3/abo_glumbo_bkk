@@ -80,6 +80,57 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
     }
   }
 
+  void _editAddress(AddressModel address) async {
+    if (_isAddingNewAddress) return;
+
+    setState(() {
+      _isAddingNewAddress = true;
+    });
+
+    try {
+      final updatedAddress = await Navigator.push<AddressModel>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LocationMapPicker(
+            userLatitude: address.lat,
+            userLongitude: address.lon,
+            existingAddress: address,
+          ),
+        ),
+      );
+
+      if (updatedAddress != null && mounted) {
+        context.read<AddressBloc>().add(AddOrUpdateAddress(updatedAddress));
+
+        setState(() {
+          final index = _currentAddresses.indexWhere(
+            (a) => a.id == updatedAddress.id,
+          );
+          if (index != -1) {
+            _currentAddresses[index] = updatedAddress.copyWith(
+              isSelected: _currentAddresses[index].isSelected,
+            );
+          }
+        });
+
+        if (address.isSelected ?? false) {
+          Navigator.of(context).pop(
+            AddressSheetResult(
+              selectedAddress: updatedAddress.copyWith(isSelected: true),
+              updatedAddresses: _currentAddresses,
+            ),
+          );
+        }
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isAddingNewAddress = false;
+        });
+      }
+    }
+  }
+
   Widget _buildAddressList(List<AddressModel> addresses) {
     return Stack(
       children: [
@@ -125,7 +176,6 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => LocationMapPicker(
-                                      
                                         userLatitude:
                                             widget.initialPosition['lat'],
                                         userLongitude:
@@ -349,6 +399,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                       Container(
                                         margin: const EdgeInsets.only(left: 8),
                                         child: PopupMenuButton(
+                                          color: Colors.white,
                                           icon: Icon(
                                             Icons.more_vert_rounded,
                                             color: isSelected
@@ -365,6 +416,33 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                           shadowColor: Colors.black26,
                                           itemBuilder: (context) {
                                             return [
+                                              PopupMenuItem(
+                                                value: 'edit',
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.edit_outlined,
+                                                      color: Colors.blue[400],
+                                                      size: 18,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      AppLocalizations.of(
+                                                            context,
+                                                          )?.edit ??
+                                                          "",
+                                                      style:
+                                                          PoppinsFont.textStyle(
+                                                            fontSize: 14,
+                                                            color: Colors
+                                                                .blue[400],
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                               PopupMenuItem(
                                                 value: 'remove',
                                                 child: Row(
@@ -396,7 +474,9 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                             ];
                                           },
                                           onSelected: (value) {
-                                            if (value == 'remove' &&
+                                            if (value == 'edit') {
+                                              _editAddress(address);
+                                            } else if (value == 'remove' &&
                                                 !_isRemovingAddress) {
                                               _removeAddress(address);
                                             }
@@ -460,7 +540,13 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(color: Colors.white),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

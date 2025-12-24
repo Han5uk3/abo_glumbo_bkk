@@ -72,8 +72,26 @@ class WorkerCard extends StatelessWidget {
                 Text('🧑‍🔧', style: TextStyle(fontSize: 20)),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(
-                    worker.name ?? 'Unknown',
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: worker.name ?? 'Unknown'),
+                        if (worker.tier != null && worker.tier!.isNotEmpty)
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4.0,
+                              ),
+                              child: Icon(
+                                Icons.workspace_premium,
+                                color: Colors.amber,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

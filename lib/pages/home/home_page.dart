@@ -164,6 +164,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 if (!_isGuest)
                   Row(
                     children: [
+                      SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: Image.asset("assets/images/app_icon.png"),
+                      ),
                       const Spacer(),
                       UnreadNotificationBadge(
                         onTap: () => Navigator.of(context).push(

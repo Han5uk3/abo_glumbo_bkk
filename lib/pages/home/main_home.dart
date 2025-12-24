@@ -39,6 +39,7 @@ class _HomeState extends State<Home> {
   String phone = "";
   String email = "";
   late final List<Widget> _pages;
+  late final Stream<dynamic> _customerStream;
 
   @override
   void initState() {
@@ -46,16 +47,19 @@ class _HomeState extends State<Home> {
     if (widget.initialIndex != null && _isGuest == true) {
       currentIndex = widget.initialIndex!;
     }
+    String? uid;
     if (widget.byPassedUid != null) {
-      LocalStoreHelper.putUID(widget.byPassedUid!);
+      uid = widget.byPassedUid!;
+      LocalStoreHelper.putUID(uid);
       LocalStoreHelper.putlogoutStatus(false);
+    } else {
+      uid = LocalStoreHelper.getUID();
     }
 
-    _pages = [
-      const HomePage(),
-      // const CategoriesPage(),
-      if (!(_isGuest ?? false)) const BookingsPage(),
-    ];
+    _customerStream = AppServices.listenToCustomerData(uid ?? '');
+
+    // Initial pages setup (AccountPage will be added dynamically in build)
+    _pages = [const HomePage(), if (!(_isGuest ?? false)) const BookingsPage()];
 
     super.initState();
 
@@ -65,6 +69,11 @@ class _HomeState extends State<Home> {
       NotificationServices.setupFCMListeners();
       await NotificationServices.checkForInitialMessage();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   static Future<void> launchEmail(String email) async {
@@ -87,6 +96,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context);
+    // uid is fetched in initState for stream, but checked here for guest logic
     final uid = LocalStoreHelper.getUID();
 
     if (_isGuest == true || uid == null || uid.isEmpty) {
@@ -94,7 +104,7 @@ class _HomeState extends State<Home> {
     }
 
     return StreamBuilder(
-      stream: AppServices.listenToCustomerData(widget.byPassedUid ?? uid),
+      stream: _customerStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
@@ -168,7 +178,13 @@ class _HomeState extends State<Home> {
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        body: getCurrentPage(),
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          child: getCurrentPage(),
+        ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: currentIndex,
           onDestinationSelected: (index) {

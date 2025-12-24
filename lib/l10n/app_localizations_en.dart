@@ -55,6 +55,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get technicianIsBusy => 'Technician is busy';
 
   @override
+  String get edit => 'Edit';
+
+  @override
+  String get namehomeworketc => 'Name (Home,Work,etc)';
+
+  @override
   String get technicianIsBusyatThisTime => 'Technician is busy at this time';
 
   @override
@@ -72,6 +78,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allMarkedAsRead => 'All notifications marked as read';
+
+  @override
+  String get pleaseAddANameToIdentifyTheLocation =>
+      'Please add a name to identify the location';
 
   @override
   String get failedToLoadVideo => 'Failed to load video';

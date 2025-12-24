@@ -188,6 +188,18 @@ abstract class AppLocalizations {
   /// **'Technician is busy'**
   String get technicianIsBusy;
 
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @namehomeworketc.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (Home,Work,etc)'**
+  String get namehomeworketc;
+
   /// No description provided for @technicianIsBusyatThisTime.
   ///
   /// In en, this message translates to:
@@ -223,6 +235,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All notifications marked as read'**
   String get allMarkedAsRead;
+
+  /// No description provided for @pleaseAddANameToIdentifyTheLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add a name to identify the location'**
+  String get pleaseAddANameToIdentifyTheLocation;
 
   /// No description provided for @failedToLoadVideo.
   ///

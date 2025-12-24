@@ -55,6 +55,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get technicianIsBusy => 'الفني مشغول';
 
   @override
+  String get edit => 'تعديل';
+
+  @override
+  String get namehomeworketc => 'الاسم (المنزل، العمل، إلخ)';
+
+  @override
   String get technicianIsBusyatThisTime => 'الفني مشغول في هذا الوقت';
 
   @override
@@ -71,6 +77,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get allMarkedAsRead => 'تم وضع علامة على جميع الإشعارات كمقروءة';
+
+  @override
+  String get pleaseAddANameToIdentifyTheLocation =>
+      'يرجى إضافة اسم لتحديد الموقع';
 
   @override
   String get failedToLoadVideo => 'فشل تحميل الفيديو';

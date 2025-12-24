@@ -62,9 +62,14 @@ class _WorkerListState extends State<WorkerList> {
   CustomerModel? customerData;
   bool isLoadingCustomer = true;
 
+  late Stream<List<WorkerWithStats>> _workersStream;
+
   @override
   void initState() {
     super.initState();
+    _workersStream = AppServices.getWorkersByRolesWithStatsRealtime(
+      widget.category,
+    );
     _fetchCustomerData();
     loadLocations();
     _fetchcategory();
@@ -187,14 +192,11 @@ class _WorkerListState extends State<WorkerList> {
   //   return R * c;
   // }
 
-  Future<List<WorkerWithStats>> _applySearchAndFilters(
+  List<WorkerWithStats> _applySearchAndFilters(
     List<WorkerWithStats> workers,
     String searchQuery,
     Set<FilterType> selectedFilters,
-  ) async {
-    _isFilteringNotifier.value = true;
-    await Future.delayed(const Duration(milliseconds: 600));
-
+  ) {
     // 1. Apply location filter (if selected)
     List<WorkerWithStats> locationFiltered = workers;
     // ✅ FIXED: Only filter if a location is selected, otherwise show all
@@ -274,7 +276,6 @@ class _WorkerListState extends State<WorkerList> {
       });
     }
 
-    _isFilteringNotifier.value = false;
     return sortedWorkers;
   }
 
@@ -288,12 +289,15 @@ class _WorkerListState extends State<WorkerList> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      enableDrag: false,
+
+      showDragHandle: false,
       backgroundColor: Colors.transparent,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Container(
-              height: MediaQuery.of(context).size.height * 0.75,
+              height: MediaQuery.of(context).size.height * 0.9,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -579,9 +583,7 @@ class _WorkerListState extends State<WorkerList> {
         // Workers List
         Expanded(
           child: StreamBuilder<List<WorkerWithStats>>(
-            stream: AppServices.getWorkersByRolesWithStatsRealtime(
-              widget.category,
-            ),
+            stream: _workersStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const _FilteringAnimation();
@@ -604,42 +606,40 @@ class _WorkerListState extends State<WorkerList> {
                   return ValueListenableBuilder<Set<FilterType>>(
                     valueListenable: _selectedFiltersNotifier,
                     builder: (context, selectedFilters, _) {
-                      return FutureBuilder<List<WorkerWithStats>>(
-                        future: _applySearchAndFilters(
-                          data,
-                          searchQuery,
-                          selectedFilters,
+                      final filteredWorkers = _applySearchAndFilters(
+                        data,
+                        searchQuery,
+                        selectedFilters,
+                      );
+
+                      if (filteredWorkers.isEmpty) {
+                        return _EmptyState(
+                          searchQuery: searchQuery,
+                          onClearFilter: () {
+                            _searchController.clear();
+                            _searchQueryNotifier.value = '';
+                            _selectedFiltersNotifier.value = {};
+                            setState(() {
+                              selectedRegion = null;
+                              selectedCity = null;
+                              selectedDistrict = null;
+                            });
+                          },
+                          onChangeLocation: _showLocationFilterDialog,
+                        );
+                      }
+
+                      return _WorkerListView(
+                        key: ValueKey(
+                          '${searchQuery}_${selectedFilters.length}',
                         ),
-                        builder: (context, filterSnapshot) {
-                          return ValueListenableBuilder<bool>(
-                            valueListenable: _isFilteringNotifier,
-                            builder: (context, isFiltering, _) {
-                              if (isFiltering) {
-                                return const _FilteringAnimation();
-                              }
-
-                              final filteredWorkers = filterSnapshot.data ?? [];
-
-                              if (filteredWorkers.isEmpty) {
-                                return _EmptyState(searchQuery: searchQuery);
-                              }
-
-                              return _WorkerListView(
-                                key: ValueKey(
-                                  '${searchQuery}_${selectedFilters.length}',
-                                ),
-                                service: widget.service,
-                                workers: filteredWorkers,
-                                selectedAddress: widget.selectedAddress,
-                                selectedIndexNotifier:
-                                    widget.selectedIndexNotifier,
-                                onWorkerSelected: widget.onWorkerSelected,
-                                selectedDate: widget.selectedDate,
-                                timeSlot: widget.timeSlot,
-                              );
-                            },
-                          );
-                        },
+                        service: widget.service,
+                        workers: filteredWorkers,
+                        selectedAddress: widget.selectedAddress,
+                        selectedIndexNotifier: widget.selectedIndexNotifier,
+                        onWorkerSelected: widget.onWorkerSelected,
+                        selectedDate: widget.selectedDate,
+                        timeSlot: widget.timeSlot,
                       );
                     },
                   );
@@ -851,38 +851,110 @@ class _SearchSection extends StatelessWidget {
 // Empty State
 class _EmptyState extends StatelessWidget {
   final String searchQuery;
+  final VoidCallback onClearFilter;
+  final VoidCallback onChangeLocation;
 
-  const _EmptyState({required this.searchQuery});
+  const _EmptyState({
+    required this.searchQuery,
+    required this.onClearFilter,
+    required this.onChangeLocation,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search_off_rounded, size: 64, color: Colors.grey.shade400),
-          const SizedBox(height: 16),
-          Text(
-            searchQuery.isNotEmpty
-                ? AppLocalizations.of(
-                    context,
-                  )!.noTechniciansFoundMatchingYourSearch
-                : AppLocalizations.of(context)!.noTechniciansFound,
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-            textAlign: TextAlign.center,
-          ),
-          if (searchQuery.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              '"$searchQuery"',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade500,
-                fontStyle: FontStyle.italic,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.search_off_rounded,
+                size: 64,
+                color: Colors.grey.shade400,
               ),
-            ),
-          ],
-        ],
+              const SizedBox(height: 16),
+              Text(
+                searchQuery.isNotEmpty
+                    ? AppLocalizations.of(
+                        context,
+                      )!.noTechniciansFoundMatchingYourSearch
+                    : AppLocalizations.of(context)!.noTechniciansFound,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (searchQuery.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  '"$searchQuery"',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade500,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 12),
+              Text(
+                "No technicians are available in your area at the moment, please try any of the below actions.",
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              // Change Location Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: onChangeLocation,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Change Location',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Clear Filter Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: onClearFilter,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    side: BorderSide(color: AppColors.primary),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)?.clearFilter ?? 'Clear Filter',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

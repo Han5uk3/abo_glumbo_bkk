@@ -38,7 +38,7 @@ showBookServiceBottomSheet(
       pageBuilder: (context, animation, secondaryAnimation) {
         return Scaffold(
           backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
+          resizeToAvoidBottomInset: false,
           body: Align(
             alignment: Alignment.bottomCenter,
             child: BookServiceBottomSheet(service: service),

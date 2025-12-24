@@ -21,6 +21,8 @@ class LocationMapPicker extends StatefulWidget {
   final Function(AddressModel)? onAddressSelected;
   final Function(Map<String, dynamic>)? onLocationSelected;
   final bool isFromHomeAddress;
+  final AddressModel? existingAddress;
+
   const LocationMapPicker({
     super.key,
     this.userLatitude,
@@ -28,6 +30,7 @@ class LocationMapPicker extends StatefulWidget {
     this.onAddressSelected,
     this.onLocationSelected,
     this.isFromHomeAddress = false,
+    this.existingAddress,
   });
 
   @override
@@ -66,6 +69,14 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
   }
 
   _populateControllers() async {
+    if (widget.existingAddress != null) {
+      _fullNameController.text = widget.existingAddress!.fullName;
+      _phoneNumberController.text = widget.existingAddress!.phoneNumber;
+      _buildingNameController.text = widget.existingAddress!.buildingNumber;
+      _locationTitle = widget.existingAddress!.streetName ?? '';
+      return;
+    }
+
     log("getting user details");
     final user = AppFirestore.customersCollectionRef.doc(
       LocalStoreHelper.getUID(),
@@ -86,10 +97,17 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     const defaultLat = 12.9716;
     const defaultLng = 77.5946;
 
-    _initialPosition = LatLng(
-      widget.userLatitude ?? defaultLat,
-      widget.userLongitude ?? defaultLng,
-    );
+    if (widget.existingAddress != null) {
+      _initialPosition = LatLng(
+        widget.existingAddress!.lat ?? defaultLat,
+        widget.existingAddress!.lon ?? defaultLng,
+      );
+    } else {
+      _initialPosition = LatLng(
+        widget.userLatitude ?? defaultLat,
+        widget.userLongitude ?? defaultLng,
+      );
+    }
     _selectedLocation = _initialPosition;
   }
 
@@ -561,13 +579,14 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)?.fullNameRequired ??
-                            'Full name is required';
+                        return AppLocalizations.of(
+                          context,
+                        )!.pleaseAddANameToIdentifyTheLocation;
                       }
                       return null;
                     },
                     hint: Text(
-                      AppLocalizations.of(context)?.fullName ?? 'Full Name',
+                      AppLocalizations.of(context)!.namehomeworketc,
                       style: PoppinsFont.textStyle(
                         fontSize: 14,
                         color: Colors.grey,
@@ -662,7 +681,9 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     try {
       if (_selectedLocation != null) {
         final newAddress = AddressModel(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          id:
+              widget.existingAddress?.id ??
+              DateTime.now().millisecondsSinceEpoch.toString(),
           streetName: _locationSubtitle.isNotEmpty
               ? _locationSubtitle
               : (_locationTitle.isNotEmpty
