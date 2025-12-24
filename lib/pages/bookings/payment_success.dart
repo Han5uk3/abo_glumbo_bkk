@@ -4,7 +4,6 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
-import 'package:abo_glumbo_bbk/sheets/write_review.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -104,9 +103,9 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
     );
   }
 
-  void _navigateToReview() {
-    showWriteReviewBottomSheet(context, booking: widget.booking);
-  }
+  // void _navigateToReview() {
+  //   showWriteReviewBottomSheet(context, booking: widget.booking);
+  // }
 
   @override
   Widget build(BuildContext context) {

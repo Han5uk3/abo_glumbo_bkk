@@ -1,5 +1,4 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 
 class CustomerAboutUsPage extends StatelessWidget {
