@@ -11,6 +11,7 @@ import 'package:abo_glumbo_bbk/services/auth_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/styles/app_images.dart';
+import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -527,6 +528,13 @@ class _LoginPageState extends State<LoginPage> {
       _phoneController.clear();
     }
     super.initState();
+
+    // Initialize notifications after splash screen
+    Future.delayed(Duration.zero, () async {
+      await NotificationServices.initializeNotifications();
+      NotificationServices.setupFCMListeners();
+      await NotificationServices.checkForInitialMessage();
+    });
   }
 
   @override

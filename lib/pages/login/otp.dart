@@ -526,6 +526,11 @@ class _OtpPageState extends State<OtpPage> {
                             }
                             return null;
                           },
+                          onChanged: (value) {
+                            if (value.length == 6) {
+                              FocusScope.of(context).unfocus();
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(height: 24),

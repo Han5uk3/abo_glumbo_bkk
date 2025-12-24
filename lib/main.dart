@@ -81,17 +81,6 @@ Future<void> main() async {
       rethrow;
     }
 
-    // 5. Initialize notifications (non-blocking for permissions)
-    try {
-      await NotificationServices.initializeNotifications();
-      NotificationServices.setupFCMListeners(); // Don't await - let it run async
-      NotificationServices.checkForInitialMessage(); // Don't await
-      debugPrint('✅ Notification services initialized');
-    } catch (e) {
-      debugPrint('⚠️ Notification setup failed (non-critical): $e');
-      // Continue anyway - notifications are not critical for app launch
-    }
-
     // 6. System UI setup (with One UI 8 fix)
     try {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);

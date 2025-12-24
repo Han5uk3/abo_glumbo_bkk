@@ -26,23 +26,45 @@ class TermsAndConditionsPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 16),
-            _buildText(locale.termsIntroduction, locale.introduction, 0),
+            _FadeSlide(
+              delay: 0,
+              child: _buildText(
+                locale.termsIntroduction,
+                locale.introduction,
+                0,
+              ),
+            ),
             SizedBox(height: 24),
-            _buildText(locale.terms1, locale.terms1title, 1),
-            SizedBox(height: 8),
-            _buildText(locale.terms2, locale.terms2title, 2),
-            SizedBox(height: 8),
-            _buildText(locale.terms3, locale.terms3title, 3),
-            SizedBox(height: 8),
-            _buildWarrantyTermsText(
-              locale.terms4p1,
-              locale.terms4p2,
-              locale.terms4title,
-              4,
-              context,
+            _FadeSlide(
+              delay: 100,
+              child: _buildText(locale.terms1, locale.terms1title, 1),
             ),
             SizedBox(height: 8),
-            _buildText(locale.terms5, locale.terms5title, 5),
+            _FadeSlide(
+              delay: 200,
+              child: _buildText(locale.terms2, locale.terms2title, 2),
+            ),
+            SizedBox(height: 8),
+            _FadeSlide(
+              delay: 300,
+              child: _buildText(locale.terms3, locale.terms3title, 3),
+            ),
+            SizedBox(height: 8),
+            _FadeSlide(
+              delay: 400,
+              child: _buildWarrantyTermsText(
+                locale.terms4p1,
+                locale.terms4p2,
+                locale.terms4title,
+                4,
+                context,
+              ),
+            ),
+            SizedBox(height: 8),
+            _FadeSlide(
+              delay: 500,
+              child: _buildText(locale.terms5, locale.terms5title, 5),
+            ),
           ],
         ),
       ),
@@ -112,31 +134,42 @@ class TermsAndConditionsPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(height: 16),
-                                _buildWarrantyContent(
-                                  AppLocalizations.of(context)!.whatsCovered,
-                                  AppLocalizations.of(context)!.issueone,
-                                  AppLocalizations.of(context)!.issuetwo,
-                                  AppLocalizations.of(context)!.issuethree,
-                                  AppLocalizations.of(context)!.issuefour,
+                                _FadeSlide(
+                                  delay: 0,
+                                  child: _buildWarrantyContent(
+                                    AppLocalizations.of(context)!.whatsCovered,
+                                    AppLocalizations.of(context)!.issueone,
+                                    AppLocalizations.of(context)!.issuetwo,
+                                    AppLocalizations.of(context)!.issuethree,
+                                    AppLocalizations.of(context)!.issuefour,
+                                  ),
                                 ),
                                 SizedBox(height: 24),
-                                _buildWarrantyContent(
-                                  AppLocalizations.of(context)!.whatsNotCovered,
-                                  AppLocalizations.of(context)!.notissueone,
-                                  AppLocalizations.of(context)!.notissuetwo,
-                                  AppLocalizations.of(context)!.notissuethree,
-                                  AppLocalizations.of(context)!.notissuefour,
-                                  content5: AppLocalizations.of(
-                                    context,
-                                  )!.notissuefive,
+                                _FadeSlide(
+                                  delay: 100,
+                                  child: _buildWarrantyContent(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.whatsNotCovered,
+                                    AppLocalizations.of(context)!.notissueone,
+                                    AppLocalizations.of(context)!.notissuetwo,
+                                    AppLocalizations.of(context)!.notissuethree,
+                                    AppLocalizations.of(context)!.notissuefour,
+                                    content5: AppLocalizations.of(
+                                      context,
+                                    )!.notissuefive,
+                                  ),
                                 ),
                                 SizedBox(height: 24),
 
-                                Text(
-                                  AppLocalizations.of(context)!.claimText,
-                                  style: DMSansFont.textStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
+                                _FadeSlide(
+                                  delay: 200,
+                                  child: Text(
+                                    AppLocalizations.of(context)!.claimText,
+                                    style: DMSansFont.textStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -212,6 +245,60 @@ class TermsAndConditionsPage extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+class _FadeSlide extends StatefulWidget {
+  final Widget child;
+  final int delay;
+
+  const _FadeSlide({required this.child, required this.delay});
+
+  @override
+  State<_FadeSlide> createState() => _FadeSlideState();
+}
+
+class _FadeSlideState extends State<_FadeSlide>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+  late final Animation<Offset> _offset;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _opacity = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _offset = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacity,
+      child: SlideTransition(position: _offset, child: widget.child),
     );
   }
 }

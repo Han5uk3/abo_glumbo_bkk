@@ -18,11 +18,20 @@ class PrivacyPolicyPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 24),
-            _buildText(locale.policy1, locale.policy1title, 1),
+            _FadeSlide(
+              delay: 0,
+              child: _buildText(locale.policy1, locale.policy1title, 1),
+            ),
             SizedBox(height: 8),
-            _buildText(locale.policy2, locale.policy2title, 2),
+            _FadeSlide(
+              delay: 100,
+              child: _buildText(locale.policy2, locale.policy2title, 2),
+            ),
             SizedBox(height: 8),
-            _buildText(locale.policy3, locale.policy3title, 3),
+            _FadeSlide(
+              delay: 200,
+              child: _buildText(locale.policy3, locale.policy3title, 3),
+            ),
           ],
         ),
       ),
@@ -47,6 +56,60 @@ class PrivacyPolicyPage extends StatelessWidget {
           style: DMSansFont.textStyle(color: Colors.black, fontSize: 14),
         ),
       ],
+    );
+  }
+}
+
+class _FadeSlide extends StatefulWidget {
+  final Widget child;
+  final int delay;
+
+  const _FadeSlide({required this.child, required this.delay});
+
+  @override
+  State<_FadeSlide> createState() => _FadeSlideState();
+}
+
+class _FadeSlideState extends State<_FadeSlide>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+  late final Animation<Offset> _offset;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _opacity = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _offset = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacity,
+      child: SlideTransition(position: _offset, child: widget.child),
     );
   }
 }

@@ -12,6 +12,7 @@ import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/pages/login/widgets/language_selector.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/biometric_service.dart';
+import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/styles/app_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -57,6 +58,13 @@ class _HomeState extends State<Home> {
     ];
 
     super.initState();
+
+    // Initialize notifications after splash screen
+    Future.delayed(Duration.zero, () async {
+      await NotificationServices.initializeNotifications();
+      NotificationServices.setupFCMListeners();
+      await NotificationServices.checkForInitialMessage();
+    });
   }
 
   static Future<void> launchEmail(String email) async {
