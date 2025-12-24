@@ -19,7 +19,7 @@ val kotlin_version: String by project
 android {
     namespace = "com.aboglumbo"
     compileSdk = 36
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973" // NDK r27 for 16KB page support
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -41,6 +41,12 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+
+        ndk {
+            // 16KB page support requires 16KB aligned binaries. 
+            // arm64-v8a and x86_64 are the primary targets for 16KB devices.
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
     }
 
 signingConfigs {
