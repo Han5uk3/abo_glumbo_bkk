@@ -38,9 +38,9 @@ class _LoginPageState extends State<LoginPage> {
   bool isCheckUserEnableTwoStepVerification = false;
   String? customerLastUid;
   bool isUserLogout = false;
-  String? _detectedCountryCode;
-  String? _displayCountryCode;
-  String? _detectedFlag;
+  // String? _detectedCountryCode;
+  // String? _displayCountryCode;
+  // String? _detectedFlag;
 
   @override
   void initState() {
@@ -67,26 +67,26 @@ class _LoginPageState extends State<LoginPage> {
 
   void _onPhoneNumberChanged() {
     final phoneNumber = _phoneController.text;
-    if (phoneNumber.isNotEmpty) {
-      // Detect country by matching phone number pattern
-      // Works with both local format (0512345678) and international (+966512345678)
-      final detectedCountry = CountryCodeDetector.detectCountryByPattern(
-        phoneNumber,
-      );
-      if (detectedCountry != null && mounted) {
-        setState(() {
-          _detectedCountryCode = detectedCountry['country'];
-          _displayCountryCode = detectedCountry['dialCode'];
-          _detectedFlag = detectedCountry['flag'];
-        });
-      } else if (mounted) {
-        setState(() {
-          _detectedCountryCode = null;
-          _displayCountryCode = null;
-          _detectedFlag = null;
-        });
-      }
-    }
+    // if (phoneNumber.isNotEmpty) {
+    // Detect country by matching phone number pattern
+    // Works with both local format (0512345678) and international (+966512345678)
+    //   final detectedCountry = CountryCodeDetector.detectCountryByPattern(
+    //     phoneNumber,
+    //   );
+    //   if (detectedCountry != null && mounted) {
+    //     setState(() {
+    //       _detectedCountryCode = detectedCountry['country'];
+    //       _displayCountryCode = detectedCountry['dialCode'];
+    //       _detectedFlag = detectedCountry['flag'];
+    //     });
+    //   } else if (mounted) {
+    //     setState(() {
+    //       _detectedCountryCode = null;
+    //       _displayCountryCode = null;
+    //       _detectedFlag = null;
+    //     });
+    //   }
+    // }
   }
 
   @override
@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
     // Format phone number with country code
     final formattedPhoneNumber = CountryCodeDetector.formatPhoneNumber(
       phoneNumber,
-      countryCode: _detectedCountryCode,
+      countryCode: "SA",
     );
     debugPrint('📱 [CUSTOMER LOGIN] Original: $phoneNumber');
     debugPrint('📱 [CUSTOMER LOGIN] Formatted: $formattedPhoneNumber');
@@ -402,26 +402,24 @@ class _LoginPageState extends State<LoginPage> {
         decoration: InputDecoration(
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(12),
-          prefixIcon: _detectedFlag != null && _displayCountryCode != null
-              ? Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(_detectedFlag!, style: const TextStyle(fontSize: 18)),
-                    const SizedBox(width: 8),
-                    Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: Text(
-                        _displayCountryCode!,
-                        style: DMSansFont.textStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : null,
+          prefixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('🇸🇦', style: const TextStyle(fontSize: 18)),
+              const SizedBox(width: 8),
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text(
+                  "+966",
+                  style: DMSansFont.textStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         onFieldSubmitted: (_) {
           if (!_isLoading) {
