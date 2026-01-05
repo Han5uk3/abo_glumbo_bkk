@@ -1,3 +1,5 @@
+import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
+
 class AddressModel {
   final String id;
   final String buildingNumber;
@@ -54,10 +56,15 @@ class AddressModel {
   }
 
   Map<String, dynamic> toJson() {
+    // Format phone number with country code when storing to Firebase
+    final formattedPhoneNumber = CountryCodeDetector.convertToFirebaseFormat(
+      phoneNumber,
+    );
+
     return {
       'id': id,
       'fullName': fullName,
-      'phoneNumber': phoneNumber,
+      'phoneNumber': formattedPhoneNumber,
       'buildingNumber': buildingNumber,
       'streetName': streetName,
       'lon': lon,

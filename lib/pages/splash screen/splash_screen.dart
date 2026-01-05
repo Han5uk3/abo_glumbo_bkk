@@ -1,6 +1,6 @@
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
-import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
+import 'package:abo_glumbo_bbk/pages/login/onboarding_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -102,7 +102,7 @@ class _SplashScreenState extends State<SplashScreen>
       } else {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
+          MaterialPageRoute(builder: (context) => const OnboardingPage()),
           (Route<dynamic> route) => false,
         );
       }

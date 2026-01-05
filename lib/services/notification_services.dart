@@ -69,12 +69,27 @@ class NotificationServices {
                 AndroidFlutterLocalNotificationsPlugin
               >();
 
+      // 1. General channel
       await androidImplementation?.createNotificationChannel(
         const AndroidNotificationChannel(
           'abo_glumbo_channel',
           'Abo Glumbo Notifications',
           description: 'Notifications related to Abo Glumbo tasks and updates',
           importance: Importance.max,
+        ),
+      );
+
+      // 2. Tracking channel (Ongoing/Persistent)
+      await androidImplementation?.createNotificationChannel(
+        const AndroidNotificationChannel(
+          'abo_glumbo_tracking_locked', // New LOCKED channel ID
+          'Live Tracking Status',
+          description: 'Active tracking monitor',
+          importance: Importance
+              .high, // High importance (Max on some skins allows swipe)
+          playSound: false,
+          enableVibration: false,
+          showBadge: true,
         ),
       );
 
@@ -399,18 +414,22 @@ class NotificationServices {
     }
 
     AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'abo_glumbo_channel',
-      'Abo Glumbo Notifications',
-      channelDescription:
-          'Notifications related to Abo Glumbo tasks and updates',
-      importance: Importance.max,
+      'abo_glumbo_tracking_locked', // Match the locked channel ID
+      'Live Tracking Status',
+      channelDescription: 'Active tracking monitor',
+      importance: Importance.high,
       priority: Priority.high,
-      ongoing: true, // Make it non-dismissable
-      autoCancel: false, // Prevent auto-cancel
+      ongoing: true, // Non-dismissible
+      autoCancel: false,
+      onlyAlertOnce: true,
+      color: const Color(0xFF4CAF50),
+      colorized: true,
       showWhen: true,
+      usesChronometer: false,
+      visibility: NotificationVisibility.public,
+      category: AndroidNotificationCategory.service,
       enableVibration: false,
       playSound: false,
-      visibility: NotificationVisibility.public,
       enableLights: false,
       icon: '@mipmap/ic_launcher',
       styleInformation: BigTextStyleInformation(

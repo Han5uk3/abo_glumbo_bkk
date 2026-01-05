@@ -46,6 +46,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   // Timers for debouncing ETA calculations
   Map<String, Timer> _etaDebounceTimers = {};
 
+  // Timer to enforce notification persistence (re-show if dismissed)
+  Timer? _notificationPersistenceTimer;
+
   // Auto-scroll configuration
   static const Duration _autoScrollInterval = Duration(seconds: 4);
   static const Duration _animationDuration = Duration(milliseconds: 500);
@@ -69,16 +72,23 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     _initializeETACalculations();
 
     // Show ongoing tracking notification after a short delay to ensure services are initialized
+    // REMOVED: calling this here resets the notification to "generic" state causing flicker.
+    // We rely on _startTrackingAgent -> _calculateETA -> _updateTrackingNotification to update it when data is ready.
+    /* 
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         _showTrackingNotification();
       }
     });
+    */
 
     // Start auto-scroll only if there are multiple bookings
     if (widget.activeBookings.length > 1) {
       _startAutoScroll();
     }
+
+    // Start persistence timer to keep notification alive even if dismissed by OS/User
+    _startNotificationPersistence();
   }
 
   @override
@@ -110,8 +120,8 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     _autoScrollTimer?.cancel();
     _pageController.dispose();
 
-    // Cancel tracking notification
-    NotificationServices.cancelTrackingNotification();
+    // Cancel tracking notification - REMOVED: Managed by HomeBloc/Parent to persist during navigation
+    // NotificationServices.cancelTrackingNotification();
 
     // Cancel all agent location subscriptions
     for (final subscription in _agentLocationSubscriptions.values) {
@@ -124,6 +134,11 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       timer.cancel();
     }
     _etaDebounceTimers.clear();
+
+    _etaDebounceTimers.clear();
+
+    _notificationPersistenceTimer?.cancel();
+    _notificationPersistenceTimer = null;
 
     super.dispose();
   }
@@ -283,6 +298,26 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     if (widget.activeBookings.length <= 1) return;
     _autoScrollTimer?.cancel();
     Future.delayed(const Duration(seconds: 2), _startAutoScroll);
+  }
+
+  /// Start persistence timer to keep notification alive
+  void _startNotificationPersistence() {
+    _notificationPersistenceTimer?.cancel();
+    // Re-show notification every 5 seconds to fight dismissal
+    _notificationPersistenceTimer = Timer.periodic(const Duration(seconds: 5), (
+      timer,
+    ) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      // Only update if we have active bookings
+      if (widget.activeBookings.isNotEmpty) {
+        _log('[ETA] Persistence check - updating notification');
+        _updateTrackingNotification();
+      }
+    });
   }
 
   /// Enhanced duration parsing with multiple format support
@@ -688,6 +723,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         };
       });
     }
+
+    // Update notification even on fallback to ensure it appears/persists
+    _updateTrackingNotification();
     _log(
       '[ETA] Set fallback ETA (${isLocationError ? "location error" : "$fallbackMinutes mins"}, arrival: $fallbackArrivalTime) for booking $bookingId (agent: $agentUid)',
     );
@@ -703,57 +741,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       return booking.customer.addresses.isNotEmpty
           ? booking.customer.addresses.first
           : null;
-    }
-  }
-
-  /// Show ongoing tracking notification
-  Future<void> _showTrackingNotification() async {
-    try {
-      final locale = AppLocalizations.of(context);
-      if (locale == null) return;
-
-      // Get booking details
-      String? serviceName;
-      String? bookingId;
-      String? notificationBody;
-
-      if (widget.activeBookings.isNotEmpty) {
-        final firstBooking = widget.activeBookings[0];
-        bookingId = firstBooking.id;
-
-        // Get service name based on app language
-        final isArabic = locale.localeName == 'ar';
-        serviceName = isArabic
-            ? firstBooking.service.name_ar
-            : firstBooking.service.name;
-
-        // Get ETA and Distance
-        final firstBookingEta = etaData[firstBooking.id];
-        if (firstBookingEta != null) {
-          final arrivalTimeFormatted =
-              firstBookingEta['arrivalTime'] as String?;
-          final distance = firstBookingEta['distance'] as String?;
-
-          if (distance != null && arrivalTimeFormatted != null) {
-            // "Your Technician is on the way - 500m away and Arrival Time 15:30"
-            // Using localized strings
-            notificationBody =
-                '${locale.yourTechnicianIsOnTheWay} - $distance ${locale.away} ${locale.and} ${locale.arrivalTime} $arrivalTimeFormatted';
-          }
-        }
-      }
-
-      await NotificationServices.showOngoingTrackingNotification(
-        title: locale.liveTracking,
-        serviceName: serviceName,
-        body: notificationBody ?? locale.tapForLiveLocationTracking,
-        // We set etaMinutes to null to avoid the default ETA appending, as we include it in the body now
-        etaMinutes: null,
-        etaTime: null,
-        bookingId: bookingId,
-      );
-    } catch (e) {
-      debugPrint('❌ Error showing tracking notification: $e');
     }
   }
 

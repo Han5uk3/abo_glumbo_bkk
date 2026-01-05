@@ -4021,6 +4021,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Our mission is to transform complicated maintenance tasks into a simple, guaranteed experience.'**
   String get customerMission;
+
+  /// No description provided for @serviceNotAvailableInRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'This service is not available in your region now. It will be added later.'**
+  String get serviceNotAvailableInRegion;
 }
 
 class _AppLocalizationsDelegate

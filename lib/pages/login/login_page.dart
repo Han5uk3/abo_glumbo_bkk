@@ -1,6 +1,7 @@
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
+import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/privacy_policy_page.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/terms_and_conditions_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
@@ -37,9 +38,60 @@ class _LoginPageState extends State<LoginPage> {
   bool isCheckUserEnableTwoStepVerification = false;
   String? customerLastUid;
   bool isUserLogout = false;
+  String? _detectedCountryCode;
+  String? _displayCountryCode;
+  String? _detectedFlag;
+
+  @override
+  void initState() {
+    _phoneController.addListener(_onPhoneNumberChanged);
+    customerLastUid = LocalStoreHelper.getUID();
+    isCheckUserEnableTwoStepVerification =
+        LocalStoreHelper.getBiometricAuthEnabled(customerLastUid ?? '');
+    isUserLogout = LocalStoreHelper.getLogoutStatus();
+    _isRememberMeChecked = LocalStoreHelper.getRememberMe();
+    if (_isRememberMeChecked) {
+      _phoneController.text = LocalStoreHelper.getPhoneNumber() ?? '';
+    } else {
+      _phoneController.clear();
+    }
+    super.initState();
+
+    // Initialize notifications after splash screen
+    Future.delayed(Duration.zero, () async {
+      await NotificationServices.initializeNotifications();
+      NotificationServices.setupFCMListeners();
+      await NotificationServices.checkForInitialMessage();
+    });
+  }
+
+  void _onPhoneNumberChanged() {
+    final phoneNumber = _phoneController.text;
+    if (phoneNumber.isNotEmpty) {
+      // Detect country by matching phone number pattern
+      // Works with both local format (0512345678) and international (+966512345678)
+      final detectedCountry = CountryCodeDetector.detectCountryByPattern(
+        phoneNumber,
+      );
+      if (detectedCountry != null && mounted) {
+        setState(() {
+          _detectedCountryCode = detectedCountry['country'];
+          _displayCountryCode = detectedCountry['dialCode'];
+          _detectedFlag = detectedCountry['flag'];
+        });
+      } else if (mounted) {
+        setState(() {
+          _detectedCountryCode = null;
+          _displayCountryCode = null;
+          _detectedFlag = null;
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
+    _phoneController.removeListener(_onPhoneNumberChanged);
     _phoneController.dispose();
     super.dispose();
   }
@@ -56,6 +108,14 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    // Format phone number with country code
+    final formattedPhoneNumber = CountryCodeDetector.formatPhoneNumber(
+      phoneNumber,
+      countryCode: _detectedCountryCode,
+    );
+    debugPrint('📱 [CUSTOMER LOGIN] Original: $phoneNumber');
+    debugPrint('📱 [CUSTOMER LOGIN] Formatted: $formattedPhoneNumber');
+
     setState(() {
       _isLoading = true;
     });
@@ -70,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
     await AuthServices().sendOTP(
       context,
       forceResendingToken: _resendToken,
-      phoneNumber: phoneNumber,
+      phoneNumber: formattedPhoneNumber,
       onCodeSent: (String verificationId, {int? resendToken}) {
         if (mounted) {
           setState(() {
@@ -85,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
             context,
             MaterialPageRoute(
               builder: (context) => OtpPage(
-                phoneNumber: AuthServices.phoneNumber ?? phoneNumber,
+                phoneNumber: AuthServices.phoneNumber ?? formattedPhoneNumber,
                 verificationId: verificationId,
               ),
             ),
@@ -334,7 +394,6 @@ class _LoginPageState extends State<LoginPage> {
         controller: _phoneController,
         textInputAction: TextInputAction.done,
         keyboardType: TextInputType.number,
-        inputFormatters: [LengthLimitingTextInputFormatter(9)],
         style: DMSansFont.textStyle(
           color: Colors.black,
           fontSize: 16,
@@ -343,22 +402,26 @@ class _LoginPageState extends State<LoginPage> {
         decoration: InputDecoration(
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(12),
-          prefixIcon: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Directionality(
-                textDirection: TextDirection.ltr,
-                child: Text(
-                  "+966",
-                  style: DMSansFont.textStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          prefixIcon: _detectedFlag != null && _displayCountryCode != null
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(_detectedFlag!, style: const TextStyle(fontSize: 18)),
+                    const SizedBox(width: 8),
+                    Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: Text(
+                        _displayCountryCode!,
+                        style: DMSansFont.textStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : null,
         ),
         onFieldSubmitted: (_) {
           if (!_isLoading) {
@@ -513,28 +576,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    customerLastUid = LocalStoreHelper.getUID();
-    isCheckUserEnableTwoStepVerification =
-        LocalStoreHelper.getBiometricAuthEnabled(customerLastUid ?? '');
-    isUserLogout = LocalStoreHelper.getLogoutStatus();
-    _isRememberMeChecked = LocalStoreHelper.getRememberMe();
-    if (_isRememberMeChecked) {
-      _phoneController.text = LocalStoreHelper.getPhoneNumber() ?? '';
-    } else {
-      _phoneController.clear();
-    }
-    super.initState();
-
-    // Initialize notifications after splash screen
-    Future.delayed(Duration.zero, () async {
-      await NotificationServices.initializeNotifications();
-      NotificationServices.setupFCMListeners();
-      await NotificationServices.checkForInitialMessage();
-    });
   }
 
   @override

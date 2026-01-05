@@ -2083,4 +2083,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get customerMission =>
       'Our mission is to transform complicated maintenance tasks into a simple, guaranteed experience.';
+
+  @override
+  String get serviceNotAvailableInRegion =>
+      'This service is not available in your region now. It will be added later.';
 }

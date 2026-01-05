@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
@@ -44,6 +46,53 @@ class _CategoryDetailState extends State<CategoryDetail> {
         context.read<AccountBloc>().add(ListenCustomerData(uid: uid));
       }
     }
+  }
+
+  /// Check if service is available in customer's city
+  bool _isServiceAvailableInCustomerRegion(ServiceModel service) {
+    final accountState = context.read<AccountBloc>().state;
+
+    if (accountState is! CustomerDataLoaded) {
+      return true; // Allow if we don't have customer data loaded yet
+    }
+
+    final customerData = accountState.customerData;
+    final customerCity = customerData.detailedLocation?.cityId;
+    final customerRegion = customerData.detailedLocation?.regionId;
+
+
+    // If customer has no city selected, service is not available
+    if (customerCity?.isEmpty ?? true) {
+      return false;
+    }
+
+    // Check if service is available for customer's city
+    if ((service.locations?.isEmpty) ?? true) {
+    
+      return false; // Service NOT available if no cities are configured
+    }
+
+    // Parse and check each service location city
+    for (final locationJsonStr in (service.locations ?? [])) {
+      if (locationJsonStr == null || locationJsonStr.isEmpty) continue;
+
+      try {
+        final locationMap = jsonDecode(locationJsonStr) as Map<String, dynamic>;
+      
+        // Check BOTH cityId AND regionId to ensure exact match
+        // This prevents false matches when different cities have the same cityId
+        if (locationMap['cityId'] == customerCity &&
+            locationMap['regionId'] == customerRegion) {
+          return true; // Found matching city
+        }
+      } catch (e) {
+        log('DEBUG: Error parsing location: $e');
+        // Skip malformed JSON
+        continue;
+      }
+    }
+
+    return false; // No matching city found
   }
 
   Future<void> _fetchAllServices() async {
@@ -196,6 +245,22 @@ class _CategoryDetailState extends State<CategoryDetail> {
                           if (LocalStoreHelper.getGuestUser()) {
                             SignUpAlertForGuestUsers().showSignUpAlert(context);
                           } else {
+                            // Check if service is available in customer's region
+                            if (!_isServiceAvailableInCustomerRegion(service)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(
+                                          context,
+                                        )?.serviceNotAvailableInRegion ??
+                                        'This service is not available in your region now. It will be added later.',
+                                  ),
+                                  backgroundColor: Colors.orange,
+                                  duration: const Duration(seconds: 4),
+                                ),
+                              );
+                              return;
+                            }
                             showBookServiceBottomSheet(
                               context,
                               service: service,

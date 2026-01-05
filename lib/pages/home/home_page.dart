@@ -79,8 +79,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<void> _initializeAuthenticatedUser() async {
     if (_isDisposed) return;
     try {
-      // FCM is already initialized in main.dart, just refresh the token
-      await NotificationServices.refreshFCMToken();
+      // FCM is already initialized in main.dart
+      // Token refresh is now handled on login (AuthServices.checkUser)
+      // await NotificationServices.refreshFCMToken();
       if (!_isDisposed) {
         WidgetsBinding.instance.addObserver(this);
       }
@@ -347,7 +348,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         slivers: [
           SliverToBoxAdapter(child: _buildHeader(safePadding)),
           if (!_isGuest)
-            BlocBuilder<HomeBloc, HomeState>(
+            BlocConsumer<HomeBloc, HomeState>(
+              listener: (context, state) {
+                if (state is FetchActiveBookingSuccess &&
+                    state.activeBookings.isEmpty) {
+                  // Cancel tracking notification when no active bookings
+                  NotificationServices.cancelTrackingNotification();
+                }
+              },
               builder: (context, state) {
                 if (state is FetchActiveBookingLoading) {
                   return const SliverToBoxAdapter(child: SizedBox.shrink());

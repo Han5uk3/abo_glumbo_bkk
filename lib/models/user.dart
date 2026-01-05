@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '/models/location.dart';
 
@@ -196,12 +197,20 @@ class UserModel {
   }
 
   Map<String, dynamic> toJson() {
+    // Format phone number with country code when storing to Firebase
+    final formattedPhone = phone != null
+        ? CountryCodeDetector.convertToFirebaseFormat(
+            phone!,
+            countryCode: country,
+          )
+        : null;
+
     return {
       'uid': uid,
       'role': role,
       'name': name,
       'email': email,
-      'phone': phone,
+      'phone': formattedPhone,
       'lanCode': lanCode,
       'country': country,
       'createdAt': createdAt,
@@ -232,11 +241,19 @@ class UserModel {
   }
 
   Map<String, dynamic> toFirestore() {
+    // Format phone number with country code when storing to Firebase
+    final formattedPhone = phone != null
+        ? CountryCodeDetector.convertToFirebaseFormat(
+            phone!,
+            countryCode: country,
+          )
+        : null;
+
     return {
       'name': name,
       'role': role,
       'email': email,
-      'phone': phone,
+      'phone': formattedPhone,
       'lanCode': lanCode,
       'country': country,
       'liveLocation': liveLocation?.toJson(),

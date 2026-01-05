@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
-import 'package:abo_glumbo_bbk/common_widgets/welcome_modal.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -226,16 +225,13 @@ class _SignupPageState extends State<SignupPage> {
 
         await Future.delayed(const Duration(milliseconds: 500));
 
-        // Show welcome modal
-        if (mounted) {
-          await WelcomeModal.show(context);
-        }
-
-        // Navigate to home
+        // Navigate to home with isNewRegistration flag - modal will be shown there
         if (mounted) {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const Home()),
+            MaterialPageRoute(
+              builder: (context) => const Home(isNewRegistration: true),
+            ),
             (route) => false,
           );
         }

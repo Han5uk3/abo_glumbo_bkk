@@ -2049,4 +2049,8 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get customerMission =>
       'مهمتنا هي تحويل مهمة الصيانة المعقدة إلى تجربة بسيطة ومضمونة.';
+
+  @override
+  String get serviceNotAvailableInRegion =>
+      'هذه الخدمة غير متوفرة في منطقتك حالياً. سيتم إضافتها لاحقاً.';
 }

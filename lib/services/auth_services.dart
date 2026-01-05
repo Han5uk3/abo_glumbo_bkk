@@ -6,6 +6,7 @@ import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/signup_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
+import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -434,6 +435,9 @@ class AuthServices {
         await LocalStoreHelper.putUID(uid);
         await LocalStoreHelper.putGuestUser(false);
         await LocalStoreHelper.putlogoutStatus(false);
+
+        // Refresh FCM token on successful login (re-login)
+        await NotificationServices.refreshFCMToken();
 
         if (context.mounted) {
           Navigator.pushAndRemoveUntil(

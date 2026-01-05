@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
+import 'package:abo_glumbo_bbk/common_widgets/welcome_modal.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/account.dart';
@@ -25,7 +26,13 @@ import 'package:url_launcher/url_launcher_string.dart';
 class Home extends StatefulWidget {
   final int? initialIndex;
   final String? byPassedUid;
-  const Home({super.key, this.initialIndex, this.byPassedUid});
+  final bool isNewRegistration;
+  const Home({
+    super.key,
+    this.initialIndex,
+    this.byPassedUid,
+    this.isNewRegistration = false,
+  });
 
   @override
   State<Home> createState() => _HomeState();
@@ -122,6 +129,14 @@ class _HomeState extends State<Home> {
         if (LocalStoreHelper.getBlockStatus() == true) {
           return _buildBlockedScaffold();
         }
+
+        // Show welcome modal for new registrations
+        if (widget.isNewRegistration && snapshot.hasData) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            WelcomeModal.show(context);
+          });
+        }
+
         return _buildScaffold(locale, customerData);
       },
     );
