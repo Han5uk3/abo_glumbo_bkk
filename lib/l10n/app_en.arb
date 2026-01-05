@@ -658,6 +658,8 @@
   "paymentProofUploadedSuccessfully": "Payment proof uploaded successfully",
   "selectFiles": "Select Files",
   "addMoreFiles": "Add More Files",
+  "failedToFetchLocation": "Failed to fetch location",
+  "locationWillBeAutomaticallyDetected": "Location will be automatically detected",
   "uploading": "Uploading...",
   "noBookings": "No bookings",
   "uploadProof": "Upload Proof",

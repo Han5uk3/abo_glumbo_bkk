@@ -1,5 +1,8 @@
 import 'dart:io';
+import 'dart:async';
 import 'dart:math' show sin, cos, sqrt, atan2, pi;
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/models/hierarchical_location.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -24,6 +27,10 @@ import 'package:abo_glumbo_bbk/utils/mulish_font.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
+import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
+import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
+import 'package:abo_glumbo_bbk/services/location_service.dart';
+import 'package:abo_glumbo_bbk/models/address_result.dart';
 
 showBookServiceBottomSheet(
   BuildContext context, {
@@ -84,6 +91,15 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   final TextEditingController notesController = TextEditingController();
   int selectedTimeCategory = 0;
   int selectedTimeSlot = 0;
+  String? addressValidationError; // New state variable
+  bool isValidatingAddress = false; // New state variable
+  Map<String, dynamic> _initialPosition = {
+    "lon": 0.0,
+    "lat": 0.0,
+    "userLocation": "",
+  };
+  Timer? _sheetUpdateTimer;
+  bool _hasRecentlyUpdatedFromSheet = false;
   List<Map> timeSlots = [
     {
       "label": "Morning",
@@ -166,6 +182,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   @override
   void initState() {
     super.initState();
+    _fetchCoordinates();
     fetchCustomerAddresses();
     _customerStream = AppServices.listenToCustomerData(
       LocalStoreHelper.getUID() ?? '',
@@ -243,9 +260,155 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   Future<void> fetchCustomerAddresses() async {
     try {
       selectedAddress = await AppServices.getCustomerSelectedAddress();
+      // Validate initially selected address
+      if (selectedAddress != null) {
+        _validateSelectedAddress(selectedAddress!);
+      }
       setState(() {});
     } catch (e) {
       debugPrint("Error fetching addresses: $e");
+    }
+  }
+
+  Future<void> _fetchCoordinates() async {
+    try {
+      final coordinates = await LocationService().getUserCoordinates();
+      if (mounted) {
+        setState(() {
+          _initialPosition = coordinates;
+        });
+      }
+    } catch (error) {
+      debugPrint("Error fetching coordinates: $error");
+    }
+  }
+
+  Future<void> _showAddressSheet(
+    BuildContext context, {
+    bool isChangingAddress = false,
+  }) async {
+    // customerData is likely available in the state or we assume it is loaded
+
+    final result = await showModalBottomSheet<AddressSheetResult>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => AddressSaveSheet(
+        initialPosition: _initialPosition,
+        isChangingAddress: isChangingAddress,
+      ),
+    );
+
+    // Refresh addresses
+    await fetchCustomerAddresses();
+
+    if (result != null) {
+      if (result.needsAddressSelection) {
+        _hasRecentlyUpdatedFromSheet = true;
+        setState(() {
+          selectedAddress = null;
+        });
+        return;
+      }
+
+      final selected = result.selectedAddress;
+      if (selected != null) {
+        _hasRecentlyUpdatedFromSheet = true;
+        setState(() {
+          selectedAddress = selected;
+        });
+        _validateSelectedAddress(selected);
+      }
+    }
+  }
+
+  Future<void> _validateSelectedAddress(AddressModel address) async {
+    if (address.lat == null || address.lon == null) {
+      setState(() {
+        addressValidationError = "Invalid address: Missing coordinates";
+      });
+      return;
+    }
+
+    setState(() {
+      isValidatingAddress = true;
+      addressValidationError = null;
+    });
+
+    try {
+      // Fetch technicians for this service
+      // Note: In a real app we might want to optimize this query
+      debugPrint("🔍 Validating service availability for ${address.fullName}");
+
+      final techniciansQuery = await AppFirestore.usersCollectionRef
+          .where('role', isEqualTo: 'agent')
+          .where('accountStatus', isEqualTo: 'approved')
+          //.where('services', arrayContains: widget.service.serviceId) // Assuming services is list of IDs
+          .get();
+
+      // Filter manually for service match if needed, or rely on worker list upstream
+      // For now, let's assume we need to check if ANY technician covers this area
+
+      bool isServiceable = false;
+
+      // We need to check if the technician covers the area
+      // AND provides the service.
+
+      for (var doc in techniciansQuery.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+
+        // Check if tech provides this service
+        List<dynamic> services = data['services'] ?? [];
+        bool providesService = services.any((s) {
+          String? sId;
+          if (s is String)
+            sId = s;
+          else if (s is Map)
+            sId = s['id'];
+
+          return sId == widget.service.id;
+        });
+
+        if (!providesService) continue;
+
+        // Check service area
+        List<dynamic> serviceAreasJson = data['serviceAreas'] ?? [];
+        // Map to SelectedCity
+        List<SelectedCity> serviceAreas = serviceAreasJson
+            .map((e) => SelectedCity.fromJson(e))
+            .toList();
+
+        final techCovers = await LocationMatcherService.isAddressInServiceArea(
+          customerLat: address.lat!,
+          customerLon: address.lon!,
+          technicianServiceAreas: serviceAreas,
+        );
+
+        if (techCovers) {
+          isServiceable = true;
+          break; // Found at least one
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          isValidatingAddress = false;
+          addressValidationError = isServiceable
+              ? null
+              : "Service not available in this area";
+        });
+      }
+    } catch (e) {
+      debugPrint("❌ Error validating address: $e");
+      if (mounted) {
+        setState(() {
+          isValidatingAddress = false;
+          addressValidationError = "Failed to validate service area";
+        });
+      }
     }
   }
 
@@ -565,6 +728,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                                   timeSlot:
                                       timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
                                   agent: selectedWorker,
+                                  selectedAddress: selectedAddress,
                                 ),
                               );
                             }
@@ -673,6 +837,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
   }
 
   _buildFirstStepBottom() {
+    final activeAddress = selectedAddress;
     return SizedBox(
       width: double.maxFinite,
       height: 50,
@@ -686,6 +851,42 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
             ),
           ),
           onPressed: () {
+            if (activeAddress == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text(
+                    AppLocalizations.of(context)?.pleaseSelectServiceAddress ??
+                        'Please select a service address',
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+
+            if (isValidatingAddress) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('Validating service area, please wait...'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+              return;
+            }
+
+            if (addressValidationError != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text(addressValidationError!),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+
             if (selectedDate == null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -749,26 +950,11 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
     return ListView(
       padding: const EdgeInsets.only(top: 5, bottom: 16),
       children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 16,
-            right: 16,
-            bottom: 8,
-            top: 16,
-          ),
-          child: Text(
-            AppLocalizations.of(context)?.selectLocation ?? '',
-            style: DMSansFont.textStyle(
-              color: Colors.black87,
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
         BlocProvider(
           create: (context) =>
               AddressBloc(AppServicesAddressRepository())..add(LoadAddresses()),
           child: AddIssueImageAndVideo(
+            showAddressPicker: false, // Hide address picker in step 2
             onImageSelected: (value) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted) {
@@ -783,13 +969,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
                 }
               });
             },
-            isAddressSelected: (value) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) {
-                  setState(() => _selectedAddress = value);
-                }
-              });
-            },
+            // Address callback not needed since we pick it in step 1
           ),
         ),
         Padding(
@@ -841,6 +1021,63 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
     return ListView(
       padding: const EdgeInsets.only(bottom: 16, top: 5),
       children: [
+        // Address Selection Section
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: 8,
+          ),
+          child: Text(
+            AppLocalizations.of(context)?.selectLocation ?? 'Select Location',
+            style: DMSansFont.textStyle(
+              color: Colors.black87,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        _buildAddressSelectionWidget(),
+        if (addressValidationError != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
+            child: Row(
+              children: [
+                Icon(Icons.error_outline, color: Colors.red, size: 16),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    addressValidationError!,
+                    style: DMSansFont.textStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        if (isValidatingAddress)
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  "Checking service availability...",
+                  style: DMSansFont.textStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
@@ -1036,6 +1273,157 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAddressSelectionWidget() {
+    final bool isRTL = Directionality.of(context) == TextDirection.rtl;
+
+    return GestureDetector(
+      onTap: () => _showAddressSheet(context),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        margin: EdgeInsets.only(left: 16, right: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFDDDDDD), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: selectedAddress != null
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.center,
+          textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                left: isRTL ? 8 : 0,
+                right: isRTL ? 0 : 8,
+              ),
+              child: Icon(
+                Icons.location_on_rounded,
+                color: const Color(0xFF4F4F4F),
+                size: 20,
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (selectedAddress != null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            AppLocalizations.of(context)!.serviceto,
+                            style: DMSansFont.textStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: isRTL ? TextAlign.right : TextAlign.left,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blue[400],
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)?.change ?? 'Change',
+                            style: DMSansFont.textStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      selectedAddress!.fullName,
+                      style: DMSansFont.textStyle(
+                        color: const Color(0xFF2C2C2C),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      selectedAddress!.streetName?.isNotEmpty == true
+                          ? selectedAddress!.streetName!
+                          : selectedAddress!.buildingNumber.isNotEmpty
+                          ? selectedAddress!.buildingNumber
+                          : "Address location",
+                      style: DMSansFont.textStyle(
+                        color: const Color(0xFF959595),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                  ] else ...[
+                    Text(
+                      (AppLocalizations.of(context)?.selectServiceAddress ??
+                          'Select Service Address'),
+                      style: DMSansFont.textStyle(
+                        color: const Color(0xFF4F4F4F),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      (AppLocalizations.of(context)?.selectFromSavedAddresses ??
+                          'Select from your saved addresses or add a new one.'),
+                      style: DMSansFont.textStyle(
+                        color: const Color(0xFF959595),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        height: 1.4,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (selectedAddress == null)
+              Padding(
+                padding: EdgeInsets.only(
+                  left: isRTL ? 0 : 8,
+                  right: isRTL ? 8 : 0,
+                ),
+                child: Transform.rotate(
+                  angle: isRTL ? 3.14159 : 0,
+                  child: Icon(
+                    isRTL
+                        ? Icons.arrow_back_ios_rounded
+                        : Icons.arrow_forward_ios_rounded,
+                    color: const Color(0xFF4F4F4F),
+                    size: 16,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 

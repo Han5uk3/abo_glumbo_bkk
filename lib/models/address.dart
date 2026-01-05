@@ -9,6 +9,7 @@ class AddressModel {
   final double? lon;
   final double? lat;
   bool? isSelected;
+  final bool? isCurrentLocation; // Flag for auto-updated current location
 
   AddressModel({
     required this.id,
@@ -19,6 +20,7 @@ class AddressModel {
     this.lon,
     this.lat,
     this.isSelected = false,
+    this.isCurrentLocation = false,
   });
 
   factory AddressModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class AddressModel {
       lon: (json['lon'] as num?)?.toDouble(),
       lat: (json['lat'] as num?)?.toDouble(),
       isSelected: json['isSelected'] as bool? ?? false,
+      isCurrentLocation: json['isCurrentLocation'] as bool? ?? false,
     );
   }
   AddressModel copyWith({
@@ -42,6 +45,7 @@ class AddressModel {
     double? lon,
     double? lat,
     bool? isSelected,
+    bool? isCurrentLocation,
   }) {
     return AddressModel(
       id: id ?? this.id,
@@ -52,6 +56,7 @@ class AddressModel {
       lon: lon ?? this.lon,
       lat: lat ?? this.lat,
       isSelected: isSelected ?? this.isSelected,
+      isCurrentLocation: isCurrentLocation ?? this.isCurrentLocation,
     );
   }
 
@@ -70,6 +75,7 @@ class AddressModel {
       'lon': lon,
       'lat': lat,
       'isSelected': isSelected,
+      'isCurrentLocation': isCurrentLocation,
     };
   }
 }

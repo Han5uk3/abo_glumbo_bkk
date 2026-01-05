@@ -26,6 +26,7 @@
   "yourTechnicianIsMovingToYourLocation": "الفني في طريقه إلى موقعك",
   "tapForLiveLocationTracking": "اضغط لتتبع الموقع المباشر",
   "language": "اللغة",
+  "failedToFetchLocation": "فشل في جلب الموقع",
   "highestRating": "أعلى تقييم",
   "nearest": "الأقرب",
   "mostOrders": "الأكثر طلبًا",

@@ -2038,6 +2038,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addMoreFiles => 'Add More Files';
 
   @override
+  String get failedToFetchLocation => 'Failed to fetch location';
+
+  @override
+  String get locationWillBeAutomaticallyDetected =>
+      'Location will be automatically detected';
+
+  @override
   String get uploading => 'Uploading...';
 
   @override

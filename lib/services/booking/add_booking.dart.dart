@@ -8,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
+import 'package:abo_glumbo_bbk/models/address.dart';
+
 class NewBookingUtils {
   static Future<String?> addBooking({
     required ServiceModel service,
@@ -19,6 +21,7 @@ class NewBookingUtils {
     File? selectedVideo,
     required Map<dynamic, dynamic> timeSlot,
     required UserModel agent,
+    AddressModel? selectedAddress, // Added selectedAddress
   }) async {
     try {
       DateTime bookingDate = DateTime(
@@ -75,7 +78,11 @@ class NewBookingUtils {
         isAdmin: customerData.isAdmin,
         detailedLocation: customerData.detailedLocation,
         addresses: customerData.addresses.map((address) {
-          return address.copyWith(isSelected: address.isSelected);
+          return address.copyWith(
+            isSelected: selectedAddress != null
+                ? address.id == selectedAddress.id
+                : address.isSelected,
+          );
         }).toList(),
       );
 
@@ -90,6 +97,7 @@ class NewBookingUtils {
         customer: updatedCustomerData,
         agent: agent,
         paymentModeCode: "U",
+        selectedAddressId: selectedAddress?.id, // Added selectedAddressId
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       );

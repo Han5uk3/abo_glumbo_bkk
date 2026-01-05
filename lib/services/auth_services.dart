@@ -4,10 +4,16 @@ import 'dart:io';
 
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
+import 'package:abo_glumbo_bbk/models/address.dart';
+import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/signup_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
+import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:flutter/material.dart';
 
@@ -421,25 +427,33 @@ class AuthServices {
     try {
       final uid = userCredential.user?.uid;
       if (uid == null) {
-        debugPrint("Error: User UID is null");
+        debugPrint("❌ Error: User UID is null");
         return;
       }
+
+      debugPrint("🔍 Checking user: $uid");
       final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
 
       if (!context.mounted) {
-        debugPrint("Context unmounted after Firestore check in checkUser");
+        debugPrint("⚠️ Context unmounted after Firestore check in checkUser");
         return;
       }
 
       if (userDoc.exists) {
+        debugPrint("✅ User exists, logging in...");
         await LocalStoreHelper.putUID(uid);
         await LocalStoreHelper.putGuestUser(false);
         await LocalStoreHelper.putlogoutStatus(false);
+
+        // Update current location address on login
+        debugPrint("📍 Updating current location on login...");
+        await _updateCurrentLocationAddress(uid);
 
         // Refresh FCM token on successful login (re-login)
         await NotificationServices.refreshFCMToken();
 
         if (context.mounted) {
+          debugPrint("🏠 Navigating to home...");
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => Home()),
@@ -447,6 +461,7 @@ class AuthServices {
           );
         }
       } else {
+        debugPrint("📝 User doesn't exist, navigating to signup...");
         if (context.mounted) {
           Navigator.pushAndRemoveUntil(
             context,
@@ -456,7 +471,7 @@ class AuthServices {
         }
       }
     } catch (e) {
-      debugPrint("Error in checkUser: $e");
+      debugPrint("❌ Error in checkUser: $e");
       if (e is FirebaseAuthException) {
         rethrow;
       } else {
@@ -465,6 +480,115 @@ class AuthServices {
           message: 'Failed to check user: $e',
         );
       }
+    }
+  }
+
+  /// Update or create current location address on login
+  Future<void> _updateCurrentLocationAddress(String uid) async {
+    try {
+      debugPrint("📍 Fetching current location for user: $uid");
+
+      // Get current position
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+          timeLimit: const Duration(seconds: 10),
+        );
+      } catch (e) {
+        debugPrint("⚠️ Failed to get current position: $e");
+        position = null;
+      }
+
+      if (position == null) {
+        debugPrint("⚠️ Could not fetch location, skipping update");
+        return;
+      }
+
+      debugPrint(
+        "📍 Position fetched: ${position.latitude}, ${position.longitude}",
+      );
+
+      // Get customer document
+      final customerDoc = await AppFirestore.customersCollectionRef
+          .doc(uid)
+          .get();
+      if (!customerDoc.exists) {
+        debugPrint("❌ Customer document not found");
+        return;
+      }
+
+      final customerData = customerDoc.data();
+      if (customerData == null) {
+        debugPrint("❌ Customer data is null");
+        return;
+      }
+
+      final customer = CustomerModel.fromJson(
+        customerData as Map<String, dynamic>,
+      );
+      final addresses = List<AddressModel>.from(customer.addresses);
+
+      // Reverse geocode to get address name
+      String addressName = 'Current Location';
+      try {
+        final locationName =
+            await LocationMatcherService.getLocationNameFromCoordinates(
+              latitude: position.latitude,
+              longitude: position.longitude,
+            );
+        if (locationName != null && locationName.isNotEmpty) {
+          addressName = locationName;
+          debugPrint("📍 Reverse geocoded: $addressName");
+        }
+      } catch (e) {
+        debugPrint("⚠️ Reverse geocoding failed: $e");
+      }
+
+      // Find existing current location address
+      final currentLocationIndex = addresses.indexWhere(
+        (addr) => addr.isCurrentLocation == true,
+      );
+
+      final phoneNumber = customer.phone ?? '';
+
+      if (currentLocationIndex != -1) {
+        // Update existing current location
+        debugPrint("🔄 Updating existing current location address");
+        addresses[currentLocationIndex] = addresses[currentLocationIndex]
+            .copyWith(
+              fullName: addressName,
+              buildingNumber: 'N/A',
+              lat: position.latitude,
+              lon: position.longitude,
+            );
+      } else {
+        // Create new current location address
+        debugPrint("➕ Creating new current location address");
+        final newAddress = AddressModel(
+          id: const Uuid().v4(),
+          fullName: addressName,
+          buildingNumber: 'N/A',
+          phoneNumber: phoneNumber,
+          lat: position.latitude,
+          lon: position.longitude,
+          isCurrentLocation: true,
+          isSelected: addresses.isEmpty, // Select if it's the only address
+        );
+        addresses.insert(0, newAddress); // Add at beginning
+      }
+
+      // Update customer document
+      await AppFirestore.customersCollectionRef.doc(uid).update({
+        'addresses': addresses.map((e) => e.toJson()).toList(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      debugPrint("✅ Current location address updated successfully");
+    } catch (e, stackTrace) {
+      debugPrint("❌ Error updating current location: $e");
+      debugPrint("Stack trace: $stackTrace");
+      // Don't throw - location update failure shouldn't block login
     }
   }
 }

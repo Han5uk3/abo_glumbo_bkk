@@ -3938,6 +3938,18 @@ abstract class AppLocalizations {
   /// **'Add More Files'**
   String get addMoreFiles;
 
+  /// No description provided for @failedToFetchLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to fetch location'**
+  String get failedToFetchLocation;
+
+  /// No description provided for @locationWillBeAutomaticallyDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Location will be automatically detected'**
+  String get locationWillBeAutomaticallyDetected;
+
   /// No description provided for @uploading.
   ///
   /// In en, this message translates to:

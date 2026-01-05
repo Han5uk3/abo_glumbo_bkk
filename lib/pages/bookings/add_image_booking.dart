@@ -18,12 +18,14 @@ class AddIssueImageAndVideo extends StatefulWidget {
   final ValueChanged<File?>? onImageSelected;
   final ValueChanged<File?>? onVideoSelected;
   final ValueChanged<AddressModel?>? isAddressSelected;
+  final bool showAddressPicker;
 
   const AddIssueImageAndVideo({
     super.key,
     this.onImageSelected,
     this.onVideoSelected,
     this.isAddressSelected,
+    this.showAddressPicker = true,
   });
 
   @override
@@ -278,18 +280,20 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 10),
-          BlocBuilder<AddressBloc, AddressState>(
-            builder: (context, state) {
-              List<AddressModel> addresses = [];
-              AddressModel? selected = _selectedAddress;
-              if (state is AddressLoaded) {
-                addresses = state.addresses;
+          const SizedBox(height: 10),
+          if (widget.showAddressPicker)
+            BlocBuilder<AddressBloc, AddressState>(
+              builder: (context, state) {
+                List<AddressModel> addresses = [];
+                AddressModel? selected = _selectedAddress;
+                if (state is AddressLoaded) {
+                  addresses = state.addresses;
 
-                selected ??= state.selected;
-              }
-              return locationDetection(addresses, selected);
-            },
-          ),
+                  selected ??= state.selected;
+                }
+                return locationDetection(addresses, selected);
+              },
+            ),
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(

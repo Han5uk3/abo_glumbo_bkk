@@ -2004,6 +2004,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addMoreFiles => 'إضافة المزيد من الملفات';
 
   @override
+  String get failedToFetchLocation => 'فشل في جلب الموقع';
+
+  @override
+  String get locationWillBeAutomaticallyDetected =>
+      'Location will be automatically detected';
+
+  @override
   String get uploading => 'جاري الرفع...';
 
   @override

@@ -1,23 +1,23 @@
-import 'dart:convert';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
-import 'package:abo_glumbo_bbk/models/location_selection.dart'; // ✅ Add this
-import 'package:abo_glumbo_bbk/models/searchable_dropdown.dart';
-import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/terms_and_conditions_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
+import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:uuid/uuid.dart';
 
 class SignupPage extends StatefulWidget {
   final String uid;
@@ -29,120 +29,121 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   bool isLoading = false;
-  bool isCreatingAccount = false;
-  bool isLoadingLocations = true;
+  bool isFetchingLocation = false;
 
   final _formkey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
-  // ✅ Location dropdowns (same as technician app)
-  List<Region> regions = [];
-  Region? selectedRegion;
-  City? selectedCity;
-  District? selectedDistrict;
-
   @override
   void initState() {
     super.initState();
-    _loadLocations();
+    debugPrint('📝 SignupPage initialized for UID: ${widget.uid}');
   }
 
-  // ✅ Load locations from JSON
-  Future<void> _loadLocations() async {
-    setState(() => isLoadingLocations = true);
-    try {
-      final jsonString = await rootBundle.loadString(
-        'assets/data/saudi_hierarchical.json',
-      );
-      final List<dynamic> jsonData = json.decode(jsonString);
+  /// Fetch current GPS location and create a "Current Location" address
+  Future<AddressModel?> _createCurrentLocationAddress() async {
+    debugPrint('📍 Starting to fetch current location for registration...');
 
-      setState(() {
-        regions = jsonData.map((r) => Region.fromJson(r)).toList();
-      });
+    try {
+      setState(() => isFetchingLocation = true);
+
+      // Check location permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        debugPrint('⚠️ Location permission denied, requesting...');
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          debugPrint('❌ Location permission denied by user');
+          throw Exception('Location permission denied');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        debugPrint('❌ Location permission permanently denied');
+        throw Exception('Location permission permanently denied');
+      }
+
+      debugPrint('✅ Location permission granted, fetching position...');
+
+      // Get current position
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
+
+      debugPrint(
+        '📍 Position fetched: ${position.latitude}, ${position.longitude}',
+      );
+
+      // Reverse geocode to get address name
+      String addressName = 'Current Location';
+      try {
+        final locationName =
+            await LocationMatcherService.getLocationNameFromCoordinates(
+              latitude: position.latitude,
+              longitude: position.longitude,
+            );
+        if (locationName != null && locationName.isNotEmpty) {
+          addressName = locationName;
+          debugPrint('📍 Reverse geocoded address: $addressName');
+        } else {
+          debugPrint('⚠️ Reverse geocoding returned null, using default name');
+        }
+      } catch (e) {
+        debugPrint('⚠️ Reverse geocoding failed: $e, using default name');
+      }
+
+      // Get phone number from Firebase Auth
+      final phoneNumber = FirebaseAuth.instance.currentUser?.phoneNumber ?? '';
+      debugPrint('📱 Phone number from auth: $phoneNumber');
+
+      // Create address model
+      final address = AddressModel(
+        id: const Uuid().v4(),
+        fullName: addressName,
+        buildingNumber: 'N/A', // Placeholder
+        phoneNumber: phoneNumber,
+        streetName: null,
+        lat: position.latitude,
+        lon: position.longitude,
+        isSelected: true, // Set as default selected
+        isCurrentLocation: true, // Mark as auto-updated location
+      );
+
+      debugPrint('✅ Current location address created: ${address.id}');
+      return address;
     } catch (e) {
+      debugPrint('❌ Error creating current location address: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)?.failedToLoadLocations ??
-                  'Failed to load locations',
+              AppLocalizations.of(context)?.failedToFetchLocation ??
+                  'Failed to fetch location. Please enable location services.',
             ),
+            backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
-            action: SnackBarAction(
-              label: AppLocalizations.of(context)?.retry ?? 'Retry',
-              onPressed: _loadLocations,
-            ),
           ),
         );
       }
+      return null;
     } finally {
       if (mounted) {
-        setState(() => isLoadingLocations = false);
+        setState(() => isFetchingLocation = false);
       }
     }
   }
 
-  // Helper methods to get localized names
-  String _getRegionName(Region region) {
-    final locale = AppLocalizations.of(context)!;
-    final isArabic = locale.localeName == 'ar';
-    return region.getName(isArabic);
-  }
-
-  String _getCityName(City city) {
-    final locale = AppLocalizations.of(context);
-    final isArabic = locale?.localeName == 'ar';
-    return city.getName(isArabic);
-  }
-
-  String _getDistrictName(District district) {
-    final locale = AppLocalizations.of(context);
-    final isArabic = locale?.localeName == 'ar';
-    return district.getName(isArabic);
-  }
-
   Future<void> signup() async {
-    if (!_formkey.currentState!.validate()) return;
+    debugPrint('🚀 Starting signup process...');
 
-    // ✅ Validate location selection
-    if (selectedRegion == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)?.pleaseSelectProvince ??
-                'Please select a province',
-          ),
-        ),
-      );
+    if (!_formkey.currentState!.validate()) {
+      debugPrint('❌ Form validation failed');
       return;
     }
 
-    if (selectedCity == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)?.pleaseSelectCity ??
-                'Please select a city',
-          ),
-        ),
-      );
-      return;
-    }
-
-    if (selectedDistrict == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)?.pleaseSelectNeighborhood ??
-                'Please select a neighborhood',
-          ),
-        ),
-      );
-      return;
-    }
-
-    // ✅ Show loading dialog
+    // Show loading dialog
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -173,44 +174,59 @@ class _SignupPageState extends State<SignupPage> {
     );
 
     try {
+      debugPrint('📍 Fetching current location...');
+
+      // Fetch current location and create address
+      final currentLocationAddress = await _createCurrentLocationAddress();
+
+      if (currentLocationAddress == null) {
+        debugPrint('❌ Failed to create current location address');
+        if (mounted) {
+          Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pop(); // Close loading dialog
+        }
+        return;
+      }
+
+      debugPrint('✅ Current location address created successfully');
+
       String phoneNumber = FirebaseAuth.instance.currentUser?.phoneNumber ?? '';
+      debugPrint('📱 Creating customer with phone: $phoneNumber');
 
-      // ✅ Create DetailedLocationModel
-      final detailedLocation = DetailedLocationModel(
-        regionId: selectedRegion!.regionId,
-        regionEn: selectedRegion!.regionEn,
-        regionAr: selectedRegion!.regionAr,
-        cityId: selectedCity!.cityId,
-        cityEn: selectedCity!.cityEn,
-        cityAr: selectedCity!.cityAr,
-        neighborhoodId: selectedDistrict!.districtId,
-        neighborhoodEn: selectedDistrict!.districtEn,
-        neighborhoodAr: selectedDistrict!.districtAr,
-      );
-
+      // Create customer model with current location address
       CustomerModel customer = CustomerModel(
         role: "customer",
         uid: widget.uid,
         name: nameController.text.trim(),
-        email: emailController.text.trim(),
+        email: emailController.text.trim().isEmpty
+            ? null
+            : emailController.text.trim(),
         phone: phoneNumber,
         country: "SA",
-        detailedLocation: detailedLocation, // ✅ Use DetailedLocationModel
+        addresses: [
+          currentLocationAddress,
+        ], // Add current location to addresses
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       );
 
+      debugPrint('💾 Saving customer to Firestore...');
       await AppFirestore.customersCollectionRef
           .doc(widget.uid)
           .set(customer.toJson());
 
-      // ✅ Close loading dialog
+      debugPrint('✅ Customer created successfully in Firestore');
+
+      // Close loading dialog
       if (mounted) {
         Navigator.of(context, rootNavigator: true).pop();
       }
 
       if (mounted) {
         LocalStoreHelper.putUID(widget.uid);
+        debugPrint('✅ UID saved to local storage');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -225,8 +241,9 @@ class _SignupPageState extends State<SignupPage> {
 
         await Future.delayed(const Duration(milliseconds: 500));
 
-        // Navigate to home with isNewRegistration flag - modal will be shown there
+        // Navigate to home with isNewRegistration flag
         if (mounted) {
+          debugPrint('🏠 Navigating to home page...');
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -236,8 +253,11 @@ class _SignupPageState extends State<SignupPage> {
           );
         }
       }
-    } catch (e) {
-      // ✅ Close loading dialog on error
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error during signup: $e');
+      debugPrint('Stack trace: $stackTrace');
+
+      // Close loading dialog on error
       if (mounted) {
         Navigator.of(context, rootNavigator: true).pop();
       }
@@ -247,8 +267,9 @@ class _SignupPageState extends State<SignupPage> {
           SnackBar(
             content: Text(
               AppLocalizations.of(context)?.failedToCreateAccount ??
-                  'Failed to create account',
+                  'Failed to create account: ${e.toString()}',
             ),
+            backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -362,7 +383,10 @@ class _SignupPageState extends State<SignupPage> {
             bottom: safePadding.bottom + 16,
           ),
           children: [
-            if (isLoadingLocations) const LinearProgressIndicator(),
+            if (isFetchingLocation)
+              const LinearProgressIndicator()
+            else
+              const SizedBox(height: 4),
             const SizedBox(height: 25),
             Text(
               locale?.createAccount ?? 'Create Account',
@@ -397,12 +421,13 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 16),
 
-            // Email Field
+            // Email Field (Optional)
             TextFormWidget(
               controller: emailController,
-              label: locale?.emailAddress ?? 'Email Address',
+              label:
+                  '${locale?.emailAddress ?? 'Email Address'} (${locale?.optional ?? 'Optional'})',
               keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
+              textInputAction: TextInputAction.done,
               validator: (value) {
                 final emailRegex = RegExp(
                   r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
@@ -415,90 +440,33 @@ class _SignupPageState extends State<SignupPage> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
-            // ✅ Location Section Header
-            Text(
-              locale?.location ?? 'Location',
-              style: DMSansFont.textStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.secondary,
+            // Location Info Card
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.secondary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.secondary.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.location_on, color: AppColors.secondary, size: 24),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      locale?.locationWillBeAutomaticallyDetected ??
+                          'Your current location will be automatically detected during registration',
+                      style: DMSansFont.textStyle(
+                        fontSize: 13,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-
-            // ✅ Province Dropdown
-            _buildDropdownField<Region>(
-              label: '${locale?.province ?? 'Region'} *',
-              value: selectedRegion,
-              items: regions,
-              hint: locale!.typeProvinceNameToSearch,
-              itemLabel: _getRegionName,
-              onChanged: (region) {
-                setState(() {
-                  selectedRegion = region;
-                  selectedCity = null;
-                  selectedDistrict = null;
-                });
-              },
-              validator: (value) {
-                if (value == null) {
-                  return locale.pleaseSelectProvince;
-                }
-                return null;
-              },
-            ),
-
-            if (selectedRegion != null) ...[
-              const SizedBox(height: 16),
-
-              // ✅ City Dropdown
-              _buildDropdownField<City>(
-                label: '${locale.city} *',
-                value: selectedCity,
-                items: selectedRegion!.cities,
-                hint: locale.typeCityNameToSearch,
-                itemLabel: _getCityName,
-                onChanged: (city) {
-                  setState(() {
-                    selectedCity = city;
-                    selectedDistrict = null;
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return locale.pleaseSelectCity;
-                  }
-                  return null;
-                },
-              ),
-            ],
-
-            if (selectedCity != null) ...[
-              const SizedBox(height: 16),
-
-              // ✅ District Dropdown
-              _buildDropdownField<District>(
-                label: '${locale.neighbourhood} *',
-                value: selectedDistrict,
-                items: selectedCity!.districts,
-                hint: locale.typeNeighborhoodNameToSearch,
-                itemLabel: _getDistrictName,
-                onChanged: (district) {
-                  setState(() {
-                    selectedDistrict = district;
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return locale.pleaseSelectNeighborhood;
-                  }
-                  return null;
-                },
-              ),
-            ],
-
             const SizedBox(height: 30),
 
             // Create Account Button
@@ -506,20 +474,23 @@ class _SignupPageState extends State<SignupPage> {
               width: double.maxFinite,
               height: 55,
               child: ElevatedButton(
-                onPressed: () async {
-                  final accepted = await showTermsAndConditionsDialog();
-                  if (accepted == true) {
-                    await signup();
-                  }
-                },
+                onPressed: isFetchingLocation
+                    ? null
+                    : () async {
+                        final accepted = await showTermsAndConditionsDialog();
+                        if (accepted == true) {
+                          await signup();
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.secondary,
+                  disabledBackgroundColor: AppColors.secondary.withOpacity(0.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: Text(
-                  locale.createAccount,
+                  locale?.createAccount ?? 'Create Account',
                   style: DMSansFont.textStyle(
                     color: Colors.white,
                     fontSize: 17,
@@ -531,27 +502,6 @@ class _SignupPageState extends State<SignupPage> {
           ],
         ),
       ),
-    );
-  }
-
-  // ✅ Dropdown builder
-  Widget _buildDropdownField<T extends Object>({
-    required String hint,
-    required String label,
-    required T? value,
-    required List<T> items,
-    required String Function(T) itemLabel,
-    required void Function(T?) onChanged,
-    String? Function(T?)? validator,
-  }) {
-    return SearchableDropdown<T>(
-      hintText: hint,
-      label: label,
-      value: value,
-      items: items,
-      itemLabel: itemLabel,
-      onChanged: onChanged,
-      validator: validator,
     );
   }
 

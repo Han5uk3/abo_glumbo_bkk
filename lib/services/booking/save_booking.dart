@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
@@ -37,6 +38,7 @@ class BookingUtils {
     File? selectedVideo,
     required Map timeSlot,
     required UserModel agent,
+    AddressModel? selectedAddress, // Added selectedAddress
   }) async {
     try {
       DateTime bookingDate = DateTime(
@@ -93,7 +95,11 @@ class BookingUtils {
         isAdmin: customerData.isAdmin,
         detailedLocation: customerData.detailedLocation,
         addresses: customerData.addresses.map((address) {
-          return address.copyWith(isSelected: address.isSelected);
+          return address.copyWith(
+            isSelected: selectedAddress != null
+                ? address.id == selectedAddress.id
+                : address.isSelected,
+          );
         }).toList(),
       );
 
@@ -107,6 +113,7 @@ class BookingUtils {
         issueVideo: selectedVideoDownloadUrl ?? "",
         customer: updatedCustomerData,
         agent: agent,
+        selectedAddressId: selectedAddress?.id, // Added selectedAddressId
 
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),

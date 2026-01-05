@@ -25,6 +25,7 @@ class NewBookingBloc extends Bloc<BookingEvent, BookingState> {
         selectedVideo: event.selectedVideo,
         timeSlot: event.timeSlot,
         agent: event.agent,
+        selectedAddress: event.selectedAddress,
       );
 
       // Emit success with booking ID if needed

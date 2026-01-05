@@ -54,11 +54,15 @@ class District {
   final String district_id;
   final String district_ar;
   final String district_en;
+  final double latitude;
+  final double longitude;
 
   District({
     required this.district_id,
     required this.district_ar,
     required this.district_en,
+    required this.latitude,
+    required this.longitude,
   });
 
   factory District.fromJson(Map<String, dynamic> json) {
@@ -66,8 +70,67 @@ class District {
       district_id: json['district_id'],
       district_ar: json['district_ar'],
       district_en: json['district_en'],
+      latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
+      longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
     );
   }
+}
+
+/// Represents a selected city for technician service areas
+class SelectedCity {
+  final String regionId;
+  final String regionEn;
+  final String regionAr;
+  final String cityId;
+  final String cityEn;
+  final String cityAr;
+
+  SelectedCity({
+    required this.regionId,
+    required this.regionEn,
+    required this.regionAr,
+    required this.cityId,
+    required this.cityEn,
+    required this.cityAr,
+  });
+
+  factory SelectedCity.fromJson(Map<String, dynamic> json) {
+    return SelectedCity(
+      regionId: json['regionId'],
+      regionEn: json['regionEn'],
+      regionAr: json['regionAr'],
+      cityId: json['cityId'],
+      cityEn: json['cityEn'],
+      cityAr: json['cityAr'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'regionId': regionId,
+      'regionEn': regionEn,
+      'regionAr': regionAr,
+      'cityId': cityId,
+      'cityEn': cityEn,
+      'cityAr': cityAr,
+    };
+  }
+
+  @override
+  String toString() => '$regionEn > $cityEn';
+
+  String displayNameAr() => '$regionAr > $cityAr';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SelectedCity &&
+          runtimeType == other.runtimeType &&
+          cityId == other.cityId &&
+          regionId == other.regionId;
+
+  @override
+  int get hashCode => cityId.hashCode ^ regionId.hashCode;
 }
 
 /// Represents a selected district with its province and city information

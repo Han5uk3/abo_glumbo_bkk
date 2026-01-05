@@ -36,6 +36,7 @@ class BookingModel {
   bool paymentCompleted = false;
   String? orderId;
   String? transactionId; // Added transactionId
+  String? selectedAddressId; // Added selectedAddressId
   WarrantyModel? warranty;
   Timestamp? paymentCompletedAt;
   List<String>? paymentProof; // Payment completion proof files
@@ -73,6 +74,7 @@ class BookingModel {
     this.cancellationReason,
     this.orderId,
     this.transactionId, // Added transactionId
+    this.selectedAddressId, // Added selectedAddressId
     this.cancelledWorkerUids,
     this.paymentCompleted = false,
     this.warranty,
@@ -124,6 +126,7 @@ class BookingModel {
       paymentCompleted = data['paymentCompleted'] ?? false,
       orderId = data['orderId'],
       transactionId = data['transactionId'], // Added transactionId
+      selectedAddressId = data['selectedAddressId'], // Added selectedAddressId
       paymentProof = data['paymentProof'] != null
           ? List<String>.from(data['paymentProof'])
           : null,
@@ -173,6 +176,7 @@ class BookingModel {
       'cancelledAt': cancelledAt,
       'orderId': orderId,
       'transactionId': transactionId, // Added transactionId
+      'selectedAddressId': selectedAddressId, // Added selectedAddressId
       'cancellationReason': cancellationReason,
       'paymentCompleted': paymentCompleted,
       'paymentProof': paymentProof,
