@@ -41,6 +41,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool? _isGuest;
   int currentIndex = 0;
+  bool _hasShownWelcome = false;
 
   String whatsapp = "";
   String phone = "";
@@ -131,9 +132,12 @@ class _HomeState extends State<Home> {
         }
 
         // Show welcome modal for new registrations
-        if (widget.isNewRegistration && snapshot.hasData) {
+        if (widget.isNewRegistration && snapshot.hasData && !_hasShownWelcome) {
+          _hasShownWelcome = true;
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            WelcomeModal.show(context);
+            if (mounted) {
+              WelcomeModal.show(context);
+            }
           });
         }
 
