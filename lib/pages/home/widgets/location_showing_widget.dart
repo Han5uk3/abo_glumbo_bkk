@@ -52,6 +52,7 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
         context.read<AccountBloc>().add(UpdateCustomerLocation());
       }
     } catch (e) {
+      
       if (!mounted) return;
 
       showSnackBar(

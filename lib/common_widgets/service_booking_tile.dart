@@ -1,19 +1,25 @@
 import 'dart:developer';
 
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/date_formatter.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/booking_bloc.dart';
+import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
+import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/sheets/booking_details.dart';
 import 'package:abo_glumbo_bbk/sheets/cancel_booking_dialog.dart';
 import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart' show DateFormat;
@@ -34,6 +40,15 @@ class ServiceBookingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AddressModel? customerSelectedAddress = booking.customer.addresses.isEmpty
+        ? null
+        : booking.customer.addresses.firstWhere(
+            (address) => address.isSelected ?? false,
+            orElse: () => booking.customer.addresses.first,
+          );
+
+    final localization = AppLocalizations.of(context)!;
+
     TextEditingController reasonController = TextEditingController();
     return GestureDetector(
       onTap: () => showBookingDetailsBottomSheet(
@@ -42,230 +57,139 @@ class ServiceBookingTile extends StatelessWidget {
         onRefresh: onRefresh,
         isWarranty: isWarranty,
       ),
-      child: Container(
+      child:
+      
+      
+       Container(
         width: double.maxFinite,
         decoration: BoxDecoration(
+          border: Border.all(color: Colors.black.withOpacity(0.12)),
           borderRadius: BorderRadius.circular(8),
           color: Colors.white,
         ),
         margin: const EdgeInsets.only(left: 16, right: 16, bottom: 14),
-        padding: const EdgeInsets.all(13),
+        padding: EdgeInsets.all(13),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child:
-                      (booking.service.image != null &&
-                          booking.service.image!.isNotEmpty &&
-                          Uri.tryParse(booking.service.image!) != null &&
-                          Uri.tryParse(booking.service.image!)!.hasAbsolutePath)
-                      ? CachedNetworkImage(
-                          imageUrl: booking.service.image!,
-                          height: 50,
-                          width: 50,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              Container(color: Colors.grey[200]),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.broken_image_outlined),
-                        )
-                      : Container(
-                          height: 50,
-                          width: 50,
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: Icon(
-                              Icons.image_not_supported,
-                              color: Colors.grey,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                ),
-                const SizedBox(width: 17),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xffEAF1FF).withOpacity(0.50),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: 10),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        booking.service.nameLocalized(
-                              languageCode:
-                                  AppLocalizations.of(context)?.localeName ??
-                                  'en',
-                            ) ??
-                            '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: DMSansFont.textStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        booking.service.descriptionLocalized(
-                              languageCode:
-                                  AppLocalizations.of(context)?.localeName ??
-                                  'en',
-                            ) ??
-                            '',
-                        style: DMSansFont.textStyle(
-                          color: Colors.black45,
-                          fontSize: 12,
-                        ),
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      "${booking.bookingStatusCode == "C" ? booking.completionData?.totalCost : booking.service.price} ${AppLocalizations.of(context)!.sar}",
-                      style: DMSansFont.textStyle(
-                        color: AppColors.green1,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    if (booking.bookingStatusCode == "P")
-                      SizedBox(
-                        height: 23,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                          onPressed: () async {
-                            final bookingBloc = context.read<BookingBloc>();
-                            bool? res = await showBookingCancelDialog(
-                              context,
-                              booking: booking,
-                              controller: reasonController,
-                            );
-                            if (res == true) {
-                              bookingBloc.add(
-                                CancelBookingEvent(
-                                  booking,
-                                  reasonController.text.trim(),
-                                ),
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: AppColors.green,
-                                  content: Text(
-                                    AppLocalizations.of(
-                                          context,
-                                        )?.bookingCancelled ??
-                                        '',
+                      SizedBox(width: 10),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child:
+                            (booking.service.image != null &&
+                                booking.service.image!.isNotEmpty &&
+                                Uri.tryParse(booking.service.image!) != null &&
+                                Uri.tryParse(
+                                  booking.service.image!,
+                                )!.hasAbsolutePath)
+                            ? CachedNetworkImage(
+                                imageUrl: booking.service.image!,
+                                height: 50,
+                                width: 50,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) =>
+                                    Container(color: Colors.grey[200]),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.broken_image_outlined),
+                              )
+                            : Container(
+                                height: 50,
+                                width: 50,
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.image_not_supported,
+                                    color: Colors.grey,
+                                    size: 20,
                                   ),
                                 ),
-                              );
-                              // refresh the page
-                              onRefresh.call();
-                            }
-                          },
-                          child: Text(
-                            AppLocalizations.of(context)?.cancel ?? '',
-                            style: DMSansFont.textStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              color: AppColors.grey3,
+                              ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Wrap(
+                              children: [
+                                Text(
+                                  "#${booking.id}",
+                                  style: TextStyle(fontSize: 11),
+                                ),
+                                Text(
+                                  booking.service.nameLocalized(
+                                        languageCode:
+                                            AppLocalizations.of(
+                                              context,
+                                            )?.localeName ??
+                                            'en',
+                                      ) ??
+                                      '',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: DMSansFont.textStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ),
-                      )
-                    else if (booking.bookingStatusCode == "C" &&
-                        booking.paymentCompleted == true &&
-                        !isWarranty)
-                      Container(
-                        height: 23,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.green2),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        alignment: Alignment.center,
-                        child: Text(
-                          AppLocalizations.of(context)?.completed ?? '',
-                          style: DMSansFont.textStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: AppColors.green2,
-                          ),
-                        ),
-                      )
-                    else if (booking.bookingStatusCode == "X" ||
-                        booking.bookingStatusCode == "XC")
-                      Container(
-                        height: 23,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.red),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        alignment: Alignment.center,
-                        child: Text(
-                          AppLocalizations.of(context)?.canceled ?? '',
-                          style: DMSansFont.textStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: AppColors.red,
-                          ),
-                        ),
-                      )
-                    else if (booking.bookingStatusCode == "R") ...{
-                      Container(
-                        height: 23,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.darkGrey),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        alignment: Alignment.center,
-                        child: Text(
-                          AppLocalizations.of(context)?.rejected ?? '',
-                          style: DMSansFont.textStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: AppColors.darkGrey,
-                          ),
+
+                            // Text(
+                            //   booking.service.descriptionLocalized(
+                            //         languageCode:
+                            //             AppLocalizations.of(context)?.localeName ??
+                            //             'en',
+                            //       ) ??
+                            //       '',
+                            //   style: DMSansFont.textStyle(
+                            //     color: Colors.black45,
+                            //     fontSize: 12,
+                            //   ),
+                            //   maxLines: 4,
+                            //   overflow: TextOverflow.ellipsis,
+                            // ),
+                          ],
                         ),
                       ),
-                    } else if (isWarranty) ...{
-                      SizedBox.shrink(),
-                    },
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "${booking.bookingStatusCode == "C" ? booking.completionData?.totalCost : booking.service.price} ${AppLocalizations.of(context)!.sar}",
+                            style: DMSansFont.textStyle(
+                              color: AppColors.green1,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                  ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildTimestampText(context),
-                if (!isWarranty && booking.bookingStatusCode == "C")
-                  _buildBookingActionButtons(context),
-                if (isWarranty) _buildWarrantyStatusBadge(context),
-              ],
+                  SizedBox(height: 10),
+                ],
+              ),
             ),
+            const SizedBox(height: 20),
 
             if (isWarranty && _shouldShowComplaintButton())
               Padding(
@@ -402,9 +326,187 @@ class ServiceBookingTile extends StatelessWidget {
                   ),
                 ),
               ),
+
+            Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                if (customerSelectedAddress != null &&
+                    customerSelectedAddress.buildingNumber.isNotEmpty)
+                  // _buildSectionCards(
+                  //   context: context,
+                  //   hasChat: false,
+                  // // title: localization.location,
+                  // icon: Icons.location_on_rounded,
+                  // children: [
+                  // _buildInfoRow(
+                  //   localization.address,
+                  //   customerSelectedAddress.buildingNumber,
+                  // ),
+                  _buildInfoRow(
+                    localization.location,
+                    customerSelectedAddress.streetName ?? 'N/A',
+                    icon: Icon(Icons.location_on_rounded),
+                    //     ),
+                    //   ],
+                    // ),
+                    // ],
+                  ),
+              ],
+            ),
+
+            Divider(thickness: 0.5, color: Color(0xffCAC4D0)),
+            Row(
+              children: [
+                const SizedBox(height: 12),
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildTimestampText(context),
+                        if (!isWarranty && booking.bookingStatusCode == "C")
+                          _buildBookingActionButtons(context),
+                        if (isWarranty) _buildWarrantyStatusBadge(context),
+                      ],
+                    ),
+                  ],
+                ),
+
+                if (booking.bookingStatusCode == "C")
+                  Expanded(child: Container())
+                else
+                  Container(),
+                Expanded(
+                  child: Column(
+                    children: [
+                      SizedBox(width: MediaQuery.of(context).size.width / 3.4),
+                      if (booking.bookingStatusCode == "P")
+                        SizedBox(
+                          height: 23,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: const Color(0xffE74C3C),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              side: BorderSide.none, // This removes the border
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            onPressed: () async {
+                              final bookingBloc = context.read<BookingBloc>();
+                              bool? res = await showBookingCancelDialog(
+                                context,
+                                booking: booking,
+                                controller: reasonController,
+                              );
+                              if (res == true) {
+                                bookingBloc.add(
+                                  CancelBookingEvent(
+                                    booking,
+                                    reasonController.text.trim(),
+                                  ),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: AppColors.green,
+                                    content: Text(
+                                      AppLocalizations.of(
+                                            context,
+                                          )?.bookingCancelled ??
+                                          '',
+                                    ),
+                                  ),
+                                );
+                                // refresh the page
+                                onRefresh.call();
+                              }
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)?.cancel ?? '',
+                              style: DMSansFont.textStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10,
+                                color: AppColors.bgWhite,
+                              ),
+                            ),
+                          ),
+                        )
+                      else if (booking.bookingStatusCode == "C" &&
+                          booking.paymentCompleted == true &&
+                          !isWarranty)
+                        Container(
+                          height: 23,
+                          decoration: BoxDecoration(
+                            // border: Border.all(color: AppColors.green2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          alignment: Alignment.center,
+                          child: Text(
+                            AppLocalizations.of(context)?.completed ?? '',
+                            style: DMSansFont.textStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                              color: AppColors.green2,
+                            ),
+                          ),
+                        )
+                      else if (booking.bookingStatusCode == "X" ||
+                          booking.bookingStatusCode == "XC")
+                        Container(
+                          height: 23,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.red),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          alignment: Alignment.center,
+                          child: Text(
+                            AppLocalizations.of(context)?.canceled ?? '',
+                            style: DMSansFont.textStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                              color: AppColors.red,
+                            ),
+                          ),
+                        )
+                      else if (booking.bookingStatusCode == "R") ...{
+                        Container(
+                          height: 23,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.darkGrey),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          alignment: Alignment.center,
+                          child: Text(
+                            AppLocalizations.of(context)?.rejected ?? '',
+                            style: DMSansFont.textStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                              color: AppColors.darkGrey,
+                            ),
+                          ),
+                        ),
+                      } else if (isWarranty) ...{
+                        const SizedBox.shrink(),
+                      },
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
+    
+    
+    
     );
   }
 
@@ -489,12 +591,9 @@ class ServiceBookingTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.access_time, size: 10, color: AppColors.secondary),
+        Icon(Icons.calendar_month, size: 19, color: AppColors.black1),
         SizedBox(width: 4),
-        Text(
-          text,
-          style: TextStyle(color: AppColors.secondary, fontSize: 10.5),
-        ),
+        Text(text, style: TextStyle(color: AppColors.black1, fontSize: 10.5)),
       ],
     );
   }
@@ -1179,9 +1278,316 @@ class ServiceBookingTile extends StatelessWidget {
     return daysSinceUpdate > 2;
   }
 
+  Future<void> _openOrCreateChat(BuildContext context) async {
+    final chatService = ChatService();
+
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          // constraints: BoxConstraints(minWidth: 100),
+          backgroundColor: Colors.white,
+          content: SizedBox(
+            height: 70,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 24, child: Loader(color: AppColors.primary)),
+                  Text(AppLocalizations.of(context)!.loadingChat),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      String chatId;
+
+      // Check if chatroom exists
+      if (booking.chatroomId.isNotEmpty) {
+        chatId = booking.chatroomId;
+      } else {
+        // Create new chatroom
+        final currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser == null) {
+          throw Exception('User not authenticated');
+        }
+
+        chatId = await chatService.createChat(
+          booking.id,
+          booking.agent!.uid ?? '',
+          booking.agent!.name ?? 'Technician',
+          booking.agent!.profileUrl ?? '',
+          booking.customer.name ?? 'Customer',
+          '', // Customer photo - update if available
+          'customer',
+        );
+
+        await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+          'chatroomId': chatId,
+        });
+      }
+
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+
+      // Open chat screen
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              chatId: chatId,
+              participantName: booking.agent!.name ?? 'Technician',
+              participantId: booking.agent!.uid ?? '',
+              participantPhoto: booking.agent!.profileUrl ?? '',
+              customerName: booking.customer.name ?? 'Customer',
+              customerPhoto: '',
+              bookingId: booking.id,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+
+      // Show error message
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to open chat: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   calculateDaysLeft() {
     final endDate = booking.warranty?.createdAt!.add(Duration(days: 7));
     final daysLeft = endDate!.difference(DateTime.now()).inDays;
     return daysLeft;
   }
+
+  Widget _buildSectionCards({
+    required BuildContext context,
+
+    required IconData icon,
+    required List<Widget> children,
+    required bool hasChat,
+  }) {
+    return Container(
+      width: double.infinity,
+      // height: 60,
+      padding: const EdgeInsets.all(0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        // border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: AppColors.blue1.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: AppColors.blue1, size: 20),
+              ),
+
+              if ((hasChat && booking.bookingStatusCode == 'A') ||
+                  (hasChat &&
+                      booking.warranty?.warrantyStatusCode == 'S' &&
+                      isWarranty)) ...{
+                const Spacer(),
+
+                StreamBuilder<int>(
+                  stream: booking.chatroomId.isNotEmpty
+                      ? ChatService().getUnreadCountStream(booking.chatroomId)
+                      : Stream.value(0),
+                  builder: (context, snapshot) {
+                    final unreadCount = snapshot.data ?? 0;
+                    return SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: GestureDetector(
+                        onTap: () => _openOrCreateChat(context),
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Image.asset(
+                                'assets/icons/chat2.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
+                            if (unreadCount > 0)
+                              Positioned(
+                                right: 12,
+                                top: 12,
+                                child: Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              },
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(
+    String label,
+    String value, {
+    bool isHighlighted = false,
+    bool needCopy = false,
+    required Icon? icon,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: needCopy
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.center,
+        children: [
+          // SizedBox(
+          //   width: 100,
+          //   child: Text(
+          //     label,
+          //     style: DMSansFont.textStyle(
+          //       fontSize: 14,
+          //       fontWeight: FontWeight.w500,
+          //       color: Colors.grey[600],
+          //     ),
+          //   ),
+          // ),
+          Expanded(child: Icon(icon!.icon)),
+          const SizedBox(width: 5),
+          Expanded(
+            flex: 9,
+            child: Text(
+              value,
+              style: DMSansFont.textStyle(
+                fontSize: 10,
+                fontWeight: isHighlighted ? FontWeight.w600 : FontWeight.w400,
+                color: Color(0xff3C3C43),
+              ),
+            ),
+          ),
+          if (needCopy) ...{
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: IconButton(
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: booking.id));
+                },
+                icon: Icon(Icons.copy),
+                iconSize: 16,
+                style: ButtonStyle(
+                  padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          },
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRatingRow(String label, double rating) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: DMSansFont.textStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Row(
+              children: [
+                ...List.generate(5, (index) {
+                  return Icon(
+                    index < rating.floor()
+                        ? Icons.star
+                        : index < rating
+                        ? Icons.star_half
+                        : Icons.star_border,
+                    color: Colors.amber,
+                    size: 16,
+                  );
+                }),
+                const SizedBox(width: 6),
+                Text(
+                  '(${rating.toStringAsFixed(1)})',
+                  style: DMSansFont.textStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // String formatDateTime(DateTime dateTime, String locale) {
+  //   final dateFormat = DateFormat.yMMMMd(locale); // e.g., ١٩ يونيو، ٢٠٢٥
+  //   final timeFormat = DateFormat.jm(locale); // e.g., ٢:٣٠ م or 2:30 PM
+  //   return '${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}';
+  // }
 }

@@ -309,17 +309,20 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   }
 
   void _handleProfileManagement() {
+    print("The error  319 : ${widget.customerData}");
     if (widget.customerData == null) {
       showSnackBar(
-        AppLocalizations.of(context)?.errorFillingProfile ?? '',
+        AppLocalizations.of(context)?.errorFillingProfile ??
+            'Profile data not available. Please refresh.',
         context,
       );
       return;
     }
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditProfilePage(customer: widget.customerData!),
+        builder: (context) => EditProfilePage(customer: widget.customerData),
       ),
     );
   }

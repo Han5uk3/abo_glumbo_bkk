@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// No description provided for @byContinuingYouAgreeToOur.
   ///
   /// In en, this message translates to:
-  /// **'By Continuing you agree to our'**
+  /// **'By Clicking continue button you agree to our'**
   String get byContinuingYouAgreeToOur;
 
   /// No description provided for @termsOfUseAndPrivacyPolicy.
@@ -449,7 +449,7 @@ abstract class AppLocalizations {
   /// No description provided for @yourName.
   ///
   /// In en, this message translates to:
-  /// **'Your Name'**
+  /// **'Name'**
   String get yourName;
 
   /// No description provided for @nameIsRequired.
@@ -467,7 +467,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailAddress.
   ///
   /// In en, this message translates to:
-  /// **'Email Address'**
+  /// **'Email ID'**
   String get emailAddress;
 
   /// No description provided for @emailIsRequired.
@@ -485,7 +485,7 @@ abstract class AppLocalizations {
   /// No description provided for @phoneNumber.
   ///
   /// In en, this message translates to:
-  /// **'Phone Number'**
+  /// **'Mobile Number'**
   String get phoneNumber;
 
   /// No description provided for @locationIsRequired.

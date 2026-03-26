@@ -36,7 +36,16 @@ class _OtpPageState extends State<OtpPage> {
   Timer? _timer;
   Timer? _smsListeningTimer;
   final _formKey = GlobalKey<FormState>();
-  final otpController = TextEditingController();
+
+  // List of OTP controllers for 6 digits
+  final List<TextEditingController> _otpControllers = List.generate(
+    6,
+    (index) => TextEditingController(),
+  );
+
+  // List of focus nodes for each OTP field
+  final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
+
   String? _verificationId;
   int? _resendToken;
   bool _isDialogShowing = false;
@@ -48,6 +57,11 @@ class _OtpPageState extends State<OtpPage> {
     _verificationId = widget.verificationId;
     startTimer();
     _startSmsAutofillListener();
+  }
+
+  // Get the complete OTP from all controllers
+  String get _fullOtp {
+    return _otpControllers.map((controller) => controller.text).join();
   }
 
   int get _remainingTime => resendSeconds;
@@ -105,6 +119,11 @@ class _OtpPageState extends State<OtpPage> {
             setState(() {
               _verificationId = verificationId;
               _resendToken = resendToken;
+
+              // Clear all OTP fields when resending
+              for (var controller in _otpControllers) {
+                controller.clear();
+              }
             });
 
             ScaffoldMessenger.of(context).showSnackBar(
@@ -186,7 +205,6 @@ class _OtpPageState extends State<OtpPage> {
       debugPrint('💥 [CUSTOMER OTP] Exception caught in try-catch: $e');
       debugPrint('💥 [CUSTOMER OTP] Exception type: ${e.runtimeType}');
 
-      // Catch any unexpected errors that weren't handled by onError callback
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -203,7 +221,6 @@ class _OtpPageState extends State<OtpPage> {
       }
     } finally {
       debugPrint('🏁 [CUSTOMER OTP] Finally block executing');
-      // Always reset the loading state, regardless of success or failure
       if (mounted) {
         setState(() {
           isResendingOtp = false;
@@ -293,13 +310,31 @@ class _OtpPageState extends State<OtpPage> {
   }
 
   void verifyOtp() async {
-    if (!_formKey.currentState!.validate() || isLoading) return;
+    if (isLoading) return;
+
+    final otp = _fullOtp;
+
+    // Validate OTP length
+    if (otp.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.enterOtp),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return;
+    }
 
     setState(() {
       isLoading = true;
     });
 
-    final otp = otpController.text.trim();
     final verificationId = _verificationId ?? widget.verificationId;
 
     if (verificationId == null) {
@@ -357,20 +392,14 @@ class _OtpPageState extends State<OtpPage> {
           isLoading = false;
         });
 
-        String errorMessage = AppLocalizations.of(
-          context,
-        )!.invalidOtpCode; // Localized message for invalid OTP
+        String errorMessage = AppLocalizations.of(context)!.invalidOtpCode;
         if (e is FirebaseAuthException) {
           switch (e.code) {
             case 'invalid-verification-code':
-              errorMessage = AppLocalizations.of(
-                context,
-              )!.invalidOtpCode; // Localized message for invalid OTP
+              errorMessage = AppLocalizations.of(context)!.invalidOtpCode;
               break;
             case 'session-expired':
-              errorMessage = AppLocalizations.of(
-                context,
-              )!.otpExpired; // Localized message for expired OTP
+              errorMessage = AppLocalizations.of(context)!.otpExpired;
               break;
             case 'too-many-requests':
               errorMessage =
@@ -410,11 +439,17 @@ class _OtpPageState extends State<OtpPage> {
             ),
           ),
         );
+
+        // Clear all OTP fields on error
+        for (var controller in _otpControllers) {
+          controller.clear();
+        }
+        // Focus on first field
+        _focusNodes[0].requestFocus();
       }
     }
   }
 
-  /// Start listening for incoming SMS
   void _startSmsAutofillListener() {
     debugPrint('🎯 [CUSTOMER OTP] Starting SMS autofill listener...');
 
@@ -424,7 +459,6 @@ class _OtpPageState extends State<OtpPage> {
       _isSmsAutofillListening = true;
     });
 
-    // Set a timeout for SMS listening (30 seconds)
     _smsListeningTimer = Timer(const Duration(seconds: 30), () {
       if (mounted) {
         setState(() {
@@ -438,7 +472,6 @@ class _OtpPageState extends State<OtpPage> {
     _listenForSmsCode();
   }
 
-  /// Listen for SMS code and auto-fill the OTP field
   void _listenForSmsCode() async {
     try {
       debugPrint('👂 [CUSTOMER OTP] Listening for SMS code...');
@@ -450,20 +483,18 @@ class _OtpPageState extends State<OtpPage> {
       if (smsCode != null && smsCode.isNotEmpty && mounted) {
         debugPrint('✅ [CUSTOMER OTP] SMS code received: $smsCode');
 
-        // Fill the OTP field with the received code
-        otpController.text = smsCode;
-
-        // Clear the form to reset validation
-        _formKey.currentState?.reset();
+        // Split the SMS code into individual digits and fill the boxes
+        final List<String> digits = smsCode.split('');
+        for (int i = 0; i < digits.length && i < 6; i++) {
+          _otpControllers[i].text = digits[i];
+        }
 
         setState(() {
           _isSmsAutofillListening = false;
         });
 
-        // Cancel the listening timer
         _smsListeningTimer?.cancel();
 
-        // Automatically verify the OTP after a short delay
         await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) {
           debugPrint('🔐 [CUSTOMER OTP] Auto-verifying OTP from SMS...');
@@ -480,12 +511,75 @@ class _OtpPageState extends State<OtpPage> {
     }
   }
 
+  // Widget for individual OTP input box
+  Widget _buildOtpTextField(int index) {
+    return SizedBox(
+      width: 45,
+      height: 60,
+      child: TextFormField(
+        controller: _otpControllers[index],
+        focusNode: _focusNodes[index],
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        maxLength: 1,
+        style: DMSansFont.textStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        decoration: InputDecoration(
+          counterText: '',
+          contentPadding: EdgeInsets.zero,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: _isSmsAutofillListening
+                  ? AppColors.green
+                  : AppColors.secondary,
+              width: 2,
+            ),
+          ),
+          fillColor: Colors.white,
+          filled: true,
+        ),
+        onChanged: (value) {
+          if (value.isNotEmpty && index < 5) {
+            // Move to next field
+            _focusNodes[index + 1].requestFocus();
+          } else if (value.isEmpty && index > 0) {
+            // Move to previous field on backspace
+            _focusNodes[index - 1].requestFocus();
+          }
+
+          // Auto-verify when all fields are filled
+          if (_fullOtp.length == 6) {
+            FocusScope.of(context).unfocus();
+            verifyOtp();
+          }
+        },
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
     _smsListeningTimer?.cancel();
     _smsAutofillService.cancelListening();
-    otpController.dispose();
+    for (var controller in _otpControllers) {
+      controller.dispose();
+    }
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
     super.dispose();
   }
 
@@ -495,7 +589,52 @@ class _OtpPageState extends State<OtpPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(centerTitle: true, backgroundColor: AppColors.primary),
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: AppColors.bgWhite,
+        elevation: 0,
+        leading: Expanded(
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: 22),
+          ),
+        ),
+        title: Row(
+          children: [
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  "Back",
+                  style: DMSansFont.textStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.secondary,
+                  ),
+                ),
+              ),
+            ),
+
+            Expanded(
+              flex: 2,
+              child: Text(
+                "Enter OTP",
+                style: DMSansFont.textStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            Expanded(child: Container()),
+          ],
+        ),
+        actions: [],
+      ),
       body: AbsorbPointer(
         absorbing: _isMigratingCustomerData,
         child: SafeArea(
@@ -508,16 +647,16 @@ class _OtpPageState extends State<OtpPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 20),
-                      Text(
-                        locn.otpVerification,
-                        style: DMSansFont.textStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 28,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
+                      // const SizedBox(height: 20),
+                      // Text(
+                      //   locn.otpVerification,
+                      //   style: DMSansFont.textStyle(
+                      //     fontWeight: FontWeight.bold,
+                      //     fontSize: 28,
+                      //     color: Colors.black,
+                      //   ),
+                      // ),
+                      SizedBox(height: 12),
                       Row(
                         children: [
                           Expanded(
@@ -559,65 +698,49 @@ class _OtpPageState extends State<OtpPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
+
+                      // 6 OTP Boxes
                       Form(
                         key: _formKey,
-                        child: TextFormField(
-                          controller: otpController,
-                          keyboardType: TextInputType.number,
-                          textInputAction: TextInputAction.done,
-                          maxLength: 6,
-                          obscureText: true,
-                          obscuringCharacter: "*",
-                          autofillHints: const [AutofillHints.oneTimeCode],
-                          style: DMSansFont.textStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                            ),
-                            helperText: _isSmsAutofillListening
-                                ? '🎯 Listening for SMS...'
-                                : null,
-                            helperStyle: DMSansFont.textStyle(
-                              fontSize: 12,
-                              color: AppColors.green,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Colors.black.withOpacity(0.1),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: List.generate(
+                                6,
+                                (index) => _buildOtpTextField(index),
                               ),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: _isSmsAutofillListening
-                                    ? AppColors.green
-                                    : AppColors.green,
+                            if (_isSmsAutofillListening)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.green,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Listening for SMS...',
+                                      style: DMSansFont.textStyle(
+                                        fontSize: 12,
+                                        color: AppColors.green,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Colors.black.withOpacity(0.1),
-                              ),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return locn.enterOtp;
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            if (value.length == 6) {
-                              FocusScope.of(context).unfocus();
-                            }
-                          },
+                          ],
                         ),
                       ),
+
                       const SizedBox(height: 24),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -671,12 +794,12 @@ class _OtpPageState extends State<OtpPage> {
                         child: ElevatedButton(
                           onPressed: isLoading ? null : verifyOtp,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.secondary,
+                            backgroundColor: AppColors.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 0,
-                            disabledBackgroundColor: AppColors.secondary
+                            disabledBackgroundColor: AppColors.primary
                                 .withOpacity(0.7),
                           ),
                           child: isLoading

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:abo_glumbo_bbk/common_widgets/customNavigationBar.dart';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
@@ -7,6 +8,7 @@ import 'package:abo_glumbo_bbk/common_widgets/welcome_modal.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/account.dart';
+import 'package:abo_glumbo_bbk/pages/accounts/edit_profile.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bookings_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/home_page.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
@@ -146,6 +148,13 @@ class _HomeState extends State<Home> {
     );
   }
 
+  // Your screens/pages
+  final List<Widget> _screens = [
+    const HomePage(),
+    const BookingsPage(),
+    const AccountPage(),
+  ];
+
   Widget _buildScaffold(AppLocalizations? locale, dynamic customerData) {
     Widget getCurrentPage() {
       final accountIndex = (_isGuest ?? false) ? 1 : 2;
@@ -197,82 +206,109 @@ class _HomeState extends State<Home> {
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          child: getCurrentPage(),
-        ),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: currentIndex,
-          onDestinationSelected: (index) {
-            if (mounted) setState(() => currentIndex = index);
-          },
-          height: 70,
-          destinations: [
-            NavigationDestination(
-              icon: SvgPicture.asset(
-                AppIcons.homeNav,
-                colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
-              ),
-              selectedIcon: SvgPicture.asset(
-                AppIcons.homeNav,
-                colorFilter: ColorFilter.mode(
-                  AppColors.secondary,
-                  BlendMode.srcIn,
+        body: _screens[currentIndex],
+        //  AnimatedSwitcher(
+        //   duration: const Duration(milliseconds: 300),
+        //   transitionBuilder: (Widget child, Animation<double> animation) {
+        //     return FadeTransition(opacity: animation, child: child);
+        //   },
+        //   child: getCurrentPage(),
+        // ),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 15,
+                  offset: const Offset(0, -3),
                 ),
-              ),
-              label: locale?.home ?? '',
+              ],
             ),
-            // NavigationDestination(
-            //   icon: SvgPicture.asset(
-            //     AppIcons.categoriesNav,
-            //     colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
-            //   ),
-            //   selectedIcon: SvgPicture.asset(
-            //     AppIcons.categoriesNav,
-            //     colorFilter: ColorFilter.mode(
-            //       AppColors.secondary,
-            //       BlendMode.srcIn,
-            //     ),
-            //   ),
-            //   label: locale?.categories ?? '',
-            // ),
-            if (!(_isGuest ?? false))
-              NavigationDestination(
-                icon: SvgPicture.asset(
-                  AppIcons.myBookingNav,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.grey,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                selectedIcon: SvgPicture.asset(
-                  AppIcons.myBookingNav,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.secondary,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                label: locale?.myBooking ?? '',
-              ),
-            NavigationDestination(
-              icon: SvgPicture.asset(
-                AppIcons.profileNav,
-                colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
-              ),
-              selectedIcon: SvgPicture.asset(
-                AppIcons.profileNav,
-                colorFilter: ColorFilter.mode(
-                  AppColors.secondary,
-                  BlendMode.srcIn,
-                ),
-              ),
-              label: locale?.account ?? '',
+            child: CustomBottomNavigationBar(
+              selectedIndex: currentIndex,
+              onDestinationSelected: (index) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
+              isGuest: _isGuest ?? false,
+              homeLabel: locale?.home ?? 'Home',
+              myBookingLabel: locale?.myBooking ?? 'My Booking',
+              accountLabel: locale?.account ?? 'Account',
             ),
-          ],
+          ),
         ),
+        //  NavigationBar(
+        //   selectedIndex: currentIndex,
+        //   onDestinationSelected: (index) {
+        //     if (mounted) setState(() => currentIndex = index);
+        //   },
+        //   height: 70,
+        //   destinations: [
+        //     NavigationDestination(
+        //       icon: SvgPicture.asset(
+        //         AppIcons.homeNav,
+        //         colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+        //       ),
+        //       selectedIcon: SvgPicture.asset(
+        //         AppIcons.homeNav,
+        //         colorFilter: ColorFilter.mode(
+        //           AppColors.secondary,
+        //           BlendMode.srcIn,
+        //         ),
+        //       ),
+        //       label: locale?.home ?? '',
+        //     ),
+        //     // NavigationDestination(
+        //     //   icon: SvgPicture.asset(
+        //     //     AppIcons.categoriesNav,
+        //     //     colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+        //     //   ),
+        //     //   selectedIcon: SvgPicture.asset(
+        //     //     AppIcons.categoriesNav,
+        //     //     colorFilter: ColorFilter.mode(
+        //     //       AppColors.secondary,
+        //     //       BlendMode.srcIn,
+        //     //     ),
+        //     //   ),
+        //     //   label: locale?.categories ?? '',
+        //     // ),
+        //     if (!(_isGuest ?? false))
+        //       NavigationDestination(
+        //         icon: SvgPicture.asset(
+        //           AppIcons.myBookingNav,
+        //           colorFilter: ColorFilter.mode(
+        //             AppColors.grey,
+        //             BlendMode.srcIn,
+        //           ),
+        //         ),
+        //         selectedIcon: SvgPicture.asset(
+        //           AppIcons.myBookingNav,
+        //           colorFilter: ColorFilter.mode(
+        //             AppColors.secondary,
+        //             BlendMode.srcIn,
+        //           ),
+        //         ),
+        //         label: locale?.myBooking ?? '',
+        //       ),
+        //     NavigationDestination(
+        //       icon: SvgPicture.asset(
+        //         AppIcons.profileNav,
+        //         colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+        //       ),
+        //       selectedIcon: SvgPicture.asset(
+        //         AppIcons.profileNav,
+        //         colorFilter: ColorFilter.mode(
+        //           AppColors.secondary,
+        //           BlendMode.srcIn,
+        //         ),
+        //       ),
+        //       label: locale?.account ?? '',
+        //     ),
+        //   ],
+        // ),
       ),
     );
   }

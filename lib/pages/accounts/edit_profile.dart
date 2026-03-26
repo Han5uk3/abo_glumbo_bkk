@@ -21,8 +21,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class EditProfilePage extends StatefulWidget {
-  final CustomerModel customer;
-  const EditProfilePage({super.key, required this.customer});
+  final CustomerModel? customer;
+  const EditProfilePage({super.key, this.customer});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
@@ -56,23 +56,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
   // ✅ Load data (profile + locations)
   Future<void> _loadData() async {
     try {
-      // 1. Fill text fields
+      // 1. Check if customer data exists
+      if (widget.customer == null) {
+        throw Exception('Customer data is null');
+      }
+
+      // 2. Fill text fields
       _fillOut();
 
-      // 2. Load locations
+      // 3. Load locations
       final jsonString = await rootBundle.loadString(
         'assets/data/saudi_hierarchical.json',
       );
       final List<dynamic> jsonData = json.decode(jsonString);
       regions = jsonData.map((r) => Region.fromJson(r)).toList();
 
-      // 3. Pre-select location
-      if (widget.customer.detailedLocation != null) {
-        preselectLocation(widget.customer.detailedLocation!);
+      // 4. Pre-select location
+      if (widget.customer?.detailedLocation != null) {
+        preselectLocation(widget.customer!.detailedLocation!);
       }
     } catch (e) {
       if (kDebugMode) {
         print('Error loading data: $e');
+      }
+      if (mounted) {
+        _showSnackBar(
+          AppLocalizations.of(context)?.errorFillingProfile ??
+              'Error loading profile data',
+          backgroundColor: AppColors.red,
+        );
+        Navigator.pop(context);
       }
     } finally {
       if (mounted) {
@@ -115,9 +128,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   void _fillOut() {
     try {
-      nameController.text = widget.customer.name ?? '';
-      emailController.text = widget.customer.email ?? '';
-      phoneController.text = widget.customer.phone ?? '';
+      if (widget.customer == null) {
+        return;
+      }
+      nameController.text = widget.customer!.name ?? '';
+      emailController.text = widget.customer!.email ?? '';
+      phoneController.text = widget.customer!.phone ?? '';
     } catch (e) {
       _showSnackBar(
         AppLocalizations.of(context)?.errorFillingProfile ??
@@ -128,6 +144,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _updateProfile() {
+    if (widget.customer == null) {
+      _showSnackBar(
+        AppLocalizations.of(context)?.errorFillingProfile ??
+            'Customer data not available',
+        backgroundColor: AppColors.red,
+      );
+      return;
+    }
+
     if (_formKey.currentState?.validate() ?? false) {
       // ✅ Validate location selection
       if (selectedRegion == null ||
@@ -155,7 +180,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         lon: selectedDistrict?.longitude,
       );
 
-      final updatedCustomer = widget.customer.copyWith(
+      final updatedCustomer = widget.customer!.copyWith(
         role: "customer",
         name: nameController.text.trim(),
         email: emailController.text.trim(),
@@ -202,6 +227,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _updatePhoneNumber() async {
+    // Check if customer data exists
+    if (widget.customer == null) {
+      _showSnackBar(
+        AppLocalizations.of(context)?.errorFillingProfile ??
+            'Customer data not available',
+        backgroundColor: AppColors.red,
+      );
+      return;
+    }
+
     // Prevent multiple clicks
     if (_isUpdatingPhone) return;
 
@@ -214,7 +249,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
 
-    if (phoneController.text != widget.customer.phone) {
+    if (phoneController.text != widget.customer?.phone) {
       if (mounted) {
         setState(() {
           isLoading = true;
@@ -225,7 +260,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       bool isNumberAlreadyExists =
           await AppServices.checkCustomerPhoneNumberAlredyExist(
             phoneController.text,
-            excludeUid: widget.customer.uid,
+            excludeUid: widget.customer!.uid,
           );
 
       if (isNumberAlreadyExists) {
@@ -325,6 +360,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final locale = AppLocalizations.of(context);
     final isArabic = locale?.localeName == 'ar';
 
+    // Show error and navigate back if customer is null
+    if (widget.customer == null && !isPageLoading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _showSnackBar(
+            locale?.errorFillingProfile ?? 'Customer data not available',
+            backgroundColor: AppColors.red,
+          );
+          Navigator.pop(context);
+        }
+      });
+    }
+
     return BlocListener<AccountBloc, AccountState>(
       listener: (context, state) {
         if (state is UpdateCustomerProfileSucess) {
@@ -343,8 +391,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(locale?.profileManagement ?? 'Profile Management'),
+          backgroundColor: AppColors.bgWhite,
+          title: Text(
+            locale?.profileManagement ?? 'Profile Management',
+            style: TextStyle(color: Colors.black),
+          ),
           centerTitle: true,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black, // Explicitly set back arrow color
+            ),
+          ),
         ),
         body: isPageLoading
             ? Center(child: Loader(color: AppColors.secondary, size: 40))
@@ -377,28 +438,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       },
                     ),
                     const SizedBox(height: 16),
-
-                    // Email Field
-                    TextFormWidget(
-                      controller: emailController,
-                      label: locale?.emailAddress ?? 'Email Address',
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      validator: (value) {
-                        final emailRegex = RegExp(
-                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                        );
-                        if (value != null && value.isNotEmpty) {
-                          if (!emailRegex.hasMatch(value)) {
-                            return locale?.enterAValidEmail ??
-                                'Enter a valid email';
-                          }
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
                     // Phone Field
                     TextFormWidget(
                       controller: phoneController,
@@ -423,7 +462,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               onPressed: _isUpdatingPhone
                                   ? null
                                   : _updatePhoneNumber,
-                              child: Text(locale?.update ?? 'Update'),
+                              child: Text(locale?.update ?? 'Save'),
                             ),
                       textInputAction: TextInputAction.next,
                       validator: (value) {
@@ -433,6 +472,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         return null;
                       },
                     ),
+                    // Email Field
+                    TextFormWidget(
+                      controller: emailController,
+                      label: locale?.emailAddress ?? 'Email Address',
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      validator: (value) {
+                        final emailRegex = RegExp(
+                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                        );
+                        if (value != null && value.isNotEmpty) {
+                          if (!emailRegex.hasMatch(value)) {
+                            return locale?.enterAValidEmail ??
+                                'Enter a valid email';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
                     Text(
                       AppLocalizations.of(context)?.phoneNumberUpdateInfo ??
                           'To update phone number, please click the "Update" button.',
@@ -547,7 +607,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 ? null
                                 : _updateProfile,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.secondary,
+                              backgroundColor: AppColors.primary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),

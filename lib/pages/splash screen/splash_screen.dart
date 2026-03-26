@@ -250,7 +250,7 @@ class _SplashScreenState extends State<SplashScreen>
                                     color: Colors.white,
                                     fontSize: 32,
                                     fontWeight: FontWeight.bold,
-  
+
                                     shadows: [
                                       Shadow(
                                         color: Colors.black.withOpacity(0.3),

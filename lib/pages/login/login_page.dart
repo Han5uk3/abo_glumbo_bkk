@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -21,6 +22,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:local_auth/error_codes.dart' as local_auth_error;
 import 'package:local_auth/local_auth.dart';
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -477,16 +480,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildLoginButton() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
+    return Container(
+      height: 54,
+
+      // padding: const EdgeInsets.only(top: 8.0),
       child: SizedBox(
         width: double.maxFinite,
-        height: 50,
+        // height: 54,
         child: ElevatedButton(
           onPressed: _isLoading ? null : _onLoginPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.secondary,
-            disabledBackgroundColor: AppColors.secondary.withOpacity(0.6),
+            backgroundColor: AppColors.primary,
+            disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -530,8 +535,8 @@ class _LoginPageState extends State<LoginPage> {
           children: <TextSpan>[
             TextSpan(
               text:
-                  "${AppLocalizations.of(context)?.byContinuingYouAgreeToOur ?? ''} ",
-              style: DMSansFont.textStyle(fontSize: 11, color: Colors.white60),
+                  "${AppLocalizations.of(context)?.byContinuingYouAgreeToOur ?? ''}\n ",
+              style: DMSansFont.textStyle(fontSize: 11, color: Colors.black),
             ),
             TextSpan(
               recognizer: TapGestureRecognizer()
@@ -552,7 +557,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             TextSpan(
               text: " ${AppLocalizations.of(context)!.and} ",
-              style: DMSansFont.textStyle(fontSize: 11, color: Colors.white60),
+              style: DMSansFont.textStyle(fontSize: 11, color: Colors.black),
             ),
             TextSpan(
               recognizer: TapGestureRecognizer()
@@ -581,7 +586,8 @@ class _LoginPageState extends State<LoginPage> {
     return BlocBuilder<AccountBloc, AccountState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.bgWhite,
+
           extendBodyBehindAppBar: true,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
@@ -591,86 +597,193 @@ class _LoginPageState extends State<LoginPage> {
           body: Form(
             key: _formKey,
             child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-
-                  children: [
-                    _buildHeaderImage(),
-                    const SizedBox(height: 10),
-                    Center(
-                      child: Text(
-                        AppLocalizations.of(context)?.loginDescription ?? '',
-                        textAlign: TextAlign.center,
-                        style: DMSansFont.textStyle(
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          fontSize: 24,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 13),
-                    Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: LanguageSelectorCard(isInLoginPage: true),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      AppLocalizations.of(context)?.mobileNumber ?? '',
-                      style: DMSansFont.textStyle(
-                        color: Colors.white.withOpacity(.7),
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    _buildPhoneInputField(),
-                    const SizedBox(height: 6),
-                    _buildRememberMeCheckbox(),
-                    const SizedBox(height: 10),
-                    _buildLoginButton(),
-                    const SizedBox(height: 10),
-                    _buildSignUpLaterButton(),
-
-                    if (isCheckUserEnableTwoStepVerification &&
-                        customerLastUid != null &&
-                        customerLastUid!.isNotEmpty) ...[
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              color: Colors.white.withOpacity(0.5),
-                              thickness: 1,
-                            ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Top Image Container - Fixed size 40x40
+                  Container(
+                    height: MediaQuery.of(context).size.height / 4,
+                    color: AppColors.primary,
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 15),
+                        SizedBox(
+                          height: 181,
+                          width: 182,
+                          // margin: EdgeInsets.only(bottom: 20), // Add some spacing
+                          child: Image.asset(
+                            'assets/images/app_icon.png',
+                            fit: BoxFit
+                                .contain, // Changed from fill to contain for better quality
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              AppLocalizations.of(context)?.or ?? 'OR',
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Bottom Container with Border Radius
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.bgWhite,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(60),
+                        topRight: Radius.circular(60),
+                      ),
+                    ),
+                    // Remove fixed height to let content determine height
+                    constraints: BoxConstraints(
+                      minHeight:
+                          MediaQuery.of(context).size.height *
+                          0.7, // Minimum height
+                    ),
+
+                    // alignment: Alignment.center,
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Login", style: TextStyle(fontSize: 17)),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                          children: [
+                            // _buildHeaderImage(),
+                            // const SizedBox(height: 10),
+                            // Center(
+                            //   child: Text(
+                            //     AppLocalizations.of(context)?.loginDescription ?? '',
+                            //     textAlign: TextAlign.center,
+                            //     style: DMSansFont.textStyle(
+                            //       fontWeight: FontWeight.w700,
+                            //       color: Colors.white,
+                            //       fontSize: 24,
+                            //     ),
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 13),
+                            // Directionality(
+                            //   textDirection: TextDirection.ltr,
+                            //   child: LanguageSelectorCard(isInLoginPage: true),
+                            // ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height / 6,
+                            ),
+                            Text(
+                              AppLocalizations.of(context)?.mobileNumber ?? '',
                               style: DMSansFont.textStyle(
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.black.withOpacity(.7),
                                 fontSize: 14,
-                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: Colors.white.withOpacity(0.5),
-                              thickness: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      _buildFingerprintAuth(),
-                    ],
-                    const SizedBox(height: 20),
-                    _buildTermsAndPrivacyText(),
-                    const SizedBox(height: 60),
-                  ],
-                ),
+                            const SizedBox(height: 6),
+                            _buildPhoneInputField(),
+                            const SizedBox(height: 6),
+                            // _buildRememberMeCheckbox(),
+                            const SizedBox(height: 10),
+                            _buildLoginButton(),
+                            const SizedBox(height: 20),
+                            _buildTermsAndPrivacyText(),
+                            const SizedBox(height: 20),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.center,
+                            //   children: [
+                            //     Text(
+                            //       "OR",
+                            //       style: TextStyle(color: Color(0xff757575)),
+                            //     ),
+                            //   ],
+                            // ),
+                            // const SizedBox(height: 20),
+
+                            // _buildSignUpLaterButton(),
+                            // eButton(
+                            //   height: 54,
+                            //   icon: FaIcon(
+                            //     FontAwesomeIcons.google,
+                            //     color: Colors.red,
+                            //     size: 20,
+                            //   ),
+                            //   width: MediaQuery.of(context).size.width,
+                            //   backgroundColor: Colors.white,
+                            //   text:
+                            //       "Continue with Google", // Fixed typo: "Contiue" -> "Continue"
+                            //   onPressed: () {},
+                            //   textColor: Colors.black,
+                            //   context: context,
+                            // ),
+                            // const SizedBox(height: 10),
+                            // // _buildSignUpLaterButton(),
+                            // eButton(
+                            //   height: 54,
+                            //   icon: FaIcon(
+                            //     FontAwesomeIcons.apple,
+                            //     color:
+                            //         Colors.black, // Changed to black for Apple icon
+                            //     size: 20,
+                            //   ),
+                            //   width: MediaQuery.of(context).size.width,
+                            //   backgroundColor: Colors.white,
+                            //   text: "Continue with Apple", // Fixed typo
+                            //   onPressed: () {},
+                            //   textColor: Colors.black,
+                            //   context: context,
+                            // ),
+                            if (isCheckUserEnableTwoStepVerification &&
+                                customerLastUid != null &&
+                                customerLastUid!.isNotEmpty) ...[
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Divider(
+                                      color: Colors.grey.withOpacity(
+                                        0.5,
+                                      ), // Changed to grey for white background
+                                      thickness: 1,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)?.or ?? 'OR',
+                                      style: DMSansFont.textStyle(
+                                        color: Colors.grey.withOpacity(
+                                          0.7,
+                                        ), // Changed to grey
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Divider(
+                                      color: Colors.grey.withOpacity(
+                                        0.5,
+                                      ), // Changed to grey
+                                      thickness: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              _buildFingerprintAuth(),
+                            ],
+                            const SizedBox(height: 60),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

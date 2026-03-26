@@ -3,6 +3,7 @@
 import 'package:abo_glumbo_bbk/common_widgets/cached_video_player.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/helpers/date_formatter.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
@@ -50,6 +51,158 @@ class BookingDetailsBottomSheet extends StatelessWidget {
     this.isWarranty = false,
   });
 
+  Widget _buildTimestampText(BuildContext context) {
+    if (isWarranty) {
+      return _buildWarrantyTimestamp(context);
+    }
+    return _buildBookingTimestamp(context);
+  }
+
+  Widget _buildBookingTimestamp(BuildContext context) {
+    final locale = AppLocalizations.of(context)?.localeName ?? 'en';
+
+    if (booking.bookingStatusCode == "P" && booking.createdAt != null) {
+      return _timestampText(
+        "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), locale)}",
+      );
+    }
+
+    if (booking.acceptedAt != null && booking.bookingStatusCode == "A") {
+      return _timestampText(
+        "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(booking.acceptedAt!.toDate(), locale)}",
+      );
+    }
+
+    if (booking.completedAt != null && booking.bookingStatusCode == "C") {
+      return _timestampText(
+        "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(booking.completedAt!.toDate(), locale)}",
+      );
+    }
+
+    if (booking.bookingStatusCode == "X" ||
+        booking.bookingStatusCode == "XC" ||
+        booking.bookingStatusCode == "R") {
+      if (booking.bookingStatusCode != "R") {
+        return _timestampText(
+          "${AppLocalizations.of(context)!.cancelledOn} : ${formatBookingDateTime(booking.cancelledAt!.toDate(), locale)}",
+        );
+      }
+      return _timestampText(
+        "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(booking.rejectedAt!.toDate(), locale)}",
+      );
+    }
+
+    return SizedBox.shrink();
+  }
+
+  Widget _buildWarrantyTimestamp(BuildContext context) {
+    final warranty = booking.warranty;
+    if (warranty == null) return SizedBox.shrink();
+
+    final locale = AppLocalizations.of(context)?.localeName ?? 'en';
+    final statusCode = warranty.warrantyStatusCode;
+
+    final timestampMap = {
+      "A": (warranty.createdAt != null)
+          ? "${AppLocalizations.of(context)!.warrantyAppliedOn} : ${formatBookingDateTime(warranty.createdAt!, locale)}"
+          : null,
+      "C": (warranty.completedAt != null)
+          ? "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(warranty.completedAt!, locale)}"
+          : null,
+      "E": (warranty.expiredOn != null)
+          ? "${AppLocalizations.of(context)!.expiredOn} : ${formatBookingDateTime(warranty.expiredOn!, locale)}"
+          : null,
+      "X": (warranty.rejectedAt != null)
+          ? "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(warranty.rejectedAt!, locale)}"
+          : null,
+      "R": (warranty.requestedOn != null)
+          ? "${AppLocalizations.of(context)!.requestedOn} : ${formatBookingDateTime(warranty.requestedOn!, locale)}"
+          : null,
+      "S": (warranty.acceptedAt != null)
+          ? "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(warranty.acceptedAt!, locale)}"
+          : null,
+    };
+
+    final text = timestampMap[statusCode];
+    return text != null ? _timestampText(text) : SizedBox.shrink();
+  }
+
+  Widget _timestampText(String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.calendar_month, size: 19, color: AppColors.black1),
+        SizedBox(width: 4),
+        Text(text, style: TextStyle(color: AppColors.black1, fontSize: 10.5)),
+      ],
+    );
+  }
+
+  Widget _buildInfoRows(
+    String label,
+    String value, {
+    bool isHighlighted = false,
+    bool needCopy = false,
+    required Icon? icon,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: needCopy
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.center,
+        children: [
+          // SizedBox(
+          //   width: 100,
+          //   child: Text(
+          //     label,
+          //     style: DMSansFont.textStyle(
+          //       fontSize: 14,
+          //       fontWeight: FontWeight.w500,
+          //       color: Colors.grey[600],
+          //     ),
+          //   ),
+          // ),
+          Expanded(child: Icon(icon!.icon)),
+          const SizedBox(width: 5),
+          Expanded(
+            flex: 9,
+            child: Text(
+              value,
+              style: DMSansFont.textStyle(
+                fontSize: 10,
+                fontWeight: isHighlighted ? FontWeight.w600 : FontWeight.w400,
+                color: Color(0xff3C3C43),
+              ),
+            ),
+          ),
+          if (needCopy) ...{
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: IconButton(
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: booking.id));
+                },
+                icon: Icon(Icons.copy),
+                iconSize: 16,
+                style: ButtonStyle(
+                  padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          },
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -83,6 +236,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Row(
@@ -105,6 +259,8 @@ class BookingDetailsBottomSheet extends StatelessWidget {
             ),
           ),
           const Divider(height: 1),
+          SizedBox(height: 16),
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -113,6 +269,166 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                 children: [
                   _buildStatusBadge(localization),
                   const SizedBox(height: 20),
+
+                  Container(
+                    width: double.maxFinite,
+                    decoration: BoxDecoration(
+                      // border: Border.all(color: Colors.black.withOpacity(0.12)),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Color(0xffEAF1FF).withOpacity(0.50),
+                    ),
+                    margin: const EdgeInsets.only(
+                      left: 0,
+                      right: 0,
+                      bottom: 14,
+                    ),
+                    padding: EdgeInsets.all(13),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  // SizedBox(width: 10),
+
+                                  // ClipRRect(
+                                  //   borderRadius: BorderRadius.circular(4),
+                                  //   child:
+                                  //       (booking.service.image != null &&
+                                  //           booking.service.image!.isNotEmpty &&
+                                  //           Uri.tryParse(
+                                  //                 booking.service.image!,
+                                  //               ) !=
+                                  //               null &&
+                                  //           Uri.tryParse(
+                                  //             booking.service.image!,
+                                  //           )!.hasAbsolutePath)
+                                  //       ? CachedNetworkImage(
+                                  //           imageUrl: booking.service.image!,
+                                  //           height: 50,
+                                  //           width: 50,
+                                  //           fit: BoxFit.cover,
+                                  //           placeholder: (context, url) =>
+                                  //               Container(
+                                  //                 color: Colors.grey[200],
+                                  //               ),
+                                  //           errorWidget:
+                                  //               (
+                                  //                 context,
+                                  //                 url,
+                                  //                 error,
+                                  //               ) => const Icon(
+                                  //                 Icons.broken_image_outlined,
+                                  //               ),
+                                  //         )
+                                  //       : Container(
+                                  //           height: 50,
+                                  //           width: 50,
+                                  //           color: Colors.grey[300],
+                                  //           child: const Center(
+                                  //             child: Icon(
+                                  //               Icons.image_not_supported,
+                                  //               color: Colors.grey,
+                                  //               size: 20,
+                                  //             ),
+                                  //           ),
+                                  //         ),
+                                  // ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text("Booking ID"),
+                                        Wrap(
+                                          children: [
+                                            Text(
+                                              "#${booking.id}",
+                                              style: TextStyle(fontSize: 11),
+                                            ),
+
+                                            // Text(
+                                            //   booking.service.nameLocalized(
+                                            //         languageCode:
+                                            //             AppLocalizations.of(
+                                            //               context,
+                                            //             )?.localeName ??
+                                            //             'en',
+                                            //       ) ??
+                                            //       '',
+                                            //   maxLines: 2,
+                                            //   overflow: TextOverflow.ellipsis,
+                                            //   style: DMSansFont.textStyle(
+                                            //     fontWeight: FontWeight.bold,
+                                            //     fontSize: 13,
+                                            //     color: Colors.black,
+                                            //   ),
+                                            // ),
+                                          ],
+                                        ),
+
+                                        // Text(
+                                        //   booking.service.descriptionLocalized(
+                                        //         languageCode:
+                                        //             AppLocalizations.of(context)?.localeName ??
+                                        //             'en',
+                                        //       ) ??
+                                        //       '',
+                                        //   style: DMSansFont.textStyle(
+                                        //     color: Colors.black45,
+                                        //     fontSize: 12,
+                                        //   ),
+                                        //   maxLines: 4,
+                                        //   overflow: TextOverflow.ellipsis,
+                                        // ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 8),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        "${booking.bookingStatusCode == "C" ? booking.completionData?.totalCost : booking.service.price} ${AppLocalizations.of(context)!.sar}",
+                                        style: DMSansFont.textStyle(
+                                          color: AppColors.green1,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 10),
+                                ],
+                              ),
+
+                              SizedBox(height: 5),
+                            ],
+                          ),
+                        ),
+                        Divider(thickness: 0.5, color: Colors.black),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [_buildTimestampText(context)],
+                        ),
+                      ],
+                    ),
+                  ),
+
                   _buildSectionCard(
                     context: context,
                     hasChat: false,
@@ -143,10 +459,34 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                                 AppLocalizations.of(context)?.localeName ?? '',
                           )!,
                         ),
+                      SizedBox(height: 5),
+                      Divider(thickness: 0.5, color: Colors.black),
+                      SizedBox(height: 10),
                       if (booking.service.price != null)
-                        _buildInfoRow(
-                          localization.inspectionFee,
-                          '${localization.sar} ${booking.service.price}',
+                        // _buildInfoRow(
+                        //   localization.inspectionFee,
+                        //   '${localization.sar} ${booking.service.price}',
+                        // ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${localization.inspectionFee}\t\t  ',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              '${localization.sar} ${booking.service.price}',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff2ECC71),
+                              ),
+                            ),
+                          ],
                         ),
                     ],
                   ),
@@ -204,7 +544,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                   },
-
+                  const SizedBox(height: 16),
                   if (customerSelectedAddress != null &&
                       customerSelectedAddress.buildingNumber.isNotEmpty)
                     _buildSectionCard(
@@ -415,7 +755,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          constraints: BoxConstraints(minWidth: 100),
+          // constraints: BoxConstraints(minWidth: 100),
           backgroundColor: Colors.white,
           content: SizedBox(
             height: 70,
@@ -1161,6 +1501,7 @@ class BookingDetailsBottomSheet extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
+
               if ((hasChat && booking.bookingStatusCode == 'A') ||
                   (hasChat &&
                       booking.warranty?.warrantyStatusCode == 'S' &&
@@ -1213,7 +1554,12 @@ class BookingDetailsBottomSheet extends StatelessWidget {
               },
             ],
           ),
-          const SizedBox(height: 16),
+
+          const SizedBox(height: 5),
+          Divider(thickness: 1, color: Color(0xffCAC4D0)),
+
+          const SizedBox(height: 5),
+
           ...children,
         ],
       ),

@@ -153,7 +153,7 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        constraints: const BoxConstraints(maxWidth: 320),
+                        // constraints: const BoxConstraints(maxWidth: 320),
                         backgroundColor: Colors.white,
                         title: Row(
                           children: [
@@ -389,7 +389,7 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        // borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.04),
@@ -416,106 +416,152 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                             }
                             // Handle navigation if needed based on data
                           },
-                          child: Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              gradient: notification.read
-                                  ? null
-                                  : LinearGradient(
-                                      begin: isAr
-                                          ? Alignment.centerRight
-                                          : Alignment.centerLeft,
-                                      end: isAr
-                                          ? Alignment.centerLeft
-                                          : Alignment.centerRight,
-                                      colors: [
-                                        iconColor.withOpacity(0.03),
-                                        Colors.transparent,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                // Red indicator for unread notifications
+                                if (!notification.read)
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 3,
+                                    color: Color(0xff51C777),
+                                    // height: 93,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(width: 15),
+                                        Icon(
+                                          Icons.done_all,
+                                          size: 24,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(width: 3),
+                                        Text(
+                                          "Mark as read",
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: AppColors.bgWhite,
+                                          ),
+                                        ),
                                       ],
                                     ),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Icon Container
-                                Container(
-                                  width: 48,
-                                  height: 48,
-                                  decoration: BoxDecoration(
-                                    color: iconColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: Icon(icon, color: iconColor, size: 24),
-                                ),
-                                const SizedBox(width: 12),
-                                // Content
+                                // Main content container
                                 Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              title,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: notification.read
-                                                    ? FontWeight.w600
-                                                    : FontWeight.bold,
-                                                color: Colors.black87,
-                                                height: 1.3,
-                                              ),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      gradient: notification.read
+                                          ? null
+                                          : LinearGradient(
+                                              begin: isAr
+                                                  ? Alignment.centerRight
+                                                  : Alignment.centerLeft,
+                                              end: isAr
+                                                  ? Alignment.centerLeft
+                                                  : Alignment.centerRight,
+                                              colors: [
+                                                iconColor.withOpacity(0.03),
+                                                Colors.transparent,
+                                              ],
+                                            ),
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Icon Container
+                                        Container(
+                                          width: 48,
+                                          height: 48,
+                                          decoration: BoxDecoration(
+                                            color: iconColor.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
                                             ),
                                           ),
-                                          if (!notification.read)
-                                            Container(
-                                              width: 8,
-                                              height: 8,
-                                              margin: EdgeInsets.only(
-                                                left: isAr ? 0 : 8,
-                                                right: isAr ? 8 : 0,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: iconColor,
-                                                shape: BoxShape.circle,
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        body,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[700],
-                                          height: 1.4,
+                                          child: Icon(
+                                            icon,
+                                            color: iconColor,
+                                            size: 24,
+                                          ),
                                         ),
-                                        maxLines: 10,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.access_time_rounded,
-                                            size: 14,
-                                            color: Colors.grey[400],
+                                        const SizedBox(width: 12),
+                                        // Content
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      title,
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            notification.read
+                                                            ? FontWeight.w600
+                                                            : FontWeight.bold,
+                                                        color: Colors.black87,
+                                                        height: 1.3,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  if (!notification.read)
+                                                    Container(
+                                                      width: 8,
+                                                      height: 8,
+                                                      margin: EdgeInsets.only(
+                                                        left: isAr ? 0 : 8,
+                                                        right: isAr ? 8 : 0,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: iconColor,
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 6),
+                                              Text(
+                                                body,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.grey[700],
+                                                  height: 1.4,
+                                                ),
+                                                maxLines: 10,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.access_time_rounded,
+                                                    size: 14,
+                                                    color: Colors.grey[400],
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    relativeTime,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.grey[500],
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            relativeTime,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey[500],
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],

@@ -22,7 +22,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueText => 'Continue';
 
   @override
-  String get byContinuingYouAgreeToOur => 'By Continuing you agree to our';
+  String get byContinuingYouAgreeToOur =>
+      'By Clicking continue button you agree to our';
 
   @override
   String get termsOfUseAndPrivacyPolicy => ' Terms of use & privacy policy';
@@ -190,7 +191,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileManagement => 'Profile Management';
 
   @override
-  String get yourName => 'Your Name';
+  String get yourName => 'Name';
 
   @override
   String get nameIsRequired => 'Name is required';
@@ -199,7 +200,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterAValidName => 'Enter a valid name';
 
   @override
-  String get emailAddress => 'Email Address';
+  String get emailAddress => 'Email ID';
 
   @override
   String get emailIsRequired => 'Email is required';
@@ -208,7 +209,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterAValidEmail => 'Enter a valid email';
 
   @override
-  String get phoneNumber => 'Phone Number';
+  String get phoneNumber => 'Mobile Number';
 
   @override
   String get locationIsRequired => 'Location is required';
