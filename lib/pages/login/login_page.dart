@@ -23,8 +23,6 @@ import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:local_auth/error_codes.dart' as local_auth_error;
 import 'package:local_auth/local_auth.dart';
 
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 

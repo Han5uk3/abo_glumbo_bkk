@@ -1,12 +1,8 @@
-import 'dart:convert';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
-import 'package:abo_glumbo_bbk/models/location_selection.dart'; // ✅ Add this
-import 'package:abo_glumbo_bbk/models/searchable_dropdown.dart';
-import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/login/otp.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
@@ -41,19 +37,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
-  // ✅ Location dropdowns (same as signup)
-  List<Region> regions = [];
-  Region? selectedRegion;
-  City? selectedCity;
-  District? selectedDistrict;
-
   @override
   void initState() {
     super.initState();
     _loadData();
   }
 
-  // ✅ Load data (profile + locations)
+  // ✅ Load data
   Future<void> _loadData() async {
     try {
       // 1. Check if customer data exists
@@ -64,17 +54,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       // 2. Fill text fields
       _fillOut();
 
-      // 3. Load locations
-      final jsonString = await rootBundle.loadString(
-        'assets/data/saudi_hierarchical.json',
-      );
-      final List<dynamic> jsonData = json.decode(jsonString);
-      regions = jsonData.map((r) => Region.fromJson(r)).toList();
-
-      // 4. Pre-select location
-      if (widget.customer?.detailedLocation != null) {
-        preselectLocation(widget.customer!.detailedLocation!);
-      }
     } catch (e) {
       if (kDebugMode) {
         print('Error loading data: $e');
@@ -94,36 +73,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         });
       }
     }
-  }
-
-  // ✅ Pre-select saved location
-  void preselectLocation(DetailedLocationModel detailedLoc) {
-    if (regions.isEmpty || !mounted) return;
-
-    final region = regions.firstWhere(
-      (r) => r.regionId == detailedLoc.regionId,
-      orElse: () => regions.first,
-    );
-
-    setState(() {
-      selectedRegion = region;
-
-      if (region.cities.isNotEmpty) {
-        final city = region.cities.firstWhere(
-          (c) => c.cityId == detailedLoc.cityId,
-          orElse: () => region.cities.first,
-        );
-        selectedCity = city;
-
-        if (city.districts.isNotEmpty) {
-          final district = city.districts.firstWhere(
-            (d) => d.districtId == detailedLoc.neighborhoodId,
-            orElse: () => city.districts.first,
-          );
-          selectedDistrict = district;
-        }
-      }
-    });
   }
 
   void _fillOut() {
@@ -154,44 +103,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
 
     if (_formKey.currentState?.validate() ?? false) {
-      // ✅ Validate location selection
-      if (selectedRegion == null ||
-          selectedCity == null ||
-          selectedDistrict == null) {
-        _showSnackBar(
-          AppLocalizations.of(context)!.pleaseSelectAllLocationFields,
-          backgroundColor: AppColors.yellow,
-        );
-        return;
-      }
-
-      // ✅ Create DetailedLocationModel
-      final detailedLocation = DetailedLocationModel(
-        regionId: selectedRegion?.regionId,
-        regionEn: selectedRegion?.regionEn,
-        regionAr: selectedRegion?.regionAr,
-        cityId: selectedCity?.cityId,
-        cityEn: selectedCity?.cityEn,
-        cityAr: selectedCity?.cityAr,
-        neighborhoodId: selectedDistrict?.districtId,
-        neighborhoodEn: selectedDistrict?.districtEn,
-        neighborhoodAr: selectedDistrict?.districtAr,
-        lat: selectedDistrict?.latitude,
-        lon: selectedDistrict?.longitude,
-      );
-
       final updatedCustomer = widget.customer!.copyWith(
         role: "customer",
         name: nameController.text.trim(),
         email: emailController.text.trim(),
-        detailedLocation: detailedLocation, // ✅ Use DetailedLocationModel
         updatedAt: Timestamp.now(),
       );
 
       context.read<AccountBloc>().add(
         UpdateCustomerProfile(
           customerData: updatedCustomer,
-          previousCustomerData: widget.customer,
+          previousCustomerData: widget.customer!,
         ),
       );
     }
@@ -358,7 +280,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     final safePadding = MediaQuery.of(context).padding;
     final locale = AppLocalizations.of(context);
-    final isArabic = locale?.localeName == 'ar';
 
     // Show error and navigate back if customer is null
     if (widget.customer == null && !isPageLoading) {
@@ -501,99 +422,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         color: AppColors.secondary,
                       ),
                     ),
-                    const SizedBox(height: 16),
-
-                    // ✅ Location Section Header
-                    Text(
-                      locale?.location ?? 'Location',
-                      style: DMSansFont.textStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.secondary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // ✅ Province Dropdown
-                    _buildDropdownField<Region>(
-                      hint: AppLocalizations.of(
-                        context,
-                      )!.typeProvinceNameToSearch,
-                      label: '${locale?.province ?? 'Region'} *',
-                      value: selectedRegion,
-                      items: regions,
-                      itemLabel: (region) => region.getName(isArabic),
-                      onChanged: (region) {
-                        setState(() {
-                          selectedRegion = region;
-                          selectedCity = null;
-                          selectedDistrict = null;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null) {
-                          return locale?.pleaseSelectProvince ??
-                              'Please select a region';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    if (selectedRegion != null) ...[
-                      const SizedBox(height: 16),
-
-                      // ✅ City Dropdown
-                      _buildDropdownField<City>(
-                        hint: AppLocalizations.of(
-                          context,
-                        )!.typeCityNameToSearch,
-                        label: '${locale?.city ?? 'City'} *',
-                        value: selectedCity,
-                        items: selectedRegion!.cities,
-                        itemLabel: (city) => city.getName(isArabic),
-                        onChanged: (city) {
-                          setState(() {
-                            selectedCity = city;
-                            selectedDistrict = null;
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null) {
-                            return locale?.pleaseSelectCity ??
-                                'Please select a city';
-                          }
-                          return null;
-                        },
-                      ),
-                    ],
-
-                    if (selectedCity != null) ...[
-                      const SizedBox(height: 16),
-
-                      // ✅ District Dropdown
-                      _buildDropdownField<District>(
-                        hint: AppLocalizations.of(
-                          context,
-                        )!.typeNeighborhoodNameToSearch,
-                        label: '${locale?.neighbourhood ?? 'District'} *',
-                        value: selectedDistrict,
-                        items: selectedCity!.districts,
-                        itemLabel: (district) => district.getName(isArabic),
-                        onChanged: (district) {
-                          setState(() {
-                            selectedDistrict = district;
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null) {
-                            return locale?.pleaseSelectNeighborhood ??
-                                'Please select a district';
-                          }
-                          return null;
-                        },
-                      ),
-                    ],
-
                     const SizedBox(height: 30),
 
                     // Update Button
@@ -630,27 +458,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ),
       ),
-    );
-  }
-
-  // ✅ Dropdown builder
-  Widget _buildDropdownField<T extends Object>({
-    required String hint,
-    required String label,
-    required T? value,
-    required List<T> items,
-    required String Function(T) itemLabel,
-    required void Function(T?) onChanged,
-    String? Function(T?)? validator,
-  }) {
-    return SearchableDropdown<T>(
-      hintText: hint,
-      label: label,
-      value: value,
-      items: items,
-      itemLabel: itemLabel,
-      onChanged: onChanged,
-      validator: validator,
     );
   }
 

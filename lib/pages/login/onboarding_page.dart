@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});

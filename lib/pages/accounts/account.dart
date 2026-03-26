@@ -309,7 +309,6 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   }
 
   void _handleProfileManagement() {
-    print("The error  319 : ${widget.customerData}");
     if (widget.customerData == null) {
       showSnackBar(
         AppLocalizations.of(context)?.errorFillingProfile ??

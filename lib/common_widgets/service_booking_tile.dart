@@ -57,10 +57,7 @@ class ServiceBookingTile extends StatelessWidget {
         onRefresh: onRefresh,
         isWarranty: isWarranty,
       ),
-      child:
-      
-      
-       Container(
+      child: Container(
         width: double.maxFinite,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black.withOpacity(0.12)),
@@ -327,40 +324,40 @@ class ServiceBookingTile extends StatelessWidget {
                 ),
               ),
 
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                if (customerSelectedAddress != null &&
-                    customerSelectedAddress.buildingNumber.isNotEmpty)
-                  // _buildSectionCards(
-                  //   context: context,
-                  //   hasChat: false,
-                  // // title: localization.location,
-                  // icon: Icons.location_on_rounded,
-                  // children: [
-                  // _buildInfoRow(
-                  //   localization.address,
-                  //   customerSelectedAddress.buildingNumber,
-                  // ),
-                  _buildInfoRow(
-                    localization.location,
-                    customerSelectedAddress.streetName ?? 'N/A',
-                    icon: Icon(Icons.location_on_rounded),
-                    //     ),
-                    //   ],
-                    // ),
-                    // ],
-                  ),
-              ],
-            ),
+            // Wrap(
+            //   alignment: WrapAlignment.start,
+            //   children: [
+            if (customerSelectedAddress != null &&
+                customerSelectedAddress.buildingNumber.isNotEmpty)
+              // _buildSectionCards(
+              //   context: context,
+              //   hasChat: false,
+              // // title: localization.location,
+              // icon: Icons.location_on_rounded,
+              // children: [
+              // _buildInfoRow(
+              //   localization.address,
+              //   customerSelectedAddress.buildingNumber,
+              // ),
+              _buildInfoRow(
+                localization.location,
+                customerSelectedAddress.streetName ?? 'N/A',
+                icon: Icon(Icons.location_on_outlined),
+                //     ),
+                //   ],
+                // ),
+                // ],
+              ),
 
+            //   ],
+            // ),
             Divider(thickness: 0.5, color: Color(0xffCAC4D0)),
-            Row(
-              children: [
-                const SizedBox(height: 12),
-                Column(
-                  children: [
-                    Row(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -370,143 +367,130 @@ class ServiceBookingTile extends StatelessWidget {
                         if (isWarranty) _buildWarrantyStatusBadge(context),
                       ],
                     ),
-                  ],
-                ),
+                  ),
 
-                if (booking.bookingStatusCode == "C")
-                  Expanded(child: Container())
-                else
-                  Container(),
-                Expanded(
-                  child: Column(
-                    children: [
-                      SizedBox(width: MediaQuery.of(context).size.width / 3.4),
-                      if (booking.bookingStatusCode == "P")
-                        SizedBox(
-                          height: 23,
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: const Color(0xffE74C3C),
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              side: BorderSide.none, // This removes the border
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                            onPressed: () async {
-                              final bookingBloc = context.read<BookingBloc>();
-                              bool? res = await showBookingCancelDialog(
-                                context,
-                                booking: booking,
-                                controller: reasonController,
-                              );
-                              if (res == true) {
-                                bookingBloc.add(
-                                  CancelBookingEvent(
-                                    booking,
-                                    reasonController.text.trim(),
-                                  ),
-                                );
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.green,
-                                    content: Text(
-                                      AppLocalizations.of(
-                                            context,
-                                          )?.bookingCancelled ??
-                                          '',
-                                    ),
-                                  ),
-                                );
-                                // refresh the page
-                                onRefresh.call();
-                              }
-                            },
-                            child: Text(
-                              AppLocalizations.of(context)?.cancel ?? '',
-                              style: DMSansFont.textStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 10,
-                                color: AppColors.bgWhite,
-                              ),
-                            ),
-                          ),
-                        )
-                      else if (booking.bookingStatusCode == "C" &&
-                          booking.paymentCompleted == true &&
-                          !isWarranty)
-                        Container(
-                          height: 23,
-                          decoration: BoxDecoration(
-                            // border: Border.all(color: AppColors.green2),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
+                  if (booking.bookingStatusCode == "C")
+                    Expanded(child: Container())
+                  else if (booking.bookingStatusCode == "P")
+                    SizedBox(
+                      height: 23,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: const Color(0xffE74C3C),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          side: BorderSide.none, // This removes the border
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)?.completed ?? '',
-                            style: DMSansFont.textStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              color: AppColors.green2,
-                            ),
-                          ),
-                        )
-                      else if (booking.bookingStatusCode == "X" ||
-                          booking.bookingStatusCode == "XC")
-                        Container(
-                          height: 23,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.red),
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)?.canceled ?? '',
-                            style: DMSansFont.textStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              color: AppColors.red,
-                            ),
-                          ),
-                        )
-                      else if (booking.bookingStatusCode == "R") ...{
-                        Container(
-                          height: 23,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.darkGrey),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)?.rejected ?? '',
-                            style: DMSansFont.textStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              color: AppColors.darkGrey,
-                            ),
                           ),
                         ),
-                      } else if (isWarranty) ...{
-                        const SizedBox.shrink(),
-                      },
-                    ],
-                  ),
-                ),
-              ],
+                        onPressed: () async {
+                          final bookingBloc = context.read<BookingBloc>();
+                          bool? res = await showBookingCancelDialog(
+                            context,
+                            booking: booking,
+                            controller: reasonController,
+                          );
+                          if (res == true) {
+                            bookingBloc.add(
+                              CancelBookingEvent(
+                                booking,
+                                reasonController.text.trim(),
+                              ),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: AppColors.green,
+                                content: Text(
+                                  AppLocalizations.of(
+                                        context,
+                                      )?.bookingCancelled ??
+                                      '',
+                                ),
+                              ),
+                            );
+                            // refresh the page
+                            onRefresh.call();
+                          }
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)?.cancel ?? '',
+                          style: DMSansFont.textStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 10,
+                            color: AppColors.bgWhite,
+                          ),
+                        ),
+                      ),
+                    )
+                  else if (booking.bookingStatusCode == "C" &&
+                      booking.paymentCompleted == true &&
+                      !isWarranty)
+                    Container(
+                      height: 23,
+                      decoration: BoxDecoration(
+                        // border: Border.all(color: AppColors.green2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      alignment: Alignment.center,
+                      child: Text(
+                        AppLocalizations.of(context)?.completed ?? '',
+                        style: DMSansFont.textStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          color: AppColors.green2,
+                        ),
+                      ),
+                    )
+                  else if (booking.bookingStatusCode == "X" ||
+                      booking.bookingStatusCode == "XC")
+                    Container(
+                      height: 23,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.red),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      alignment: Alignment.center,
+                      child: Text(
+                        AppLocalizations.of(context)?.canceled ?? '',
+                        style: DMSansFont.textStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          color: AppColors.red,
+                        ),
+                      ),
+                    )
+                  else if (booking.bookingStatusCode == "R") ...{
+                    Container(
+                      height: 23,
+
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.darkGrey),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      alignment: Alignment.center,
+                      child: Text(
+                        AppLocalizations.of(context)?.rejected ?? '',
+                        style: DMSansFont.textStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          color: AppColors.darkGrey,
+                        ),
+                      ),
+                    ),
+                  } else if (isWarranty) ...{
+                    const SizedBox.shrink(),
+                  },
+                ],
+              ),
             ),
           ],
         ),
       ),
-    
-    
-    
     );
   }
 
@@ -600,6 +584,7 @@ class ServiceBookingTile extends StatelessWidget {
 
   Widget _buildBookingActionButtons(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         if (booking.paymentCompleted == false) _buildPaymentButton(context),
         if (booking.paymentCompleted == false) SizedBox(width: 4),

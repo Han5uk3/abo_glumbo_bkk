@@ -1,6 +1,6 @@
 import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '/models/location.dart';
+
 
 class UserModel {
   String? uid;
@@ -12,9 +12,7 @@ class UserModel {
   String? lanCode;
   Timestamp? createdAt;
   Timestamp? updatedAt;
-  LocationModel? location; // ✅ Keep existing LocationModel
-  DetailedLocationModel?
-  detailedLocation; // ✅ NEW: Detailed location with cascading data
+
   LiveLocation? liveLocation;
   bool? isAdmin;
   bool? isVerified;
@@ -46,8 +44,7 @@ class UserModel {
     this.country,
     this.createdAt,
     this.updatedAt,
-    this.location,
-    this.detailedLocation, // ✅ Add this
+
     this.liveLocation,
     this.isAdmin,
     this.isVerified,
@@ -76,8 +73,7 @@ class UserModel {
     String? phone,
     String? country,
     String? lanCode,
-    LocationModel? location,
-    DetailedLocationModel? detailedLocation, // ✅ Add this
+
     LiveLocation? liveLocation,
     List<String>? favourites,
     Timestamp? createdAt,
@@ -108,8 +104,7 @@ class UserModel {
       email: email ?? this.email,
       phone: phone ?? this.phone,
       districtName: districtName ?? this.districtName,
-      location: location ?? this.location,
-      detailedLocation: detailedLocation ?? this.detailedLocation, // ✅ Add this
+
       liveLocation: liveLocation ?? this.liveLocation,
       lanCode: lanCode ?? this.lanCode,
       country: country ?? this.country,
@@ -156,14 +151,7 @@ class UserModel {
       isAdmin: json['isAdmin'] ?? false,
       isVerified: json['isVerified'] ?? false,
       districtName: json['districtName'],
-      location: json['location'] != null
-          ? LocationModel.fromJson(json['location'])
-          : null,
-      detailedLocation:
-          json['detailedLocation'] !=
-              null // ✅ Add this
-          ? DetailedLocationModel.fromJson(json['detailedLocation'])
-          : null,
+
       jobRoles: json['jobRoles'] != null
           ? List<String>.from(json['jobRoles'])
           : <String>[],
@@ -214,8 +202,7 @@ class UserModel {
       'lanCode': lanCode,
       'country': country,
       'createdAt': createdAt,
-      'location': location?.toJson(),
-      'detailedLocation': detailedLocation?.toJson(), // ✅ Add this
+
       'updatedAt': updatedAt,
       'isAdmin': isAdmin ?? false,
       'isVerified': isVerified ?? false,
@@ -257,8 +244,7 @@ class UserModel {
       'lanCode': lanCode,
       'country': country,
       'liveLocation': liveLocation?.toJson(),
-      'location': location?.toJson(),
-      'detailedLocation': detailedLocation?.toJson(), // ✅ Add this
+
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'isAdmin': isAdmin ?? false,

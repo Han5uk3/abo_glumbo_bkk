@@ -16,20 +16,20 @@ class UnreadNotificationBadge extends StatelessWidget {
           // Notification icon
           const Icon(Icons.notifications_none, color: Colors.white, size: 24),
           // Unread count badge
-          StreamBuilder<int>(
-            stream: AppServices.getUnreadNotificationsCountStream(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData || snapshot.data == 0) {
-                return const SizedBox.shrink();
-              }
+          Positioned(
+            top: -2,
+            right: 0,
+            child: StreamBuilder<int>(
+              stream: AppServices.getUnreadNotificationsCountStream(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data == 0) {
+                  return const SizedBox.shrink();
+                }
 
-              final count = snapshot.data!;
-              final countText = count > 99 ? '99+' : count.toString();
+                final count = snapshot.data!;
+                final countText = count > 99 ? '99+' : count.toString();
 
-              return Positioned(
-                top: -2,
-                right: 0,
-                child: Container(
+                return Container(
                   margin: const EdgeInsets.all(0),
                   decoration: BoxDecoration(
                     color: Colors.red,
@@ -57,9 +57,9 @@ class UnreadNotificationBadge extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ],
       ),

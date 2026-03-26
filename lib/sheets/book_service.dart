@@ -364,10 +364,11 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
         List<dynamic> services = data['services'] ?? [];
         bool providesService = services.any((s) {
           String? sId;
-          if (s is String)
+          if (s is String) {
             sId = s;
-          else if (s is Map)
+          } else if (s is Map) {
             sId = s['id'];
+          }
 
           return sId == widget.service.id;
         });

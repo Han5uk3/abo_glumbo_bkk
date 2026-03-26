@@ -181,13 +181,11 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         country: customerData.country,
         fcmToken: customerData.fcmToken,
         lanCode: customerData.lanCode,
-        location: customerData.location,
         addresses: customerData.addresses,
         favourites: updatedFavorites,
         createdAt: customerData.createdAt,
         updatedAt: customerData.updatedAt,
         isAdmin: customerData.isAdmin,
-        detailedLocation: customerData.detailedLocation,
       );
 
       // Emit the updated state with new customer data

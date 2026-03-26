@@ -114,13 +114,6 @@ class _WorkerListState extends State<WorkerList> {
           regions = jsonData.map((r) => Region.fromJson(r)).toList();
           isLoadingLocations = false;
         });
-
-        // Pre-select location AFTER regions are loaded and state is set
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (customerData?.detailedLocation != null && mounted) {
-            _preselectCustomerLocation(customerData!.detailedLocation!);
-          }
-        });
       }
     } catch (e) {
       if (kDebugMode) {
@@ -135,34 +128,6 @@ class _WorkerListState extends State<WorkerList> {
   }
 
   // ✅ Pre-select customer's location as default filter
-  void _preselectCustomerLocation(DetailedLocationModel location) {
-    if (regions.isEmpty) return;
-
-    final province = regions.firstWhere(
-      (p) => p.regionId == location.regionId,
-      orElse: () => regions.first,
-    );
-
-    selectedRegion = province;
-
-    if (province.cities.isNotEmpty) {
-      final governorate = province.cities.firstWhere(
-        (g) => g.cityId == location.cityId,
-        orElse: () => province.cities.first,
-      );
-
-      selectedCity = governorate;
-
-      if (governorate.districts.isNotEmpty) {
-        selectedDistrict = governorate.districts.firstWhere(
-          (n) => n.districtId == location.neighborhoodId,
-          orElse: () => governorate.districts.first,
-        );
-      }
-    }
-
-    setState(() {});
-  }
 
   _fetchcategory() async {
     final category = await AppServices.fetchCategory(widget.category);
@@ -202,28 +167,10 @@ class _WorkerListState extends State<WorkerList> {
     // ✅ FIXED: Only filter if a location is selected, otherwise show all
     if (selectedDistrict != null) {
       // Filter by neighborhood
-      locationFiltered = workers.where((workerData) {
-        final workerLocation = workerData.worker.detailedLocation;
-
-        debugPrint('Worker location: ${workerLocation?.neighborhoodEn}');
-
-        return workerLocation?.neighborhoodId == selectedDistrict!.districtId;
-      }).toList();
     } else if (selectedCity != null) {
       // Filter by governorate
-      locationFiltered = workers.where((workerData) {
-        final workerLocation = workerData.worker.detailedLocation;
-        debugPrint('Worker location: ${workerLocation?.cityEn}');
-        return workerLocation?.cityId == selectedCity!.cityId;
-      }).toList();
     } else if (selectedRegion != null) {
       // Filter by province
-      locationFiltered = workers.where((workerData) {
-        final workerLocation = workerData.worker.detailedLocation;
-        debugPrint('Worker location: ${workerLocation?.regionEn}');
-
-        return workerLocation?.regionId == selectedRegion!.regionId;
-      }).toList();
     } else {
       // ✅ FIXED: Show all workers when no location filter is applied
       debugPrint(

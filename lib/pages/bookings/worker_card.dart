@@ -31,15 +31,7 @@ class WorkerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final detaliLocation = worker.detailedLocation;
-    final cityName = Directionality.of(context) == TextDirection.rtl
-        ? detaliLocation?.regionAr ?? ''
-        : detaliLocation?.regionEn ?? '';
-    final neighborhoodName = Directionality.of(context) == TextDirection.rtl
-        ? detaliLocation?.neighborhoodAr ?? ''
-        : detaliLocation?.neighborhoodEn ?? '';
-
-    // final services = worker.jobRoles ?? [];
+    // Location display removed based on user request to remove structured location data
     final inspectionFee = service.price ?? 0.0;
 
     return Container(
@@ -123,11 +115,6 @@ class WorkerCard extends StatelessWidget {
               text:
                   '$rating ($reviewCount ${AppLocalizations.of(context)!.reviews})',
             ),
-
-            const SizedBox(height: 6),
-
-            // Distance
-            _InfoRow(icon: '📍', text: '$neighborhoodName | $cityName '),
 
             const SizedBox(height: 6),
 

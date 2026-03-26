@@ -71,12 +71,10 @@ class NewBookingUtils {
         country: customerData.country,
         fcmToken: customerData.fcmToken,
         lanCode: customerData.lanCode,
-        location: customerData.location,
         favourites: customerData.favourites,
         createdAt: customerData.createdAt,
         updatedAt: customerData.updatedAt,
         isAdmin: customerData.isAdmin,
-        detailedLocation: customerData.detailedLocation,
         addresses: customerData.addresses.map((address) {
           return address.copyWith(
             isSelected: selectedAddress != null

@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
@@ -50,49 +48,8 @@ class _CategoryDetailState extends State<CategoryDetail> {
 
   /// Check if service is available in customer's city
   bool _isServiceAvailableInCustomerRegion(ServiceModel service) {
-    final accountState = context.read<AccountBloc>().state;
-
-    if (accountState is! CustomerDataLoaded) {
-      return true; // Allow if we don't have customer data loaded yet
-    }
-
-    final customerData = accountState.customerData;
-    final customerCity = customerData.detailedLocation?.cityId;
-    final customerRegion = customerData.detailedLocation?.regionId;
-
-
-    // If customer has no city selected, service is not available
-    if (customerCity?.isEmpty ?? true) {
-      return false;
-    }
-
-    // Check if service is available for customer's city
-    if ((service.locations?.isEmpty) ?? true) {
-    
-      return false; // Service NOT available if no cities are configured
-    }
-
-    // Parse and check each service location city
-    for (final locationJsonStr in (service.locations ?? [])) {
-      if (locationJsonStr == null || locationJsonStr.isEmpty) continue;
-
-      try {
-        final locationMap = jsonDecode(locationJsonStr) as Map<String, dynamic>;
-      
-        // Check BOTH cityId AND regionId to ensure exact match
-        // This prevents false matches when different cities have the same cityId
-        if (locationMap['cityId'] == customerCity &&
-            locationMap['regionId'] == customerRegion) {
-          return true; // Found matching city
-        }
-      } catch (e) {
-        log('DEBUG: Error parsing location: $e');
-        // Skip malformed JSON
-        continue;
-      }
-    }
-
-    return false; // No matching city found
+    // Location filtering disabled as structured location fields are removed.
+    return true;
   }
 
   Future<void> _fetchAllServices() async {

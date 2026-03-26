@@ -1,6 +1,5 @@
 import 'package:abo_glumbo_bbk/models/address.dart';
-import 'package:abo_glumbo_bbk/models/location.dart';
-import 'package:abo_glumbo_bbk/models/user.dart';
+
 import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -14,10 +13,7 @@ class CustomerModel {
   final String? fcmToken;
   final String? lanCode;
 
-  // Location models
-  final LocationModel?
-  location; // Old location model (keep for backward compatibility)
-  final DetailedLocationModel? detailedLocation; // ✅ New structured location
+
 
   // Multiple saved addresses
   final List<AddressModel> addresses;
@@ -44,8 +40,7 @@ class CustomerModel {
     this.fcmToken,
     this.lanCode,
     this.country,
-    this.location,
-    this.detailedLocation,
+
     this.addresses = const [],
     this.favourites = const [],
     this.createdAt,
@@ -64,12 +59,7 @@ class CustomerModel {
       fcmToken: json['fcmToken'],
       lanCode: json['lanCode'],
       country: json['country'],
-      location: json['location'] != null
-          ? LocationModel.fromJson(json['location'] as Map<String, dynamic>)
-          : null,
-      detailedLocation: json['detailedLocation'] != null
-          ? DetailedLocationModel.fromJson(json['detailedLocation'])
-          : null,
+
       addresses:
           (json['addresses'] as List<dynamic>?)
               ?.map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
@@ -102,8 +92,7 @@ class CustomerModel {
       'fcmToken': fcmToken,
       'lanCode': lanCode,
       'country': country,
-      'location': location?.toJson(),
-      'detailedLocation': detailedLocation?.toJson(),
+
       'addresses': addresses.map((e) => e.toJson()).toList(),
       'favourites': favourites,
       'createdAt': createdAt,
@@ -123,8 +112,7 @@ class CustomerModel {
     String? lanCode,
     required String role,
     String? country,
-    LocationModel? location,
-    DetailedLocationModel? detailedLocation,
+
     List<AddressModel>? addresses,
     List<String>? favourites,
     Timestamp? createdAt,
@@ -141,8 +129,7 @@ class CustomerModel {
       fcmToken: fcmToken ?? this.fcmToken,
       lanCode: lanCode ?? this.lanCode,
       country: country ?? this.country,
-      location: location ?? this.location,
-      detailedLocation: detailedLocation ?? this.detailedLocation,
+
       addresses: addresses ?? this.addresses,
       favourites: favourites ?? this.favourites,
       createdAt: createdAt ?? this.createdAt,
@@ -179,12 +166,7 @@ class CustomerModel {
     checkAndSet('fcmToken', fcmToken, previous.fcmToken);
     checkAndSet('lanCode', lanCode, previous.lanCode);
     checkAndSet('country', country, previous.country);
-    checkAndSet('location', location?.toJson(), previous.location?.toJson());
-    checkAndSet(
-      'detailedLocation',
-      detailedLocation?.toJson(),
-      previous.detailedLocation?.toJson(),
-    );
+
     checkAndSet(
       'addresses',
       addresses.map((e) => e.toJson()).toList(),

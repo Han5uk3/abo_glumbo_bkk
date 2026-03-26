@@ -19,7 +19,7 @@ val kotlin_version: String by project
 android {
     namespace = "com.aboglumbo"
     compileSdk = 36
-    ndkVersion = "27.0.12077973" // NDK r27 for 16KB page support
+    ndkVersion = "30.0.14904198" // NDK for 16KB page support
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -37,7 +37,7 @@ android {
         applicationId = "com.aboglumbo"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"

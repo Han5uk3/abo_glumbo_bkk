@@ -158,7 +158,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             : null,
         ivp_lang: 'en',
         bill_custref: widget.customerData.uid,
-        bill_city: widget.customerData.detailedLocation?.cityEn ?? "",
+        bill_city: "",
       );
       final paymentService = TelrPaymentService();
       final response = await paymentService.createPayment(paymentRequest);

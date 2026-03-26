@@ -8,7 +8,6 @@ import 'package:abo_glumbo_bbk/common_widgets/welcome_modal.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/account.dart';
-import 'package:abo_glumbo_bbk/pages/accounts/edit_profile.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bookings_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/home_page.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
@@ -17,10 +16,8 @@ import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/biometric_service.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/styles/app_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -112,7 +109,6 @@ class _HomeState extends State<Home> {
     if (_isGuest == true || uid == null || uid.isEmpty) {
       return _buildScaffold(locale, null);
     }
-
     return StreamBuilder(
       stream: _customerStream,
       builder: (context, snapshot) {
@@ -121,6 +117,18 @@ class _HomeState extends State<Home> {
             body: Center(child: Loader(color: AppColors.primary)),
           );
         }
+
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Text(
+                '${locale?.error ?? "Error"}: ${snapshot.error}',
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+          );
+        }
+
         final customerData = snapshot.data;
         final isBlocked = customerData?.isBlocked ?? false;
 
@@ -148,12 +156,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // Your screens/pages
-  final List<Widget> _screens = [
-    const HomePage(),
-    const BookingsPage(),
-    const AccountPage(),
-  ];
+
 
   Widget _buildScaffold(AppLocalizations? locale, dynamic customerData) {
     Widget getCurrentPage() {
@@ -206,16 +209,10 @@ class _HomeState extends State<Home> {
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        body: _screens[currentIndex],
-        //  AnimatedSwitcher(
-        //   duration: const Duration(milliseconds: 300),
-        //   transitionBuilder: (Widget child, Animation<double> animation) {
-        //     return FadeTransition(opacity: animation, child: child);
-        //   },
-        //   child: getCurrentPage(),
-        // ),
+        body: getCurrentPage(),
         bottomNavigationBar: SafeArea(
           child: Container(
+            height: 60,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
