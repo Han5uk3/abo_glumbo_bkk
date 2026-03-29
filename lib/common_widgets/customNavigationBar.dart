@@ -1,4 +1,3 @@
-// customNavigationBar.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -58,7 +57,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
                       TweenAnimationBuilder<Color?>(
                         duration: const Duration(milliseconds: 350),
                         tween: ColorTween(
-                          begin: isSelected ? AppColors.grey : AppColors.bgWhite,
+                          begin: isSelected
+                              ? AppColors.grey
+                              : AppColors.bgWhite,
                           end: isSelected ? AppColors.bgWhite : AppColors.grey,
                         ),
                         builder: (context, color, child) {

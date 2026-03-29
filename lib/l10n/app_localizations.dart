@@ -4039,6 +4039,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This service is not available in your region now. It will be added later.'**
   String get serviceNotAvailableInRegion;
+
+  /// No description provided for @serviceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Unavailable'**
+  String get serviceUnavailable;
+
+  /// No description provided for @serviceUnavailableLongMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'service unavailable to this location currently, we hope to expand our services to this area in the future'**
+  String get serviceUnavailableLongMessage;
 }
 
 class _AppLocalizationsDelegate

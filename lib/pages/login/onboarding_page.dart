@@ -284,14 +284,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
           Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              Container(child: CircleAvatar(radius: 120)),
               Positioned(
                 top: 0,
                 bottom: 0, // Remove bottom constraint
-                child: Container(
+                child: SizedBox(
                   height: MediaQuery.of(context).size.height,
                   child: Image.asset(
-                    "assets/onboardImage.png",
+                    "assets/images/Ellipse1.png",
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                bottom: 0, // Remove bottom constraint
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Image.asset(
+                    "assets/images/Ellipse1.png",
                     fit: BoxFit.fill,
                   ),
                 ),

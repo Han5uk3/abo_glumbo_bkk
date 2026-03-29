@@ -2060,4 +2060,11 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get serviceNotAvailableInRegion =>
       'هذه الخدمة غير متوفرة في منطقتك حالياً. سيتم إضافتها لاحقاً.';
+
+  @override
+  String get serviceUnavailable => 'الخدمة غير متوفرة';
+
+  @override
+  String get serviceUnavailableLongMessage =>
+      'الخدمة غير متوفرة في هذا الموقع حالياً، نأمل في توسيع خدماتنا لتشمل هذه المنطقة في المستقبل';
 }

@@ -4,6 +4,7 @@ import 'package:abo_glumbo_bbk/pages/login/onboarding_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -76,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen>
         );
       }
       _startAnimationSequence();
-      _initializeApp();
+      // _initializeApp();
     }
   }
 
@@ -117,14 +118,6 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
-  Widget _buildServiceIcon(IconData icon, double posX, double posY) {
-    return Positioned(
-      left: posX,
-      top: posY,
-      child: Icon(icon, color: Colors.white.withOpacity(0.2), size: 28),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -135,81 +128,27 @@ class _SplashScreenState extends State<SplashScreen>
         return Scaffold(
           body: Stack(
             children: [
+              // 1. Solid Background
               Container(
                 width: double.infinity,
                 height: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Color(0xFF0A2A5E), Color(0xFF1E5AB6)],
+                color: AppColors.primary,
+              ),
+
+              // 2. Large Shape at Bottom (Rectangle + Triangle Top)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: CustomPaint(
+                  size: Size(screenWidth, screenHeight * 0.35),
+                  painter: BottomShapePainter(
+                    color: const Color(0xFF143D82).withOpacity(0.5),
                   ),
                 ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: -100,
-                      right: -100,
-                      child: Container(
-                        width: 300,
-                        height: 300,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.05),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: -150,
-                      left: -150,
-                      child: Container(
-                        width: 400,
-                        height: 400,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.03),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: screenHeight * 0.3,
-                      right: -80,
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.04),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ),
 
-              _buildServiceIcon(Icons.build, 50, 120),
-              _buildServiceIcon(Icons.handyman, screenWidth - 90, 100),
-              _buildServiceIcon(
-                Icons.lightbulb_outline,
-                screenWidth - 100,
-                screenHeight * 0.4,
-              ),
-              _buildServiceIcon(
-                Icons.water_drop_outlined,
-                40,
-                screenHeight * 0.6,
-              ),
-              _buildServiceIcon(
-                Icons.settings,
-                screenWidth - 80,
-                screenHeight * 0.72,
-              ),
-              _buildServiceIcon(
-                Icons.electrical_services,
-                60,
-                screenHeight * 0.8,
-              ),
-
+              // 3. Central Content (Logo & Text)
               SafeArea(
                 child: Center(
                   child: Column(
@@ -223,76 +162,40 @@ class _SplashScreenState extends State<SplashScreen>
                         builder: (context, child) {
                           return FadeTransition(
                             opacity: _logoFadeAnimation,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 140,
-                                  height: 140,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Container(
+                            child: ScaleTransition(
+                              scale: _logoScaleAnimation,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Logo
+                                  SizedBox(
+                                    width: 120,
+                                    height: 120,
+                                    child: Image.asset(
+                                      'assets/icons/app_icon.png',
                                       color: Colors.white,
-                                      child: Image.asset(
-                                        'assets/images/app_icon.png',
-                                        fit: BoxFit.cover,
-                                      ),
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 32),
-                                Text(
-                                  state.locale.languageCode == "ar"
-                                      ? "ابو جلمبو"
-                                      : "Abo Glumbo",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
 
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.black.withOpacity(0.3),
-                                        offset: const Offset(0, 2),
-                                        blurRadius: 8,
-                                      ),
-                                    ],
+                                  // Text
+                                  Text(
+                                    state.locale.languageCode == "ar"
+                                        ? "ابو جلمبو"
+                                        : "Abo Glumbo",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         },
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      FadeTransition(
-                        opacity: _taglineAnimation,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: Text(
-                            state.locale.languageCode == "ar"
-                                ? "خدمات إصلاح وصيانة سريعة وموثوقة في أي وقت وأي مكان"
-                                : "Repair & Maintenance, Anytime – Anywhere",
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 0.8,
-                              height: 1.3,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  offset: const Offset(0, 1),
-                                  blurRadius: 4,
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
                       ),
                     ],
                   ),
@@ -304,4 +207,25 @@ class _SplashScreenState extends State<SplashScreen>
       },
     );
   }
+}
+
+class BottomShapePainter extends CustomPainter {
+  final Color color;
+  BottomShapePainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var path = Path();
+    // Draws a pentagon shape (rectangle with a triangle on top)
+    path.moveTo(0, size.height); // bottom left
+    path.lineTo(0, size.height * 0.6); // top of rectangle part
+    path.lineTo(size.width / 2, 0); // peak of triangle
+    path.lineTo(size.width, size.height * 0.6); // top of rectangle right
+    path.lineTo(size.width, size.height); // bottom right
+    path.close();
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

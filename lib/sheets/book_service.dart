@@ -339,23 +339,76 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
     });
 
     try {
-      // Fetch technicians for this service
-      // Note: In a real app we might want to optimize this query
-      debugPrint("🔍 Validating service availability for ${address.fullName}");
+      // 1. Check Service Area (Radius-based from Admin App)
+      debugPrint("🔍 Checking service area availability for ${address.fullName}");
+      final serviceLocationsQuery = await AppFirestore.locationsCollectionRef
+          .where('service_id', isEqualTo: widget.service.id)
+          .get();
+
+      if (serviceLocationsQuery.docs.isNotEmpty) {
+        final data = serviceLocationsQuery.docs.first.data() as Map<String, dynamic>;
+        final locations = data['locations'] as List<dynamic>? ?? [];
+
+        if (locations.isNotEmpty) {
+          bool inServiceArea = false;
+          for (var loc in locations) {
+            final double? lat = loc['lat']?.toDouble();
+            final double? lng = loc['lng']?.toDouble();
+            final double? radius = loc['radius']?.toDouble(); // meters
+
+            if (lat != null && lng != null && radius != null) {
+              final double distanceKm = calculateDistance(
+                address.lat!,
+                address.lon!,
+                lat,
+                lng,
+              );
+              final double distanceMeters = distanceKm * 1000;
+
+              if (distanceMeters <= radius) {
+                inServiceArea = true;
+                break;
+              }
+            }
+          }
+
+          if (!inServiceArea && mounted) {
+            setState(() {
+              isValidatingAddress = false;
+              addressValidationError = "Service unavailable to this location currently";
+            });
+
+            // Show alert dialog as requested
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(AppLocalizations.of(context)?.serviceUnavailable ?? "Service Unavailable"),
+                content: Text(
+                  AppLocalizations.of(context)?.serviceUnavailableLongMessage ?? 
+                  "service unavailable to this location currently, we hope to expand our services to this area in the future"
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(AppLocalizations.of(context)?.ok ?? "OK"),
+                  ),
+                ],
+              ),
+            );
+            return;
+          }
+        }
+      }
+
+      // 2. Fetch technicians for this service (Keep existing check but make it second)
+      debugPrint("🔍 Checking technician coverage for ${address.fullName}");
 
       final techniciansQuery = await AppFirestore.usersCollectionRef
           .where('role', isEqualTo: 'agent')
           .where('accountStatus', isEqualTo: 'approved')
-          //.where('services', arrayContains: widget.service.serviceId) // Assuming services is list of IDs
           .get();
 
-      // Filter manually for service match if needed, or rely on worker list upstream
-      // For now, let's assume we need to check if ANY technician covers this area
-
       bool isServiceable = false;
-
-      // We need to check if the technician covers the area
-      // AND provides the service.
 
       for (var doc in techniciansQuery.docs) {
         final data = doc.data() as Map<String, dynamic>;
@@ -399,7 +452,7 @@ class _BookServiceBottomSheetState extends State<BookServiceBottomSheet> {
           isValidatingAddress = false;
           addressValidationError = isServiceable
               ? null
-              : "Service not available in this area";
+              : "No technicians available in this area";
         });
       }
     } catch (e) {

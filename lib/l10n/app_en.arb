@@ -674,5 +674,7 @@
   "customerTransparencyTitle": "Full Transparency",
   "customerTransparencyDesc": "We ensure clear pricing for inspection fees and provide full details of the service before and after execution, along with a documented warranty on our work.",
   "customerMission": "Our mission is to transform complicated maintenance tasks into a simple, guaranteed experience.",
-  "serviceNotAvailableInRegion": "This service is not available in your region now. It will be added later."
+  "serviceNotAvailableInRegion": "This service is not available in your region now. It will be added later.",
+  "serviceUnavailable": "Service Unavailable",
+  "serviceUnavailableLongMessage": "service unavailable to this location currently, we hope to expand our services to this area in the future"
 }

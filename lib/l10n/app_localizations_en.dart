@@ -2095,4 +2095,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get serviceNotAvailableInRegion =>
       'This service is not available in your region now. It will be added later.';
+
+  @override
+  String get serviceUnavailable => 'Service Unavailable';
+
+  @override
+  String get serviceUnavailableLongMessage =>
+      'service unavailable to this location currently, we hope to expand our services to this area in the future';
 }
