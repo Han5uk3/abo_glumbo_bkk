@@ -23,15 +23,12 @@ class BiometricService {
   }
 
   static Future<void> setBiometricEnabled(bool enabled) async {
-    await LocalStoreHelper.setBiometricAuthEnabled(
-      enabled,
-      LocalStoreHelper.getUID() ?? '',
-    );
+    final uid = LocalStoreHelper.getUID() ?? LocalStoreHelper.getLastValidUID() ?? '';
+    await LocalStoreHelper.setBiometricAuthEnabled(enabled, uid);
   }
 
   static Future<bool> isBiometricEnabled() async {
-    return LocalStoreHelper.getBiometricAuthEnabled(
-      LocalStoreHelper.getUID() ?? '',
-    );
+    final uid = LocalStoreHelper.getUID() ?? LocalStoreHelper.getLastValidUID() ?? '';
+    return LocalStoreHelper.getBiometricAuthEnabled(uid);
   }
 }

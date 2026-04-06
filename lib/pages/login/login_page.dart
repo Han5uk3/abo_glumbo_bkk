@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     _phoneController.addListener(_onPhoneNumberChanged);
-    customerLastUid = LocalStoreHelper.getUID();
+    customerLastUid = LocalStoreHelper.getUID() ?? LocalStoreHelper.getLastValidUID();
     isCheckUserEnableTwoStepVerification =
         LocalStoreHelper.getBiometricAuthEnabled(customerLastUid ?? '');
     isUserLogout = LocalStoreHelper.getLogoutStatus();

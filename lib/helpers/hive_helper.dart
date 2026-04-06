@@ -2,11 +2,18 @@ import 'package:abo_glumbo_bbk/main.dart';
 
 class LocalStoreHelper {
   static Future<void> putUID(String uid) {
+    // Store as last valid UID for biometric authentication fallback after logout
+    MyApp.box.put('last_valid_uid', uid);
     return MyApp.box.put('uid', uid);
   }
 
   static String? getUID() {
     return MyApp.box.get('uid');
+  }
+
+  // Get the last valid UID (for biometric auth after logout)
+  static String? getLastValidUID() {
+    return MyApp.box.get('last_valid_uid');
   }
 
   // clear uid
@@ -115,18 +122,17 @@ class LocalStoreHelper {
     }
     return null;
   }
+
   // Clear cache
   static Future<void> clearCache() async {
     await MyApp.box.clear();
   }
 
-static bool? getBlockStatus() {
+  static bool? getBlockStatus() {
     return MyApp.box.get('block_status');
   }
-static Future<void> putBlockStatus(bool status) async {
+
+  static Future<void> putBlockStatus(bool status) async {
     await MyApp.box.put('block_status', status);
   }
-
 }
-
-

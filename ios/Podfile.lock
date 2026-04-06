@@ -1198,6 +1198,40 @@ PODS:
     - Firebase/Firestore (= 12.4.0)
     - firebase_core
     - Flutter
+  - DKImagePickerController/Core (4.3.9):
+    - DKImagePickerController/ImageDataManager
+    - DKImagePickerController/Resource
+  - DKImagePickerController/ImageDataManager (4.3.9)
+  - DKImagePickerController/PhotoGallery (4.3.9):
+    - DKImagePickerController/Core
+    - DKPhotoGallery
+  - DKImagePickerController/Resource (4.3.9)
+  - DKPhotoGallery (0.0.19):
+    - DKPhotoGallery/Core (= 0.0.19)
+    - DKPhotoGallery/Model (= 0.0.19)
+    - DKPhotoGallery/Preview (= 0.0.19)
+    - DKPhotoGallery/Resource (= 0.0.19)
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Core (0.0.19):
+    - DKPhotoGallery/Model
+    - DKPhotoGallery/Preview
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Model (0.0.19):
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Preview (0.0.19):
+    - DKPhotoGallery/Model
+    - DKPhotoGallery/Resource
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Resource (0.0.19):
+    - SDWebImage
+    - SwiftyGif
+  - file_picker (0.0.1):
+    - DKImagePickerController/PhotoGallery
+    - Flutter
   - Firebase/Auth (12.4.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 12.4.0)
@@ -1531,10 +1565,10 @@ PODS:
     - gRPC-Core/Privacy (= 1.69.0)
   - gRPC-Core/Interface (1.69.0)
   - gRPC-Core/Privacy (1.69.0)
-  - GTMSessionFetcher/Core (5.0.0)
-  - image_cropper (0.0.4):
+  - GTMSessionFetcher/Core (5.2.0)
+  - image_cropper (0.0.5):
     - Flutter
-    - TOCropViewController (~> 2.7.4)
+    - TOCropViewController (~> 3.1.1)
   - image_picker_ios (0.0.1):
     - Flutter
   - leveldb-library (1.22.6)
@@ -1563,10 +1597,16 @@ PODS:
     - RecaptchaInterop (~> 101.0.0)
   - RecaptchaEnterpriseSDK (18.8.2)
   - RecaptchaInterop (101.0.0)
+  - SDWebImage (5.21.7):
+    - SDWebImage/Core (= 5.21.7)
+  - SDWebImage/Core (5.21.7)
+  - sms_autofill (0.0.1):
+    - Flutter
   - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
-  - TOCropViewController (2.7.4)
+  - SwiftyGif (5.4.5)
+  - TOCropViewController (3.1.1)
   - url_launcher_ios (0.0.1):
     - Flutter
   - video_player_avfoundation (0.0.1):
@@ -1578,6 +1618,7 @@ PODS:
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
+  - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Firebase/Auth
   - Firebase/Core
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
@@ -1601,6 +1642,7 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - pay_ios (from `.symlinks/plugins/pay_ios/ios`)
   - RecaptchaEnterprise
+  - sms_autofill (from `.symlinks/plugins/sms_autofill/ios`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
@@ -1610,6 +1652,8 @@ SPEC REPOS:
   trunk:
     - abseil
     - BoringSSL-GRPC
+    - DKImagePickerController
+    - DKPhotoGallery
     - Firebase
     - FirebaseAnalytics
     - FirebaseAppCheckInterop
@@ -1644,11 +1688,15 @@ SPEC REPOS:
     - RecaptchaEnterprise
     - RecaptchaEnterpriseSDK
     - RecaptchaInterop
+    - SDWebImage
+    - SwiftyGif
     - TOCropViewController
 
 EXTERNAL SOURCES:
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
+  file_picker:
+    :path: ".symlinks/plugins/file_picker/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_auth:
@@ -1687,6 +1735,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   pay_ios:
     :path: ".symlinks/plugins/pay_ios/ios"
+  sms_autofill:
+    :path: ".symlinks/plugins/sms_autofill/ios"
   sqflite_darwin:
     :path: ".symlinks/plugins/sqflite_darwin/darwin"
   url_launcher_ios:
@@ -1700,6 +1750,9 @@ SPEC CHECKSUMS:
   abseil: a05cc83bf02079535e17169a73c5be5ba47f714b
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
   cloud_firestore: a3b1211b3f675799799756ff9b4ceb0c4985da04
+  DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
+  DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
+  file_picker: a0560bc09d61de87f12d246fc47d2119e6ef37be
   Firebase: f07b15ae5a6ec0f93713e30b923d9970d144af3e
   firebase_analytics: 7d070dd48c97df454d8a947cfbbfb04bce46660b
   firebase_auth: 89321560e22d8af12358adb0d56526f1dc078611
@@ -1738,11 +1791,11 @@ SPEC CHECKSUMS:
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   "gRPC-C++": cc207623316fb041a7a3e774c252cf68a058b9e8
   gRPC-Core: 860978b7db482de8b4f5e10677216309b5ff6330
-  GTMSessionFetcher: 02d6e866e90bc236f48a703a041dfe43e6221a29
-  image_cropper: c4326ea50132b1e1564499e5d32a84f01fb03537
+  GTMSessionFetcher: 904bdd2a82c635bcd6f44edf94cc8775c5d1d6e6
+  image_cropper: e405d3e44183f8e8edbec2e49b01ff9c819c7ac8
   image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
-  local_auth_darwin: d2e8c53ef0c4f43c646462e3415432c4dab3ae19
+  local_auth_darwin: c3ee6cce0a8d56be34c8ccb66ba31f7f180aaebb
   location: 155caecf9da4f280ab5fe4a55f94ceccfab838f8
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
@@ -1753,10 +1806,13 @@ SPEC CHECKSUMS:
   RecaptchaEnterprise: 2d06f415c94253c3e92214a4d1472b5875442cdc
   RecaptchaEnterpriseSDK: 2fd06a12a27f943c24f643f8814404a27cc74288
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+  SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
+  sms_autofill: b36b2147535657fea83d7f3898d7831de70bd8e4
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
-  TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
+  SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
+  TOCropViewController: 9002a9b12d8104d7478cdc306d80f0efea7fe2c5
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
-  video_player_avfoundation: dd410b52df6d2466a42d28550e33e4146928280a
+  video_player_avfoundation: 2cef49524dd1f16c5300b9cd6efd9611ce03639b
   webview_flutter_wkwebview: 1821ceac936eba6f7984d89a9f3bcb4dea99ebb2
 
 PODFILE CHECKSUM: 9ba5e673369d64e7569d86ee11f7cc92f82bec5b
