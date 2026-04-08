@@ -1,4 +1,5 @@
 import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
+import 'package:abo_glumbo_bbk/models/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
@@ -13,6 +14,7 @@ class UserModel {
   Timestamp? createdAt;
   Timestamp? updatedAt;
 
+  LocationModel? location;
   LiveLocation? liveLocation;
   bool? isAdmin;
   bool? isVerified;
@@ -44,7 +46,7 @@ class UserModel {
     this.country,
     this.createdAt,
     this.updatedAt,
-
+    this.location,
     this.liveLocation,
     this.isAdmin,
     this.isVerified,
@@ -73,7 +75,7 @@ class UserModel {
     String? phone,
     String? country,
     String? lanCode,
-
+    LocationModel? location,
     LiveLocation? liveLocation,
     List<String>? favourites,
     Timestamp? createdAt,
@@ -104,7 +106,7 @@ class UserModel {
       email: email ?? this.email,
       phone: phone ?? this.phone,
       districtName: districtName ?? this.districtName,
-
+      location: location ?? this.location,
       liveLocation: liveLocation ?? this.liveLocation,
       lanCode: lanCode ?? this.lanCode,
       country: country ?? this.country,
@@ -143,6 +145,7 @@ class UserModel {
       phone: json['phone'],
       lanCode: json['lanCode'],
       country: json['country'],
+      location: _parseLocation(json),
       liveLocation: json['liveLocation'] != null
           ? LiveLocation.fromJson(json['liveLocation'])
           : null,
@@ -201,6 +204,7 @@ class UserModel {
       'phone': formattedPhone,
       'lanCode': lanCode,
       'country': country,
+      'location': location?.toJson(),
       'createdAt': createdAt,
 
       'updatedAt': updatedAt,
@@ -243,6 +247,7 @@ class UserModel {
       'phone': formattedPhone,
       'lanCode': lanCode,
       'country': country,
+      'location': location?.toJson(),
       'liveLocation': liveLocation?.toJson(),
 
       'createdAt': createdAt,
@@ -484,6 +489,46 @@ class PayoutAccountModel {
       updatedAt: map['updatedAt'],
     );
   }
+}
+
+/// Attempt to build a [LocationModel] from any legacy or current JSON shape.
+/// Priority: new 'location' key → migrate from 'detailedLocation' key.
+LocationModel? _parseLocation(Map<String, dynamic> json) {
+  // New unified format
+  if (json['location'] is Map<String, dynamic>) {
+    final raw = json['location'] as Map<String, dynamic>;
+    if (raw.containsKey('lat') || raw.containsKey('fullAddress')) {
+      return LocationModel.fromJson(raw);
+    }
+  }
+
+  // Legacy: migrate from detailedLocation
+  if (json['detailedLocation'] is Map<String, dynamic>) {
+    final dl = json['detailedLocation'] as Map<String, dynamic>;
+    final neighborhoodEn = dl['neighborhoodEn'] as String?;
+    final cityEn = dl['cityEn'] as String?;
+    final regionEn = dl['regionEn'] as String?;
+    final lat = (dl['lat'] as num?)?.toDouble();
+    final lon = (dl['lon'] as num?)?.toDouble();
+
+    final parts = <String>[
+      if (neighborhoodEn != null && neighborhoodEn.trim().isNotEmpty)
+        neighborhoodEn.trim(),
+      if (cityEn != null && cityEn.trim().isNotEmpty) cityEn.trim(),
+      if (regionEn != null && regionEn.trim().isNotEmpty) regionEn.trim(),
+    ];
+
+    return LocationModel(
+      lat: lat,
+      lon: lon,
+      city: cityEn,
+      province: regionEn,
+      street: neighborhoodEn,
+      fullAddress: parts.isNotEmpty ? parts.join(', ') : null,
+    );
+  }
+
+  return null;
 }
 
 // lib/models/detailed_location.dart

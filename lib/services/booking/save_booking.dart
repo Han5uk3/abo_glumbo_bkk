@@ -112,7 +112,7 @@ class BookingUtils {
         customer: updatedCustomerData,
         agent: agent,
         selectedAddressId: selectedAddress?.id, // Added selectedAddressId
-
+        isOnHour: service.isOnWorkHour(currentTime: bookingDate), // ✅ Added
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -190,13 +190,19 @@ class BookingUtils {
   }
 
   static Future<bool> updateBookingStatus({
-    required BookingModel booking,
+    BookingModel? booking,
+    String? bookingId,
     required bool isCompleted,
     required String paymentModeCode,
     required String orderId,
   }) async {
     try {
-      await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+      final String? id = booking?.id ?? bookingId;
+      if (id == null) {
+        debugPrint("Error: No booking ID provided for status update");
+        return false;
+      }
+      await AppFirestore.bookingsCollectionRef.doc(id).update({
         "paymentCompleted": isCompleted,
         "paymentModeCode": paymentModeCode,
         "paymentCompletedAt": Timestamp.now(),

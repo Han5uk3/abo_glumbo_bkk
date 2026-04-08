@@ -1,4 +1,6 @@
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/styles/app_images.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:flutter/material.dart';
 
 class LocationCard extends StatelessWidget {
@@ -12,10 +14,10 @@ class LocationCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color.fromARGB(255, 232, 232, 232),
-          width: 1,
+          color: const Color(0xFFF1F1F1),
+          width: 1.5,
         ),
       ),
       child: Column(
@@ -27,14 +29,34 @@ class LocationCard extends StatelessWidget {
                 width: 20,
                 height: 20,
                 margin: const EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(shape: BoxShape.circle),
+                decoration: const BoxDecoration(shape: BoxShape.circle),
                 child: Image.asset(AppImages.livelocationIcon),
               ),
-              Text(title ?? 'Location Title'),
+              Expanded(
+                child: Text(
+                  title ?? 'Location Title',
+                  style: DMSansFont.textStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.black1,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(subtitle ?? 'Location Subtitle'),
+          const SizedBox(height: 6),
+          Text(
+            subtitle ?? 'Location Subtitle',
+            style: DMSansFont.textStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey[600],
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );

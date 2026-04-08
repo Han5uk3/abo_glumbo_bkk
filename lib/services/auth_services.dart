@@ -8,7 +8,6 @@ import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/signup_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
-import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -439,11 +438,15 @@ class AuthServices {
         return;
       }
 
+      await LocalStoreHelper.putGuestUser(false);
+
       if (userDoc.exists) {
         debugPrint("✅ User exists, logging in...");
+
+        // Setup authenticated state within the code
         await LocalStoreHelper.putUID(uid);
-        await LocalStoreHelper.putGuestUser(false);
         await LocalStoreHelper.putlogoutStatus(false);
+        await LocalStoreHelper.putBlockStatus(false);
 
         // Update current location address on login
         debugPrint("📍 Updating current location on login...");
@@ -456,7 +459,7 @@ class AuthServices {
           debugPrint("🏠 Navigating to home...");
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => Home()),
+            MaterialPageRoute(builder: (context) => const Home()),
             (route) => false,
           );
         }
@@ -480,6 +483,38 @@ class AuthServices {
           message: 'Failed to check user: $e',
         );
       }
+    }
+  }
+
+  Future<void> signInAsGuest(BuildContext context) async {
+    try {
+      debugPrint("👤 Setting up Guest User state...");
+
+      final currentUid = LocalStoreHelper.getUID();
+      final isBiometricEnabled = currentUid != null
+          ? LocalStoreHelper.getBiometricAuthEnabled(currentUid)
+          : false;
+
+      // Handle setup correctly within the code
+      if (!isBiometricEnabled) {
+        await LocalStoreHelper.clearUID();
+      }
+
+      await LocalStoreHelper.putGuestUser(true);
+      await LocalStoreHelper.putlogoutStatus(false);
+      await LocalStoreHelper.putBlockStatus(false);
+
+      if (context.mounted) {
+        debugPrint("🏠 Navigating to home as Guest...");
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const Home(initialIndex: 0)),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      debugPrint("❌ Error in signInAsGuest: $e");
+      rethrow;
     }
   }
 
@@ -532,15 +567,8 @@ class AuthServices {
       // Reverse geocode to get address name
       String addressName = 'Current Location';
       try {
-        final locationName =
-            await LocationMatcherService.getLocationNameFromCoordinates(
-              latitude: position.latitude,
-              longitude: position.longitude,
-            );
-        if (locationName != null && locationName.isNotEmpty) {
-          addressName = locationName;
-          debugPrint("📍 Reverse geocoded: $addressName");
-        }
+        // Reverse geocoding is handled externally; use a safe fallback
+        debugPrint("📍 Skipping reverse geocode — using default 'Current Location'");
       } catch (e) {
         debugPrint("⚠️ Reverse geocoding failed: $e");
       }

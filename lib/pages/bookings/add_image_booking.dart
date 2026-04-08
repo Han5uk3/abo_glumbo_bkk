@@ -8,6 +8,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
 import 'package:abo_glumbo_bbk/services/location_service.dart';
 import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -165,23 +166,29 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0x805C9BE8),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(10),
           ),
-          width: MediaQuery.of(context).size.width * 0.4,
+          width: (MediaQuery.of(context).size.width - 52) * 0.5,
           height: 100,
           child: Center(
             child: file == null
                 ? isImage
-                      ? Image.asset(
-                          "assets/images/image.png",
-                          width: 30,
-                          height: 30,
+                      ? Center(
+                          child: Icon(
+                            Icons.add_photo_alternate_outlined,
+                            color: Colors.grey,
+                            size: 30,
+                          ),
                         )
-                      : Image.asset(
-                          "assets/images/upload.png",
-                          width: 30,
-                          height: 30,
+                      : Center(
+                          child: Image.asset(
+                            colorBlendMode: BlendMode.srcIn,
+                            color: Colors.grey,
+                            "assets/icons/add-movie.png",
+                            width: 30,
+                            height: 30,
+                          ),
                         )
                 : Stack(
                     children: [
@@ -279,37 +286,20 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 10),
-          const SizedBox(height: 10),
-          if (widget.showAddressPicker)
-            BlocBuilder<AddressBloc, AddressState>(
-              builder: (context, state) {
-                List<AddressModel> addresses = [];
-                AddressModel? selected = _selectedAddress;
-                if (state is AddressLoaded) {
-                  addresses = state.addresses;
-
-                  selected ??= state.selected;
-                }
-                return locationDetection(addresses, selected);
-              },
-            ),
-          const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(
               top: 10,
-              left: 16,
-              right: 16,
+              left: 0,
+              right: 0,
               bottom: 8,
             ),
             child: heading(
               AppLocalizations.of(context)?.visualizeYourIssue ?? '',
-              AppLocalizations.of(context)?.addImageOrVideoOfIssue ?? '',
             ),
           ),
           const SizedBox(height: 5),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _addMediaWidget(
                 file: _selectedImage,
@@ -330,24 +320,16 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
     );
   }
 
-  Widget heading(String heading, String subtitle) {
+  Widget heading(String heading) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           heading,
-          style: PoppinsFont.textStyle(
-            color: const Color.fromARGB(255, 79, 79, 79),
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        Text(
-          subtitle,
-          style: PoppinsFont.textStyle(
+          style: DMSansFont.textStyle(
             color: Colors.black,
-            fontSize: 9,
-            fontWeight: FontWeight.w400,
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
           ),
         ),
       ],

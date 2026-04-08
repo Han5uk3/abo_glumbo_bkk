@@ -795,7 +795,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
         barrierDismissible: false, // User must tap a button
         builder: (BuildContext dialogContext) {
           return AlertDialog(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.bgBlueTint,
             actionsAlignment: MainAxisAlignment.start,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),

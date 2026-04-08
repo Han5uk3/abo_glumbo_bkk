@@ -201,21 +201,21 @@ class MyApp extends StatelessWidget {
 
               theme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-                scaffoldBackgroundColor: AppColors.bgWhite,
+                scaffoldBackgroundColor: AppColors.bgBlueTint,
                 navigationBarTheme: NavigationBarThemeData(
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.bgBlueTint,
                   indicatorColor: Colors.transparent,
                   labelTextStyle: WidgetStateTextStyle.resolveWith((states) {
                     if (states.contains(WidgetState.selected)) {
                       return DMSansFont.textStyle(
                         color: AppColors.darkGrey,
-                        fontSize: 10,
+                        fontSize: 8,
                         fontWeight: FontWeight.bold,
                       );
                     }
                     return DMSansFont.textStyle(
                       color: AppColors.grey,
-                      fontSize: 10,
+                      fontSize: 8,
                     );
                   }),
                 ),
@@ -245,15 +245,15 @@ class MyApp extends StatelessWidget {
                   titleSpacing: 0,
                   titleTextStyle: DMSansFont.textStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 searchBarTheme: SearchBarThemeData(
                   elevation: const WidgetStatePropertyAll(0),
-                  backgroundColor: const WidgetStatePropertyAll(Colors.white),
+                  backgroundColor: WidgetStatePropertyAll(AppColors.bgBlueTint),
                   textStyle: WidgetStatePropertyAll(
-                    DMSansFont.textStyle(color: Colors.black45, fontSize: 14),
+                    DMSansFont.textStyle(color: Colors.black45, fontSize: 12),
                   ),
                   constraints: const BoxConstraints(
                     minHeight: 50,
@@ -268,9 +268,9 @@ class MyApp extends StatelessWidget {
                     BorderSide(color: Colors.black12, width: 1),
                   ),
                 ),
-                bottomSheetTheme: const BottomSheetThemeData(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
+                bottomSheetTheme: BottomSheetThemeData(
+                  backgroundColor: AppColors.bgBlueTint,
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(12),
                       topRight: Radius.circular(12),

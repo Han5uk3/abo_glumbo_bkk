@@ -271,24 +271,35 @@ Widget buildBookingTimelineCard(
         }
 
         // Payment status
+        if (booking.paidAt != null) {
+          timelineItems.add({
+            'title': AppLocalizations.of(context)!.verificationPending,
+            'time': _formatDateLocalized(booking.paidAt!.toDate(), context),
+            'description':
+                AppLocalizations.of(context)!.waitingForTechnicianVerification,
+            'status': 'completed',
+            'date': booking.paidAt!.toDate(),
+          });
+        }
+
         if (booking.paymentCompleted == true &&
             (booking.bookingStatusCode != 'P' &&
                 booking.bookingStatusCode != "A")) {
           timelineItems.add({
             'title': AppLocalizations.of(context)!.paymentCompleted,
             'time': AppLocalizations.of(context)!.completed,
-            'description': AppLocalizations.of(
-              context,
-            )!.paymentSuccessfullyCompleted,
+            'description':
+                AppLocalizations.of(context)!.paymentSuccessfullyCompleted,
             'status': 'completed',
-            'date': booking.completedAt!.toDate(),
+            'date': booking.paymentCompletedAt?.toDate() ??
+                booking.completedAt?.toDate() ??
+                booking.cancelledAt?.toDate() ??
+                booking.createdAt?.toDate() ??
+                DateTime.now(),
           });
         } else if (booking.paymentCompleted == false &&
-            (booking.bookingStatusCode != 'P' &&
-                booking.bookingStatusCode != "A") &&
-            // Don't show payment pending for rejected or cancelled bookings
-            booking.bookingStatusCode.toLowerCase() != 'r' &&
-            booking.bookingStatusCode.toLowerCase() != 'xc') {
+            booking.bookingStatusCode == 'C') {
+          // If customer hasn't paid yet but booking is done
           timelineItems.add({
             'title': AppLocalizations.of(context)!.paymentPending,
             'time': AppLocalizations.of(context)!.pending,
@@ -310,6 +321,9 @@ Widget buildBookingTimelineCard(
             'date': booking.rejectedAt!.toDate(),
           });
         }
+
+        // Counter Proposal Started (redundant if already added above but good for clarity in normal path if needed)
+        // Actually, I'll add them outside the if/else if they apply to both.
 
         // Cancelled by customer
         if (booking.bookingStatusCode.toLowerCase() == 'xc') {
@@ -347,6 +361,29 @@ Widget buildBookingTimelineCard(
             });
           }
         }
+      }
+      // Counter Proposal Started
+      if (booking.counterProposalStartedAt != null) {
+        final eventDate = booking.counterProposalStartedAt!.toDate();
+        timelineItems.add({
+          'title': AppLocalizations.of(context)!.counterProposalStarted,
+          'time': _formatDateLocalized(eventDate, context),
+          'description': AppLocalizations.of(context)!.counterOfferSent,
+          'status': 'completed',
+          'date': eventDate,
+        });
+      }
+
+      // Counter Proposal Accepted
+      if (booking.counterProposalAcceptedAt != null) {
+        final eventDate = booking.counterProposalAcceptedAt!.toDate();
+        timelineItems.add({
+          'title': AppLocalizations.of(context)!.counterProposalAccepted,
+          'time': _formatDateLocalized(eventDate, context),
+          'description': AppLocalizations.of(context)!.counterOfferResponse,
+          'status': 'completed',
+          'date': eventDate,
+        });
       }
 
       // Sort ALL events by date

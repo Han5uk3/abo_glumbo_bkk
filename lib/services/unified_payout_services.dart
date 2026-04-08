@@ -20,6 +20,7 @@ class UnifiedPayoutServices {
         await _firestore.collection('unified_wallets').doc(workerId).set({
           'workerId': workerId,
           'totalEarnings': 0.0,
+          'totalCompletionAmount': 0.0, // ✅ Ensure consistency
           'paidEarnings': 0.0,
           'availableEarnings': 0.0,
           'totalTips': 0.0,
@@ -70,6 +71,7 @@ class UnifiedPayoutServices {
       // Update earnings (from service payments)
       if (earningsIncrement > 0) {
         updates['totalEarnings'] = FieldValue.increment(earningsIncrement);
+        updates['totalCompletionAmount'] = FieldValue.increment(earningsIncrement); // ✅ Consistent with Model
         updates['availableEarnings'] = FieldValue.increment(earningsIncrement);
         updates['lifetimeTotal'] = FieldValue.increment(earningsIncrement);
         updates['totalAvailableBalance'] = FieldValue.increment(

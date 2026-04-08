@@ -10,7 +10,6 @@ import 'package:abo_glumbo_bbk/pages/login/otp.dart';
 import 'package:abo_glumbo_bbk/services/auth_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/styles/app_images.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -44,7 +43,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     _phoneController.addListener(_onPhoneNumberChanged);
-    customerLastUid = LocalStoreHelper.getUID() ?? LocalStoreHelper.getLastValidUID();
+    customerLastUid =
+        LocalStoreHelper.getUID() ?? LocalStoreHelper.getLastValidUID();
     isCheckUserEnableTwoStepVerification =
         LocalStoreHelper.getBiometricAuthEnabled(customerLastUid ?? '');
     isUserLogout = LocalStoreHelper.getLogoutStatus();
@@ -196,26 +196,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _signUpLater() async {
     try {
-      final currentUid = LocalStoreHelper.getUID();
-      final isBiometricEnabled = currentUid != null
-          ? LocalStoreHelper.getBiometricAuthEnabled(currentUid)
-          : false;
-
-      if (!isBiometricEnabled) {
-        await LocalStoreHelper.clearUID();
-      }
-      await LocalStoreHelper.putGuestUser(true);
-      if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const Home(initialIndex: 0)),
-          (route) => false,
-        );
-      }
+      setState(() => _isLoading = true);
+      await AuthServices().signInAsGuest(context);
     } catch (e) {
       if (mounted) {
+        setState(() => _isLoading = false);
         _showSnackBar(
-          'Error occurred while setting guest mode: ${e.toString()}',
+          '${AppLocalizations.of(context)?.unexpectedErrorOccurred ?? 'Error'}: ${e.toString()}',
           AppColors.red,
         );
       }
@@ -254,6 +241,7 @@ class _LoginPageState extends State<LoginPage> {
         if (FirebaseAuth.instance.currentUser == null) {
           await FirebaseAuth.instance.signInAnonymously();
         }
+        await LocalStoreHelper.putGuestUser(false);
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -335,50 +323,6 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  Widget _buildHeaderImage() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 60),
-      child: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Positioned(
-              child: Container(
-                height: 305,
-                width: 256,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(32),
-                ),
-              ),
-            ),
-            Container(
-              height: 295,
-              width: 278,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(32),
-              ),
-            ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(32),
-              child: SizedBox(
-                height: 285,
-                width: 290,
-                child: Image.asset(
-                  AppImages.loginImage,
-
-                  fit: BoxFit.cover,
-                  alignment: Alignment.center,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildPhoneInputField() {
     return Container(
       height: 60,
@@ -387,24 +331,14 @@ class _LoginPageState extends State<LoginPage> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
       ),
-      alignment: Alignment.center,
-      padding: const EdgeInsets.only(left: 22, right: 22),
-      child: TextFormField(
-        controller: _phoneController,
-        textInputAction: TextInputAction.done,
-        keyboardType: TextInputType.number,
-        style: DMSansFont.textStyle(
-          color: Colors.black,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.all(12),
-          prefixIcon: Row(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('🇸🇦', style: const TextStyle(fontSize: 18)),
+              const Text('🇸🇦', style: TextStyle(fontSize: 20)),
               const SizedBox(width: 8),
               Directionality(
                 textDirection: TextDirection.ltr,
@@ -412,39 +346,84 @@ class _LoginPageState extends State<LoginPage> {
                   "+966",
                   style: DMSansFont.textStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 14,
                     color: Colors.black,
                   ),
                 ),
               ),
+              const SizedBox(width: 12),
+              Container(
+                height: 24,
+                width: 1,
+                color: Colors.black.withOpacity(0.1),
+              ),
+              const SizedBox(width: 12),
             ],
           ),
-        ),
-        onFieldSubmitted: (_) {
-          if (!_isLoading) {
-            _onLoginPressed();
-          }
-        },
+          Expanded(
+            child: TextFormField(
+              controller: _phoneController,
+              textInputAction: TextInputAction.done,
+              keyboardType: TextInputType.number,
+              textAlignVertical: TextAlignVertical.center,
+              style: DMSansFont.textStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                hintText: '5XXXXXXXX',
+                hintStyle: DMSansFont.textStyle(
+                  color: Colors.black.withOpacity(0.3),
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              onFieldSubmitted: (_) {
+                if (!_isLoading) {
+                  _onLoginPressed();
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
+
   Widget _buildRememberMeCheckbox() {
-    return Center(
-      child: CheckboxListTile.adaptive(
-        dense: true,
-        controlAffinity: ListTileControlAffinity.leading,
-        contentPadding: const EdgeInsets.all(0),
-        title: Text(
-          AppLocalizations.of(context)?.rememberMe ?? '',
-          style: DMSansFont.textStyle(color: Colors.white, fontSize: 14),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 24,
+          width: 24,
+          child: Checkbox(
+            value: _isRememberMeChecked,
+            onChanged: _onRememberMeChanged,
+            activeColor: AppColors.primary,
+            side: BorderSide(color: Colors.black.withOpacity(0.4), width: 1.5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
         ),
-        side: const BorderSide(color: Colors.white),
-        activeColor: Colors.blue,
-        checkColor: Colors.white,
-        value: _isRememberMeChecked,
-        onChanged: _onRememberMeChanged,
-      ),
+        const SizedBox(width: 8),
+        GestureDetector(
+          onTap: () => _onRememberMeChanged(!_isRememberMeChecked),
+          child: Text(
+            AppLocalizations.of(context)?.rememberMe ?? 'Remember me',
+            style: DMSansFont.textStyle(
+              color: Colors.black.withOpacity(0.7),
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -489,7 +468,7 @@ class _LoginPageState extends State<LoginPage> {
             backgroundColor: AppColors.primary,
             disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
           child: _isLoading
@@ -498,7 +477,7 @@ class _LoginPageState extends State<LoginPage> {
                   AppLocalizations.of(context)?.continueText ?? '',
                   style: DMSansFont.textStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -514,8 +493,8 @@ class _LoginPageState extends State<LoginPage> {
         child: Text(
           AppLocalizations.of(context)?.signUpLater ?? '',
           style: DMSansFont.textStyle(
-            color: Colors.white,
-            fontSize: 16,
+            color: Colors.black.withOpacity(0.7),
+            fontSize: 14,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -532,7 +511,7 @@ class _LoginPageState extends State<LoginPage> {
             TextSpan(
               text:
                   "${AppLocalizations.of(context)?.byContinuingYouAgreeToOur ?? ''}\n ",
-              style: DMSansFont.textStyle(fontSize: 11, color: Colors.black),
+              style: DMSansFont.textStyle(fontSize: 10, color: Colors.black),
             ),
             TextSpan(
               recognizer: TapGestureRecognizer()
@@ -546,14 +525,14 @@ class _LoginPageState extends State<LoginPage> {
                 },
               text: AppLocalizations.of(context)?.termsOfUse ?? '',
               style: DMSansFont.textStyle(
-                fontSize: 11,
+                fontSize: 12,
                 color: Colors.blue,
                 decoration: TextDecoration.underline,
               ),
             ),
             TextSpan(
               text: " ${AppLocalizations.of(context)!.and} ",
-              style: DMSansFont.textStyle(fontSize: 11, color: Colors.black),
+              style: DMSansFont.textStyle(fontSize: 10, color: Colors.black),
             ),
             TextSpan(
               recognizer: TapGestureRecognizer()
@@ -566,7 +545,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
               text: AppLocalizations.of(context)?.privacyPolicy ?? '',
               style: DMSansFont.textStyle(
-                fontSize: 11,
+                fontSize: 12,
                 color: Colors.blue,
                 decoration: TextDecoration.underline,
               ),
@@ -582,7 +561,7 @@ class _LoginPageState extends State<LoginPage> {
     return BlocBuilder<AccountBloc, AccountState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: AppColors.bgWhite,
+          backgroundColor: AppColors.bgBlueTint,
 
           extendBodyBehindAppBar: true,
           appBar: AppBar(
@@ -598,12 +577,12 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   // Top Image Container - Fixed size 40x40
                   Container(
-                    height: MediaQuery.of(context).size.height / 4,
+                    height: MediaQuery.of(context).size.height * 0.27,
                     color: AppColors.primary,
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       children: [
-                        SizedBox(height: 15),
+                        SizedBox(height: 32),
                         SizedBox(
                           height: 181,
                           width: 182,
@@ -621,7 +600,7 @@ class _LoginPageState extends State<LoginPage> {
                   // Bottom Container with Border Radius
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColors.bgWhite,
+                      color: AppColors.bgBlueTint,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(60),
                         topRight: Radius.circular(60),
@@ -631,7 +610,7 @@ class _LoginPageState extends State<LoginPage> {
                     constraints: BoxConstraints(
                       minHeight:
                           MediaQuery.of(context).size.height *
-                          0.7, // Minimum height
+                          0.63, // Minimum height
                     ),
 
                     // alignment: Alignment.center,
@@ -642,35 +621,24 @@ class _LoginPageState extends State<LoginPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Login", style: TextStyle(fontSize: 17)),
+                            Text(
+                              AppLocalizations.of(context)!.login,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
                           ],
                         ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 20,
+                        ),
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
 
                           children: [
-                            // _buildHeaderImage(),
-                            // const SizedBox(height: 10),
-                            // Center(
-                            //   child: Text(
-                            //     AppLocalizations.of(context)?.loginDescription ?? '',
-                            //     textAlign: TextAlign.center,
-                            //     style: DMSansFont.textStyle(
-                            //       fontWeight: FontWeight.w700,
-                            //       color: Colors.white,
-                            //       fontSize: 24,
-                            //     ),
-                            //   ),
-                            // ),
-                            // const SizedBox(height: 13),
-                            // Directionality(
-                            //   textDirection: TextDirection.ltr,
-                            //   child: LanguageSelectorCard(isInLoginPage: true),
-                            // ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 6,
-                            ),
                             Text(
                               AppLocalizations.of(context)?.mobileNumber ?? '',
                               style: DMSansFont.textStyle(
@@ -680,10 +648,12 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             const SizedBox(height: 6),
                             _buildPhoneInputField(),
-                            const SizedBox(height: 6),
-                            // _buildRememberMeCheckbox(),
                             const SizedBox(height: 10),
+                            _buildRememberMeCheckbox(),
+                            const SizedBox(height: 20),
                             _buildLoginButton(),
+                            const SizedBox(height: 10),
+                            _buildSignUpLaterButton(),
                             const SizedBox(height: 20),
                             _buildTermsAndPrivacyText(),
                             const SizedBox(height: 20),

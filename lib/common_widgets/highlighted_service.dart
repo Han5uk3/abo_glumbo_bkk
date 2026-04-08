@@ -1,8 +1,7 @@
-import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/common_widgets/shimmer_loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/sheets/service_info.dart';
-import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -52,15 +51,13 @@ class HighlightedServiceWidget extends StatelessWidget {
                     .get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Container(
-                      height: 127,
-                      width: 127,
-                      alignment: Alignment.center,
-                      margin: isRtlLanguage
-                          ? const EdgeInsets.only(left: 13)
-                          : const EdgeInsets.only(right: 13),
-                      color: Colors.grey[200],
-                      // child: const CircularProgressIndicator(),
+                    return const Padding(
+                      padding: EdgeInsets.only(right: 13),
+                      child: ShimmerLoader(
+                        width: 127,
+                        height: 127,
+                        borderRadius: 4,
+                      ),
                     );
                   }
                   if (snapshot.hasError) {
@@ -104,9 +101,10 @@ class HighlightedServiceWidget extends StatelessWidget {
                                 ? CachedNetworkImage(
                                     imageUrl: service.image!,
                                     fit: BoxFit.cover,
-                                    placeholder: (context, url) => Loader(
-                                      size: 20,
-                                      color: AppColors.primary,
+                                    placeholder: (context, url) => const ShimmerLoader(
+                                      width: 127,
+                                      height: 127,
+                                      borderRadius: 4,
                                     ),
                                     errorWidget: (context, url, error) =>
                                         const Icon(

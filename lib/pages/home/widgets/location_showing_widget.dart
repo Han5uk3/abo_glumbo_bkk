@@ -4,6 +4,7 @@ import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LocationShowingWidget extends StatefulWidget {
@@ -116,14 +117,7 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
                   _fetchLocation();
                 },
                 child: state is UpdateCustomerLocationLoading
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          color: Colors.white70,
-                          strokeWidth: 2,
-                        ),
-                      )
+                    ? Loader(color: Colors.white70, size: 12)
                     : const Icon(
                         Icons.refresh,
                         color: Colors.white70,

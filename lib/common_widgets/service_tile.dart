@@ -1,7 +1,7 @@
-import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/common_widgets/shimmer_loader.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/sheets/book_service.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/book_service_page.dart';
 import 'package:abo_glumbo_bbk/sheets/sign_up_alert.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 // import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
@@ -41,38 +41,67 @@ class ServiceTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child:
-                (service.image != null &&
-                    service.image!.isNotEmpty &&
-                    Uri.tryParse(service.image!) != null &&
-                    Uri.tryParse(service.image!)!.hasAbsolutePath)
-                ? CachedNetworkImage(
-                    imageUrl: service.image!,
-                    height: 85,
-                    width: 85,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => SizedBox(
-                      height: 85,
-                      width: 85,
-                      child: Loader(color: AppColors.primary),
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child:
+                    (service.image != null &&
+                        service.image!.isNotEmpty &&
+                        Uri.tryParse(service.image!) != null &&
+                        Uri.tryParse(service.image!)!.hasAbsolutePath)
+                    ? CachedNetworkImage(
+                        imageUrl: service.image!,
+                        height: 85,
+                        width: 85,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const ShimmerLoader(
+                          height: 85,
+                          width: 85,
+                          borderRadius: 4,
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error, color: Colors.red, size: 30),
+                      )
+                    : Container(
+                        height: 85,
+                        width: 85,
+                        color: Colors.grey[300],
+                        child: const Center(
+                          child: Icon(
+                            Icons.image_not_supported,
+                            color: Colors.grey,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+              ),
+              if ((service.discountPercentage ?? 0) > 0)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
                     ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error, color: Colors.red, size: 30),
-                  )
-                : Container(
-                    height: 85,
-                    width: 85,
-                    color: Colors.grey[300],
-                    child: const Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: Colors.grey,
-                        size: 30,
+                    decoration: const BoxDecoration(
+                      color: Colors.redAccent,
+                      borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      "${service.discountPercentage!.toInt()}%",
+                      style: DMSansFont.textStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
+                ),
+            ],
           ),
           const SizedBox(width: 17),
           Expanded(
@@ -96,7 +125,7 @@ class ServiceTile extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: DMSansFont.textStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 13,
+                          fontSize: 11,
                           color: Colors.black,
                         ),
                       ),
@@ -170,7 +199,7 @@ class ServiceTile extends StatelessWidget {
                       '',
                   style: DMSansFont.textStyle(
                     color: Colors.black45,
-                    fontSize: 12,
+                    fontSize: 10,
                   ),
                   maxLines: 5,
                   overflow: TextOverflow.ellipsis,
@@ -199,7 +228,7 @@ class ServiceTile extends StatelessWidget {
                               '',
                           style: DMSansFont.textStyle(
                             color: AppColors.secondary,
-                            fontSize: 12,
+                            fontSize: 10,
                           ),
                         ),
                       ),
@@ -209,13 +238,28 @@ class ServiceTile extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    Text(
-                      "${service.price} ${AppLocalizations.of(context)!.sar}",
-                      style: DMSansFont.textStyle(
-                        color: AppColors.green1,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if ((service.discountPercentage ?? 0) > 0)
+                          Text(
+                            "${service.price} ${AppLocalizations.of(context)!.sar}",
+                            style: DMSansFont.textStyle(
+                              color: Colors.black26,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 9,
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          ),
+                        Text(
+                          "${service.getDiscountedPrice(service.price ?? 0)} ${AppLocalizations.of(context)!.sar}",
+                          style: DMSansFont.textStyle(
+                            color: AppColors.green1,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(width: 11),
                     SizedBox(
@@ -235,14 +279,21 @@ class ServiceTile extends StatelessWidget {
                               context,
                             );
                           }
-                          showBookServiceBottomSheet(context, service: service);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BookServicePage(
+                                service: service,
+                              ),
+                            ),
+                          );
                         },
                         child: Text(
                           AppLocalizations.of(context)?.requestService ?? '',
                           style: DMSansFont.textStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 10,
+                            fontSize: 8,
                           ),
                         ),
                       ),

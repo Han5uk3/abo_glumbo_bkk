@@ -2,6 +2,8 @@ import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/models/warranty.dart';
+import 'package:abo_glumbo_bbk/models/counter_offer.dart';
+import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BookingModel {
@@ -11,6 +13,7 @@ class BookingModel {
   late String bookingStatusCode;
   bool? isEscalated;
   Timestamp? escalatedAt;
+  bool? isOnHour; // ✅ Added: Whether booking is on-hour or off-hour
 
   late String notes;
   late String? issueImage;
@@ -39,8 +42,18 @@ class BookingModel {
   String? selectedAddressId; // Added selectedAddressId
   WarrantyModel? warranty;
   Timestamp? paymentCompletedAt;
-  List<String>? paymentProof; // Payment completion proof files
+  List<String>? paymentProof; // Customer payment completion proof files
+  List<String>? technicianPaymentProof; // Technician payment confirmation proof files
   double? paidAmount; // Amount paid for job completion
+  Timestamp? paidAt; // Added paidAt
+  Timestamp? counterProposalAcceptedAt;
+  Timestamp? counterProposalStartedAt;
+  CounterOfferModel? activeCounterOffer;
+
+  /// The service location zone that the customer's address matched during
+  /// booking validation. Used by the technician/admin app to display which
+  /// named area the booking covers.
+  MatchedServiceZone? serviceLocation;
 
   List<String>? cancelledWorkerUids;
 
@@ -75,11 +88,18 @@ class BookingModel {
     this.orderId,
     this.transactionId, // Added transactionId
     this.selectedAddressId, // Added selectedAddressId
+    this.serviceLocation, // Matched service zone
     this.cancelledWorkerUids,
     this.paymentCompleted = false,
     this.warranty,
     this.paymentProof,
+    this.technicianPaymentProof,
     this.paidAmount,
+    this.paidAt,
+    this.activeCounterOffer,
+    this.isOnHour, // ✅ Added
+    this.counterProposalAcceptedAt,
+    this.counterProposalStartedAt,
   });
 
   BookingModel.fromMap(Map<String, dynamic> data)
@@ -125,12 +145,27 @@ class BookingModel {
       completedAt = data['completedAt'],
       paymentCompleted = data['paymentCompleted'] ?? false,
       orderId = data['orderId'],
+      activeCounterOffer = data['activeCounterOffer'] != null
+          ? CounterOfferModel.fromMap(data['activeCounterOffer'])
+          : null,
+      counterProposalAcceptedAt = data['counterProposalAcceptedAt'] as Timestamp?,
+      counterProposalStartedAt = data['counterProposalStartedAt'] as Timestamp?,
       transactionId = data['transactionId'], // Added transactionId
       selectedAddressId = data['selectedAddressId'], // Added selectedAddressId
+      serviceLocation = data['serviceLocation'] != null
+          ? MatchedServiceZone.fromJson(
+              data['serviceLocation'] as Map<String, dynamic>,
+            )
+          : null,
       paymentProof = data['paymentProof'] != null
           ? List<String>.from(data['paymentProof'])
           : null,
+      technicianPaymentProof = data['technicianPaymentProof'] != null
+          ? List<String>.from(data['technicianPaymentProof'])
+          : null,
       paidAmount = data['paidAmount']?.toDouble(),
+      paidAt = data['paidAt'] as Timestamp?,
+      isOnHour = data['isOnHour'], // ✅ Added
       cancelledAt = data['cancelledAt'];
 
   factory BookingModel.fromJson(Map<String, dynamic> data) {
@@ -177,10 +212,15 @@ class BookingModel {
       'orderId': orderId,
       'transactionId': transactionId, // Added transactionId
       'selectedAddressId': selectedAddressId, // Added selectedAddressId
+      'serviceLocation': serviceLocation?.toJson(),
       'cancellationReason': cancellationReason,
       'paymentCompleted': paymentCompleted,
       'paymentProof': paymentProof,
+      'technicianPaymentProof': technicianPaymentProof,
       'paidAmount': paidAmount,
+      'paidAt': paidAt,
+      'activeCounterOffer': activeCounterOffer?.toMap(),
+      'isOnHour': isOnHour, // ✅ Added
     };
 
     map['id'] = id;
@@ -306,6 +346,7 @@ enum BookingStatusType {
   pending,
   confirmed,
   pendingPayment,
+  verificationPending,
   completed,
   cancelled,
   onWarranty,

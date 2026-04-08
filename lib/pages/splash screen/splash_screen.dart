@@ -84,14 +84,24 @@ class _SplashScreenState extends State<SplashScreen>
   void _startAnimationSequence() async {
     _pulseController.repeat(reverse: true);
 
-    _logoController.forward();
+    // 1. Wait for Logo animation
+    await _logoController.forward();
 
-    await Future.delayed(const Duration(milliseconds: 1000));
-    if (mounted) _taglineController.forward();
+    // 2. Wait for Tagline animation
+    if (mounted) {
+      await _taglineController.forward();
+    }
+
+    // 3. Wait 1 second AFTER all animations are done
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (mounted) {
+      _initializeApp();
+    }
   }
 
   void _initializeApp() async {
-    await Future.delayed(const Duration(seconds: 3));
+    // Redundant delay removed as it's now handled by the animation sequence completion logic
 
     if (mounted) {
       if (LocalStoreHelper.getUID() != null && !_isUserLogout) {
@@ -143,62 +153,60 @@ class _SplashScreenState extends State<SplashScreen>
                 child: CustomPaint(
                   size: Size(screenWidth, screenHeight * 0.35),
                   painter: BottomShapePainter(
-                    color: const Color(0xFF143D82).withOpacity(0.5),
+                    color: Colors.white.withOpacity(0.03),
                   ),
                 ),
               ),
 
               // 3. Central Content (Logo & Text)
-              SafeArea(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AnimatedBuilder(
-                        animation: Listenable.merge([
-                          _logoController,
-                          _pulseController,
-                        ]),
-                        builder: (context, child) {
-                          return FadeTransition(
-                            opacity: _logoFadeAnimation,
-                            child: ScaleTransition(
-                              scale: _logoScaleAnimation,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Logo
-                                  SizedBox(
-                                    width: 120,
-                                    height: 120,
-                                    child: Image.asset(
-                                      'assets/icons/app_icon.png',
-                                      color: Colors.white,
-                                      fit: BoxFit.contain,
-                                    ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AnimatedBuilder(
+                      animation: Listenable.merge([
+                        _logoController,
+                        _pulseController,
+                      ]),
+                      builder: (context, child) {
+                        return FadeTransition(
+                          opacity: _logoFadeAnimation,
+                          child: ScaleTransition(
+                            scale: _logoScaleAnimation,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Logo
+                                SizedBox(
+                                  width: 120,
+                                  height: 120,
+                                  child: Image.asset(
+                                    'assets/icons/app_icon.png',
+                                    color: Colors.white,
+                                    fit: BoxFit.contain,
                                   ),
+                                ),
 
-                                  // Text
-                                  Text(
-                                    state.locale.languageCode == "ar"
-                                        ? "ابو جلمبو"
-                                        : "Abo Glumbo",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
-                                    ),
+                                // Text
+                                Text(
+                                  state.locale.languageCode == "ar"
+                                      ? "ابو جلمبو"
+                                      : "Abo Glumbo",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],

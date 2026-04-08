@@ -3,6 +3,7 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
+import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'dart:io';
 
 abstract class BookingEvent extends Equatable {
@@ -22,6 +23,7 @@ class CreateBookingEvent extends BookingEvent {
   final Map timeSlot;
   final UserModel agent;
   final AddressModel? selectedAddress;
+  final MatchedServiceZone? serviceLocation;
 
   const CreateBookingEvent({
     required this.service,
@@ -33,6 +35,7 @@ class CreateBookingEvent extends BookingEvent {
     required this.timeSlot,
     required this.agent,
     this.selectedAddress,
+    this.serviceLocation,
   });
 
   @override
@@ -46,5 +49,6 @@ class CreateBookingEvent extends BookingEvent {
     timeSlot,
     agent,
     selectedAddress,
+    serviceLocation,
   ];
 }

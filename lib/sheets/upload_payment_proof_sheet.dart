@@ -79,7 +79,9 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error selecting files: $e'),
+            content: Text(
+              "${AppLocalizations.of(context)?.errorUploading ?? 'Error uploading'}: $e",
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -125,7 +127,10 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
     if (transactionId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please enter a transaction ID'),
+          content: Text(
+            AppLocalizations.of(context)?.pleaseEnterTransactionId ??
+                'Please enter a transaction ID',
+          ),
           backgroundColor: Colors.orange,
         ),
       );
@@ -170,8 +175,9 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
         'paymentProof': uploadedUrls,
         'paidAmount': amount,
         'transactionId': transactionId, // Saving transaction ID
-        'paymentCompleted': true,
-        'paymentCompletedAt': Timestamp.now(),
+        'bookingStatusCode': 'VP',
+        'paidAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
       });
 
       if (mounted) {
@@ -194,7 +200,9 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error uploading: $e'),
+            content: Text(
+              "${AppLocalizations.of(context)?.errorUploading ?? 'Error uploading'}: $e",
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -230,8 +238,8 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  AppLocalizations.of(context)?.uploadPaymentProof ??
-                      'Upload Payment Proof',
+                  AppLocalizations.of(context)?.completePayment ??
+                      'Complete Payment',
                   style: DMSansFont.textStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -309,7 +317,8 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                   controller: _transactionIdController,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    hintText: 'Enter Transaction ID',
+                    hintText: AppLocalizations.of(context)?.enterTransactionId ??
+                        'Enter Transaction ID',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -425,6 +434,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                           ),
                   ),
                 ),
+                const SizedBox(height: 50),
               ],
             ),
           ),

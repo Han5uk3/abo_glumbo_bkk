@@ -16,7 +16,7 @@ void showSnackBar(
           color: backgroundColor == AppColors.yellow
               ? Colors.grey.shade800
               : Colors.white,
-          fontSize: 15,
+          fontSize: 13,
           fontWeight: FontWeight.w500,
         ),
       ),

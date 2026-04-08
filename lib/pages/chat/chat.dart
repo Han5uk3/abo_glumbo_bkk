@@ -156,7 +156,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.bgBlueTint,
       appBar: AppBar(
         elevation: 1,
         backgroundColor: AppColors.primary,

@@ -3,6 +3,7 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/notification.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -130,7 +131,7 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
         }
 
         return Scaffold(
-          backgroundColor: Colors.grey[50],
+          backgroundColor: AppColors.bgBlueTint,
           appBar: AppBar(
             elevation: 0,
             backgroundColor: AppColors.primary,
@@ -236,8 +237,8 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
             builder: (context) {
               if (snapshot.connectionState == ConnectionState.waiting &&
                   _cachedNotifications.isEmpty) {
-                return const Center(
-                  child: CircularProgressIndicator(strokeWidth: 3),
+                return Center(
+                  child: Loader(color: AppColors.primary, size: 30),
                 );
               }
 
@@ -309,10 +310,8 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                       padding: const EdgeInsets.all(16),
                       alignment: Alignment.center,
                       child: _isLoadingMore
-                          ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                          ? Center(
+                              child: Loader(color: AppColors.primary, size: 24),
                             )
                           : const SizedBox.shrink(),
                     );

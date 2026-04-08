@@ -16,6 +16,7 @@ class TelrPaymentRequest {
   final String? bill_country;
   final String? bill_zip;
   final String? bill_email;
+  final String? bill_phone;
 
   TelrPaymentRequest({
     this.ivp_method = 'create',
@@ -33,6 +34,7 @@ class TelrPaymentRequest {
     this.bill_country,
     this.bill_zip,
     this.bill_email,
+    this.bill_phone,
   });
 
   Map<String, dynamic> toMap() {
@@ -66,6 +68,9 @@ class TelrPaymentRequest {
     if (bill_zip != null && bill_zip!.isNotEmpty) map['bill_zip'] = bill_zip!;
     if (bill_email != null && bill_email!.isNotEmpty) {
       map['bill_email'] = bill_email!;
+    }
+    if (bill_phone != null && bill_phone!.isNotEmpty) {
+      map['bill_phone'] = bill_phone!;
     }
 
     return map;

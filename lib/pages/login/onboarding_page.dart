@@ -1,5 +1,7 @@
+import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/login/widgets/language_selector.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
@@ -46,216 +48,90 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // PageView for onboarding screens
-            // PageView(
-            //   controller: _pageController,
-            //   children: [
-            // // Screen 1
-            // _buildOnboardingScreen(
-            //   context,
-            //   screenHeight,
-            //   screenWidth,
-            //   icon: Icons.home_repair_service_rounded,
-            //   title: 'Welcome to Abo Glumbo!',
-            //   description:
-            //       'We are your new partner for peace of mind. Ready for your home maintenance? Start your first request now.',
-            //   color: const Color(0xFF0A2A5E),
-            // ),
-            // // Screen 2
-            // _buildOnboardingScreen(
-            //   context,
-            //   screenHeight,
-            //   screenWidth,
-            //   icon: Icons.verified_user_rounded,
-            //   title: 'Trusted Professionals',
-            //   description:
-            //       'All our technicians are verified, trained, and ready to help you with any home maintenance needs.',
-            //   color: const Color(0xFF1E5AB6),
-            // ),
-            // // Screen 3
-            _buildOnboardingScreen(
+      backgroundColor: AppColors.bgBlueTint,
+      body: Stack(
+        children: [
+          // // Screen 3
+          Positioned.fill(
+            child: _buildOnboardingScreen(
               context,
               screenHeight,
               screenWidth,
               icon: Icons.schedule_rounded,
-              title: 'Reliable Home Services at Your Fingertips',
-              description:
-                  'Find trusted professionals for repairs, installations, and maintenance in just a few taps.',
-              color: const Color(0xFF2A6FD4),
+              title: AppLocalizations.of(context)!.onboard1,
+              description: AppLocalizations.of(context)!.onboard1desc,
+              color: AppColors.primary,
             ),
-
-            //   ],
-            // ),
-            // Bottom section with page indicator and button
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                  // color: Colors.white,
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: Colors.black.withOpacity(0.08),
-                  //     blurRadius: 10,
-                  //     offset: const Offset(0, -2),
-                  //   ),
-                  // ],
+          ),
+          Positioned(
+            top: 0,
+            child: Container(
+              height: screenHeight * 0.3,
+              width: screenWidth,
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(20),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Directionality.of(context) == TextDirection.ltr
+                      ? Radius.circular(12)
+                      : Radius.circular(0),
+                  bottomRight: Directionality.of(context) == TextDirection.ltr
+                      ? Radius.circular(0)
+                      : Radius.circular(12),
                 ),
-                padding: EdgeInsets.fromLTRB(24, 24, 24, 32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Page Indicator
-                    // SmoothPageIndicator(
-                    //   controller: _pageController,
-                    //   count: 3,
-                    //   effect: ExpandingDotsEffect(
-                    //     dotHeight: 8,
-                    //     dotWidth: 8,
-                    //     activeDotColor: AppColors.secondary,
-                    //     dotColor: Colors.grey.shade300,
-                    //     spacing: 6,
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 32),
-                    // Navigation Buttons
+              ),
+            ),
+          ),
 
-                    // if (_currentPage < 2)
-                    //   Row(
-                    //     children: [
-                    //       // Skip Button
-                    //       if (_currentPage > 0)
-                    //         Expanded(
-                    //           child: SizedBox(
-                    //             height: 56,
-                    //             child: OutlinedButton(
-                    //               onPressed: () => _pageController.previousPage(
-                    //                 duration: const Duration(milliseconds: 300),
-                    //                 curve: Curves.easeInOut,
-                    //               ),
-                    //               style: OutlinedButton.styleFrom(
-                    //                 side: BorderSide(
-                    //                   color: AppColors.secondary,
-                    //                   width: 2,
-                    //                 ),
-                    //                 shape: RoundedRectangleBorder(
-                    //                   borderRadius: BorderRadius.circular(12),
-                    //                 ),
-                    //               ),
-                    //               child: Text(
-                    //                 'Back',
-                    //                 style: DMSansFont.textStyle(
-                    //                   color: AppColors.secondary,
-                    //                   fontSize: 16,
-                    //                   fontWeight: FontWeight.w600,
-                    //                 ),
-                    //               ),
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       if (_currentPage > 0) const SizedBox(width: 12),
-                    //       // Next/Start Button
-                    //       Expanded(
-                    //         child: SizedBox(
-                    //           height: 56,
-                    //           child: ElevatedButton(
-                    //             onPressed: () {
-                    //               if (_currentPage < 2) {
-                    //                 _pageController.nextPage(
-                    //                   duration: const Duration(
-                    //                     milliseconds: 300,
-                    //                   ),
-                    //                   curve: Curves.easeInOut,
-                    //                 );
-                    //               } else {
-                    //                 _navigateToLogin();
-                    //               }
-                    //             },
-                    //             style: ElevatedButton.styleFrom(
-                    //               backgroundColor: AppColors.secondary,
-                    //               shape: RoundedRectangleBorder(
-                    //                 borderRadius: BorderRadius.circular(12),
-                    //               ),
-                    //               elevation: 0,
-                    //             ),
-                    //             child: Text(
-                    //               'Next',
-                    //               style: DMSansFont.textStyle(
-                    //                 color: Colors.white,
-                    //                 fontSize: 16,
-                    //                 fontWeight: FontWeight.w600,
-                    //               ),
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   )
-                    // else
-                    // Start Now Button on last screen
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: _navigateToLogin,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.bgWhite,
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 10,
-                        ),
-                        child: Text(
-                          'Start Now',
-                          style: DMSansFont.textStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+          //   ],
+          // ),
+          // Bottom section with page indicator and button
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
+              padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
+              margin: EdgeInsets.fromLTRB(0, 24, 0, 32),
+              child: SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _navigateToLogin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.bgWhite,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ],
+                    elevation: 10,
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.getStarted,
+                    style: DMSansFont.textStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ),
+          ),
 
-            // Close/Skip button in top right
-            Positioned(
-              top: 16,
-              right: 16,
-              child: GestureDetector(
-                onTap: _navigateToLogin,
-                child: LanguageSelectorCard(isInLoginPage: false),
-
-                //  Container(
-                //   padding: const EdgeInsets.all(8),
-                //   decoration: BoxDecoration(
-                //     color: Colors.white,
-                //     borderRadius: BorderRadius.circular(8),
-                //     boxShadow: [
-                //       BoxShadow(
-                //         color: Colors.black.withOpacity(0.1),
-                //         blurRadius: 4,
-                //       ),
-                //     ],
-                //   ),
-                //   child: Icon(
-                //     Icons.close,
-                //     color: AppColors.secondary,
-                //     size: 20,
-                //   ),
-                // ),
-              ),
+          // Close/Skip button in top right
+          Positioned(
+            top: kToolbarHeight + 6,
+            right: Directionality.of(context) == TextDirection.ltr ? 16 : null,
+            left: Directionality.of(context) == TextDirection.ltr ? null : 16,
+            child: GestureDetector(
+              onTap: _navigateToLogin,
+              child: LanguageSelectorCard(isInLoginPage: false),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -270,43 +146,91 @@ class _OnboardingPageState extends State<OnboardingPage> {
     required Color color,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [color, color.withOpacity(0.8)],
-        ),
-      ),
+      decoration: BoxDecoration(color: color),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Icon
-          Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              Positioned(
-                top: 0,
-                bottom: 0, // Remove bottom constraint
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: Image.asset(
-                    "assets/images/Ellipse1.png",
-                    fit: BoxFit.fill,
+          // Image/Icon Section
+          SizedBox(
+            height: screenHeight * 0.37,
+            child: Stack(
+              children: [
+                Center(
+                  child: Container(
+                    height: screenHeight * 0.3,
+
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: 0,
-                bottom: 0, // Remove bottom constraint
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: Image.asset(
-                    "assets/images/Ellipse1.png",
-                    fit: BoxFit.fill,
+                Center(
+                  child: SizedBox(
+                    height: screenHeight * 0.3,
+                    width: screenWidth,
+                    child: Image.asset(
+                      "assets/onboardImage.png",
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
-              ),
-            ],
+                //box over the image with text
+                Positioned(
+                  bottom: 0,
+                  left: screenWidth * 0.16,
+                  right: screenWidth * 0.16,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 13, sigmaY: 13),
+                      child: Container(
+                        width: screenWidth * 0.8,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.5),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: CircleAvatar(
+                                radius: 14,
+                                backgroundColor: Colors.white,
+                                child: Icon(
+                                  size: 14,
+                                  Icons.verified_user,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                AppLocalizations.of(
+                                  context,
+                                )!.verifiedAndProfessionalTechnicians,
+                                style: DMSansFont.textStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 40),
           // Title
@@ -316,7 +240,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               title,
               textAlign: TextAlign.center,
               style: DMSansFont.textStyle(
-                fontSize: 22,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -330,13 +254,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
               description,
               textAlign: TextAlign.center,
               style: DMSansFont.textStyle(
-                fontSize: 15,
+                fontSize: 14,
                 color: Colors.white.withOpacity(0.9),
                 height: 1.5,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
+          const SizedBox(height: 120),
         ],
       ),
     );

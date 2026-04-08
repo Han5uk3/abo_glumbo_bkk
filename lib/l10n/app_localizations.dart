@@ -158,11 +158,23 @@ abstract class AppLocalizations {
   /// **'Highest Rating'**
   String get highestRating;
 
+  /// No description provided for @verifiedAndProfessionalTechnicians.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified and Professional Technicians'**
+  String get verifiedAndProfessionalTechnicians;
+
   /// No description provided for @nearest.
   ///
   /// In en, this message translates to:
   /// **'Nearest'**
   String get nearest;
+
+  /// No description provided for @bookservice.
+  ///
+  /// In en, this message translates to:
+  /// **'Book service'**
+  String get bookservice;
 
   /// No description provided for @failedToLoadImage.
   ///
@@ -170,11 +182,23 @@ abstract class AppLocalizations {
   /// **'Failed to load image'**
   String get failedToLoadImage;
 
+  /// No description provided for @describeYourIssueInDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue in detail...'**
+  String get describeYourIssueInDetail;
+
   /// No description provided for @issueMedia.
   ///
   /// In en, this message translates to:
   /// **'Issue Media'**
   String get issueMedia;
+
+  /// No description provided for @notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get notes;
 
   /// No description provided for @image.
   ///
@@ -188,17 +212,89 @@ abstract class AppLocalizations {
   /// **'Technician is busy'**
   String get technicianIsBusy;
 
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// No description provided for @bookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get bookings;
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @aboutThisService.
+  ///
+  /// In en, this message translates to:
+  /// **'About this service'**
+  String get aboutThisService;
+
   /// No description provided for @backtobooking.
   ///
   /// In en, this message translates to:
   /// **'Back to booking'**
   String get backtobooking;
 
+  /// No description provided for @otphasbeensentto.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP has been sent to'**
+  String get otphasbeensentto;
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @resendOTPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP in'**
+  String get resendOTPin;
+
   /// No description provided for @edit.
   ///
   /// In en, this message translates to:
   /// **'Edit'**
   String get edit;
+
+  /// No description provided for @sText.
+  ///
+  /// In en, this message translates to:
+  /// **'s'**
+  String get sText;
+
+  /// No description provided for @verifiedTrustedAndProfessionalTechnicians.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified, Trusted and Professional Technicians'**
+  String get verifiedTrustedAndProfessionalTechnicians;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @onboard1.
+  ///
+  /// In en, this message translates to:
+  /// **'Reliable Home Services at Your Fingertips'**
+  String get onboard1;
+
+  /// No description provided for @onboard1desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Find trusted professionals for repairs, installations, and maintenance in just a few taps.'**
+  String get onboard1desc;
 
   /// No description provided for @namehomeworketc.
   ///
@@ -1292,6 +1388,24 @@ abstract class AppLocalizations {
   /// **'SAR'**
   String get sar;
 
+  /// No description provided for @discount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get discount;
+
+  /// No description provided for @off.
+  ///
+  /// In en, this message translates to:
+  /// **'OFF'**
+  String get off;
+
+  /// No description provided for @originalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Original Price'**
+  String get originalPrice;
+
   /// No description provided for @am.
   ///
   /// In en, this message translates to:
@@ -1928,6 +2042,12 @@ abstract class AppLocalizations {
   /// **'Select Service Address'**
   String get selectServiceAddress;
 
+  /// No description provided for @goToBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Bookings'**
+  String get goToBookings;
+
   /// No description provided for @savedAddresses.
   ///
   /// In en, this message translates to:
@@ -1939,6 +2059,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add New'**
   String get addNew;
+
+  /// No description provided for @bookingIdCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking ID Copied'**
+  String get bookingIdCopied;
 
   /// No description provided for @selected.
   ///
@@ -4049,8 +4175,302 @@ abstract class AppLocalizations {
   /// No description provided for @serviceUnavailableLongMessage.
   ///
   /// In en, this message translates to:
-  /// **'service unavailable to this location currently, we hope to expand our services to this area in the future'**
+  /// **'service unavailable to the seleceted address, we hope to expand our services to this area in the future'**
   String get serviceUnavailableLongMessage;
+
+  /// No description provided for @placeAndTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Place and timing'**
+  String get placeAndTiming;
+
+  /// No description provided for @counterOfferFromTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician proposed a new time'**
+  String get counterOfferFromTechnician;
+
+  /// No description provided for @technicianProposedNewTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician has proposed a new time for your booking.'**
+  String get technicianProposedNewTime;
+
+  /// No description provided for @acceptOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept Offer'**
+  String get acceptOffer;
+
+  /// No description provided for @rejectOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Offer'**
+  String get rejectOffer;
+
+  /// No description provided for @proposedTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Proposed Time'**
+  String get proposedTime;
+
+  /// No description provided for @counterPropose.
+  ///
+  /// In en, this message translates to:
+  /// **'Counter Propose'**
+  String get counterPropose;
+
+  /// No description provided for @proposeNewTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Propose New Time'**
+  String get proposeNewTime;
+
+  /// No description provided for @counterOfferSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Counter offer sent'**
+  String get counterOfferSent;
+
+  /// No description provided for @waitingForTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for technician response'**
+  String get waitingForTechnician;
+
+  /// No description provided for @checkingServiceAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking service availability...'**
+  String get checkingServiceAvailability;
+
+  /// No description provided for @serviceAreaNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Service unavailable: No service areas are set currently'**
+  String get serviceAreaNotConfigured;
+
+  /// No description provided for @noActiveServiceZones.
+  ///
+  /// In en, this message translates to:
+  /// **'Service unavailable: No active service zones defined'**
+  String get noActiveServiceZones;
+
+  /// No description provided for @failedToValidateServiceArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to validate service area'**
+  String get failedToValidateServiceArea;
+
+  /// No description provided for @validatingServiceAreaPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Validating service area, please wait...'**
+  String get validatingServiceAreaPleaseWait;
+
+  /// No description provided for @onHour.
+  ///
+  /// In en, this message translates to:
+  /// **'On-Hour'**
+  String get onHour;
+
+  /// No description provided for @offHour.
+  ///
+  /// In en, this message translates to:
+  /// **'Off-Hour'**
+  String get offHour;
+
+  /// No description provided for @currentTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Timing:'**
+  String get currentTiming;
+
+  /// No description provided for @pleaseSelectATimeSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a time slot'**
+  String get pleaseSelectATimeSlot;
+
+  /// No description provided for @cannotBookForPastTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot book for past time'**
+  String get cannotBookForPastTime;
+
+  /// No description provided for @finalizingBookingInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait while we finalize your booking...'**
+  String get finalizingBookingInfo;
+
+  /// No description provided for @technicianAssignmentNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'We will notify you once a technician has been assigned to you.'**
+  String get technicianAssignmentNotification;
+
+  /// No description provided for @verificationPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Pending'**
+  String get verificationPending;
+
+  /// No description provided for @waitingForTechnicianVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for technician to verify payment'**
+  String get waitingForTechnicianVerification;
+
+  /// No description provided for @verifyPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Payment'**
+  String get verifyPayment;
+
+  /// No description provided for @confirmPaymentReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Payment Receipt'**
+  String get confirmPaymentReceipt;
+
+  /// No description provided for @uploadTechnicianPaymentProof.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Technician Payment Proof'**
+  String get uploadTechnicianPaymentProof;
+
+  /// No description provided for @paymentVerifiedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment verified successfully'**
+  String get paymentVerifiedSuccessfully;
+
+  /// No description provided for @paidOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid On'**
+  String get paidOn;
+
+  /// No description provided for @pleaseEnterTransactionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a transaction ID'**
+  String get pleaseEnterTransactionId;
+
+  /// No description provided for @enterTransactionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Transaction ID'**
+  String get enterTransactionId;
+
+  /// No description provided for @errorUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Error uploading'**
+  String get errorUploading;
+
+  /// No description provided for @counterProposalStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Counter proposal started'**
+  String get counterProposalStarted;
+
+  /// No description provided for @counterProposalAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Counter proposal accepted'**
+  String get counterProposalAccepted;
+
+  /// No description provided for @counterOfferResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'Response sent successfully'**
+  String get counterOfferResponse;
+
+  /// No description provided for @waitingForYourResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Your Response'**
+  String get waitingForYourResponse;
+
+  /// No description provided for @selectTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Time'**
+  String get selectTime;
+
+  /// No description provided for @pleaseSelectALaterTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a later time'**
+  String get pleaseSelectALaterTime;
+
+  /// No description provided for @submitCounterOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Counter Offer'**
+  String get submitCounterOffer;
+
+  /// No description provided for @proposalRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Proposal Rejected'**
+  String get proposalRejected;
+
+  /// No description provided for @proposalAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Proposal Accepted'**
+  String get proposalAccepted;
+
+  /// No description provided for @technicianRejectedProposal.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician rejected your proposal.'**
+  String get technicianRejectedProposal;
+
+  /// No description provided for @youRejectedProposal.
+  ///
+  /// In en, this message translates to:
+  /// **'You rejected technician\'s proposal.'**
+  String get youRejectedProposal;
+
+  /// No description provided for @appointmentRescheduledTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment rescheduled to'**
+  String get appointmentRescheduledTo;
+
+  /// No description provided for @poor.
+  ///
+  /// In en, this message translates to:
+  /// **'Poor'**
+  String get poor;
+
+  /// No description provided for @fair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get fair;
+
+  /// No description provided for @good.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get good;
+
+  /// No description provided for @veryGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Good'**
+  String get veryGood;
+
+  /// No description provided for @excellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get excellent;
 }
 
 class _AppLocalizationsDelegate

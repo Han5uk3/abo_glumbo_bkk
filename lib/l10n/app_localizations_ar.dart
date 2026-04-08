@@ -40,13 +40,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get highestRating => 'أعلى تقييم';
 
   @override
+  String get verifiedAndProfessionalTechnicians => 'فنيين موثوقين ومحترفين';
+
+  @override
   String get nearest => 'الأقرب';
+
+  @override
+  String get bookservice => 'احجز خدمة';
 
   @override
   String get failedToLoadImage => 'فشل تحميل الصورة';
 
   @override
+  String get describeYourIssueInDetail => 'يرجى وصف مشكلتك بالتفصيل';
+
+  @override
   String get issueMedia => 'مرفقات المشكلة';
+
+  @override
+  String get notes => 'ملاحظات';
 
   @override
   String get image => 'صورة';
@@ -55,10 +67,48 @@ class AppLocalizationsAr extends AppLocalizations {
   String get technicianIsBusy => 'الفني مشغول';
 
   @override
+  String get login => 'تسجيل الدخول';
+
+  @override
+  String get bookings => 'الحجوزات';
+
+  @override
+  String get details => 'تفاصيل';
+
+  @override
+  String get aboutThisService => 'عن هذه الخدمة';
+
+  @override
   String get backtobooking => 'العودة إلى الحجز';
 
   @override
+  String get otphasbeensentto => 'تم إرسال رمز التحقق إلى';
+
+  @override
+  String get profile => 'الملف الشخصي';
+
+  @override
+  String get resendOTPin => 'إعادة إرسال الرمز';
+
+  @override
   String get edit => 'تعديل';
+
+  @override
+  String get sText => 'ث';
+
+  @override
+  String get verifiedTrustedAndProfessionalTechnicians =>
+      'فنيين موثوقين ومحترفين';
+
+  @override
+  String get getStarted => 'ابدأ';
+
+  @override
+  String get onboard1 => 'خدمات منزلية موثوقة في متناول يدك';
+
+  @override
+  String get onboard1desc =>
+      'ابحث عن محترفين موثوقين للإصلاحات والتركيبات والصيانة ببضع نقرات فقط.';
 
   @override
   String get namehomeworketc => 'الاسم (المنزل، العمل، إلخ)';
@@ -624,6 +674,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sar => 'ر.س';
 
   @override
+  String get discount => 'خصم';
+
+  @override
+  String get off => 'خصم';
+
+  @override
+  String get originalPrice => 'السعر الأصلي';
+
+  @override
   String get am => 'ص';
 
   @override
@@ -946,10 +1005,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get selectServiceAddress => 'حدد عنوان الخدمة';
 
   @override
+  String get goToBookings => 'الانتقال إلى الحجوزات';
+
+  @override
   String get savedAddresses => 'العناوين المحفوظة';
 
   @override
   String get addNew => 'إضافة جديد';
+
+  @override
+  String get bookingIdCopied => 'تم نسخ رقم الحجز';
 
   @override
   String get selected => 'محدد';
@@ -2066,5 +2131,158 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get serviceUnavailableLongMessage =>
-      'الخدمة غير متوفرة في هذا الموقع حالياً، نأمل في توسيع خدماتنا لتشمل هذه المنطقة في المستقبل';
+      'الخدمة غير متوفرة في العنوان المحدد، نأمل في توسيع خدماتنا لتشمل هذه المنطقة في المستقبل';
+
+  @override
+  String get placeAndTiming => 'المكان والوقت';
+
+  @override
+  String get counterOfferFromTechnician => 'الفني اقترح وقتاً جديداً';
+
+  @override
+  String get technicianProposedNewTime => 'لقد اقترح الفني وقتاً جديداً لحجزك.';
+
+  @override
+  String get acceptOffer => 'قبول العرض';
+
+  @override
+  String get rejectOffer => 'رفض العرض';
+
+  @override
+  String get proposedTime => 'الوقت المقترح';
+
+  @override
+  String get counterPropose => 'اقتراح بديل';
+
+  @override
+  String get proposeNewTime => 'اقتراح وقت جديد';
+
+  @override
+  String get counterOfferSent => 'تم إرسال الاقتراح البديل';
+
+  @override
+  String get waitingForTechnician => 'في انتظار رد الفني';
+
+  @override
+  String get checkingServiceAvailability => 'جاري التحقق من توفر الخدمة...';
+
+  @override
+  String get serviceAreaNotConfigured =>
+      'الخدمة غير متوفرة: لم يتم إعداد مناطق الخدمة حالياً';
+
+  @override
+  String get noActiveServiceZones =>
+      'الخدمة غير متوفرة: لا توجد مناطق خدمة نشطة محددة';
+
+  @override
+  String get failedToValidateServiceArea => 'فشل التحقق من منطقة الخدمة';
+
+  @override
+  String get validatingServiceAreaPleaseWait =>
+      'جاري التحقق من منطقة الخدمة، يرجى الانتظار...';
+
+  @override
+  String get onHour => 'ساعات العمل الرسمية';
+
+  @override
+  String get offHour => 'خارج ساعات العمل';
+
+  @override
+  String get currentTiming => 'التوقيت الحالي:';
+
+  @override
+  String get pleaseSelectATimeSlot => 'يرجى اختيار الموعد المتاح';
+
+  @override
+  String get cannotBookForPastTime => 'لا يمكن حجز موعد في الماضي';
+
+  @override
+  String get finalizingBookingInfo =>
+      'يرجى الانتظار بينما نقوم بإنهاء إجراءات الحجز...';
+
+  @override
+  String get technicianAssignmentNotification =>
+      'سنقوم بإعلامك بمجرد تعيين فني لك.';
+
+  @override
+  String get verificationPending => 'قيد التحقق من الدفع';
+
+  @override
+  String get waitingForTechnicianVerification =>
+      'في انتظار تحقق الفني من الدفع';
+
+  @override
+  String get verifyPayment => 'التحقق من الدفع';
+
+  @override
+  String get confirmPaymentReceipt => 'تأكيد استلام الدفع';
+
+  @override
+  String get uploadTechnicianPaymentProof => 'رفع إثبات استلام الدفع';
+
+  @override
+  String get paymentVerifiedSuccessfully => 'تم التحقق من الدفع بنجاح';
+
+  @override
+  String get paidOn => 'تاريخ الدفع';
+
+  @override
+  String get pleaseEnterTransactionId => 'يرجى إدخال رقم العملية';
+
+  @override
+  String get enterTransactionId => 'أدخل رقم العملية';
+
+  @override
+  String get errorUploading => 'خطأ أثناء الرفع';
+
+  @override
+  String get counterProposalStarted => 'بدء الاقتراح البديل';
+
+  @override
+  String get counterProposalAccepted => 'قبول الاقتراح البديل';
+
+  @override
+  String get counterOfferResponse => 'تم إرسال الرد بنجاح';
+
+  @override
+  String get waitingForYourResponse => 'في انتظار ردك';
+
+  @override
+  String get selectTime => 'اختر الوقت';
+
+  @override
+  String get pleaseSelectALaterTime => 'يرجى اختيار وقت لاحق';
+
+  @override
+  String get submitCounterOffer => 'إرسال اقتراح بديل';
+
+  @override
+  String get proposalRejected => 'تم رفض الاقتراح';
+
+  @override
+  String get proposalAccepted => 'تم قبول الاقتراح';
+
+  @override
+  String get technicianRejectedProposal => 'رفض الفني اقتراحك.';
+
+  @override
+  String get youRejectedProposal => 'لقد رفضت اقتراح الفني.';
+
+  @override
+  String get appointmentRescheduledTo => 'تم إعادة جدولة الموعد إلى';
+
+  @override
+  String get poor => 'سيء';
+
+  @override
+  String get fair => 'مقبول';
+
+  @override
+  String get good => 'جيد';
+
+  @override
+  String get veryGood => 'جيد جداً';
+
+  @override
+  String get excellent => 'ممتاز';
 }

@@ -9,6 +9,7 @@ import 'package:abo_glumbo_bbk/models/searchable_dropdown.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 // Singleton class to manage locations cache
@@ -550,8 +551,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (isLoading)
-                const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
+                Expanded(
+                  child: Center(child: Loader(color: AppColors.primary)),
                 )
               else ...[
                 const SizedBox(height: 16),
@@ -784,8 +785,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (isLoading)
-                const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
+                Expanded(
+                  child: Center(child: Loader(color: AppColors.primary)),
                 )
               else
                 Expanded(

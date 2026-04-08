@@ -66,7 +66,7 @@ class ContactBottomSheet extends StatelessWidget {
               Text(
                 AppLocalizations.of(context)?.contactSupportOptions ?? "",
                 style: DMSansFont.textStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -174,7 +174,7 @@ class _ContactOption extends StatelessWidget {
       leading: Icon(icon, color: iconColor),
       title: Text(
         title,
-        style: DMSansFont.textStyle(fontSize: 16, color: AppColors.black1),
+        style: DMSansFont.textStyle(fontSize: 14, color: AppColors.black1),
       ),
       onTap: onTap,
     );

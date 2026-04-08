@@ -19,7 +19,7 @@ class LanguageSelectionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgBlueTint,
       title: Text(title),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -64,7 +64,7 @@ class _LanguageOption extends StatelessWidget {
     return ListTile(
       title: Text(
         language,
-        style: DMSansFont.textStyle(fontSize: 16, color: AppColors.black1),
+        style: DMSansFont.textStyle(fontSize: 14, color: AppColors.black1),
       ),
       trailing: isSelected
           ? Icon(Icons.check, color: AppColors.primary, size: 20)

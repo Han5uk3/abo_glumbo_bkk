@@ -41,13 +41,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get highestRating => 'Highest Rating';
 
   @override
+  String get verifiedAndProfessionalTechnicians =>
+      'Verified and Professional Technicians';
+
+  @override
   String get nearest => 'Nearest';
+
+  @override
+  String get bookservice => 'Book service';
 
   @override
   String get failedToLoadImage => 'Failed to load image';
 
   @override
+  String get describeYourIssueInDetail => 'Describe your issue in detail...';
+
+  @override
   String get issueMedia => 'Issue Media';
+
+  @override
+  String get notes => 'Notes';
 
   @override
   String get image => 'Image';
@@ -56,10 +69,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get technicianIsBusy => 'Technician is busy';
 
   @override
+  String get login => 'Login';
+
+  @override
+  String get bookings => 'Bookings';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get aboutThisService => 'About this service';
+
+  @override
   String get backtobooking => 'Back to booking';
 
   @override
+  String get otphasbeensentto => 'OTP has been sent to';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get resendOTPin => 'Resend OTP in';
+
+  @override
   String get edit => 'Edit';
+
+  @override
+  String get sText => 's';
+
+  @override
+  String get verifiedTrustedAndProfessionalTechnicians =>
+      'Verified, Trusted and Professional Technicians';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get onboard1 => 'Reliable Home Services at Your Fingertips';
+
+  @override
+  String get onboard1desc =>
+      'Find trusted professionals for repairs, installations, and maintenance in just a few taps.';
 
   @override
   String get namehomeworketc => 'Name (Home,Work,etc)';
@@ -631,6 +682,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sar => 'SAR';
 
   @override
+  String get discount => 'Discount';
+
+  @override
+  String get off => 'OFF';
+
+  @override
+  String get originalPrice => 'Original Price';
+
+  @override
   String get am => 'AM';
 
   @override
@@ -959,10 +1019,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectServiceAddress => 'Select Service Address';
 
   @override
+  String get goToBookings => 'Go to Bookings';
+
+  @override
   String get savedAddresses => 'Saved Addresses';
 
   @override
   String get addNew => 'Add New';
+
+  @override
+  String get bookingIdCopied => 'Booking ID Copied';
 
   @override
   String get selected => 'Selected';
@@ -2101,5 +2167,159 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get serviceUnavailableLongMessage =>
-      'service unavailable to this location currently, we hope to expand our services to this area in the future';
+      'service unavailable to the seleceted address, we hope to expand our services to this area in the future';
+
+  @override
+  String get placeAndTiming => 'Place and timing';
+
+  @override
+  String get counterOfferFromTechnician => 'Technician proposed a new time';
+
+  @override
+  String get technicianProposedNewTime =>
+      'Technician has proposed a new time for your booking.';
+
+  @override
+  String get acceptOffer => 'Accept Offer';
+
+  @override
+  String get rejectOffer => 'Reject Offer';
+
+  @override
+  String get proposedTime => 'Proposed Time';
+
+  @override
+  String get counterPropose => 'Counter Propose';
+
+  @override
+  String get proposeNewTime => 'Propose New Time';
+
+  @override
+  String get counterOfferSent => 'Counter offer sent';
+
+  @override
+  String get waitingForTechnician => 'Waiting for technician response';
+
+  @override
+  String get checkingServiceAvailability => 'Checking service availability...';
+
+  @override
+  String get serviceAreaNotConfigured =>
+      'Service unavailable: No service areas are set currently';
+
+  @override
+  String get noActiveServiceZones =>
+      'Service unavailable: No active service zones defined';
+
+  @override
+  String get failedToValidateServiceArea => 'Failed to validate service area';
+
+  @override
+  String get validatingServiceAreaPleaseWait =>
+      'Validating service area, please wait...';
+
+  @override
+  String get onHour => 'On-Hour';
+
+  @override
+  String get offHour => 'Off-Hour';
+
+  @override
+  String get currentTiming => 'Current Timing:';
+
+  @override
+  String get pleaseSelectATimeSlot => 'Please select a time slot';
+
+  @override
+  String get cannotBookForPastTime => 'Cannot book for past time';
+
+  @override
+  String get finalizingBookingInfo =>
+      'Please wait while we finalize your booking...';
+
+  @override
+  String get technicianAssignmentNotification =>
+      'We will notify you once a technician has been assigned to you.';
+
+  @override
+  String get verificationPending => 'Verification Pending';
+
+  @override
+  String get waitingForTechnicianVerification =>
+      'Waiting for technician to verify payment';
+
+  @override
+  String get verifyPayment => 'Verify Payment';
+
+  @override
+  String get confirmPaymentReceipt => 'Confirm Payment Receipt';
+
+  @override
+  String get uploadTechnicianPaymentProof => 'Upload Technician Payment Proof';
+
+  @override
+  String get paymentVerifiedSuccessfully => 'Payment verified successfully';
+
+  @override
+  String get paidOn => 'Paid On';
+
+  @override
+  String get pleaseEnterTransactionId => 'Please enter a transaction ID';
+
+  @override
+  String get enterTransactionId => 'Enter Transaction ID';
+
+  @override
+  String get errorUploading => 'Error uploading';
+
+  @override
+  String get counterProposalStarted => 'Counter proposal started';
+
+  @override
+  String get counterProposalAccepted => 'Counter proposal accepted';
+
+  @override
+  String get counterOfferResponse => 'Response sent successfully';
+
+  @override
+  String get waitingForYourResponse => 'Waiting for Your Response';
+
+  @override
+  String get selectTime => 'Select Time';
+
+  @override
+  String get pleaseSelectALaterTime => 'Please select a later time';
+
+  @override
+  String get submitCounterOffer => 'Submit Counter Offer';
+
+  @override
+  String get proposalRejected => 'Proposal Rejected';
+
+  @override
+  String get proposalAccepted => 'Proposal Accepted';
+
+  @override
+  String get technicianRejectedProposal => 'Technician rejected your proposal.';
+
+  @override
+  String get youRejectedProposal => 'You rejected technician\'s proposal.';
+
+  @override
+  String get appointmentRescheduledTo => 'Appointment rescheduled to';
+
+  @override
+  String get poor => 'Poor';
+
+  @override
+  String get fair => 'Fair';
+
+  @override
+  String get good => 'Good';
+
+  @override
+  String get veryGood => 'Very Good';
+
+  @override
+  String get excellent => 'Excellent';
 }

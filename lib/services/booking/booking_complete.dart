@@ -191,7 +191,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.bgBlueTint,
         body: Column(
           children: [
             // Success Header with animations

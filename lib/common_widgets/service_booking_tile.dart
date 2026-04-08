@@ -11,7 +11,7 @@ import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/booking_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
-import 'package:abo_glumbo_bbk/sheets/booking_details.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/booking_details_page.dart';
 import 'package:abo_glumbo_bbk/sheets/cancel_booking_dialog.dart';
 import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -51,11 +51,15 @@ class ServiceBookingTile extends StatelessWidget {
 
     TextEditingController reasonController = TextEditingController();
     return GestureDetector(
-      onTap: () => showBookingDetailsBottomSheet(
+      onTap: () => Navigator.push(
         context,
-        booking: booking,
-        onRefresh: onRefresh,
-        isWarranty: isWarranty,
+        MaterialPageRoute(
+          builder: (context) => BookingDetailsPage(
+            booking: booking,
+            onRefresh: onRefresh,
+            isWarranty: isWarranty,
+          ),
+        ),
       ),
       child: Container(
         width: double.maxFinite,
@@ -125,7 +129,7 @@ class ServiceBookingTile extends StatelessWidget {
                               children: [
                                 Text(
                                   "#${booking.id}",
-                                  style: TextStyle(fontSize: 11),
+                                  style: TextStyle(fontSize: 9),
                                 ),
                                 Text(
                                   booking.service.nameLocalized(
@@ -140,7 +144,7 @@ class ServiceBookingTile extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                   style: DMSansFont.textStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 13,
+                                    fontSize: 11,
                                     color: Colors.black,
                                   ),
                                 ),
@@ -169,7 +173,7 @@ class ServiceBookingTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "${booking.bookingStatusCode == "C" ? booking.completionData?.totalCost : booking.service.price} ${AppLocalizations.of(context)!.sar}",
+                            "${(booking.bookingStatusCode == "C" || booking.bookingStatusCode == "VP") ? ((booking.completionData?.totalCost ?? 0) + (booking.service.getDiscountedPrice(booking.service.price ?? 0))).toStringAsFixed(1) : booking.service.getDiscountedPrice(booking.service.price ?? 0).toStringAsFixed(1)} ${AppLocalizations.of(context)!.sar}",
                             style: DMSansFont.textStyle(
                               color: AppColors.green1,
                               fontWeight: FontWeight.bold,
@@ -361,69 +365,72 @@ class ServiceBookingTile extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _buildTimestampText(context),
-                        if (!isWarranty && booking.bookingStatusCode == "C")
+                        Expanded(child: _buildTimestampText(context)),
+                        if (!isWarranty &&
+                            (booking.bookingStatusCode == "C" ||
+                                booking.bookingStatusCode == "VP"))
                           _buildBookingActionButtons(context),
                         if (isWarranty) _buildWarrantyStatusBadge(context),
                       ],
                     ),
                   ),
 
-                  if (booking.bookingStatusCode == "C")
-                    Expanded(child: Container())
+                  if (booking.bookingStatusCode == "C" ||
+                      booking.bookingStatusCode == "VP")
+                    const SizedBox.shrink()
                   else if (booking.bookingStatusCode == "P")
-                    SizedBox(
-                      height: 23,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: const Color(0xffE74C3C),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          side: BorderSide.none, // This removes the border
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        onPressed: () async {
-                          final bookingBloc = context.read<BookingBloc>();
-                          bool? res = await showBookingCancelDialog(
-                            context,
-                            booking: booking,
-                            controller: reasonController,
-                          );
-                          if (res == true) {
-                            bookingBloc.add(
-                              CancelBookingEvent(
-                                booking,
-                                reasonController.text.trim(),
-                              ),
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: AppColors.green,
-                                content: Text(
-                                  AppLocalizations.of(
-                                        context,
-                                      )?.bookingCancelled ??
-                                      '',
-                                ),
-                              ),
-                            );
-                            // refresh the page
-                            onRefresh.call();
-                          }
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)?.cancel ?? '',
-                          style: DMSansFont.textStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: AppColors.bgWhite,
-                          ),
+                  SizedBox(
+                    height: 23,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: const Color(0xffE74C3C),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        side: BorderSide.none, // This removes the border
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       ),
-                    )
+                      onPressed: () async {
+                        final bookingBloc = context.read<BookingBloc>();
+                        bool? res = await showBookingCancelDialog(
+                          context,
+                          booking: booking,
+                          controller: reasonController,
+                        );
+                        if (res == true) {
+                          bookingBloc.add(
+                            CancelBookingEvent(
+                              booking,
+                              reasonController.text.trim(),
+                            ),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: AppColors.green,
+                              content: Text(
+                                AppLocalizations.of(
+                                      context,
+                                    )?.bookingCancelled ??
+                                    '',
+                              ),
+                            ),
+                          );
+                          // refresh the page
+                          onRefresh.call();
+                        }
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)?.cancel ?? '',
+                        style: DMSansFont.textStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 8,
+                          color: AppColors.bgWhite,
+                        ),
+                      ),
+                    ),
+                  )
                   else if (booking.bookingStatusCode == "C" &&
                       booking.paymentCompleted == true &&
                       !isWarranty)
@@ -439,7 +446,7 @@ class ServiceBookingTile extends StatelessWidget {
                         AppLocalizations.of(context)?.completed ?? '',
                         style: DMSansFont.textStyle(
                           fontWeight: FontWeight.w500,
-                          fontSize: 10,
+                          fontSize: 8,
                           color: AppColors.green2,
                         ),
                       ),
@@ -458,7 +465,7 @@ class ServiceBookingTile extends StatelessWidget {
                         AppLocalizations.of(context)?.canceled ?? '',
                         style: DMSansFont.textStyle(
                           fontWeight: FontWeight.w500,
-                          fontSize: 10,
+                          fontSize: 8,
                           color: AppColors.red,
                         ),
                       ),
@@ -477,7 +484,7 @@ class ServiceBookingTile extends StatelessWidget {
                         AppLocalizations.of(context)?.rejected ?? '',
                         style: DMSansFont.textStyle(
                           fontWeight: FontWeight.w500,
-                          fontSize: 10,
+                          fontSize: 8,
                           color: AppColors.darkGrey,
                         ),
                       ),
@@ -519,6 +526,12 @@ class ServiceBookingTile extends StatelessWidget {
     if (booking.completedAt != null && booking.bookingStatusCode == "C") {
       return _timestampText(
         "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(booking.completedAt!.toDate(), locale)}",
+      );
+    }
+
+    if (booking.bookingStatusCode == "VP" && booking.paidAt != null) {
+      return _timestampText(
+        "${AppLocalizations.of(context)!.paidOn} : ${formatBookingDateTime(booking.paidAt!.toDate(), locale)}",
       );
     }
 
@@ -577,19 +590,51 @@ class ServiceBookingTile extends StatelessWidget {
       children: [
         Icon(Icons.calendar_month, size: 19, color: AppColors.black1),
         SizedBox(width: 4),
-        Text(text, style: TextStyle(color: AppColors.black1, fontSize: 10.5)),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(color: AppColors.black1, fontSize: 8.5),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildBookingActionButtons(BuildContext context) {
+    if (booking.bookingStatusCode == "VP") {
+      return _buildVerificationBadge(context);
+    }
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (booking.paymentCompleted == false) _buildPaymentButton(context),
-        if (booking.paymentCompleted == false) SizedBox(width: 4),
+        if (booking.bookingStatusCode == "C" &&
+            booking.paymentCompleted == false)
+          _buildPaymentButton(context),
         if (booking.paymentCompleted == true) _buildReviewButton(context),
       ],
+    );
+  }
+
+  Widget _buildVerificationBadge(BuildContext context) {
+    return Container(
+      height: 23,
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Colors.blue.shade200),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      alignment: Alignment.center,
+      child: Text(
+        AppLocalizations.of(context)?.verificationPending?.toUpperCase() ??
+            'VERIFICATION PENDING',
+        style: DMSansFont.textStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 8,
+          color: Colors.blue.shade700,
+        ),
+      ),
     );
   }
 
@@ -615,11 +660,11 @@ class ServiceBookingTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           alignment: Alignment.center,
           child: Text(
-            AppLocalizations.of(context)?.uploadPaymentProof ??
-                'Upload Payment Proof',
+            AppLocalizations.of(context)?.completePayment ??
+                'Complete Payment',
             style: DMSansFont.textStyle(
               fontWeight: FontWeight.w500,
-              fontSize: 10,
+              fontSize: 8,
               color: Colors.orange,
             ),
           ),
@@ -644,7 +689,7 @@ class ServiceBookingTile extends StatelessWidget {
               : AppLocalizations.of(context)?.reviewSubmitted ?? '',
           style: DMSansFont.textStyle(
             color: Colors.black,
-            fontSize: 10,
+            fontSize: 8,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -729,7 +774,7 @@ class ServiceBookingTile extends StatelessWidget {
             label,
             style: DMSansFont.textStyle(
               fontWeight: FontWeight.w500,
-              fontSize: 10,
+              fontSize: 8,
               color: textColor,
             ),
           ),

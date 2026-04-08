@@ -49,7 +49,7 @@ class FAQPage extends StatelessWidget {
           return ListView.separated(
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemCount: faqs.length,
-            padding: EdgeInsets.only(left: 16, right: 16, bottom: 24, top: 20),
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 40, top: 20),
             itemBuilder: (context, index) {
               final faq = faqs[index];
               final question = isArabic ? faq.questionAr : faq.questionEn;
@@ -80,14 +80,9 @@ class FAQPage extends StatelessWidget {
                     title: Row(
                       mainAxisSize: MainAxisSize.min,
 
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       spacing: 3,
                       children: [
-                        Icon(
-                          Icons.help_outline,
-                          size: 20,
-                          color: theme.colorScheme.primary,
-                        ),
                         Expanded(
                           child: Text(
                             question,

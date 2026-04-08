@@ -40,8 +40,13 @@ class _BookingsPageState extends State<BookingsPage> {
       child: CustomScrollView(
         slivers: [
           SliverAppBar(
+            backgroundColor: AppColors.bgBlueTint,
+            foregroundColor: Colors.black,
             titleSpacing: 16,
-            title: Text(AppLocalizations.of(context)?.myBooking ?? ''),
+            title: Text(
+              AppLocalizations.of(context)?.bookings ?? '',
+              style: TextStyle(color: Colors.black),
+            ),
             pinned: true,
             primary: true,
             centerTitle: true,
@@ -61,6 +66,7 @@ class _BookingsPageState extends State<BookingsPage> {
           BlocBuilder<BookingBloc, BookingState>(
             builder: (context, state) => _buildContent(context, state),
           ),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
         ],
       ),
     );
@@ -87,8 +93,8 @@ class _BookingsPageState extends State<BookingsPage> {
                     width: 70,
                     height: 34,
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(4),
+                      color: AppColors.bgBlueTint,
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                 ),
@@ -109,9 +115,13 @@ class _BookingsPageState extends State<BookingsPage> {
         child: ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           scrollDirection: Axis.horizontal,
-          itemCount: BookingStatusType.values.length,
+          itemCount: BookingStatusType.values
+              .where((s) => s != BookingStatusType.verificationPending)
+              .length,
           itemBuilder: (context, index) {
-            BookingStatusType status = BookingStatusType.values[index];
+            BookingStatusType status = BookingStatusType.values
+                .where((s) => s != BookingStatusType.verificationPending)
+                .toList()[index];
             final selectedStatus = _getSelectedStatus(state);
 
             return Padding(
@@ -126,14 +136,14 @@ class _BookingsPageState extends State<BookingsPage> {
                   decoration: BoxDecoration(
                     border: selectedStatus == status
                         ? Border.all(width: 1, color: AppColors.blue1)
-                        : null,
-                    borderRadius: BorderRadius.circular(4),
-                    color: AppColors.blue1.withOpacity(0.04),
+                        : Border.all(width: 1, color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.bgBlueTint,
                   ),
                   child: Text(
                     _getLocalizedStatusNames(status.name, context),
                     style: DMSansFont.textStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: selectedStatus == status
                           ? AppColors.blue1
@@ -244,6 +254,8 @@ class _BookingsPageState extends State<BookingsPage> {
         return locn.completed.toUpperCase();
       case "pendingPayment":
         return locn.paymentPending.toUpperCase();
+      case "verificationPending":
+        return locn.verificationPending.toUpperCase();
       case "cancelled":
         return locn.cancelled.toUpperCase();
       case "onWarranty":

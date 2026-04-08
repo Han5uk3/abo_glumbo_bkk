@@ -51,13 +51,17 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _isGuest = LocalStoreHelper.getGuestUser();
-    if (widget.initialIndex != null && _isGuest == true) {
+    if (widget.byPassedUid != null) {
+      _isGuest = false;
+    }
+    if (widget.initialIndex != null) {
       currentIndex = widget.initialIndex!;
     }
     String? uid;
     if (widget.byPassedUid != null) {
       uid = widget.byPassedUid!;
       LocalStoreHelper.putUID(uid);
+      LocalStoreHelper.putGuestUser(false);
       LocalStoreHelper.putlogoutStatus(false);
     } else {
       uid = LocalStoreHelper.getUID();
@@ -114,12 +118,14 @@ class _HomeState extends State<Home> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
+            backgroundColor: AppColors.bgBlueTint,
             body: Center(child: Loader(color: AppColors.primary)),
           );
         }
 
         if (snapshot.hasError) {
           return Scaffold(
+            backgroundColor: AppColors.bgBlueTint,
             body: Center(
               child: Text(
                 '${locale?.error ?? "Error"}: ${snapshot.error}',
@@ -156,8 +162,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-
-
   Widget _buildScaffold(AppLocalizations? locale, dynamic customerData) {
     Widget getCurrentPage() {
       final accountIndex = (_isGuest ?? false) ? 1 : 2;
@@ -176,7 +180,7 @@ class _HomeState extends State<Home> {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.bgBlueTint,
               actionsAlignment: MainAxisAlignment.start,
               title: Text(locale?.exitAppTitle ?? 'Exit App'),
               content: Text(
@@ -208,34 +212,20 @@ class _HomeState extends State<Home> {
         }
       },
       child: Scaffold(
-        extendBodyBehindAppBar: true,
+        backgroundColor: AppColors.bgBlueTint,
+        extendBody: true,
         body: getCurrentPage(),
-        bottomNavigationBar: SafeArea(
-          child: Container(
-            height: 60,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 15,
-                  offset: const Offset(0, -3),
-                ),
-              ],
-            ),
-            child: CustomBottomNavigationBar(
-              selectedIndex: currentIndex,
-              onDestinationSelected: (index) {
-                setState(() {
-                  currentIndex = index;
-                });
-              },
-              isGuest: _isGuest ?? false,
-              homeLabel: locale?.home ?? 'Home',
-              myBookingLabel: locale?.myBooking ?? 'My Booking',
-              accountLabel: locale?.account ?? 'Account',
-            ),
-          ),
+        bottomNavigationBar: CustomBottomNavigationBar(
+          selectedIndex: currentIndex,
+          onDestinationSelected: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          isGuest: _isGuest ?? false,
+          homeLabel: locale?.home ?? 'Home',
+          myBookingLabel: locale?.bookings ?? 'Bookings',
+          accountLabel: locale?.account ?? 'Account',
         ),
         //  NavigationBar(
         //   selectedIndex: currentIndex,
@@ -312,6 +302,7 @@ class _HomeState extends State<Home> {
 
   _buildBlockedScaffold() {
     return Scaffold(
+      backgroundColor: AppColors.bgBlueTint,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)?.accountBlocked ?? 'Account Blocked',
@@ -554,7 +545,7 @@ class _HomeState extends State<Home> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.bgBlueTint,
           actionsAlignment: MainAxisAlignment.start,
           title: Text(
             AppLocalizations.of(context)?.logout ?? 'Logout',
@@ -574,7 +565,7 @@ class _HomeState extends State<Home> {
                 Navigator.of(context).pop();
               },
               context: context,
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.bgWhite,
               textColor: Colors.black,
               text: AppLocalizations.of(context)?.cancel ?? 'Cancel',
             ),

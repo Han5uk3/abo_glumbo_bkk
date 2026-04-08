@@ -79,8 +79,9 @@ class BookingsLoaded extends BookingState {
       case BookingStatusType.pendingPayment:
         final pending = allBookings.where((e) {
           final isPending = e.bookingStatusCode == 'C' && !e.paymentCompleted;
+          final isVerification = e.bookingStatusCode == 'VP';
 
-          return isPending;
+          return isPending || isVerification;
         }).toList();
         // Sort by completedAt in descending order (newest first)
         pending.sort((a, b) {
@@ -102,6 +103,8 @@ class BookingsLoaded extends BookingState {
           final warranty = e.warranty != null;
           return completed && warranty;
         }).toList();
+      case BookingStatusType.verificationPending:
+        return allBookings.where((e) => e.bookingStatusCode == 'VP').toList();
     }
   }
 

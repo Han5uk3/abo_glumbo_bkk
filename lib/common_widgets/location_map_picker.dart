@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:ui';
 import 'package:abo_glumbo_bbk/apis/place_suggestion_api.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/location_card.dart';
@@ -8,7 +9,8 @@ import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
-import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -541,7 +543,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                   ),
                   Text(
                     AppLocalizations.of(context)?.serviceto ?? 'Service to',
-                    style: PoppinsFont.textStyle(
+                    style: DMSansFont.textStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -554,7 +556,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     title: _locationTitle.isNotEmpty
                         ? _locationTitle
                         : AppLocalizations.of(context)?.selectedLocation ??
-                              'Selected Location',
+                               'Selected Location',
                     subtitle: _locationSubtitle,
                   ),
                   const SizedBox(height: 20),
@@ -565,7 +567,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     keyboardType: TextInputType.text,
                     hint: Text(
                       "${AppLocalizations.of(context)?.buildingName ?? 'Building Name'} (${AppLocalizations.of(context)!.optional})",
-                      style: PoppinsFont.textStyle(
+                      style: DMSansFont.textStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -587,7 +589,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     },
                     hint: Text(
                       AppLocalizations.of(context)!.namehomeworketc,
-                      style: PoppinsFont.textStyle(
+                      style: DMSansFont.textStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -602,7 +604,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     hint: Text(
                       AppLocalizations.of(context)?.phoneNumber ??
                           'Phone Number',
-                      style: PoppinsFont.textStyle(
+                      style: DMSansFont.textStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -644,19 +646,20 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        backgroundColor: Colors.blue,
+                        backgroundColor: AppColors.primary,
+                        elevation: 0,
                       ),
                       child: _isAddingAddress
                           ? Loader()
                           : Text(
                               AppLocalizations.of(context)?.saveAddress ??
                                   'Save Address',
-                              style: PoppinsFont.textStyle(
+                              style: DMSansFont.textStyle(
                                 fontSize: 16,
                                 color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                     ),
@@ -744,12 +747,8 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
             ),
           ],
         ),
-        child: const Center(
-          child: SizedBox(
-            height: 20,
-            width: 20,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
+        child: Center(
+          child: Loader(color: AppColors.primary, size: 20),
         ),
       );
     }
@@ -759,32 +758,52 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     }
 
     return Container(
-      constraints: const BoxConstraints(maxHeight: 200),
+      constraints: const BoxConstraints(maxHeight: 250),
+      margin: const EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: _predictions.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            dense: true,
-            title: Text(
-              _predictions[index],
-              style: const TextStyle(fontSize: 14),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: ListView.separated(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            itemCount: _predictions.length,
+            separatorBuilder: (context, index) => Divider(
+              height: 1,
+              color: Colors.grey.withOpacity(0.1),
             ),
-            leading: const Icon(Icons.location_on, size: 20),
-            onTap: () => _moveCameraToPlace(_predictions[index]),
-          );
-        },
+            itemBuilder: (context, index) {
+              return ListTile(
+                dense: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                title: Text(
+                  _predictions[index],
+                  style: DMSansFont.textStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                leading: Icon(
+                  Icons.location_on_outlined,
+                  size: 18,
+                  color: AppColors.primary,
+                ),
+                onTap: () => _moveCameraToPlace(_predictions[index]),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -793,12 +812,23 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)?.chooseLocation ?? 'Choose Location',
+          style: DMSansFont.textStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
         ),
-        elevation: 0,
+        backgroundColor: AppColors.primary,
         centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: Column(
         children: [
@@ -806,7 +836,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
             child: Stack(
               children: [
                 if (!_mapReady)
-                  const Center(child: CircularProgressIndicator()),
+                  Center(child: Loader(color: AppColors.primary)),
                 GoogleMap(
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
@@ -840,91 +870,91 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                   zoomControlsEnabled: false,
                 ),
                 Positioned(
-                  top: 15,
-                  left: 15,
-                  right: 15,
+                  top: MediaQuery.of(context).padding.top + 65,
+                  left: 20,
+                  right: 20,
                   child: Column(
                     children: [
-                      Material(
-                        elevation: 8,
-                        borderRadius: BorderRadius.circular(8),
-                        child: TextField(
-                          controller: _searchController,
-                          onChanged: _searchPlaces,
-                          focusNode: _searchFocusNode,
-                          decoration: InputDecoration(
-                            hintText:
-                                AppLocalizations.of(
-                                  context,
-                                )?.pickServiceAddress ??
-                                'Pick service address',
-                            prefixIcon: const Icon(Icons.search),
-                            suffixIcon: _searchController.text.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(Icons.clear),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      setState(() {
-                                        _predictions.clear();
-                                      });
-                                      _searchFocusNode.unfocus();
-                                    },
-                                  )
-                                : null,
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 15,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.85),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.2),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              controller: _searchController,
+                              onChanged: _searchPlaces,
+                              focusNode: _searchFocusNode,
+                              style: DMSansFont.textStyle(fontSize: 14),
+                              decoration: InputDecoration(
+                                hintText:
+                                    AppLocalizations.of(
+                                      context,
+                                    )?.pickServiceAddress ??
+                                    'Pick service address',
+                                hintStyle: DMSansFont.textStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: AppColors.primary,
+                                  size: 20,
+                                ),
+                                suffixIcon: _searchController.text.isNotEmpty
+                                    ? IconButton(
+                                        icon: const Icon(
+                                          Icons.clear,
+                                          size: 18,
+                                        ),
+                                        onPressed: () {
+                                          _searchController.clear();
+                                          setState(() {
+                                            _predictions.clear();
+                                          });
+                                          _searchFocusNode.unfocus();
+                                        },
+                                      )
+                                    : null,
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
                       _buildSearchResults(),
                     ],
                   ),
                 ),
                 Positioned(
-                  bottom: 10,
-                  left: 100,
-                  child: Material(
+                  bottom: 20,
+                  right: 20,
+                  child: FloatingActionButton(
+                    onPressed: _getCurrentLocation,
+                    backgroundColor: Colors.white,
                     elevation: 4,
-                    borderRadius: BorderRadius.circular(8),
-                    child: InkWell(
-                      onTap: _getCurrentLocation,
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.my_location,
-                              size: 16,
-                              color: Colors.blue,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              AppLocalizations.of(
-                                    context,
-                                  )?.useMyCurrentLocation ??
-                                  'Use my current location',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    mini: true,
+                    child: Icon(
+                      Icons.my_location,
+                      color: AppColors.primary,
+                      size: 20,
                     ),
                   ),
                 ),
@@ -939,29 +969,34 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
 
   Widget _buildDistanceInfo() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -5),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            AppLocalizations.of(context)?.serviceto ?? 'Service to',
-            style: PoppinsFont.textStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+            AppLocalizations.of(context)!.serviceto,
+            style: DMSansFont.textStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: AppColors.black1,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           LocationCard(
             title: _locationTitle.isNotEmpty
                 ? _locationTitle
@@ -969,16 +1004,17 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                       'Select Location',
             subtitle: _locationSubtitle,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
+            height: 54,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                backgroundColor: Colors.blue,
+                backgroundColor: AppColors.primary,
+                elevation: 0,
               ),
               onPressed: _selectedLocation != null
                   ? () => _showAddressDetailsBottomSheet()
@@ -986,15 +1022,15 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
               child: Text(
                 AppLocalizations.of(context)?.addAddressDetails ??
                     'Add Address Details',
-                style: PoppinsFont.textStyle(
-                  fontSize: 14,
+                style: DMSansFont.textStyle(
+                  fontSize: 16,
                   color: Colors.white,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
         ],
       ),
     );

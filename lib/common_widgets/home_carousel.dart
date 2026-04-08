@@ -1,4 +1,4 @@
-import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/common_widgets/shimmer_loader.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -67,9 +67,9 @@ class _HomeCarouselWidgetState extends State<HomeCarouselWidget> {
     if (widget.banners.isEmpty) {
       return Column(
         children: [
-          const SizedBox(
-            height: 140,
-            child: Center(child: Loader(color: Colors.white)),
+           const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: ShimmerLoader(width: double.infinity, height: 140, borderRadius: 12),
           ),
           const SizedBox(height: 15),
           AnimatedSmoothIndicator(
@@ -162,15 +162,10 @@ class _HomeCarouselWidgetState extends State<HomeCarouselWidget> {
                       child: CachedNetworkImage(
                         imageUrl: item.image!,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: Loader(color: Colors.white),
-                            ),
-                          ),
+                        placeholder: (context, url) => const ShimmerLoader(
+                          width: double.infinity,
+                          height: 140,
+                          borderRadius: 12,
                         ),
                         errorWidget: (context, url, error) => Container(
                           color: Colors.grey[300],

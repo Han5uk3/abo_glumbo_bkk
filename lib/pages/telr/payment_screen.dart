@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:abo_glumbo_bbk/apis/telr_services.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -8,17 +7,14 @@ import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/telr/request_model.dart';
 
-import 'package:abo_glumbo_bbk/models/total_tip.dart';
-import 'package:abo_glumbo_bbk/models/transaction.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/payment_failed.dart';
-import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
-import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/telr_config.dart';
-import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/processing_payment_page.dart';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -28,15 +24,16 @@ class PaymentWebView extends StatefulWidget {
   File? selectedImage;
   File? selectedVideo;
   DateTime? selectedDate;
-  List<Map>? timeSlots;
-  int? selectedTimeCategory;
-  int? selectedTimeSlot;
+  Map? timeSlot;
   ServiceModel? service;
   ReviewModel? review;
   BookingModel? booking;
   UserModel? agent;
+  AddressModel? selectedAddress;
+  MatchedServiceZone? serviceLocation;
   TextEditingController? notesController;
   String? selectedPayment;
+
   PaymentWebView({
     super.key,
     this.service,
@@ -45,13 +42,13 @@ class PaymentWebView extends StatefulWidget {
     this.selectedImage,
     this.selectedVideo,
     this.selectedDate,
-    this.timeSlots,
+    this.timeSlot,
     this.review,
-    this.selectedTimeCategory,
-    this.selectedTimeSlot,
     this.notesController,
     this.booking,
     this.agent,
+    this.selectedAddress,
+    this.serviceLocation,
     this.selectedPayment,
   });
 
@@ -121,6 +118,22 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           : widget.review?.tipAmount ?? 0.00,
     );
 
+    // Extract city from the full city address (fullName)
+    String city = "";
+    if (selectedAddress.fullName.isNotEmpty) {
+      if (selectedAddress.fullName.contains(',')) {
+        final parts = selectedAddress.fullName.split(',');
+        if (parts.length >= 2) {
+          // Take the second to last component (usually the city)
+          city = parts[parts.length - 2].trim();
+        } else {
+          city = parts.first.trim();
+        }
+      } else {
+        city = selectedAddress.fullName.split(' ').first;
+      }
+    }
+
     try {
       final paymentRequest = TelrPaymentRequest(
         ivp_store: TelrConfig.storeId,
@@ -129,10 +142,12 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           ivp_cart: orderId ?? 'NO ORDER ID',
           ivp_ref: widget.customerData.uid ?? '',
           ivp_amount: widget.isFromBooking
-              ? double.tryParse(
-                      widget.booking?.service.price.toString() ?? '0.00',
-                    )?.toStringAsFixed(2) ??
-                    '0.00'
+              ? (double.tryParse(
+                        widget.service?.price.toString() ??
+                        widget.booking?.service.price.toString() ??
+                        '0.00',
+                      )?.toStringAsFixed(2) ??
+                  '0.00')
               : widget.review?.tipAmount?.toStringAsFixed(2) ?? '0.00',
           ivp_desc: widget.notesController?.text.isNotEmpty == true
               ? widget.notesController?.text ?? "No description provided"
@@ -149,8 +164,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         bill_email: widget.customerData.email?.isNotEmpty == true
             ? widget.customerData.email
             : null,
-        bill_addr1: selectedAddress.streetName?.isNotEmpty == true
-            ? selectedAddress.streetName
+        bill_addr1: selectedAddress.fullName.isNotEmpty == true
+            ? selectedAddress.fullName
             : null,
         bill_country: 'Saudi Arabia',
         bill_zip: selectedAddress.buildingNumber.isNotEmpty == true
@@ -158,7 +173,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             : null,
         ivp_lang: 'en',
         bill_custref: widget.customerData.uid,
-        bill_city: "",
+        bill_city: city,
+        bill_phone: widget.customerData.phone,
       );
       final paymentService = TelrPaymentService();
       final response = await paymentService.createPayment(paymentRequest);
@@ -213,64 +229,6 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     }
   }
 
-  Future<bool> saveTransaction() async {
-    final amount =
-        double.tryParse(
-          widget.booking?.completionData?.totalCost.toString() ?? '0.00',
-        ) ??
-        0.00;
-
-    TransactionModel transaction = TransactionModel(
-      Timestamp.now(),
-      amount: amount,
-      paymentStatus: "completed",
-      paymentMethod: widget.selectedPayment ?? "Cards",
-      createdAt: Timestamp.now(),
-      orderId: orderId ?? "",
-      customerId: widget.customerData.uid ?? "",
-      workerId: widget.booking?.agent?.uid ?? "",
-      bookingId: widget.booking?.id ?? "",
-    );
-    return await BookingUtils.saveTransaction(transaction: transaction);
-  }
-
-  Future<bool> saveBooking() async {
-    return await BookingUtils.updateBookingStatus(
-      booking: widget.booking!,
-      paymentModeCode: widget.selectedPayment == "Cards" ? "C" : "O",
-      isCompleted: true,
-      orderId: orderId ?? "",
-    );
-  }
-
-  Future<bool> saveReview() async {
-    try {
-      await BookingUtils.saveTipToSubcollection(
-        workerId: widget.review?.workerId ?? "",
-        tipData: AllTipsModel(
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now(),
-          totalTipAmount: widget.review?.tipAmount,
-
-          proofs: [],
-          agentId: widget.review?.workerId,
-          paymentMethod: "cards",
-          id: "id_${DateTime.now().millisecondsSinceEpoch}",
-        ),
-      );
-      // Save the review with tip information
-      final success = await BookingUtils.saveReview(
-        booking: widget.booking!,
-        review: widget.review?.copyWith(isTipPaid: true),
-      );
-
-      return success;
-    } catch (e) {
-      debugPrint('Error saving review: $e');
-      return false;
-    }
-  }
-
   bool isPaymentProcessed = false;
 
   Future<NavigationDecision> _handleNavigation(
@@ -283,8 +241,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       }
       isPaymentProcessed = true;
 
-      if (widget.booking == null) {
-        // Handle the case where there's no booking
+      if (widget.booking == null && !widget.isFromBooking) {
+        // Handle the case where there's no booking and not from booking flow
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const Home()),
@@ -299,51 +257,25 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           ),
         );
       } else {
-        if (widget.isFromBooking) {
-          saveBooking();
-          saveTransaction();
-
-          // Update unified wallet with earnings
-          try {
-            final amount =
-                double.tryParse(
-                  widget.booking?.completionData?.totalCost.toString() ??
-                      '0.00',
-                ) ??
-                0.00;
-            await UnifiedPayoutServices.updateWalletAmounts(
-              workerId: widget.booking?.agent?.uid ?? '',
-              earningsIncrement: amount,
-            );
-            debugPrint('✅ Unified wallet updated with earnings: $amount');
-          } catch (e) {
-            debugPrint('❌ Error updating unified wallet: $e');
-            // Don't block the payment flow if wallet update fails
-          }
-        }
-        if (widget.isFromBooking == false) {
-          saveReview();
-        }
-
-        log('Booking: isFromBooking: $isFromBooking');
-        // If we have a booking, proceed to the success page
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => PaymentSuccessPage(
-              isFromBooking: isFromBooking,
-              amount: widget.isFromBooking
-                  ? double.tryParse(
-                          widget.booking?.completionData?.totalCost
-                                  .toString() ??
-                              '0.00',
-                        ) ??
-                        0.00
-                  : widget.review?.tipAmount ?? 0.00,
+            builder: (context) => ProcessingPaymentPage(
+              customerData: widget.customerData,
+              isFromBooking: widget.isFromBooking,
               orderId: orderId ?? "",
-              booking: widget.booking!,
-              paymentMethod:
-                  "Cards", // Default to "Cards" as it's a card payment
+              selectedImage: widget.selectedImage,
+              selectedVideo: widget.selectedVideo,
+              selectedDate: widget.selectedDate,
+              timeSlot: widget.timeSlot,
+              service: widget.service,
+              review: widget.review,
+              booking: widget.booking,
+              agent: widget.agent,
+              selectedAddress: widget.selectedAddress,
+              serviceLocation: widget.serviceLocation,
+              notesController: widget.notesController,
+              selectedPayment: widget.selectedPayment,
             ),
           ),
           (Route<dynamic> route) => false,
@@ -361,6 +293,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       return NavigationDecision.prevent;
     } else if (url.contains('cancel') || url.contains('payment/cancelled')) {
       if (widget.isFromBooking) {
+        if (!mounted) return NavigationDecision.prevent;
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => PaymentFailedScreen(
@@ -383,6 +316,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       return NavigationDecision.prevent;
     } else if (url.contains('declined') || url.contains('payment/declined')) {
       if (widget.isFromBooking) {
+        if (!mounted) return NavigationDecision.prevent;
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => PaymentFailedScreen(
@@ -424,7 +358,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(),
+                    Loader(color: AppColors.primary),
                     SizedBox(height: 16),
                     Text(AppLocalizations.of(context)!.initializingPayment),
                   ],

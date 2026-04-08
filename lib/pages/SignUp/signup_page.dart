@@ -52,7 +52,7 @@ class _SignupPageState extends State<SignupPage> {
         return PopScope(
           canPop: false,
           child: AlertDialog(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.bgBlueTint,
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -166,7 +166,7 @@ class _SignupPageState extends State<SignupPage> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.bgBlueTint,
           actionsAlignment: MainAxisAlignment.start,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -269,15 +269,15 @@ class _SignupPageState extends State<SignupPage> {
               locale?.createAccount ?? 'Create Account',
               style: DMSansFont.textStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 24,
-                color: Colors.black,
-              ),
+              fontSize: 22,
+              color: Colors.black,
+            ),
             ),
             const SizedBox(height: 9),
             Text(
               locale?.pleaseFillTheInputBelowHereToContinue ??
                   'Please fill the input below here to continue',
-              style: DMSansFont.textStyle(color: Colors.black45, fontSize: 14),
+              style: DMSansFont.textStyle(color: Colors.black45, fontSize: 12),
             ),
             const SizedBox(height: 34),
 
@@ -340,7 +340,7 @@ class _SignupPageState extends State<SignupPage> {
                   locale?.createAccount ?? 'Create Account',
                   style: DMSansFont.textStyle(
                     color: Colors.white,
-                    fontSize: 17,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

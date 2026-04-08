@@ -588,52 +588,26 @@ class _OtpPageState extends State<OtpPage> {
     final locn = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgBlueTint,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: AppColors.bgWhite,
-        elevation: 0,
-        leading: Expanded(
-          child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: 22),
+
+        leading: IconButton(
+          iconSize: 18,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+        ),
+        title: Text(
+          AppLocalizations.of(context)!.enterOtp,
+          style: DMSansFont.textStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
           ),
         ),
-        title: Row(
-          children: [
-            Expanded(
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  "Back",
-                  style: DMSansFont.textStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.secondary,
-                  ),
-                ),
-              ),
-            ),
-
-            Expanded(
-              flex: 2,
-              child: Text(
-                "Enter OTP",
-                style: DMSansFont.textStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            Expanded(child: Container()),
-          ],
-        ),
-        actions: [],
       ),
       body: AbsorbPointer(
         absorbing: _isMigratingCustomerData,
@@ -645,59 +619,39 @@ class _OtpPageState extends State<OtpPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // const SizedBox(height: 20),
-                      // Text(
-                      //   locn.otpVerification,
-                      //   style: DMSansFont.textStyle(
-                      //     fontWeight: FontWeight.bold,
-                      //     fontSize: 28,
-                      //     color: Colors.black,
-                      //   ),
-                      // ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 24),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                text: locn.enterTheOtpSentToTheNumber,
-                                style: DMSansFont.textStyle(
-                                  color: Colors.black54,
-                                  fontSize: 16,
-                                ),
-                                children: [
-                                  WidgetSpan(
-                                    alignment: PlaceholderAlignment.middle,
-                                    child: Directionality(
-                                      textDirection: TextDirection.ltr,
-                                      child: Text(
-                                        " ${widget.phoneNumber} ",
-                                        style: DMSansFont.textStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: Colors.black87,
-                                        ),
+                          RichText(
+                            text: TextSpan(
+                              text: locn.otphasbeensentto,
+                              style: DMSansFont.textStyle(
+                                color: Colors.black45,
+                                fontSize: 14,
+                              ),
+                              children: [
+                                WidgetSpan(
+                                  child: Directionality(
+                                    textDirection: TextDirection.ltr,
+                                    child: Text(
+                                      " ${widget.phoneNumber} ",
+                                      style: DMSansFont.textStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: Colors.black,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 40),
-                      Text(
-                        locn.enterOtp,
-                        style: DMSansFont.textStyle(
-                          color: Colors.black87,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
 
                       // 6 OTP Boxes
                       Form(
@@ -747,7 +701,7 @@ class _OtpPageState extends State<OtpPage> {
                         children: [
                           Text(
                             _remainingTime > 0
-                                ? '${locn.resend} ($_formattedTime)'
+                                ? '${locn.resendOTPin} $_formattedTime ${AppLocalizations.of(context)!.sText}'
                                 : AppLocalizations.of(context)!.didntreciveCode,
                             style: DMSansFont.textStyle(
                               color: Colors.black54,
@@ -766,18 +720,11 @@ class _OtpPageState extends State<OtpPage> {
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
                               child: isResendingOtp
-                                  ? SizedBox(
-                                      width: 16,
-                                      height: 16,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: AppColors.green,
-                                      ),
-                                    )
+                                  ? Loader(color: AppColors.green, size: 16)
                                   : Text(
                                       locn.resend,
                                       style: DMSansFont.textStyle(
-                                        color: AppColors.green,
+                                        color: AppColors.primary,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
                                       ),
@@ -786,8 +733,11 @@ class _OtpPageState extends State<OtpPage> {
                           ],
                         ],
                       ),
-                      const Spacer(),
+                      SizedBox(height: 24),
                       Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
                         width: double.infinity,
                         margin: const EdgeInsets.only(bottom: 24),
                         height: 56,
@@ -796,7 +746,7 @@ class _OtpPageState extends State<OtpPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             elevation: 0,
                             disabledBackgroundColor: AppColors.primary
@@ -846,7 +796,7 @@ class _OtpPageState extends State<OtpPage> {
 
   Widget _migratingDataDialog() {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgBlueTint,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       contentPadding: const EdgeInsets.all(32),
       content: WillPopScope(

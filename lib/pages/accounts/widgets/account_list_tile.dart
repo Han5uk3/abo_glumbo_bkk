@@ -9,17 +9,20 @@ class AccountListTile extends StatelessWidget {
   final Widget? trailing;
   final bool dense;
   final Color? textcolor;
+  final Widget? leading;
 
   const AccountListTile({
     super.key,
     required this.title,
     this.onTap,
+    this.leading,
     this.trailing,
     this.textcolor,
     this.dense = false,
   });
 
   factory AccountListTile.withArrow({
+    Widget? leading,
     required String title,
     VoidCallback? onTap,
   }) {
@@ -27,10 +30,13 @@ class AccountListTile extends StatelessWidget {
       title: title,
       onTap: onTap,
       trailing: const Icon(Icons.arrow_forward_ios_sharp, size: 15),
+      leading: leading,
     );
   }
 
   factory AccountListTile.withText({
+    Widget? leading,
+
     required String title,
     required String trailingText,
     VoidCallback? onTap,
@@ -39,10 +45,11 @@ class AccountListTile extends StatelessWidget {
     return AccountListTile(
       title: title,
       onTap: onTap,
+      leading: leading,
       trailing: Text(
         trailingText,
         style: DMSansFont.textStyle(
-          fontSize: 13,
+          fontSize: 11,
           color: textColor ?? AppColors.black1,
           fontWeight: FontWeight.w600,
         ),
@@ -58,11 +65,12 @@ class AccountListTile extends StatelessWidget {
       title: Text(
         title,
         style: DMSansFont.textStyle(
-          fontSize: dense ? 15 : 16,
-          color: textcolor ?? AppColors.black1,
+          fontSize: 12,
+          color: textcolor ?? Colors.black,
         ),
       ),
       trailing: trailing,
+      leading: leading,
     );
   }
 }
@@ -79,7 +87,7 @@ class SectionHeader extends StatelessWidget {
       child: Text(
         title,
         style: DMSansFont.textStyle(
-          fontSize: 12,
+          fontSize: 10,
           fontWeight: FontWeight.w500,
           color: AppColors.lightGrey,
         ),

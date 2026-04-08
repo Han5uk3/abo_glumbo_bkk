@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import '../models/booking.dart';
 
 Future<bool?> showWriteReviewBottomSheet(
@@ -17,9 +18,9 @@ Future<bool?> showWriteReviewBottomSheet(
   return await showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
-    clipBehavior: Clip.antiAlias,
-    isDismissible: false,
-    enableDrag: false,
+    backgroundColor: Colors.transparent,
+    isDismissible: true,
+    enableDrag: true,
     builder: (context) => WriteReviewBottomSheetWidget(booking: booking),
   );
 }
@@ -46,8 +47,8 @@ class _WriteReviewBottomSheetWidgetState
   bool _saving = false;
   bool _processingTip = false;
 
-  static const List<double> _tipAmounts = [1.0, 2.0, 3.0, 5.0];
-  static const double _minTipAmount = 0.5;
+  static const List<double> _tipAmounts = [5.0, 10.0, 20.0, 50.0];
+  static const double _minTipAmount = 1.0;
 
   @override
   void dispose() {
@@ -74,7 +75,9 @@ class _WriteReviewBottomSheetWidgetState
     } else if (_showCustomTip &&
         _selectedTip > 0 &&
         _selectedTip < _minTipAmount) {
-      errorMessage = l10n?.minimumTipAmount ?? 'Minimum tip amount is SAR 0.50';
+      errorMessage =
+          l10n?.minimumTipAmount ??
+          'Minimum tip amount is SAR ${_minTipAmount.toStringAsFixed(2)}';
     }
 
     if (errorMessage != null) {
@@ -88,10 +91,14 @@ class _WriteReviewBottomSheetWidgetState
   void _showSnackBar(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: isError ? Colors.red.shade600 : Colors.green.shade600,
+        content: Text(
+          message,
+          style: DMSansFont.textStyle(fontSize: 14, color: Colors.white),
+        ),
+        backgroundColor: isError ? AppColors.red : Colors.green.shade600,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }
@@ -99,7 +106,7 @@ class _WriteReviewBottomSheetWidgetState
   ReviewModel _createReviewModel({bool isTipPaid = false}) {
     return ReviewModel(
       workerId: widget.booking.agent?.uid,
-      rating: _rating, // Rating is guaranteed to be set here
+      rating: _rating,
       review: _reviewController.text.trim(),
       tipAmount: _selectedTip > 0 ? _selectedTip : null,
       paymentType: _tipPaymentMethod.isNotEmpty ? _tipPaymentMethod : null,
@@ -111,23 +118,21 @@ class _WriteReviewBottomSheetWidgetState
   }
 
   Future<void> _saveReview() async {
+    final l10n = AppLocalizations.of(context);
     if (!_validateForm()) return;
 
     setState(() => _saving = true);
 
     try {
       if (_selectedTip > 0 && _tipPaymentMethod.toLowerCase() == 'card') {
-        // Card payment - navigate to PaymentWebView
         await _processTipPayment();
       } else {
-        // No tip or cash payment - save review directly
         final success = await BookingUtils.saveReview(
           booking: widget.booking,
           review: _createReviewModel(),
         );
 
         if (success) {
-          // If there's a cash tip, save it to subcollection
           if (_selectedTip > 0 && _tipPaymentMethod.toLowerCase() == 'cash') {
             await _saveCashTipToSubcollection();
           }
@@ -138,21 +143,21 @@ class _WriteReviewBottomSheetWidgetState
             (route) => false,
           );
           _showSnackBar(
-            AppLocalizations.of(context)?.reviewSubmittedSuccessfully ??
-                'Review submitted successfully',
+            l10n?.reviewSubmittedSuccessfully ?? 'Review submitted successfully',
           );
         } else {
           setState(() => _saving = false);
           _showSnackBar(
-            AppLocalizations.of(context)?.failedToSaveReview ??
-                'Failed to save review',
+            l10n?.failedToSaveReview ?? 'Failed to save review',
             isError: true,
           );
         }
       }
     } catch (e) {
-      setState(() => _saving = false);
-      _showSnackBar('An error occurred: $e', isError: true);
+      if (mounted) {
+        setState(() => _saving = false);
+        _showSnackBar('An error occurred: $e', isError: true);
+      }
     }
   }
 
@@ -179,7 +184,6 @@ class _WriteReviewBottomSheetWidgetState
       debugPrint('Error saving cash tip: $e');
     }
   }
-
 
   Future<void> _processTipPayment() async {
     setState(() => _processingTip = true);
@@ -234,41 +238,69 @@ class _WriteReviewBottomSheetWidgetState
 
   @override
   Widget build(BuildContext context) {
-    final safePadding = MediaQuery.of(context).padding;
     final l10n = AppLocalizations.of(context);
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.85,
-      child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
-        body: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildHeader(l10n),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.95,
+      ),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.bgBlueTint,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+      padding: EdgeInsets.only(bottom: bottomPadding),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildDragHandle(),
+          _buildHeader(l10n),
+          const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Form(
+                key: _formKey,
+                child: Column(
                   children: [
                     _buildRatingSection(l10n),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     _buildReviewSection(l10n),
+                    const SizedBox(height: 20),
                     _buildTipSection(l10n),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
-              _buildActionButtons(safePadding, l10n),
-            ],
+            ),
           ),
+          _buildActionButtons(l10n),
+        ],
+      ),
+    ),);
+  }
+
+  Widget _buildDragHandle() {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.only(top: 12),
+        width: 40,
+        height: 4,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(2),
         ),
       ),
     );
   }
 
   Widget _buildHeader(AppLocalizations? l10n) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 16),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -276,13 +308,15 @@ class _WriteReviewBottomSheetWidgetState
             l10n?.submitAReview ?? 'Submit Review',
             style: DMSansFont.textStyle(
               fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              fontWeight: FontWeight.w700,
+              color: AppColors.black1,
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.close, color: Colors.black54),
             onPressed: () => Navigator.pop(context, false),
+            icon: const Icon(Icons.close, color: Colors.black, size: 24),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
         ],
       ),
@@ -294,32 +328,79 @@ class _WriteReviewBottomSheetWidgetState
       padding: const EdgeInsets.all(20),
       decoration: _cardDecoration(),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildRequiredLabel(l10n?.overallRating ?? 'Overall Rating'),
-          const SizedBox(height: 12),
+          Text(
+            l10n?.overallRating ?? 'Overall Rating',
+            style: DMSansFont.textStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.black1,
+            ),
+          ),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(5, (index) => _buildStarIcon(index)),
+            children: List.generate(
+              5,
+              (index) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: _buildStarIcon(index),
+              ),
+            ),
           ),
+          if (_rating > 0) ...[
+            const SizedBox(height: 12),
+            Text(
+              _getRatingDescription(_rating, l10n),
+              style: DMSansFont.textStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: _getRatingColor(_rating),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
+  String _getRatingDescription(int rating, AppLocalizations? l10n) {
+    switch (rating) {
+      case 1:
+        return l10n?.poor ?? 'Poor';
+      case 2:
+        return l10n?.fair ?? 'Fair';
+      case 3:
+        return l10n?.good ?? 'Good';
+      case 4:
+        return l10n?.veryGood ?? 'Very Good';
+      case 5:
+        return l10n?.excellent ?? 'Excellent';
+      default:
+        return '';
+    }
+  }
+
+  Color _getRatingColor(int rating) {
+    if (rating <= 2) return AppColors.red;
+    if (rating == 3) return AppColors.yellow;
+    return const Color(0xFF34A059);
+  }
+
   Widget _buildStarIcon(int index) {
+    final bool isSelected = index < _rating;
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        HapticFeedback.mediumImpact();
         setState(() => _rating = index + 1);
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.all(4),
+      child: AnimatedScale(
+        scale: isSelected ? 1.1 : 1.0,
+        duration: const Duration(milliseconds: 200),
         child: Icon(
-          Icons.star_rounded,
-          color: index < _rating ? AppColors.yellow : AppColors.grey5,
-          size: 36,
+          isSelected ? Icons.star_rounded : Icons.star_outline_rounded,
+          color: isSelected ? const Color(0xFFFBBF24) : Colors.grey.shade300,
+          size: 44,
         ),
       ),
     );
@@ -332,31 +413,47 @@ class _WriteReviewBottomSheetWidgetState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildRequiredLabel(l10n?.writeYourReview ?? 'Write Your Review'),
+          Row(
+            children: [
+              Text(
+                l10n?.writeYourReview ?? 'Write Your Review',
+                style: DMSansFont.textStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black1,
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Text(
+                '*',
+                style: TextStyle(color: AppColors.red, fontSize: 16),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _reviewController,
             maxLines: 4,
             maxLength: 500,
+            style: DMSansFont.textStyle(fontSize: 14, color: AppColors.black1),
             decoration: InputDecoration(
-              hintText: l10n?.writeYourReviewHere ?? 'Share your experience...',
+              hintText:
+                  l10n?.writeYourReviewHere ?? 'Share your experience with us...',
               hintStyle: DMSansFont.textStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Colors.black54,
+                color: Colors.grey.shade400,
               ),
-              border: _outlineInputBorder(Colors.grey.shade300),
-              focusedBorder: _outlineInputBorder(AppColors.secondary, width: 2),
-              errorBorder: _outlineInputBorder(Colors.red),
+              counterStyle: DMSansFont.textStyle(
+                fontSize: 12,
+                color: Colors.grey.shade500,
+              ),
               filled: true,
               fillColor: Colors.grey.shade50,
+              border: _outlineInputBorder(Colors.grey.shade200),
+              enabledBorder: _outlineInputBorder(Colors.grey.shade200),
+              focusedBorder: _outlineInputBorder(AppColors.secondary, width: 1.5),
+              contentPadding: const EdgeInsets.all(16),
             ),
-            validator: (value) {
-              if (value?.trim().isEmpty ?? true) {
-                return l10n?.pleaseWriteAReview ?? 'Please write a review';
-              }
-              return null;
-            },
           ),
         ],
       ),
@@ -366,80 +463,110 @@ class _WriteReviewBottomSheetWidgetState
   Widget _buildTipSection(AppLocalizations? l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.only(top: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.secondary.withOpacity(0.05),
-            AppColors.secondary.withOpacity(0.02),
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.secondary.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.secondary.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.secondary.withOpacity(0.03),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTipHeader(l10n),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          Row(
             children: [
-              ..._tipAmounts.map((amount) => _buildTipButton(amount, l10n)),
-              _buildCustomTipButton(l10n),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.secondary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.volunteer_activism_rounded,
+                  color: AppColors.secondary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n?.thankTheTechnician ?? 'Thank the Technician',
+                      style: DMSansFont.textStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.black1,
+                      ),
+                    ),
+                    Text(
+                      l10n?.showAppreciationWithTip ??
+                          'Show appreciation with a tip',
+                      style: DMSansFont.textStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
+          ),
+          const SizedBox(height: 20),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                ..._tipAmounts.map(
+                  (amount) => Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: _buildTipButton(amount, l10n),
+                  ),
+                ),
+                _buildCustomTipButton(l10n),
+              ],
+            ),
           ),
           if (_showCustomTip) _buildCustomTipInput(l10n),
-          if (_selectedTip > 0) _buildPaymentMethodSection(l10n),
-          if (_selectedTip > 0 && _tipPaymentMethod.isNotEmpty)
-            _buildTipSummary(l10n),
+          if (_selectedTip > 0) ...[
+            const SizedBox(height: 20),
+            Text(
+              l10n?.selectPaymentMethod ?? 'Select Payment Method',
+              style: DMSansFont.textStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.black1,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildPaymentMethodButton(
+                    'card',
+                    l10n?.payWithCard ?? 'Card',
+                    Icons.credit_card_rounded,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildPaymentMethodButton(
+                    'cash',
+                    l10n?.payInCash ?? 'Cash',
+                    Icons.payments_rounded,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
-    );
-  }
-
-  Widget _buildTipHeader(AppLocalizations? l10n) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.secondary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(Icons.favorite, color: AppColors.secondary, size: 20),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n?.thankTheTechnician ?? 'Thank the Technician',
-                style: DMSansFont.textStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              Text(
-                l10n?.showAppreciationWithTip ?? 'Show appreciation with a tip',
-                style: DMSansFont.textStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black54,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -451,19 +578,19 @@ class _WriteReviewBottomSheetWidgetState
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.secondary : Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          color: isSelected ? AppColors.secondary : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? AppColors.secondary : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
+            color: isSelected ? AppColors.secondary : Colors.grey.shade200,
+            width: 1,
           ),
         ),
         child: Text(
           '${l10n?.sar ?? 'SAR '} ${amount.toInt()}',
           style: DMSansFont.textStyle(
             fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: isSelected ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.w600,
+            color: isSelected ? Colors.white : AppColors.black1,
           ),
         ),
       ),
@@ -477,28 +604,27 @@ class _WriteReviewBottomSheetWidgetState
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: _showCustomTip ? AppColors.secondary : Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          color: _showCustomTip ? AppColors.secondary : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: _showCustomTip ? AppColors.secondary : Colors.grey.shade300,
-            width: _showCustomTip ? 2 : 1,
+            color: _showCustomTip ? AppColors.secondary : Colors.grey.shade200,
+            width: 1,
           ),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.edit,
-              size: 16,
-              color: _showCustomTip ? Colors.white : Colors.black87,
+              Icons.edit_rounded,
+              size: 14,
+              color: _showCustomTip ? Colors.white : AppColors.black1,
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 6),
             Text(
               l10n?.custom ?? 'Custom',
               style: DMSansFont.textStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: _showCustomTip ? Colors.white : Colors.black87,
+                fontWeight: FontWeight.w600,
+                color: _showCustomTip ? Colors.white : AppColors.black1,
               ),
             ),
           ],
@@ -509,12 +635,13 @@ class _WriteReviewBottomSheetWidgetState
 
   Widget _buildCustomTipInput(AppLocalizations? l10n) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.only(top: 16),
       child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.grey.shade50,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.secondary.withOpacity(0.3)),
+          border: Border.all(color: AppColors.secondary.withOpacity(0.2)),
         ),
         child: TextFormField(
           controller: _customTipController,
@@ -522,17 +649,25 @@ class _WriteReviewBottomSheetWidgetState
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
           ],
+          style: DMSansFont.textStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: AppColors.black1,
+          ),
           decoration: InputDecoration(
-            hintText: l10n?.enterCustomTipAmount ?? 'Enter custom tip amount',
-            hintStyle: DMSansFont.textStyle(fontSize: 14, color: Colors.black54),
-            prefixText: l10n?.sar ?? 'SAR ',
+            hintText: '0.00',
+            hintStyle: DMSansFont.textStyle(
+              fontSize: 15,
+              color: Colors.grey.shade400,
+            ),
+            prefixText: '${l10n?.sar ?? 'SAR '} ',
             prefixStyle: DMSansFont.textStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: AppColors.black1,
             ),
             border: InputBorder.none,
-            contentPadding: const EdgeInsets.all(16),
+            contentPadding: const EdgeInsets.symmetric(vertical: 14),
           ),
           onChanged: (value) {
             final amount = double.tryParse(value) ?? 0.0;
@@ -541,135 +676,41 @@ class _WriteReviewBottomSheetWidgetState
               if (amount == 0) _tipPaymentMethod = '';
             });
           },
-          validator: (value) {
-            if (_showCustomTip) {
-              if (value?.isEmpty ?? true) {
-                return l10n?.pleaseEnterTipAmount ?? 'Please enter tip amount';
-              }
-              final amount = double.tryParse(value!) ?? 0.0;
-              if (amount <= 0) {
-                return l10n?.pleaseEnterValidTipAmount ??
-                    'Please enter a valid tip amount';
-              }
-              if (amount < _minTipAmount) {
-                return l10n?.minimumTipAmount ??
-                    'Minimum tip amount is SAR 0.50';
-              }
-            }
-            return null;
-          },
         ),
       ),
     );
   }
 
-  Widget _buildPaymentMethodSection(AppLocalizations? l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        Text(
-          l10n?.selectPaymentMethod ?? 'Select Payment Method',
-          style: DMSansFont.textStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _buildPaymentMethodButton(
-                'card',
-                l10n?.payWithCard ?? 'Pay with Card',
-                Icons.credit_card,
-                AppColors.secondary,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildPaymentMethodButton(
-                'cash',
-                l10n?.payInCash ?? 'Pay in Cash',
-                Icons.money,
-                Colors.green,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPaymentMethodButton(
-    String method,
-    String label,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildPaymentMethodButton(String method, String label, IconData icon) {
     final isSelected = _tipPaymentMethod == method;
     return GestureDetector(
       onTap: () => _onPaymentMethodSelected(method),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : Colors.white,
+          color: isSelected ? AppColors.secondary : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? color : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
+            color: isSelected ? AppColors.secondary : Colors.grey.shade200,
+            width: 1,
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: isSelected ? color : Colors.black54, size: 18),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                label,
-                style: DMSansFont.textStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected ? color : Colors.black87,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTipSummary(AppLocalizations? l10n) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.green.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.green.withOpacity(0.3)),
-        ),
-        child: Row(
-          children: [
             Icon(
-              _tipPaymentMethod == 'card' ? Icons.credit_card : Icons.money,
-              color: Colors.green,
-              size: 20,
+              icon,
+              size: 18,
+              color: isSelected ? Colors.white : AppColors.black1,
             ),
             const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                '${l10n?.tip ?? 'Tip'}: ${l10n?.sar ?? 'SAR '} ${_selectedTip.toStringAsFixed(2)} (${_tipPaymentMethod == 'card' ? l10n?.card ?? 'Card' : l10n?.cash ?? 'Cash'})',
-                style: DMSansFont.textStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.green.shade700,
-                ),
+            Text(
+              label,
+              style: DMSansFont.textStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : AppColors.black1,
               ),
             ),
           ],
@@ -678,128 +719,82 @@ class _WriteReviewBottomSheetWidgetState
     );
   }
 
-  Widget _buildActionButtons(EdgeInsets safePadding, AppLocalizations? l10n) {
-    final isProcessing = _saving || _processingTip;
+  Widget _buildActionButtons(AppLocalizations? l10n) {
+    final bool isBusy = _saving || _processingTip;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Container(
-      color: Colors.white,
       padding: EdgeInsets.only(
-        bottom: safePadding.bottom + 16,
-        top: 16,
-        left: 16,
-        right: 16,
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: bottomPadding > 0 ? bottomPadding : 20,
+      ),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, -2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          if (!isProcessing)
-            Expanded(
-              flex: 2,
-              child: SizedBox(
-                height: 52,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.grey.shade400),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+          Expanded(
+            child: SizedBox(
+              height: 54,
+              child: OutlinedButton(
+                onPressed: isBusy ? null : () => Navigator.pop(context, false),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.grey.shade300),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text(
-                    l10n?.cancel ?? 'Cancel',
-                    style: DMSansFont.textStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                ),
+                child: Text(
+                  l10n?.cancel ?? 'Cancel',
+                  style: DMSansFont.textStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black1,
                   ),
                 ),
               ),
             ),
-          if (!isProcessing) const SizedBox(width: 16),
+          ),
+          const SizedBox(width: 12),
           Expanded(
-            flex: 3,
+            flex: 2,
             child: SizedBox(
-              height: 52,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
+              height: 54,
+              child: ElevatedButton(
+                onPressed: isBusy ? null : _saveReview,
+                style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.secondary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                onPressed: isProcessing ? null : _saveReview,
-                child: isProcessing
-                    ? _buildProcessingIndicator(l10n)
-                    : _buildSubmitButtonText(l10n),
+                child: isBusy
+                    ? const Loader(color: Colors.white, size: 24)
+                    : Text(
+                        _selectedTip > 0
+                            ? '${l10n?.submitReviewAndTip ?? 'Submit Review & Tip'}'
+                            : l10n?.submitReview ?? 'Submit Review',
+                        style: DMSansFont.textStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
               ),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildProcessingIndicator(AppLocalizations? l10n) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          _processingTip
-              ? l10n?.processing ?? 'Processing...'
-              : l10n?.submitting ?? 'Submitting...',
-          style: DMSansFont.textStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSubmitButtonText(AppLocalizations? l10n) {
-    return Text(
-      _selectedTip > 0
-          ? '${l10n?.submitReviewAndTip ?? 'Submit Review & Tip'} (${l10n?.sar ?? 'SAR '} ${_selectedTip.toStringAsFixed(2)})'
-          : l10n?.submitReview ?? 'Submit Review',
-      style: DMSansFont.textStyle(
-        color: Colors.white,
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      ),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Widget _buildRequiredLabel(String label) {
-    return Row(
-      children: [
-        Text(
-          label,
-          style: DMSansFont.textStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        Text(
-          ' *',
-          style: DMSansFont.textStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.red,
-          ),
-        ),
-      ],
     );
   }
 
@@ -809,9 +804,9 @@ class _WriteReviewBottomSheetWidgetState
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
-          blurRadius: 10,
-          offset: const Offset(0, 2),
+          color: Colors.black.withOpacity(0.04),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
         ),
       ],
     );

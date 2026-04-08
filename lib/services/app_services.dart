@@ -13,6 +13,7 @@ import 'package:abo_glumbo_bbk/models/location.dart';
 import 'package:abo_glumbo_bbk/models/notification.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/models/counter_offer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -122,6 +123,9 @@ class AppServices {
   }
 
   static Future<CustomerModel> fetchCustomerData({required String uid}) async {
+    if (uid.isEmpty) {
+      throw Exception('fetchCustomerData called with empty UID');
+    }
     try {
       DocumentSnapshot doc = await AppFirestore.customersCollectionRef
           .doc(uid)
@@ -138,6 +142,10 @@ class AppServices {
   }
 
   static Stream<CustomerModel> listenToCustomerData(String uid) {
+    if (uid.isEmpty) {
+      debugPrint('⚠️ listenToCustomerData called with empty UID');
+      return const Stream.empty();
+    }
     return AppFirestore.customersCollectionRef.doc(uid).snapshots().map((
       snapshot,
     ) {
@@ -295,6 +303,20 @@ class AppServices {
         });
   }
 
+  static Stream<List<ServiceModel>> listenToServices() {
+    return AppFirestore.servicesCollectionRef
+        .where('isActive', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map(
+                (doc) =>
+                    ServiceModel.fromJson(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
+        });
+  }
+
   static Future<List<BannerModel>> fetchBanners() async {
     try {
       final snapshot = await AppFirestore.bannersCollectionRef
@@ -309,6 +331,20 @@ class AppServices {
       debugPrint('❌ Error fetching banners: $e');
       return [];
     }
+  }
+
+  static Stream<List<BannerModel>> listenToBanners() {
+    return AppFirestore.bannersCollectionRef
+        .where('active', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map(
+                (doc) =>
+                    BannerModel.fromJson(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
+        });
   }
 
   static Future<void> updateCustomerLocation(String userLocation) async {
@@ -878,8 +914,8 @@ class AppServices {
     final workersStream = AppFirestore.usersCollectionRef
         .where('jobRoles', arrayContains: categoryDocId)
         // .where('isAdmin', isEqualTo: false) // Removed to include admins
-        .where('isOnline', isEqualTo: true)
-        .where('isVerified', isEqualTo: true)
+        // .where('isOnline', isEqualTo: true)
+        // .where('isVerified', isEqualTo: true)
         .snapshots()
         .map((snapshot) {
           return snapshot.docs
@@ -1328,6 +1364,150 @@ class AppServices {
         .where('read', isEqualTo: false)
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
+  }
+
+  static Future<bool> createCounterOffer({
+    required String bookingId,
+    required String proposedBy,
+    required String proposedByUid,
+    required String proposedByName,
+    required Timestamp proposedTime,
+    required String? agentUid,
+  }) async {
+    try {
+      final docRef = AppFirestore.counterOffersCollectionRef.doc();
+      final counterOffer = CounterOfferModel(
+        id: docRef.id,
+        bookingId: bookingId,
+        proposedBy: proposedBy,
+        proposedByUid: proposedByUid,
+        proposedByName: proposedByName,
+        proposedTime: proposedTime,
+        status: 'pending',
+        createdAt: Timestamp.now(),
+      );
+
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final bookingRef = AppFirestore.bookingsCollectionRef.doc(bookingId);
+        final bookingSnapshot = await transaction.get(bookingRef);
+
+        Map<String, dynamic> updateData = {
+          'activeCounterOffer': counterOffer.toMap(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        };
+
+        // Set startedAt if not already set
+        if (bookingSnapshot.exists) {
+          final data = bookingSnapshot.data() as Map<String, dynamic>;
+          if (data['counterProposalStartedAt'] == null) {
+            updateData['counterProposalStartedAt'] = FieldValue.serverTimestamp();
+          }
+        }
+
+        transaction.set(docRef, counterOffer.toMap());
+        transaction.update(bookingRef, updateData);
+      });
+
+      if (agentUid != null && agentUid.isNotEmpty) {
+        await recordTechnicianNotification(
+          technicianId: agentUid,
+          titleEn: 'Counter Offer Update',
+          titleAr: 'تحديث عرض الموعد البديل',
+          bodyEn: 'Customer has proposed a new time for the booking.',
+          bodyAr: 'لقد اقترح العميل وقتاً جديداً للحجز.',
+          type: 'counter_offer',
+          data: {'bookingId': bookingId},
+        );
+      }
+
+      return true;
+    } catch (e) {
+      debugPrint('Error creating counter offer: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> respondToCounterOffer({
+    required BookingModel booking,
+    required String response, // 'accepted' or 'rejected'
+  }) async {
+    try {
+      final bookingId = booking.id;
+      final activeCounterOffer = booking.activeCounterOffer;
+      if (activeCounterOffer == null) return false;
+
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final bookingRef = AppFirestore.bookingsCollectionRef.doc(bookingId);
+        final offerRef =
+            AppFirestore.counterOffersCollectionRef.doc(activeCounterOffer.id!);
+
+        if (response == 'accepted') {
+          transaction.update(bookingRef, {
+            'bookingDateTime': activeCounterOffer.proposedTime,
+            'activeCounterOffer.status': response,
+            'counterProposalAcceptedAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+        } else {
+          transaction.update(bookingRef, {
+            'activeCounterOffer.status': response,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        transaction.update(offerRef, {
+          'status': response,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      });
+
+      if (booking.agent?.uid != null) {
+        await recordTechnicianNotification(
+          technicianId: booking.agent!.uid!,
+          titleEn: 'Counter Offer Response',
+          titleAr: 'الرد على عرض الموعد البديل',
+          bodyEn: 'Customer has $response your proposed time.',
+          bodyAr: response == 'accepted'
+              ? 'لقد قبل العميل الوقت المقترح.'
+              : 'لقد رفض العميل الوقت المقترح.',
+          type: 'counter_offer_response',
+          data: {'bookingId': bookingId, 'status': response},
+        );
+      }
+
+      return true;
+    } catch (e) {
+      debugPrint('Error responding to counter offer: $e');
+      return false;
+    }
+  }
+
+  static Future<void> recordTechnicianNotification({
+    required String technicianId,
+    required String titleEn,
+    required String titleAr,
+    required String bodyEn,
+    required String bodyAr,
+    required String type,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      await AppFirestore.usersCollectionRef
+          .doc(technicianId)
+          .collection('notifications')
+          .add({
+        'titleEn': titleEn,
+        'titleAr': titleAr,
+        'bodyEn': bodyEn,
+        'bodyAr': bodyAr,
+        'type': type,
+        'data': data,
+        'createdAt': FieldValue.serverTimestamp(),
+        'read': false,
+      });
+    } catch (e) {
+      debugPrint('Error recording technician notification: $e');
+    }
   }
 }
 

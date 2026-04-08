@@ -53,7 +53,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       // 2. Fill text fields
       _fillOut();
-
     } catch (e) {
       if (kDebugMode) {
         print('Error loading data: $e');
@@ -130,7 +129,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               color: backgroundColor == AppColors.yellow
                   ? Colors.grey.shade800
                   : Colors.white,
-              fontSize: 15,
+              fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -279,14 +278,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final safePadding = MediaQuery.of(context).padding;
-    final locale = AppLocalizations.of(context);
+    final locale = AppLocalizations.of(context)!;
 
     // Show error and navigate back if customer is null
     if (widget.customer == null && !isPageLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           _showSnackBar(
-            locale?.errorFillingProfile ?? 'Customer data not available',
+            locale.errorFillingProfile,
             backgroundColor: AppColors.red,
           );
           Navigator.pop(context);
@@ -311,19 +310,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
         }
       },
       child: Scaffold(
+        backgroundColor: AppColors.bgBlueTint,
         appBar: AppBar(
-          backgroundColor: AppColors.bgWhite,
+          backgroundColor: AppColors.bgBlueTint,
           title: Text(
-            locale?.profileManagement ?? 'Profile Management',
-            style: TextStyle(color: Colors.black),
+            locale.profile,
+            style: TextStyle(color: Colors.black, fontSize: 14),
           ),
           centerTitle: true,
           leading: IconButton(
+            iconSize: 18,
             onPressed: () {
               Navigator.pop(context);
             },
             icon: Icon(
-              Icons.arrow_back,
+              Icons.arrow_back_ios,
+
               color: Colors.black, // Explicitly set back arrow color
             ),
           ),
@@ -333,27 +335,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
             : Form(
                 key: _formKey,
                 child: ListView(
-                  padding: EdgeInsets.only(
-                    top: 16,
-                    left: 16,
-                    right: 16,
-                    bottom: safePadding.bottom + 16,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                   children: [
                     const SizedBox(height: 16),
 
                     // Name Field
                     TextFormWidget(
                       controller: nameController,
-                      label: locale?.yourName ?? 'Your Name',
+                      label: locale.yourName,
                       keyboardType: TextInputType.name,
                       textInputAction: TextInputAction.next,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return locale?.nameIsRequired ?? 'Name is required';
+                          return locale.nameIsRequired;
                         } else if (value.length < 3) {
-                          return locale?.enterAValidName ??
-                              'Enter a valid name';
+                          return locale.enterAValidName;
                         }
                         return null;
                       },
@@ -362,33 +358,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     // Phone Field
                     TextFormWidget(
                       controller: phoneController,
-                      label: locale?.phoneNumber ?? 'Phone Number',
+                      label: locale.phoneNumber,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
                         LengthLimitingTextInputFormatter(10),
                       ],
                       suffixIcon: _isUpdatingPhone
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: Padding(
-                                padding: EdgeInsets.all(12.0),
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
+                          ? Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Loader(color: AppColors.primary, size: 16),
                             )
                           : TextButton(
                               onPressed: _isUpdatingPhone
                                   ? null
                                   : _updatePhoneNumber,
-                              child: Text(locale?.update ?? 'Save'),
+                              child: Text(locale.update),
                             ),
                       textInputAction: TextInputAction.next,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return locale?.pleaseEnterAValidPhoneNumber ?? '';
+                          return locale.pleaseEnterAValidPhoneNumber;
                         }
                         return null;
                       },
@@ -396,7 +386,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     // Email Field
                     TextFormWidget(
                       controller: emailController,
-                      label: locale?.emailAddress ?? 'Email Address',
+                      label: locale.emailAddress,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       validator: (value) {
@@ -405,8 +395,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         );
                         if (value != null && value.isNotEmpty) {
                           if (!emailRegex.hasMatch(value)) {
-                            return locale?.enterAValidEmail ??
-                                'Enter a valid email';
+                            return locale.enterAValidEmail;
                           }
                         }
                         return null;
@@ -418,43 +407,50 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       AppLocalizations.of(context)?.phoneNumberUpdateInfo ??
                           'To update phone number, please click the "Update" button.',
                       style: DMSansFont.textStyle(
-                        fontSize: 12,
+                        fontSize: 10,
                         color: AppColors.secondary,
                       ),
                     ),
-                    const SizedBox(height: 30),
-
-                    // Update Button
-                    BlocBuilder<AccountBloc, AccountState>(
-                      builder: (context, state) {
-                        return SizedBox(
-                          width: double.maxFinite,
-                          height: 55,
-                          child: ElevatedButton(
-                            onPressed: state is UpdateCustomerProfileLoading
-                                ? null
-                                : _updateProfile,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: state is UpdateCustomerProfileLoading
-                                ? Loader(size: 20, color: Colors.white)
-                                : Text(
-                                    locale?.update ?? 'Update',
-                                    style: DMSansFont.textStyle(
-                                      color: Colors.white,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                          ),
-                        );
-                      },
-                    ),
                   ],
+                ),
+              ),
+        bottomNavigationBar: isPageLoading
+            ? null
+            : Padding(
+                padding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: safePadding.bottom + 16,
+                  top: 8,
+                ),
+                child: BlocBuilder<AccountBloc, AccountState>(
+                  builder: (context, state) {
+                    return SizedBox(
+                      width: double.maxFinite,
+                      height: 55,
+                      child: ElevatedButton(
+                        onPressed: state is UpdateCustomerProfileLoading
+                            ? null
+                            : _updateProfile,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: state is UpdateCustomerProfileLoading
+                            ? Loader(size: 20, color: Colors.white)
+                            : Text(
+                                locale.update,
+                                style: DMSansFont.textStyle(
+                                  color: Colors.white,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    );
+                  },
                 ),
               ),
       ),

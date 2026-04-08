@@ -128,10 +128,49 @@ class WorkerCard extends StatelessWidget {
             const SizedBox(height: 6),
 
             // Inspection Fee
-            _InfoRow(
-              icon: '💵',
-              text:
-                  '${AppLocalizations.of(context)!.inspectionFee}: $inspectionFee ${AppLocalizations.of(context)!.sar}',
+            Row(
+              children: [
+                Text('💵 ', style: TextStyle(fontSize: 16)),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${AppLocalizations.of(context)!.inspectionFee}:',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                          height: 1.4,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          if ((service.discountPercentage ?? 0) > 0)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 6.0),
+                              child: Text(
+                                "$inspectionFee ${AppLocalizations.of(context)!.sar}",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade400,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                            ),
+                          Text(
+                            '${service.getDiscountedPrice(inspectionFee)} ${AppLocalizations.of(context)!.sar}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.green.shade700,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 6),

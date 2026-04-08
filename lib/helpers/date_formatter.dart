@@ -15,3 +15,11 @@ String formatBookingDateTime(DateTime dateTime, String locale) {
 
   return '${dateFormat.format(dateTime)} ${timeFormat.format(dateTime)}';
 }
+
+String formatDateTimeDay(DateTime date, String locale) {
+  return DateFormat('EEE, MMM d, y - h:mm a', locale).format(date);
+}
+
+String formatDateTime(DateTime date, String locale) {
+  return DateFormat('dd MMM yyyy, hh:mm a', locale).format(date);
+}

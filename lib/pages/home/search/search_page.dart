@@ -10,6 +10,9 @@ import 'package:abo_glumbo_bbk/pages/home/categories/bloc/categories_bloc.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/categories.dart';
 
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
+
 import 'dart:async';
 
 class SearchPage extends StatefulWidget {
@@ -418,7 +421,7 @@ class _SearchPageState extends State<SearchPage> {
               child: RefreshIndicator(
                 onRefresh: _fetchServices,
                 child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? Center(child: Loader(color: AppColors.primary))
                     : (searchQuery == null || searchQuery!.trim().isEmpty)
                     ? _buildEmptySearchState()
                     : _buildServicesList(),

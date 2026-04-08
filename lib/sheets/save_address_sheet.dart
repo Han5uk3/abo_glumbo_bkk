@@ -3,6 +3,8 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/address_result.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -225,31 +227,20 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                             width: 50,
                             height: 16,
                             child: Center(
-                              child: SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Color.fromARGB(255, 28, 143, 243),
-                                ),
-                              ),
+                              child: Loader(color: const Color.fromARGB(255, 28, 143, 243), size: 16),
                             ),
                           )
                         : Text(
                             AppLocalizations.of(context)?.addNew ?? 'Add New',
                             style: PoppinsFont.textStyle(
-                              color: const Color.fromARGB(255, 28, 143, 243),
+                              color: AppColors.primary,
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                     icon: _isAddingNewAddress
                         ? const SizedBox.shrink()
-                        : const Icon(
-                            Icons.add,
-                            color: Color.fromARGB(255, 28, 143, 243),
-                            size: 20,
-                          ),
+                        : Icon(Icons.add, color: AppColors.primary, size: 20),
                   ),
                 ],
               ),
@@ -300,37 +291,13 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            gradient: isSelected
-                                ? LinearGradient(
-                                    colors: [
-                                      Colors.blue[50]!,
-                                      Colors.blue[100]!.withOpacity(0.3),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  )
-                                : LinearGradient(
-                                    colors: [Colors.white, Colors.grey[50]!],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: isSelected
-                                  ? Colors.blue[400]!
+                                  ? AppColors.primary
                                   : Colors.grey[200]!,
                               width: isSelected ? 2 : 1,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: isSelected
-                                    ? Colors.blue[200]!.withOpacity(0.4)
-                                    : Colors.grey[300]!.withOpacity(0.2),
-                                blurRadius: isSelected ? 8 : 4,
-                                offset: const Offset(0, 2),
-                                spreadRadius: isSelected ? 1 : 0,
-                              ),
-                            ],
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(16),
@@ -348,7 +315,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
                                           color: isSelected
-                                              ? Colors.blue[500]
+                                              ? AppColors.primary
                                               : Colors.grey[100],
                                           borderRadius: BorderRadius.circular(
                                             10,
@@ -376,7 +343,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                                     : FontWeight.w500,
                                                 fontSize: 16,
                                                 color: isSelected
-                                                    ? Colors.blue[800]
+                                                    ? AppColors.primary
                                                     : Colors.grey[800],
                                               ),
                                             ),
@@ -385,7 +352,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                               address.streetName ?? '',
                                               style: PoppinsFont.textStyle(
                                                 color: isSelected
-                                                    ? Colors.blue[600]
+                                                    ? AppColors.primary
                                                     : Colors.grey[500],
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w400,
@@ -403,7 +370,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                           icon: Icon(
                                             Icons.more_vert_rounded,
                                             color: isSelected
-                                                ? Colors.blue[600]
+                                                ? AppColors.primary
                                                 : Colors.grey[600],
                                             size: 20,
                                           ),
@@ -422,7 +389,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                                   children: [
                                                     Icon(
                                                       Icons.edit_outlined,
-                                                      color: Colors.blue[400],
+                                                      color: AppColors.primary,
                                                       size: 18,
                                                     ),
                                                     const SizedBox(width: 8),
@@ -434,8 +401,8 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                                       style:
                                                           PoppinsFont.textStyle(
                                                             fontSize: 14,
-                                                            color: Colors
-                                                                .blue[400],
+                                                            color: AppColors
+                                                                .primary,
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                           ),
@@ -495,9 +462,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                           colors: [
                                             Colors.transparent,
                                             isSelected
-                                                ? Colors.blue[200]!.withOpacity(
-                                                    0.3,
-                                                  )
+                                                ? AppColors.primary
                                                 : Colors.grey[200]!.withOpacity(
                                                     0.3,
                                                   ),
@@ -540,8 +505,8 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: AppColors.bgBlueTint,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16),
           topRight: Radius.circular(16),

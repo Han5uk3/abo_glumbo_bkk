@@ -30,7 +30,7 @@ class CustomerAboutUsPage extends StatelessWidget {
                       Text(
                         locale.customerAboutHeadline,
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),

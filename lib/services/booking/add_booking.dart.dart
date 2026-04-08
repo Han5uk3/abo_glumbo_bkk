@@ -4,24 +4,24 @@ import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
 import 'package:abo_glumbo_bbk/models/address.dart';
 
 class NewBookingUtils {
   static Future<String?> addBooking({
     required ServiceModel service,
     required DateTime selectedDate,
-
     required CustomerModel customerData,
     required String notes,
     File? selectedImage,
     File? selectedVideo,
     required Map<dynamic, dynamic> timeSlot,
     required UserModel agent,
-    AddressModel? selectedAddress, // Added selectedAddress
+    AddressModel? selectedAddress,
+    MatchedServiceZone? serviceLocation, // Matched polygon zone
   }) async {
     try {
       DateTime bookingDate = DateTime(
@@ -95,7 +95,9 @@ class NewBookingUtils {
         customer: updatedCustomerData,
         agent: agent,
         paymentModeCode: "U",
-        selectedAddressId: selectedAddress?.id, // Added selectedAddressId
+        selectedAddressId: selectedAddress?.id,
+        serviceLocation: serviceLocation, // Matched zone stored here
+        isOnHour: service.isOnWorkHour(currentTime: bookingDate), // ✅ Automatically determined
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       );
