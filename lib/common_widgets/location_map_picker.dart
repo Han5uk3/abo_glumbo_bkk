@@ -70,7 +70,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     _populateControllers();
   }
 
-  _populateControllers() async {
+  Future<void> _populateControllers() async {
     if (widget.existingAddress != null) {
       _fullNameController.text = widget.existingAddress!.fullName;
       _phoneNumberController.text = widget.existingAddress!.phoneNumber;

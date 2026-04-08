@@ -13,8 +13,19 @@ class CustomerAboutUsPage extends StatelessWidget {
         slivers: [
           SliverAppBar(
             pinned: true,
-            centerTitle: false,
-            title: Text(locale.customerAboutUsTitle),
+            centerTitle: true,
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.white,
+            leading: IconButton(
+              iconSize: 16,
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              onPressed: () => Navigator.pop(context),
+            ),
+            shape: Border.all(style: BorderStyle.none),
+            title: Text(
+              locale.customerAboutUsTitle,
+              style: TextStyle(color: Colors.black),
+            ),
           ),
 
           SliverPadding(

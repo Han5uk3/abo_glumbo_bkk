@@ -136,7 +136,7 @@ String getTitle(String type, BuildContext context) {
   }
 }
 
-getOnTap(String type, String content) {
+Future<Null>? Function() getOnTap(String type, String content) {
   switch (type) {
     case "Email":
       return () async {

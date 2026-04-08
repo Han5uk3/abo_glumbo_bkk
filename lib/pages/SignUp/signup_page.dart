@@ -56,7 +56,7 @@ class _SignupPageState extends State<SignupPage> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: 24, child: Loader(color: AppColors.secondary)),
+                Loader(color: AppColors.secondary, height: 24),
                 const SizedBox(height: 16),
                 Text(
                   AppLocalizations.of(dialogContext)?.creatingAccount ??

@@ -292,10 +292,10 @@ class ChatService {
     String senderPhoto,
     String bookingId,
   ) async {
-    try {
-      final messageRef = _rtdb.child('messages/$chatId').push();
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final messageRef = _rtdb.child('messages/$chatId').push();
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
 
+    try {
       await messageRef.set({
         'senderId': currentUserId,
         'senderType': senderType,
@@ -305,76 +305,111 @@ class ChatService {
         'mediaUrl': null,
         'mediaType': null,
       });
+    } catch (e) {
+      throw Exception('Failed to send message: $e');
+    }
 
+    // Metadata updates are best-effort. The message has already been sent.
+    try {
       await _rtdb.child('chats/$chatId').update({
         'lastMessage': message,
         'lastMessageTime': timestamp,
         'lastMessageBy': currentUserId,
       });
+    } catch (e) {
+      debugPrint('⚠️ Failed to update chat metadata: $e');
+    }
 
-      String unreadField = senderType == 'customer'
-          ? 'technicianUnreadCount'
-          : 'customerUnreadCount';
+    String unreadField = senderType == 'customer'
+        ? 'technicianUnreadCount'
+        : 'customerUnreadCount';
+    try {
       await _rtdb
           .child('chats/$chatId/$unreadField')
           .set(ServerValue.increment(1));
+    } catch (e) {
+      debugPrint('⚠️ Failed to increment unread count: $e');
+    }
 
+    try {
       await _rtdb.child('userChats/$currentUserId/$chatId').update({
         'lastMessage': message,
         'lastMessageTime': timestamp,
       });
+    } catch (e) {
+      debugPrint('⚠️ Failed to update current user chat entry: $e');
+    }
 
-      // Check if receiver's userChats entry exists, create if not
-      final receiverChatRef = _rtdb.child('userChats/$receiverId/$chatId');
+    final receiverChatRef = _rtdb.child('userChats/$receiverId/$chatId');
 
-      bool receiverChatExists = false;
-      bool receiverChatCorrupted = false;
-
-      try {
-        final receiverSnapshot = await receiverChatRef.get();
-        receiverChatExists = receiverSnapshot.exists;
-
-        // Check if data is corrupted
-        if (receiverSnapshot.exists && receiverSnapshot.value is String) {
-          receiverChatCorrupted = true;
-        }
-      } catch (e) {
-        if (e.toString().contains('String') && e.toString().contains('Map')) {
-          receiverChatCorrupted = true;
-        } else {
-          rethrow;
-        }
-      }
-
-      if (receiverChatExists && !receiverChatCorrupted) {
-        // Update existing entry
+    // Update receiver's entry directly without reading first to avoid permission errors
+    try {
+      await receiverChatRef.update({
+        'participantId': currentUserId,
+        'participantName': senderName,
+        'participantPhoto': senderPhoto,
+        'participantType': senderType,
+        'bookingId': bookingId,
+        'lastMessage': message,
+        'lastMessageTime': timestamp,
+        'unreadCount': ServerValue.increment(1),
+      });
+    } catch (e) {
+      if (e.toString().contains('permission-denied') ||
+          e.toString().contains('String') ||
+          e.toString().contains('Map')) {
+        // If update fails due to permissions or corrupted data, try set/recreate
         try {
-          await receiverChatRef.update({
+          await receiverChatRef.set({
+            'participantId': currentUserId,
+            'participantName': senderName,
+            'participantPhoto': senderPhoto,
+            'participantType': senderType,
+            'bookingId': bookingId,
             'lastMessage': message,
             'lastMessageTime': timestamp,
-            'unreadCount': ServerValue.increment(1),
+            'unreadCount': 1,
           });
-        } catch (e) {
-          // If update fails, recreate the entry
-          debugPrint('⚠️ Failed to update receiver chat, recreating: $e');
-          receiverChatCorrupted = true;
+        } catch (e2) {
+          debugPrint('⚠️ Failed to create/update receiver chat entry: $e2');
         }
+      } else {
+        debugPrint('⚠️ Unexpected error updating receiver chat entry: $e');
       }
+    }
+  }
 
-      if (!receiverChatExists || receiverChatCorrupted) {
-        await receiverChatRef.set({
-          'participantId': currentUserId,
-          'participantName': senderName,
-          'participantPhoto': senderPhoto,
-          'participantType': senderType,
-          'bookingId': bookingId,
-          'lastMessage': message,
-          'lastMessageTime': timestamp,
-          'unreadCount': 1,
-        });
+  Future<void> setActiveChat(String chatId) async {
+    final String uid = _auth.currentUser?.uid ?? '';
+    if (uid.isEmpty || chatId.isEmpty) return;
+
+    // Use the 'chats' root which we know is working for markAsRead
+    final String path = 'chats/$chatId/presence/$uid';
+    debugPrint('🚀 Presence start: path=$path');
+
+    try {
+      await _rtdb.child(path).set(true);
+      debugPrint('✅ Presence set success');
+      
+      try {
+        await _rtdb.child(path).onDisconnect().remove();
+        debugPrint('✅ OnDisconnect register success');
+      } catch (e) {
+        debugPrint('⚠️ OnDisconnect failed: $e');
       }
     } catch (e) {
-      throw Exception('Failed to send message: $e');
+      debugPrint('❌ Presence set failed even on working root: $e');
+    }
+  }
+
+  Future<void> clearActiveChat(String chatId) async {
+    final String uid = _auth.currentUser?.uid ?? '';
+    if (uid.isEmpty || chatId.isEmpty) return;
+
+    try {
+      await _rtdb.child('chats/$chatId/presence/$uid').remove();
+    } catch (e) {
+      debugPrint('⚠️ Failed to clear presence: $e');
     }
   }
 
@@ -427,7 +462,8 @@ class ChatService {
         .map((event) {
           final value = event.snapshot.value;
           return value is int ? value : 0;
-        });
+        })
+        .asBroadcastStream();
   }
 
   Future<int> getUnreadCount(String userType) async {

@@ -35,6 +35,15 @@ class NotificationServices {
       FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin
   _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  
+  /// Track the current active chat to suppress notifications when user is inside the chat
+  static String? currentActiveChatId;
+
+  /// Set the current active chat ID
+  static void setActiveChatId(String? chatId) {
+    currentActiveChatId = chatId;
+    debugPrint('🔔 Active chat set to: $chatId');
+  }
 
   /// Initialize local notifications
   static Future<void> initializeNotifications() async {
@@ -140,16 +149,24 @@ class NotificationServices {
         // Setup message handlers
         FirebaseMessaging.onMessage.listen((RemoteMessage message) {
           debugPrint('📨 Foreground message received: ${message.messageId}');
+          
+          final data = message.data;
+          final String? incomingChatId = data['chatId']?.toString();
+          
+          // Suppress notification if user is already in this chat
+          if (incomingChatId != null && incomingChatId == currentActiveChatId) {
+            debugPrint('🤫 Suppressing foreground notification for active chat: $incomingChatId');
+            return;
+          }
+
           RemoteNotification? notification = message.notification;
-          if (notification != null) {
+          if (notification != null && Platform.isAndroid) {
             showNotification(
               id: notification.hashCode,
               title: notification.title ?? 'Notification',
               body: notification.body ?? '',
               payload: json.encode(message.data),
             );
-            // Note: Notification is already stored by backend Cloud Function
-            // No need to store it again here to avoid duplicates
           }
         });
 

@@ -13,9 +13,18 @@ class TermsAndConditionsPage extends StatelessWidget {
     final locale = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          iconSize: 16,
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        shape: Border.all(style: BorderStyle.none),
         centerTitle: true,
         title: Text(
           isFromLogin ? locale.termsOfUse : locale.termsAndConditions,
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: SingleChildScrollView(

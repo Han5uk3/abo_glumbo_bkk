@@ -133,17 +133,27 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
         return Scaffold(
           backgroundColor: AppColors.bgBlueTint,
           appBar: AppBar(
+            leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              iconSize: 16,
+              icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
+            ),
             elevation: 0,
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
             title: Text(
               AppLocalizations.of(context)?.notifications ?? 'Notifications',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              style: TextStyle(color: Colors.black),
             ),
+            shape: Border.all(style: BorderStyle.none),
             actions: [
               if (_cachedNotifications.isNotEmpty)
                 IconButton(
-                  icon: const Icon(Icons.delete_sweep_rounded),
+                  iconSize: 16,
+                  icon: const Icon(
+                    Icons.delete_sweep_rounded,
+                    color: Colors.black,
+                  ),
                   tooltip: isAr ? 'حذف الكل' : 'Delete All',
                   onPressed: () async {
                     // Show confirmation dialog
@@ -301,7 +311,10 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
 
               return ListView.builder(
                 controller: _scrollController,
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 16,
+                ),
                 itemCount: displayedNotifications.length + (hasMore ? 1 : 0),
                 itemBuilder: (context, index) {
                   // Show loading indicator at the bottom
@@ -343,232 +356,15 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                   final icon = _getNotificationIcon(notification);
                   final iconColor = _getNotificationColor(notification);
 
-                  return Dismissible(
-                    key: Key(notification.id),
-                    direction: DismissDirection.endToStart,
-                    background: Container(
-                      alignment: isAr
-                          ? Alignment.centerLeft
-                          : Alignment.centerRight,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Icon(
-                        Icons.delete_rounded,
-                        color: Colors.white,
-                        size: 28,
-                      ),
-                    ),
-                    onDismissed: (direction) {
-                      AppServices.deleteFirestoreNotification(notification.id);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.grey[800],
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          content: Text(
-                            isAr ? 'تم حذف الإشعار' : 'Notification deleted',
-                          ),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        // borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                        border: notification.read
-                            ? null
-                            : Border.all(
-                                color: iconColor.withOpacity(0.3),
-                                width: 1.5,
-                              ),
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(16),
-                          onTap: () {
-                            if (!notification.read) {
-                              AppServices.markFirestoreNotificationAsRead(
-                                notification.id,
-                              );
-                            }
-                            // Handle navigation if needed based on data
-                          },
-                          child: IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                // Red indicator for unread notifications
-                                if (!notification.read)
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Color(0xff51C777),
-                                    // height: 93,
-                                    child: Row(
-                                      children: [
-                                        SizedBox(width: 15),
-                                        Icon(
-                                          Icons.done_all,
-                                          size: 24,
-                                          color: Colors.white,
-                                        ),
-                                        SizedBox(width: 3),
-                                        Text(
-                                          "Mark as read",
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: AppColors.bgWhite,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                // Main content container
-                                Expanded(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                      gradient: notification.read
-                                          ? null
-                                          : LinearGradient(
-                                              begin: isAr
-                                                  ? Alignment.centerRight
-                                                  : Alignment.centerLeft,
-                                              end: isAr
-                                                  ? Alignment.centerLeft
-                                                  : Alignment.centerRight,
-                                              colors: [
-                                                iconColor.withOpacity(0.03),
-                                                Colors.transparent,
-                                              ],
-                                            ),
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Icon Container
-                                        Container(
-                                          width: 48,
-                                          height: 48,
-                                          decoration: BoxDecoration(
-                                            color: iconColor.withOpacity(0.1),
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                          child: Icon(
-                                            icon,
-                                            color: iconColor,
-                                            size: 24,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        // Content
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      title,
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            notification.read
-                                                            ? FontWeight.w600
-                                                            : FontWeight.bold,
-                                                        color: Colors.black87,
-                                                        height: 1.3,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  if (!notification.read)
-                                                    Container(
-                                                      width: 8,
-                                                      height: 8,
-                                                      margin: EdgeInsets.only(
-                                                        left: isAr ? 0 : 8,
-                                                        right: isAr ? 8 : 0,
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                        color: iconColor,
-                                                        shape: BoxShape.circle,
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 6),
-                                              Text(
-                                                body,
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey[700],
-                                                  height: 1.4,
-                                                ),
-                                                maxLines: 10,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.access_time_rounded,
-                                                    size: 14,
-                                                    color: Colors.grey[400],
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Text(
-                                                    relativeTime,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.grey[500],
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  return dismissibleWidget(
+                    notification,
+                    isAr,
+                    context,
+                    icon,
+                    iconColor,
+                    relativeTime,
+                    title,
+                    body,
                   );
                 },
               );
@@ -576,6 +372,191 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget dismissibleWidget(
+    NotificationModel notification,
+    bool isAr,
+    BuildContext context,
+    IconData icon,
+    Color iconColor,
+    String relativeTime,
+    String title,
+    String body,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Dismissible(
+          key: Key(notification.id),
+          direction: notification.read
+              ? DismissDirection.endToStart
+              : DismissDirection.horizontal,
+          confirmDismiss: (direction) async {
+            if (direction == DismissDirection.startToEnd) {
+              AppServices.markFirestoreNotificationAsRead(notification.id);
+              return false;
+            }
+            return true;
+          },
+          background: Container(
+            alignment: AlignmentDirectional.centerStart,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            color: const Color(0xff51C777),
+            child: Row(
+              children: [
+                const Icon(Icons.done_all, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  isAr ? 'مقروء' : "Read",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          secondaryBackground: Container(
+            alignment: AlignmentDirectional.centerEnd,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            color: Colors.red,
+            child: const Icon(
+              Icons.delete_rounded,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+          onDismissed: (direction) {
+            if (direction == DismissDirection.endToStart) {
+              AppServices.deleteFirestoreNotification(notification.id);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.grey[800],
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  content: Text(
+                    isAr ? 'تم حذف الإشعار' : 'Notification deleted',
+                  ),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Material(
+              color: Colors.white,
+              child: InkWell(
+                onTap: () {
+                  if (!notification.read) {
+                    AppServices.markFirestoreNotificationAsRead(
+                      notification.id,
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Icon Container
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: iconColor.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(icon, color: iconColor, size: 18),
+                      ),
+                      const SizedBox(width: 10),
+                      // Content
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    title,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: notification.read
+                                          ? FontWeight.w500
+                                          : FontWeight.bold,
+                                      color: Colors.black87,
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                ),
+                                if (!notification.read)
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    margin: EdgeInsets.only(
+                                      left: isAr ? 0 : 6,
+                                      right: isAr ? 6 : 0,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: iconColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              body,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[700],
+                                height: 1.3,
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.access_time_rounded,
+                                  size: 12,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  relativeTime,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[500],
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

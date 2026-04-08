@@ -48,5 +48,8 @@ Widget _buildChild(String? text, Color? textColor, Widget? icon) {
   }
 
   // If only text is provided
-  return Text(text ?? "", style: TextStyle(color: textColor ?? Colors.black));
+  return Text(
+    text ?? "",
+    style: TextStyle(color: textColor ?? Colors.black, fontSize: 12),
+  );
 }

@@ -1,6 +1,7 @@
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
+import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,10 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     _currentUserId = _chatService.currentUserId;
     _chatService.markAsRead(widget.chatId, userType);
+    _chatService.setActiveChat(widget.chatId);
+    
+    // Set active chat for notification suppression
+    NotificationServices.setActiveChatId(widget.chatId);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
@@ -566,6 +571,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
+    _chatService.clearActiveChat(widget.chatId);
+    // Clear active chat for notification suppression
+    NotificationServices.setActiveChatId(null);
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();

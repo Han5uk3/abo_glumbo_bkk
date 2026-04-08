@@ -321,6 +321,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                   _buildSectionCard(
                     context: context,
                     hasChat: true,
+                    showChatOnHeader: false,
                     title: localization.technician,
                     icon: Icons.person_outline,
                     children: [
@@ -367,24 +368,43 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Spacer(),
-                          if (booking.bookingStatusCode != 'C')
+                          const Spacer(),
+                          if (booking.bookingStatusCode == 'A')
                             GestureDetector(
-                              onTap: () {
-                                final phone = (booking.agent!.phone ?? "")
-                                    .replaceAll(RegExp(r'\s+'), '');
-                                _launchUrl('tel:$phone');
-                              },
+                              onTap: () => _openOrCreateChat(context),
                               child: Container(
-                                padding: EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: AppColors.green.withOpacity(0.1),
+                                  color: AppColors.primary.withOpacity(0.1),
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(
-                                  Icons.call_rounded,
-                                  color: AppColors.green,
-                                  size: 16,
+                                child: Image.asset(
+                                  'assets/icons/chat2.png',
+                                  width: 16,
+                                  height: 16,
+                                ),
+                              ),
+                            ),
+                          if (booking.bookingStatusCode != 'C')
+                            Padding(
+                              padding: const EdgeInsets.only(left: 12),
+                              child: GestureDetector(
+                                onTap: () {
+                                  final phone = (booking.agent!.phone ?? "")
+                                      .replaceAll(RegExp(r'\s+'), '');
+                                  _launchUrl('tel:$phone');
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.green.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.call_rounded,
+                                    color: AppColors.green,
+                                    size: 16,
+                                  ),
                                 ),
                               ),
                             ),
@@ -772,7 +792,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                           ),
                         ),
                         SizedBox(height: 10),
-                        _buildCounterOfferUI(context),
+                        _buildCounterOfferUI(context, booking),
                       ],
                     ),
                   ),
@@ -1554,6 +1574,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     required IconData icon,
     required List<Widget> children,
     required bool hasChat,
+    bool showChatOnHeader = true,
   }) {
     return Container(
       width: double.infinity,
@@ -1598,10 +1619,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                   color: Colors.black87,
                 ),
               ),
-              if ((hasChat && booking.bookingStatusCode == 'A') ||
-                  (hasChat &&
-                      booking.warranty?.warrantyStatusCode == 'S' &&
-                      isWarranty)) ...[
+              if (showChatOnHeader &&
+                  ((hasChat && booking.bookingStatusCode == 'A') ||
+                      (hasChat &&
+                          booking.warranty?.warrantyStatusCode == 'S' &&
+                          isWarranty))) ...[
                 const Spacer(),
                 StreamBuilder<int>(
                   stream: booking.chatroomId.isNotEmpty
@@ -1924,7 +1946,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     );
   }
 
-  Widget _buildCounterOfferUI(BuildContext context) {
+  Widget _buildCounterOfferUI(BuildContext context, BookingModel booking) {
     final activeOffer = booking.activeCounterOffer;
     final l10n = AppLocalizations.of(context)!;
     final locale = l10n.localeName;
@@ -2016,7 +2038,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () =>
-                            _handleCounterOfferResponse(context, 'rejected'),
+                            _handleCounterOfferResponse(context, booking, 'rejected'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.red,
                           side: const BorderSide(color: Colors.red),
@@ -2032,7 +2054,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () =>
-                            _handleCounterConfirm(context, 'accepted'),
+                            _handleCounterConfirm(context, booking, 'accepted'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
@@ -2184,7 +2206,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
                         builder: (context) =>
-                            CounterProposeSheet(booking: widget.booking),
+                            CounterProposeSheet(booking: booking),
                       );
                     },
                     icon: const Icon(Icons.history_toggle_off, size: 20),
@@ -2218,6 +2240,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
 
   Future<void> _handleCounterConfirm(
     BuildContext context,
+    BookingModel booking,
     String response,
   ) async {
     final l10n = AppLocalizations.of(context)!;
@@ -2250,17 +2273,18 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
 
     if (confirm == true) {
       if (context.mounted) {
-        await _handleCounterOfferResponse(context, response);
+        await _handleCounterOfferResponse(context, booking, response);
       }
     }
   }
 
   Future<void> _handleCounterOfferResponse(
     BuildContext context,
+    BookingModel booking,
     String response,
   ) async {
     final success = await AppServices.respondToCounterOffer(
-      booking: widget.booking,
+      booking: booking,
       response: response,
     );
 

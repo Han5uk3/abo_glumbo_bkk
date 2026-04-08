@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class Loader extends StatefulWidget {
   final Color color;
   final double size;
+  final double? height;
 
-  const Loader({super.key, this.color = Colors.white, this.size = 20.0});
+  const Loader({
+    super.key,
+    this.color = Colors.white,
+    this.size = 20.0,
+    this.height,
+  });
 
   @override
   State<Loader> createState() => _LoaderState();
@@ -49,25 +55,30 @@ class _LoaderState extends State<Loader> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(4, (index) {
-        return AnimatedBuilder(
-          animation: _animations[index],
-          builder: (context, child) {
-            return Container(
-              margin: EdgeInsets.symmetric(horizontal: 1.5),
-              width: 3,
-              height: widget.size * _animations[index].value,
-              decoration: BoxDecoration(
-                color: widget.color,
-                borderRadius: BorderRadius.circular(1.5),
-              ),
-            );
-          },
-        );
-      }),
+    double margin = (widget.size - 12) / 8;
+    return SizedBox(
+      width: widget.size,
+      height: widget.height ?? widget.size,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(4, (index) {
+          return AnimatedBuilder(
+            animation: _animations[index],
+            builder: (context, child) {
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: margin),
+                width: 3,
+                height: widget.size * _animations[index].value,
+                decoration: BoxDecoration(
+                  color: widget.color,
+                  borderRadius: BorderRadius.circular(1.5),
+                ),
+              );
+            },
+          );
+        }),
+      ),
     );
   }
 }

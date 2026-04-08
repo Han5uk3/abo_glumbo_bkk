@@ -733,22 +733,32 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
             ],
           ),
           actions: [
-            eButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              context: context,
-              backgroundColor: AppColors.bgBlueTint,
-              textColor: Colors.black,
-              text: AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
-            ),
+            Row(
+              children: [
+                Expanded(
+                  child: eButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    context: context,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
 
-            eButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              context: context,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              text:
-                  AppLocalizations.of(dialogContext)?.deleteAccount ??
-                  'Delete Account',
+                    text:
+                        AppLocalizations.of(dialogContext)?.deleteAccount ??
+                        'Delete Account',
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: eButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    context: context,
+                    backgroundColor: AppColors.bgBlueTint,
+                    textColor: Colors.black,
+                    text:
+                        AppLocalizations.of(dialogContext)?.cancel ?? 'Cancel',
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -839,25 +849,33 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
             style: DMSansFont.textStyle(fontSize: 14),
           ),
           actions: [
-            eButton(
-              context: context,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _performLogout();
-              },
-              text: AppLocalizations.of(context)?.logout ?? 'Logout',
-            ),
-            SizedBox(width: 8),
-            eButton(
-              context: context,
-              backgroundColor: AppColors.bgBlueTint,
-              textColor: Colors.black,
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              text: AppLocalizations.of(context)?.cancel ?? 'Cancel',
+            Row(
+              children: [
+                Expanded(
+                  child: eButton(
+                    context: context,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      await _performLogout();
+                    },
+                    text: AppLocalizations.of(context)?.logout ?? 'Logout',
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: eButton(
+                    context: context,
+                    backgroundColor: AppColors.bgBlueTint,
+                    textColor: Colors.black,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    text: AppLocalizations.of(context)?.cancel ?? 'Cancel',
+                  ),
+                ),
+              ],
             ),
           ],
         );

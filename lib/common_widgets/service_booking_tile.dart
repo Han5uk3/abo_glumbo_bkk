@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
-import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/date_formatter.dart';
@@ -9,15 +8,13 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/booking_bloc.dart';
-import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
-import 'package:abo_glumbo_bbk/services/chat_services.dart';
+
 import 'package:abo_glumbo_bbk/pages/bookings/booking_details_page.dart';
 import 'package:abo_glumbo_bbk/sheets/cancel_booking_dialog.dart';
 import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -379,58 +376,58 @@ class ServiceBookingTile extends StatelessWidget {
                       booking.bookingStatusCode == "VP")
                     const SizedBox.shrink()
                   else if (booking.bookingStatusCode == "P")
-                  SizedBox(
-                    height: 23,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: const Color(0xffE74C3C),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        side: BorderSide.none, // This removes the border
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
+                    SizedBox(
+                      height: 23,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: const Color(0xffE74C3C),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          side: BorderSide.none, // This removes the border
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                         ),
-                      ),
-                      onPressed: () async {
-                        final bookingBloc = context.read<BookingBloc>();
-                        bool? res = await showBookingCancelDialog(
-                          context,
-                          booking: booking,
-                          controller: reasonController,
-                        );
-                        if (res == true) {
-                          bookingBloc.add(
-                            CancelBookingEvent(
-                              booking,
-                              reasonController.text.trim(),
-                            ),
+                        onPressed: () async {
+                          final bookingBloc = context.read<BookingBloc>();
+                          bool? res = await showBookingCancelDialog(
+                            context,
+                            booking: booking,
+                            controller: reasonController,
                           );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: AppColors.green,
-                              content: Text(
-                                AppLocalizations.of(
-                                      context,
-                                    )?.bookingCancelled ??
-                                    '',
+                          if (res == true) {
+                            bookingBloc.add(
+                              CancelBookingEvent(
+                                booking,
+                                reasonController.text.trim(),
                               ),
-                            ),
-                          );
-                          // refresh the page
-                          onRefresh.call();
-                        }
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)?.cancel ?? '',
-                        style: DMSansFont.textStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 8,
-                          color: AppColors.bgWhite,
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: AppColors.green,
+                                content: Text(
+                                  AppLocalizations.of(
+                                        context,
+                                      )?.bookingCancelled ??
+                                      '',
+                                ),
+                              ),
+                            );
+                            // refresh the page
+                            onRefresh.call();
+                          }
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)?.cancel ?? '',
+                          style: DMSansFont.textStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 8,
+                            color: AppColors.bgWhite,
+                          ),
                         ),
                       ),
-                    ),
-                  )
+                    )
                   else if (booking.bookingStatusCode == "C" &&
                       booking.paymentCompleted == true &&
                       !isWarranty)
@@ -627,7 +624,7 @@ class ServiceBookingTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       alignment: Alignment.center,
       child: Text(
-        AppLocalizations.of(context)?.verificationPending?.toUpperCase() ??
+        AppLocalizations.of(context)?.verificationPending.toUpperCase() ??
             'VERIFICATION PENDING',
         style: DMSansFont.textStyle(
           fontWeight: FontWeight.w500,
@@ -660,8 +657,7 @@ class ServiceBookingTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           alignment: Alignment.center,
           child: Text(
-            AppLocalizations.of(context)?.completePayment ??
-                'Complete Payment',
+            AppLocalizations.of(context)?.completePayment ?? 'Complete Payment',
             style: DMSansFont.textStyle(
               fontWeight: FontWeight.w500,
               fontSize: 8,
@@ -1308,199 +1304,10 @@ class ServiceBookingTile extends StatelessWidget {
     return daysSinceUpdate > 2;
   }
 
-  Future<void> _openOrCreateChat(BuildContext context) async {
-    final chatService = ChatService();
-
-    try {
-      // Show loading indicator
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          // constraints: BoxConstraints(minWidth: 100),
-          backgroundColor: Colors.white,
-          content: SizedBox(
-            height: 70,
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 24, child: Loader(color: AppColors.primary)),
-                  Text(AppLocalizations.of(context)!.loadingChat),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-
-      String chatId;
-
-      // Check if chatroom exists
-      if (booking.chatroomId.isNotEmpty) {
-        chatId = booking.chatroomId;
-      } else {
-        // Create new chatroom
-        final currentUser = FirebaseAuth.instance.currentUser;
-        if (currentUser == null) {
-          throw Exception('User not authenticated');
-        }
-
-        chatId = await chatService.createChat(
-          booking.id,
-          booking.agent!.uid ?? '',
-          booking.agent!.name ?? 'Technician',
-          booking.agent!.profileUrl ?? '',
-          booking.customer.name ?? 'Customer',
-          '', // Customer photo - update if available
-          'customer',
-        );
-
-        await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
-          'chatroomId': chatId,
-        });
-      }
-
-      // Close loading dialog
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
-
-      // Open chat screen
-      if (context.mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatScreen(
-              chatId: chatId,
-              participantName: booking.agent!.name ?? 'Technician',
-              participantId: booking.agent!.uid ?? '',
-              participantPhoto: booking.agent!.profileUrl ?? '',
-              customerName: booking.customer.name ?? 'Customer',
-              customerPhoto: '',
-              bookingId: booking.id,
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      // Close loading dialog
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
-
-      // Show error message
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to open chat: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  calculateDaysLeft() {
+  int calculateDaysLeft() {
     final endDate = booking.warranty?.createdAt!.add(Duration(days: 7));
     final daysLeft = endDate!.difference(DateTime.now()).inDays;
     return daysLeft;
-  }
-
-  Widget _buildSectionCards({
-    required BuildContext context,
-
-    required IconData icon,
-    required List<Widget> children,
-    required bool hasChat,
-  }) {
-    return Container(
-      width: double.infinity,
-      // height: 60,
-      padding: const EdgeInsets.all(0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        // border: Border.all(color: Colors.grey[200]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: AppColors.blue1.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: AppColors.blue1, size: 20),
-              ),
-
-              if ((hasChat && booking.bookingStatusCode == 'A') ||
-                  (hasChat &&
-                      booking.warranty?.warrantyStatusCode == 'S' &&
-                      isWarranty)) ...{
-                const Spacer(),
-
-                StreamBuilder<int>(
-                  stream: booking.chatroomId.isNotEmpty
-                      ? ChatService().getUnreadCountStream(booking.chatroomId)
-                      : Stream.value(0),
-                  builder: (context, snapshot) {
-                    final unreadCount = snapshot.data ?? 0;
-                    return SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: GestureDetector(
-                        onTap: () => _openOrCreateChat(context),
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: Image.asset(
-                                'assets/icons/chat2.png',
-                                width: 24,
-                                height: 24,
-                              ),
-                            ),
-                            if (unreadCount > 0)
-                              Positioned(
-                                right: 12,
-                                top: 12,
-                                child: Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 2,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              },
-            ],
-          ),
-          const SizedBox(height: 16),
-          ...children,
-        ],
-      ),
-    );
   }
 
   Widget _buildInfoRow(
@@ -1566,58 +1373,4 @@ class ServiceBookingTile extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildRatingRow(String label, double rating) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              label,
-              style: DMSansFont.textStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Row(
-              children: [
-                ...List.generate(5, (index) {
-                  return Icon(
-                    index < rating.floor()
-                        ? Icons.star
-                        : index < rating
-                        ? Icons.star_half
-                        : Icons.star_border,
-                    color: Colors.amber,
-                    size: 16,
-                  );
-                }),
-                const SizedBox(width: 6),
-                Text(
-                  '(${rating.toStringAsFixed(1)})',
-                  style: DMSansFont.textStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // String formatDateTime(DateTime dateTime, String locale) {
-  //   final dateFormat = DateFormat.yMMMMd(locale); // e.g., ١٩ يونيو، ٢٠٢٥
-  //   final timeFormat = DateFormat.jm(locale); // e.g., ٢:٣٠ م or 2:30 PM
-  //   return '${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}';
-  // }
 }

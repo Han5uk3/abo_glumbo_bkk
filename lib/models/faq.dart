@@ -39,7 +39,7 @@ class FaqModel {
     };
   }
 
-  static fromDocumentSnapshot(QueryDocumentSnapshot<Object?> doc) {
+  static FaqModel fromDocumentSnapshot(QueryDocumentSnapshot<Object?> doc) {
     return FaqModel.fromMap(doc.data() as Map<String, dynamic>);
   }
 

@@ -43,7 +43,7 @@ class TrackingData extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(height: 24, child: Loader(color: AppColors.primary)),
+                  Loader(color: AppColors.primary, height: 24),
                   Text(AppLocalizations.of(context)!.loadingChat),
                 ],
               ),
