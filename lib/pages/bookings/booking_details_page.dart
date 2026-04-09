@@ -310,7 +310,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         );
 
         // Tab 2: TECHNICIAN (Conditional)
-        if (booking.agent != null) {
+        if (booking.agent != null && (booking.agent!.uid ?? "").isNotEmpty) {
           tabs.add(Tab(text: localization.technician));
           tabViews.add(
             SingleChildScrollView(
