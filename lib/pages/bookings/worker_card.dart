@@ -1,4 +1,5 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/helpers/location_helper.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
@@ -31,7 +32,19 @@ class WorkerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Location display removed based on user request to remove structured location data
+    // Calculate distance
+    double? distance;
+    if (customerAddress.lat != null &&
+        customerAddress.lon != null &&
+        worker.lastKnownLocation != null) {
+      distance = LocationHelper.calculateDistance(
+        customerAddress.lat!,
+        customerAddress.lon!,
+        worker.lastKnownLocation!.latitude,
+        worker.lastKnownLocation!.longitude,
+      );
+    }
+
     final inspectionFee = service.price ?? 0.0;
 
     return Container(
@@ -108,6 +121,16 @@ class WorkerCard extends StatelessWidget {
             ),
 
             const SizedBox(height: 12),
+
+            // Distance
+            if (distance != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6.0),
+                child: _InfoRow(
+                  icon: '📍',
+                  text: 'Within ${distance.toStringAsFixed(1)} km radius',
+                ),
+              ),
 
             // Rating
             _InfoRow(

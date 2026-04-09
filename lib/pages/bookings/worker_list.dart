@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:abo_glumbo_bbk/helpers/location_helper.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'dart:async';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
@@ -42,11 +44,14 @@ class WorkerList extends StatefulWidget {
   State<WorkerList> createState() => _WorkerListState();
 }
 
+enum FilterType { premium, nearby }
+
 class _WorkerListState extends State<WorkerList> {
 
 
   CustomerModel? customerData;
   bool isLoadingCustomer = true;
+  FilterType _filterType = FilterType.premium;
 
   late Stream<List<WorkerWithStats>> _workersStream;
 
@@ -131,10 +136,48 @@ class _WorkerListState extends State<WorkerList> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
-            style: TextStyle(fontSize: 14, color: Colors.black45),
+            style: const TextStyle(fontSize: 14, color: Colors.black45),
             AppLocalizations.of(
               context,
             )!.inspectionFeeNote(widget.service.price.toString()),
+          ),
+        ),
+
+        // Filter Options
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              FilterChip(
+                label: Text(
+                  _filterType == FilterType.premium ? "⭐ Nearby Premium" : "Nearby Premium",
+                  style: TextStyle(
+                    color: _filterType == FilterType.premium ? Colors.white : Colors.black87,
+                  ),
+                ),
+                selected: _filterType == FilterType.premium,
+                onSelected: (selected) {
+                  if (selected) setState(() => _filterType = FilterType.premium);
+                },
+                selectedColor: AppColors.primary,
+                checkmarkColor: Colors.white,
+              ),
+              const SizedBox(width: 8),
+              FilterChip(
+                label: Text(
+                  "Nearby",
+                  style: TextStyle(
+                    color: _filterType == FilterType.nearby ? Colors.white : Colors.black87,
+                  ),
+                ),
+                selected: _filterType == FilterType.nearby,
+                onSelected: (selected) {
+                  if (selected) setState(() => _filterType = FilterType.nearby);
+                },
+                selectedColor: AppColors.primary,
+                checkmarkColor: Colors.white,
+              ),
+            ],
           ),
         ),
 
@@ -156,9 +199,49 @@ class _WorkerListState extends State<WorkerList> {
                 );
               }
 
-              final filteredWorkers = List<WorkerWithStats>.from(snapshot.data ?? []);
+              List<WorkerWithStats> workers = List<WorkerWithStats>.from(snapshot.data ?? []);
 
-              if (filteredWorkers.isEmpty) {
+              // Sort workers based on filter type
+              if (widget.selectedAddress?.lat != null && widget.selectedAddress?.lon != null) {
+                workers.sort((a, b) {
+                  final lat1 = widget.selectedAddress!.lat!;
+                  final lon1 = widget.selectedAddress!.lon!;
+
+                  double distA = 99999;
+                  if (a.worker.lastKnownLocation != null) {
+                    distA = LocationHelper.calculateDistance(
+                      lat1, lon1, 
+                      a.worker.lastKnownLocation!.latitude, 
+                      a.worker.lastKnownLocation!.longitude
+                    );
+                  }
+
+                  double distB = 99999;
+                  if (b.worker.lastKnownLocation != null) {
+                    distB = LocationHelper.calculateDistance(
+                      lat1, lon1, 
+                      b.worker.lastKnownLocation!.latitude, 
+                      b.worker.lastKnownLocation!.longitude
+                    );
+                  }
+
+                  if (_filterType == FilterType.premium) {
+                    // Premium sort: Rating -> Completion -> Distance
+                    int ratingCompare = b.rating.compareTo(a.rating);
+                    if (ratingCompare != 0) return ratingCompare;
+
+                    int completionCompare = b.completedJobs.compareTo(a.completedJobs);
+                    if (completionCompare != 0) return completionCompare;
+
+                    return distA.compareTo(distB);
+                  } else {
+                    // Nearby sort: Distance
+                    return distA.compareTo(distB);
+                  }
+                });
+              }
+
+              if (workers.isEmpty) {
                 return _EmptyState(
                   searchQuery: '',
                   onClearFilter: () {},
@@ -167,9 +250,9 @@ class _WorkerListState extends State<WorkerList> {
               }
 
               return _WorkerListView(
-                key: const ValueKey('worker_list'),
+                key: ValueKey('worker_list_${_filterType.name}'),
                 service: widget.service,
-                workers: filteredWorkers,
+                workers: workers,
                 selectedAddress: widget.selectedAddress,
                 selectedIndexNotifier: widget.selectedIndexNotifier,
                 onWorkerSelected: widget.onWorkerSelected,

@@ -34,6 +34,8 @@ class UserModel {
   double? totalMonthlyBonus;
   Timestamp? lastBonusDate;
   String? tier;
+  GeoPoint? lastKnownLocation;
+  String? geohash;
 
   UserModel({
     required this.role,
@@ -65,6 +67,8 @@ class UserModel {
     this.lastBonusDate,
     this.paidoutTips,
     this.tier,
+    this.lastKnownLocation,
+    this.geohash,
   });
 
   UserModel copyWith({
@@ -129,6 +133,8 @@ class UserModel {
       certifications: certifications ?? this.certifications,
       isOnline: isOnline ?? this.isOnline,
       tier: tier ?? this.tier,
+      lastKnownLocation: lastKnownLocation ?? this.lastKnownLocation,
+      geohash: geohash ?? this.geohash,
     );
   }
 
@@ -184,6 +190,8 @@ class UserModel {
           : <String>[],
       isOnline: json['isOnline'],
       tier: json['tier'],
+      lastKnownLocation: json['last_known_location'],
+      geohash: json['geohash'],
     );
   }
 
@@ -228,6 +236,8 @@ class UserModel {
       'certifications': certifications,
       'paidoutTips': paidoutTips,
       'tier': tier,
+      'last_known_location': lastKnownLocation,
+      'geohash': geohash,
     };
   }
 

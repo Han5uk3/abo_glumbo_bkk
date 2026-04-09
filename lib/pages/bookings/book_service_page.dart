@@ -459,13 +459,14 @@ class _BookServicePageState extends State<BookServicePage> {
               AppLocalizations.of(context)?.details ?? 'Details',
             ),
           ),
-          Expanded(
-            child: _buildStepItem(
-              2,
-              Icons.person_rounded,
-              AppLocalizations.of(context)?.chooseYourTechnician ?? 'Expert',
+          if (!_isOnHour())
+            Expanded(
+              child: _buildStepItem(
+                2,
+                Icons.person_rounded,
+                AppLocalizations.of(context)?.chooseYourTechnician ?? 'Expert',
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -497,7 +498,7 @@ class _BookServicePageState extends State<BookServicePage> {
               Expanded(
                 child: Container(
                   height: 2,
-                  color: step == 2
+                  color: (step == 2 || (step == 1 && _isOnHour()))
                       ? Colors.transparent
                       : (isCompleted ? AppColors.primary : Colors.grey[200]!),
                 ),
@@ -907,6 +908,11 @@ class _BookServicePageState extends State<BookServicePage> {
     );
   }
 
+  bool _isOnHour() {
+    final price = _getSelectedPrice();
+    return price == widget.service.onWorkHourPrice;
+  }
+
   double _getSelectedPrice() {
     if (selectedDate == null ||
         selectedTimeCategory == -1 ||
@@ -1093,7 +1099,13 @@ class _BookServicePageState extends State<BookServicePage> {
       children: [
         Expanded(
           child: ElevatedButton(
-            onPressed: () => setState(() => currentStep = 2),
+            onPressed: () {
+              if (_isOnHour()) {
+                _completeBooking(context);
+              } else {
+                setState(() => currentStep = 2);
+              }
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               minimumSize: const Size(0, 54),
@@ -1102,7 +1114,9 @@ class _BookServicePageState extends State<BookServicePage> {
               ),
             ),
             child: Text(
-              AppLocalizations.of(context)?.continueText ?? 'Continue',
+              _isOnHour()
+                  ? (AppLocalizations.of(context)?.completeBooking ?? 'Book Now')
+                  : (AppLocalizations.of(context)?.continueText ?? 'Continue'),
               style: DMSansFont.textStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
