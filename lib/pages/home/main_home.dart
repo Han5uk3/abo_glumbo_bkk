@@ -300,7 +300,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  _buildBlockedScaffold() {
+  Widget _buildBlockedScaffold() {
     return Scaffold(
       backgroundColor: AppColors.bgBlueTint,
       appBar: AppBar(

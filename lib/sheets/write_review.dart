@@ -783,7 +783,7 @@ class _WriteReviewBottomSheetWidgetState
                     ? const Loader(color: Colors.white, size: 24)
                     : Text(
                         _selectedTip > 0
-                            ? '${l10n?.submitReviewAndTip ?? 'Submit Review & Tip'}'
+                            ? l10n?.submitReviewAndTip ?? 'Submit Review & Tip'
                             : l10n?.submitReview ?? 'Submit Review',
                         style: DMSansFont.textStyle(
                           fontSize: 16,

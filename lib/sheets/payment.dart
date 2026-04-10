@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:pay/pay.dart';
 
-showPaymentBottomSheet(
+void showPaymentBottomSheet(
   BuildContext context, {
   required UserModel agent,
   required ServiceModel service,
@@ -315,7 +315,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
     }
   }
 
-  showCashDetailBottomSheet({
+  void showCashDetailBottomSheet({
     required BookingModel booking,
     required BuildContext context,
     required CustomerModel customer,

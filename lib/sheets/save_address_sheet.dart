@@ -227,7 +227,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                             width: 50,
                             height: 16,
                             child: Center(
-                              child: Loader(color: const Color.fromARGB(255, 28, 143, 243), size: 16),
+                              child: Loader(color:  Color.fromARGB(255, 28, 143, 243), size: 16),
                             ),
                           )
                         : Text(

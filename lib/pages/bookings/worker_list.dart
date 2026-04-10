@@ -92,7 +92,7 @@ class _WorkerListState extends State<WorkerList> {
 
   // ✅ Pre-select customer's location as default filter
 
-  _fetchcategory() async {
+  Future<void> _fetchcategory() async {
     final category = await AppServices.fetchCategory(widget.category);
     category["name"];
   }

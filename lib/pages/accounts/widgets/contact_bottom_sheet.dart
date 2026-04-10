@@ -151,7 +151,9 @@ Future<Null>? Function() getOnTap(String type, String content) {
         await ContactService.launchPhone(content);
       };
     default:
-      return () {};
+      return () {
+        return null;
+      };
   }
 }
 

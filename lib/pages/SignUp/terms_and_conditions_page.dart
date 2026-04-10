@@ -101,7 +101,7 @@ class TermsAndConditionsPage extends StatelessWidget {
     );
   }
 
-  _buildWarrantyTermsText(
+  Widget _buildWarrantyTermsText(
     String part1,
     String part2,
     String title,
