@@ -17,23 +17,23 @@ class LanguageSelectorCard extends StatelessWidget {
 
         return Center(
           child: isInLoginPage
-              ? Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                ? Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.primary.withOpacity(0.1),
+                        width: 1,
                       ),
-                    ],
-                  ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -53,23 +53,23 @@ class LanguageSelectorCard extends StatelessWidget {
                     ],
                   ),
                 )
-              : Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                : Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.primary.withOpacity(0.1),
+                        width: 1,
                       ),
-                    ],
-                  ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -115,32 +115,19 @@ class LanguageSelectorCard extends StatelessWidget {
         width: 56,
         height: 40,
         decoration: BoxDecoration(
-          color: isInLoginPage
-              ? isSelected
-                    ? Colors.white.withOpacity(0.25)
-                    : Colors.transparent
-              : isSelected
-              ? AppColors.primary
-              : Colors.transparent,
-
+          color: isSelected ? AppColors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
-          border: isInLoginPage
-              ? isSelected
-                    ? Border.all(color: Colors.white.withOpacity(0.3), width: 1)
-                    : null
+          border: isSelected && !isInLoginPage
+              ? Border.all(color: Colors.white.withOpacity(0.1), width: 1)
               : null,
         ),
         child: Center(
           child: AnimatedDefaultTextStyle(
             duration: const Duration(milliseconds: 200),
             style: DMSansFont.textStyle(
-              color: isInLoginPage
-                  ? isSelected
-                        ? Colors.white
-                        : Colors.white.withOpacity(0.7)
-                  : isSelected
+              color: isSelected
                   ? Colors.white
-                  : AppColors.primary,
+                  : AppColors.primary.withOpacity(0.7),
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               letterSpacing: 0.8,

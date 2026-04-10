@@ -101,12 +101,16 @@ class _LoginPageState extends State<LoginPage> {
       LocalStoreHelper.clearPhoneNumber();
     }
 
+    debugPrint('🚀 [LOGIN PAGE] Initiating OTP send for: $formattedPhoneNumber');
     await AuthServices().sendOTP(
       context,
       forceResendingToken: _resendToken,
       phoneNumber: formattedPhoneNumber,
       onCodeSent: (String verificationId, {int? resendToken}) {
+        debugPrint('🎯 [LOGIN PAGE] onCodeSent callback triggered');
+        debugPrint('🆔 [LOGIN PAGE] Verification ID: $verificationId');
         if (mounted) {
+          debugPrint('📱 [LOGIN PAGE] Widget mounted, updating UI and navigating to OTP page');
           setState(() {
             _resendToken = resendToken;
             _isLoading = false;
@@ -123,10 +127,15 @@ class _LoginPageState extends State<LoginPage> {
                 verificationId: verificationId,
               ),
             ),
-          );
+          ).then((value) => debugPrint('✅ [LOGIN PAGE] Navigation to OtpPage complete'));
+        } else {
+          debugPrint('⚠️ [LOGIN PAGE] onCodeSent received but widget is unmounted');
+          // Still set loading false globally if possible or shared state
         }
       },
       onError: (FirebaseAuthException e) {
+        debugPrint('❌ [LOGIN PAGE] onError callback triggered');
+        debugPrint('❌ [LOGIN PAGE] Error: ${e.code} - ${e.message}');
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -606,22 +615,31 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                         const SizedBox(height: 20),
-                        Directionality(
-                          textDirection: TextDirection.ltr,
-                          child: LanguageSelectorCard(isInLoginPage: true),
-                        ),
+
                         const SizedBox(height: 20),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
 
                           children: [
-                            Text(
-                              AppLocalizations.of(context)?.mobileNumber ?? '',
-                              style: DMSansFont.textStyle(
-                                color: Colors.black.withOpacity(.7),
-                                fontSize: 14,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)?.mobileNumber ??
+                                      '',
+                                  style: DMSansFont.textStyle(
+                                    color: Colors.black.withOpacity(.7),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Directionality(
+                                  textDirection: TextDirection.ltr,
+                                  child: LanguageSelectorCard(
+                                    isInLoginPage: true,
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 6),
                             _buildPhoneInputField(),
