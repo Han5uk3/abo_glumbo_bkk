@@ -7,6 +7,7 @@ import 'package:abo_glumbo_bbk/pages/SignUp/terms_and_conditions_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/login/otp.dart';
+import 'package:abo_glumbo_bbk/pages/login/widgets/language_selector.dart';
 import 'package:abo_glumbo_bbk/services/auth_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -604,9 +605,12 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height / 20,
+                        const SizedBox(height: 20),
+                        Directionality(
+                          textDirection: TextDirection.ltr,
+                          child: LanguageSelectorCard(isInLoginPage: true),
                         ),
+                        const SizedBox(height: 20),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
