@@ -57,6 +57,10 @@
 	<string>We need your location for continuous location access.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to show live tracking</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need access to your microphone to allow you to record videos of work.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need access to your photo library to allow you to save images of work.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library to allow you to upload images of work.</string>
 	<key>PKPaymentNetworks</key>

@@ -32,7 +32,7 @@ class _OtpPageState extends State<OtpPage> {
   bool isResendingOtp = false;
   bool _isMigratingCustomerData = false;
   bool _isSmsAutofillListening = false;
-  int resendSeconds = 60;
+  final ValueNotifier<int> _resendSecondsNotifier = ValueNotifier<int>(60);
   Timer? _timer;
   Timer? _smsListeningTimer;
   final _formKey = GlobalKey<FormState>();
@@ -64,22 +64,14 @@ class _OtpPageState extends State<OtpPage> {
     return _otpControllers.map((controller) => controller.text).join();
   }
 
-  int get _remainingTime => resendSeconds;
-  String get _formattedTime {
-    int minutes = resendSeconds ~/ 60;
-    int seconds = resendSeconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-  }
 
   void startTimer() {
     _timer?.cancel();
-    resendSeconds = 60;
+    _resendSecondsNotifier.value = 60;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (resendSeconds > 0) {
+      if (_resendSecondsNotifier.value > 0) {
         if (mounted) {
-          setState(() {
-            resendSeconds--;
-          });
+          _resendSecondsNotifier.value--;
         }
       } else {
         timer.cancel();
@@ -88,9 +80,9 @@ class _OtpPageState extends State<OtpPage> {
   }
 
   void resendOTP() async {
-    if (resendSeconds > 0) {
+    if (_resendSecondsNotifier.value > 0) {
       debugPrint(
-        '🚫 [CUSTOMER OTP] Cannot resend - timer still active: $resendSeconds seconds remaining',
+        '🚫 [CUSTOMER OTP] Cannot resend - timer still active: ${_resendSecondsNotifier.value} seconds remaining',
       );
       return;
     }
@@ -520,6 +512,9 @@ class _OtpPageState extends State<OtpPage> {
         controller: _otpControllers[index],
         focusNode: _focusNodes[index],
         keyboardType: TextInputType.number,
+        textInputAction: index < 5 ? TextInputAction.next : TextInputAction.done,
+        autofillHints: const [AutofillHints.oneTimeCode],
+        enableInteractiveSelection: false,
         textAlign: TextAlign.center,
         maxLength: 1,
         style: DMSansFont.textStyle(
@@ -573,6 +568,7 @@ class _OtpPageState extends State<OtpPage> {
   void dispose() {
     _timer?.cancel();
     _smsListeningTimer?.cancel();
+    _resendSecondsNotifier.dispose();
     _smsAutofillService.cancelListening();
     for (var controller in _otpControllers) {
       controller.dispose();
@@ -696,42 +692,54 @@ class _OtpPageState extends State<OtpPage> {
                       ),
 
                       const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _remainingTime > 0
-                                ? '${locn.resendOTPin} $_formattedTime ${AppLocalizations.of(context)!.sText}'
-                                : AppLocalizations.of(context)!.didntreciveCode,
-                            style: DMSansFont.textStyle(
-                              color: Colors.black54,
-                              fontSize: 14,
-                            ),
-                          ),
-                          if (_remainingTime <= 0) ...[
-                            const SizedBox(width: 4),
-                            TextButton(
-                              onPressed: isResendingOtp ? null : resendOTP,
-                              style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
+                      ValueListenableBuilder<int>(
+                        valueListenable: _resendSecondsNotifier,
+                        builder: (context, remainingTime, child) {
+                          int minutes = remainingTime ~/ 60;
+                          int seconds = remainingTime % 60;
+                          String formattedTime =
+                              '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                remainingTime > 0
+                                    ? '${locn.resendOTPin} $formattedTime ${AppLocalizations.of(context)!.sText}'
+                                    : AppLocalizations.of(context)!
+                                        .didntreciveCode,
+                                style: DMSansFont.textStyle(
+                                  color: Colors.black54,
+                                  fontSize: 14,
                                 ),
-                                minimumSize: Size.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              child: isResendingOtp
-                                  ? Loader(color: AppColors.green, size: 16)
-                                  : Text(
-                                      locn.resend,
-                                      style: DMSansFont.textStyle(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
+                              if (remainingTime <= 0) ...[
+                                const SizedBox(width: 4),
+                                TextButton(
+                                  onPressed: isResendingOtp ? null : resendOTP,
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
                                     ),
-                            ),
-                          ],
-                        ],
+                                    minimumSize: Size.zero,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  child: isResendingOtp
+                                      ? Loader(color: AppColors.green, size: 16)
+                                      : Text(
+                                          locn.resend,
+                                          style: DMSansFont.textStyle(
+                                            color: AppColors.primary,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                ),
+                              ],
+                            ],
+                          );
+                        },
                       ),
                       SizedBox(height: 24),
                       Container(

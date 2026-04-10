@@ -73,6 +73,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookings => 'الحجوزات';
 
   @override
+  String get errorOccurred => 'حدث خطأ ما';
+
+  @override
   String get details => 'تفاصيل';
 
   @override

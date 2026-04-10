@@ -224,6 +224,12 @@ abstract class AppLocalizations {
   /// **'Bookings'**
   String get bookings;
 
+  /// No description provided for @errorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'Error Occurred'**
+  String get errorOccurred;
+
   /// No description provided for @details.
   ///
   /// In en, this message translates to:

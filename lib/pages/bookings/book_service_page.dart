@@ -809,57 +809,61 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildSecondStepContent() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Text(
-          AppLocalizations.of(context)!.details,
-          style: DMSansFont.textStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text(
+            AppLocalizations.of(context)!.details,
+            style: DMSansFont.textStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        BlocProvider(
-          create: (context) =>
-              AddressBloc(AppServicesAddressRepository())..add(LoadAddresses()),
-          child: AddIssueImageAndVideo(
-            showAddressPicker: false,
-            onImageSelected: (value) => setState(() => _selectedImage = value),
-            onVideoSelected: (value) => setState(() => _selectedVideo = value),
+          const SizedBox(height: 12),
+          BlocProvider(
+            create: (context) =>
+                AddressBloc(AppServicesAddressRepository())..add(LoadAddresses()),
+            child: AddIssueImageAndVideo(
+              showAddressPicker: false,
+              onImageSelected: (value) => setState(() => _selectedImage = value),
+              onVideoSelected: (value) => setState(() => _selectedVideo = value),
+            ),
           ),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          AppLocalizations.of(context)!.notes,
-          style: DMSansFont.textStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.normal,
-            color: Colors.black,
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context)!.notes,
+            style: DMSansFont.textStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        TextFormField(
-          controller: notesController,
-          maxLines: 5,
-          style: TextStyle(fontSize: 14),
-          decoration: InputDecoration(
-            hintStyle: TextStyle(fontSize: 14),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: notesController,
+            maxLines: 5,
+            style: TextStyle(fontSize: 14),
+            decoration: InputDecoration(
+              hintStyle: TextStyle(fontSize: 14),
 
-            hintText: AppLocalizations.of(context)!.describeYourIssueInDetail,
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[200]!),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[200]!),
+              hintText: AppLocalizations.of(context)!.describeYourIssueInDetail,
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[200]!),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[200]!),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

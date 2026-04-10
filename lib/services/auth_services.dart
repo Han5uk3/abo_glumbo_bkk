@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
@@ -15,6 +14,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -90,15 +90,30 @@ class AuthServices {
 
     try {
       if (Platform.isIOS) {
-        debugPrint('🍎 [CUSTOMER AUTH] Setting appVerificationDisabledForTesting: true');
-        await FirebaseAuth.instance.setSettings(
-          appVerificationDisabledForTesting: true,
-          userAccessGroup: null,
-        );
+        if (kDebugMode) {
+          debugPrint(
+            '🍎 [CUSTOMER AUTH] Debug mode: appVerificationDisabledForTesting set to true',
+          );
+          await FirebaseAuth.instance.setSettings(
+            appVerificationDisabledForTesting: true,
+            userAccessGroup: null,
+          );
+        } else {
+          debugPrint(
+            '🍎 [CUSTOMER AUTH] Production mode: appVerificationDisabledForTesting set to false',
+          );
+          await FirebaseAuth.instance.setSettings(
+            appVerificationDisabledForTesting: false,
+            // In production, we don't set userAccessGroup to null unless we know it should be.
+            // Leaving it as default is safer.
+          );
+        }
       }
 
-      debugPrint('📞 [CUSTOMER AUTH] Calling Firebase verifyPhoneNumber (no-await version)...');
-      
+      debugPrint(
+        '📞 [CUSTOMER AUTH] Calling Firebase verifyPhoneNumber (no-await version)...',
+      );
+
       _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: forceResendingToken,
@@ -110,7 +125,9 @@ class AuthServices {
             await _auth.signInWithCredential(credential);
             debugPrint('✅ [CUSTOMER AUTH] Auto sign-in successful');
           } catch (e) {
-            debugPrint("❌ [CUSTOMER AUTH] Auto verification sign-in failed: $e");
+            debugPrint(
+              "❌ [CUSTOMER AUTH] Auto verification sign-in failed: $e",
+            );
           }
         },
         verificationFailed: (FirebaseAuthException e) {
@@ -128,7 +145,7 @@ class AuthServices {
           debugPrint('⏰ [CUSTOMER AUTH] codeAutoRetrievalTimeout triggered');
         },
       );
-      
+
       debugPrint('✅ [CUSTOMER AUTH] verifyPhoneNumber call initiated');
     } catch (e) {
       debugPrint('💥 [CUSTOMER AUTH] Exception in sendOTP: $e');
@@ -443,7 +460,9 @@ class AuthServices {
       String addressName = 'Current Location';
       try {
         // Reverse geocoding is handled externally; use a safe fallback
-        debugPrint("📍 Skipping reverse geocode — using default 'Current Location'");
+        debugPrint(
+          "📍 Skipping reverse geocode — using default 'Current Location'",
+        );
       } catch (e) {
         debugPrint("⚠️ Reverse geocoding failed: $e");
       }

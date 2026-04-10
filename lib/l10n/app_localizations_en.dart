@@ -75,6 +75,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookings => 'Bookings';
 
   @override
+  String get errorOccurred => 'Error Occurred';
+
+  @override
   String get details => 'Details';
 
   @override

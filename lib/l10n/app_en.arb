@@ -20,6 +20,7 @@
   "technicianIsBusy": "Technician is busy",
   "login": "Login",
   "bookings": "Bookings",
+  "errorOccurred": "Error Occurred",
   "details": "Details",
   "aboutThisService": "About this service",
   "backtobooking": "Back to booking",

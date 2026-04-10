@@ -53,27 +53,55 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
   Timer? _sheetUpdateTimer;
 
   Future<void> _pickImageFromSource(ImageSource source) async {
-    final XFile? pickedFile = await _picker.pickImage(source: source);
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: source);
 
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-      });
-      if (widget.onImageSelected != null) {
-        widget.onImageSelected!(_selectedImage);
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+        if (widget.onImageSelected != null) {
+          widget.onImageSelected!(_selectedImage);
+        }
+      }
+    } catch (e) {
+      debugPrint("Error picking image: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)?.errorOccurred ?? 'An error occurred while picking the image',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
 
   Future<void> _pickVideoFromSource(ImageSource source) async {
-    final XFile? pickedFile = await _picker.pickVideo(source: source);
+    try {
+      final XFile? pickedFile = await _picker.pickVideo(source: source);
 
-    if (pickedFile != null) {
-      setState(() {
-        _selectedVideo = File(pickedFile.path);
-      });
-      if (widget.onVideoSelected != null) {
-        widget.onVideoSelected!(_selectedVideo);
+      if (pickedFile != null) {
+        setState(() {
+          _selectedVideo = File(pickedFile.path);
+        });
+        if (widget.onVideoSelected != null) {
+          widget.onVideoSelected!(_selectedVideo);
+        }
+      }
+    } catch (e) {
+      debugPrint("Error picking video: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)?.errorOccurred ?? 'An error occurred while picking the video',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
