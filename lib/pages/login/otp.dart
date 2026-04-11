@@ -120,7 +120,9 @@ class _OtpPageState extends State<OtpPage> {
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(AppLocalizations.of(context)!.otpSent),
+                content: Text(
+                  AppLocalizations.of(context)?.otpSent ?? 'OTP Sent',
+                ),
                 backgroundColor: Colors.green,
                 duration: Duration(seconds: 2),
                 behavior: SnackBarBehavior.floating,
@@ -177,7 +179,7 @@ class _OtpPageState extends State<OtpPage> {
             );
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(errorMessage),
+                content: Text(errorMessage.isEmpty ? 'Verification Failed' : errorMessage),
                 backgroundColor: Colors.red,
                 duration: Duration(seconds: 3),
                 behavior: SnackBarBehavior.floating,
@@ -310,7 +312,7 @@ class _OtpPageState extends State<OtpPage> {
     if (otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.enterOtp),
+          content: Text(AppLocalizations.of(context)?.enterOtp ?? 'Enter OTP'),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
@@ -384,14 +386,17 @@ class _OtpPageState extends State<OtpPage> {
           isLoading = false;
         });
 
-        String errorMessage = AppLocalizations.of(context)!.invalidOtpCode;
+        String errorMessage =
+            AppLocalizations.of(context)?.invalidOtpCode ?? 'Invalid OTP code';
         if (e is FirebaseAuthException) {
           switch (e.code) {
             case 'invalid-verification-code':
-              errorMessage = AppLocalizations.of(context)!.invalidOtpCode;
+              errorMessage = AppLocalizations.of(context)?.invalidOtpCode ??
+                  'Invalid OTP code';
               break;
             case 'session-expired':
-              errorMessage = AppLocalizations.of(context)!.otpExpired;
+              errorMessage =
+                  AppLocalizations.of(context)?.otpExpired ?? 'OTP expired';
               break;
             case 'too-many-requests':
               errorMessage =
@@ -421,7 +426,7 @@ class _OtpPageState extends State<OtpPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage),
+            content: Text(errorMessage.isEmpty ? 'Error' : errorMessage),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
@@ -581,7 +586,8 @@ class _OtpPageState extends State<OtpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final locn = AppLocalizations.of(context)!;
+    final locn = AppLocalizations.of(context);
+    if (locn == null) return const SizedBox.shrink();
 
     return Scaffold(
       backgroundColor: AppColors.bgBlueTint,
@@ -597,7 +603,7 @@ class _OtpPageState extends State<OtpPage> {
           icon: Icon(Icons.arrow_back_ios, color: Colors.black),
         ),
         title: Text(
-          AppLocalizations.of(context)!.enterOtp,
+          locn.enterOtp,
           style: DMSansFont.textStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -633,7 +639,7 @@ class _OtpPageState extends State<OtpPage> {
                                   child: Directionality(
                                     textDirection: TextDirection.ltr,
                                     child: Text(
-                                      " ${widget.phoneNumber} ",
+                                      " ${widget.phoneNumber ?? ''} ",
                                       style: DMSansFont.textStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
@@ -705,9 +711,8 @@ class _OtpPageState extends State<OtpPage> {
                             children: [
                               Text(
                                 remainingTime > 0
-                                    ? '${locn.resendOTPin} $formattedTime ${AppLocalizations.of(context)!.sText}'
-                                    : AppLocalizations.of(context)!
-                                        .didntreciveCode,
+                                    ? '${locn.resendOTPin} $formattedTime ${locn.sText}'
+                                    : locn.didntreciveCode,
                                 style: DMSansFont.textStyle(
                                   color: Colors.black54,
                                   fontSize: 14,
@@ -727,14 +732,14 @@ class _OtpPageState extends State<OtpPage> {
                                   ),
                                   child: isResendingOtp
                                       ? Loader(color: AppColors.green, size: 16)
-                                      : Text(
-                                          locn.resend,
-                                          style: DMSansFont.textStyle(
-                                            color: AppColors.primary,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                          ),
-                                        ),
+                                          : Text(
+                                              locn.resend,
+                                              style: DMSansFont.textStyle(
+                                                color: AppColors.primary,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
                                 ),
                               ],
                             ],
