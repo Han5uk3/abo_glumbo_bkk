@@ -114,12 +114,14 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
   }
 
   void _onMapCreated(GoogleMapController controller) {
+    log("[MAP_DEBUG] 🗺️ onMapCreated triggered for LocationMapPicker");
     mapController = controller;
     setState(() {
       _mapReady = true;
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      log("[MAP_DEBUG] 📍 Centering camera on: ${_selectedLocation?.latitude}, ${_selectedLocation?.longitude}");
       _moveCameraToLocation(_selectedLocation!, animate: false);
       _getAddressFromLatLng(_selectedLocation!, showLoader: true);
     });

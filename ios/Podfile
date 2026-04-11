@@ -47,9 +47,22 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
     
-    # ✅ Ensure iOS 15+ minimum deployment target
+    # ✅ Fix geocoding_ios PrivacyInfo.xcprivacy warning:
+    # This prevents Xcode from trying to 'compile' the privacy manifest as source code
+    if target.name == 'geocoding_ios'
+      target.build_phases.each do |phase|
+        if phase.is_a?(Xcodeproj::Project::Object::PBXSourcesBuildPhase)
+          phase.files_references.delete_if { |ref| ref.path.end_with?('PrivacyInfo.xcprivacy') }
+        end
+      end
+    end
+
     target.build_configurations.each do |config|
+      # ✅ Ensure iOS 15+ minimum deployment target
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      
+      # ✅ Fix Xcode 15+ script phase warnings
+      config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
     end
   end
 end

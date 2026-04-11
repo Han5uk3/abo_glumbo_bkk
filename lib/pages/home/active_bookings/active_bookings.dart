@@ -86,9 +86,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     if (widget.activeBookings.length > 1) {
       _startAutoScroll();
     }
-
-    // Start persistence timer to keep notification alive even if dismissed by OS/User
-    _startNotificationPersistence();
   }
 
   @override
@@ -120,9 +117,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     _autoScrollTimer?.cancel();
     _pageController.dispose();
 
-    // Cancel tracking notification - REMOVED: Managed by HomeBloc/Parent to persist during navigation
-    // NotificationServices.cancelTrackingNotification();
-
     // Cancel all agent location subscriptions
     for (final subscription in _agentLocationSubscriptions.values) {
       subscription.cancel();
@@ -134,11 +128,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       timer.cancel();
     }
     _etaDebounceTimers.clear();
-
-    _etaDebounceTimers.clear();
-
-    _notificationPersistenceTimer?.cancel();
-    _notificationPersistenceTimer = null;
 
     super.dispose();
   }
@@ -300,25 +289,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     Future.delayed(const Duration(seconds: 2), _startAutoScroll);
   }
 
-  /// Start persistence timer to keep notification alive
-  void _startNotificationPersistence() {
-    _notificationPersistenceTimer?.cancel();
-    // Re-show notification every 5 seconds to fight dismissal
-    _notificationPersistenceTimer = Timer.periodic(const Duration(seconds: 5), (
-      timer,
-    ) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
 
-      // Only update if we have active bookings
-      if (widget.activeBookings.isNotEmpty) {
-        _log('[ETA] Persistence check - updating notification');
-        _updateTrackingNotification();
-      }
-    });
-  }
 
   /// Enhanced duration parsing with multiple format support
   int _extractMinutesFromDuration(String duration) {
@@ -624,7 +595,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         originLng: agentLng,
         destinationLat: customerLat,
         destinationLng: customerLng,
-        apiKey: "AIzaSyBl4RQBYM_v-u2Oik_ENyxcGxnvyZGxL2o",
+        apiKey: "AIzaSyBQglwauOyBM2wKjobljQUdlkD4ECnSPp4",
       ).timeout(const Duration(seconds: 10));
 
       _log('[ETA] API Response for booking ${booking.id}: $result');

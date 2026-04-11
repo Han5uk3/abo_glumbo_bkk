@@ -158,40 +158,58 @@ class TrackingData extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Time / ETA
-              Row(
-                children: [
-                  const Text('⏱️', style: TextStyle(fontSize: 24)),
-                  const SizedBox(width: 8),
-                  Text(
-                    timeTakenToArrive ?? '--',
-                    style: DMSansFont.textStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
-
-              // Distance
-              if (remainingKm != "") ...{
-                Row(
+              Expanded(
+                child: Row(
                   children: [
-                    const Text('📍', style: TextStyle(fontSize: 18)),
-                    const SizedBox(width: 4),
-                    Text(
-                      Directionality.of(context) == TextDirection.rtl
-                          ? remainingKm ?? '--'
-                          : "${remainingKm ?? '--'} away",
-                      style: DMSansFont.textStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
+                    const Text('⏱️', style: TextStyle(fontSize: 24)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          timeTakenToArrive ?? '--',
+                          style: DMSansFont.textStyle(
+                            fontSize: 28, // Moderated for better fit
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-              },
+              ),
+
+              const SizedBox(width: 12),
+
+              // Distance
+              if (remainingKm != "" && remainingKm != null)
+                Flexible(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('📍', style: TextStyle(fontSize: 18)),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            Directionality.of(context) == TextDirection.rtl
+                                ? remainingKm!
+                                : "$remainingKm away",
+                            style: DMSansFont.textStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
 

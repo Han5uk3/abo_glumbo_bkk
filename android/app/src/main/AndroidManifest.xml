@@ -60,12 +60,12 @@
         
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBl4RQBYM_v-u2Oik_ENyxcGxnvyZGxL2o"/>
+            android:value="AIzaSyBQglwauOyBM2wKjobljQUdlkD4ECnSPp4"/>
         
         <!-- Add reCAPTCHA verification site key for Firebase Auth -->
         <meta-data
             android:name="com.google.android.gms.safetynet.API_KEY"
-            android:value="AIzaSyBk_ntYzCiL1uhCfuNBS9jqdK_Pmmzm0V8" />
+            android:value="AIzaSyBQglwauOyBM2wKjobljQUdlkD4ECnSPp4" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

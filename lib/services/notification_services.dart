@@ -36,6 +36,9 @@ class NotificationServices {
   static final FlutterLocalNotificationsPlugin
   _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   
+  /// Track if the tracking notification has already alerted the user
+  static bool _hasAlertedTracking = false;
+  
   /// Track the current active chat to suppress notifications when user is inside the chat
   static String? currentActiveChatId;
 
@@ -88,17 +91,28 @@ class NotificationServices {
         ),
       );
 
-      // 2. Tracking channel (Ongoing/Persistent)
+      // 2. Tracking channel (Ongoing/Persistent but SILENT)
       await androidImplementation?.createNotificationChannel(
         const AndroidNotificationChannel(
-          'abo_glumbo_tracking_locked', // New LOCKED channel ID
-          'Live Tracking Status',
-          description: 'Active tracking monitor',
-          importance: Importance
-              .high, // High importance (Max on some skins allows swipe)
+          'abo_glumbo_tracking_silent', // Silent channel
+          'Live Tracking updates',
+          description: 'Background updates for live tracking',
+          importance: Importance.low, 
           playSound: false,
           enableVibration: false,
-          showBadge: true,
+          showBadge: false,
+        ),
+      );
+
+      // 3. Tracking alert channel (High priority for the FIRST alert)
+      await androidImplementation?.createNotificationChannel(
+        const AndroidNotificationChannel(
+          'abo_glumbo_tracking_alert', // Alert channel
+          'Live Tracking Alert',
+          description: 'Initial alert for live tracking',
+          importance: Importance.high,
+          playSound: true,
+          enableVibration: true,
         ),
       );
 
@@ -430,12 +444,21 @@ class NotificationServices {
       payload = jsonEncode({'type': 'tracking', 'bookingId': bookingId});
     }
 
+    // Use Alert channel for first time, Silent channel thereafter
+    final String channelId = _hasAlertedTracking 
+        ? 'abo_glumbo_tracking_silent' 
+        : 'abo_glumbo_tracking_alert';
+    
+    // Set importance based on channel
+    final Importance importance = _hasAlertedTracking ? Importance.low : Importance.high;
+    final Priority priority = _hasAlertedTracking ? Priority.low : Priority.high;
+
     AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'abo_glumbo_tracking_locked', // Match the locked channel ID
-      'Live Tracking Status',
-      channelDescription: 'Active tracking monitor',
-      importance: Importance.high,
-      priority: Priority.high,
+      channelId,
+      _hasAlertedTracking ? 'Live Tracking updates' : 'Live Tracking Alert',
+      channelDescription: _hasAlertedTracking ? 'Background updates' : 'Initial alert',
+      importance: importance,
+      priority: priority,
       ongoing: true, // Non-dismissible
       autoCancel: false,
       onlyAlertOnce: true,
@@ -445,9 +468,9 @@ class NotificationServices {
       usesChronometer: false,
       visibility: NotificationVisibility.public,
       category: AndroidNotificationCategory.service,
-      enableVibration: false,
-      playSound: false,
-      enableLights: false,
+      enableVibration: !_hasAlertedTracking,
+      playSound: !_hasAlertedTracking,
+      enableLights: !_hasAlertedTracking,
       icon: '@mipmap/ic_launcher',
       styleInformation: BigTextStyleInformation(
         notificationBody,
@@ -457,10 +480,15 @@ class NotificationServices {
       ),
     );
 
-    const DarwinNotificationDetails iOSDetails = DarwinNotificationDetails(
-      presentAlert: false,
+    // After first time, set flag to true so next updates are silent
+    if (!_hasAlertedTracking) {
+      _hasAlertedTracking = true;
+    }
+
+    final DarwinNotificationDetails iOSDetails = DarwinNotificationDetails(
+      presentAlert: !_hasAlertedTracking,
       presentBadge: false,
-      presentSound: false,
+      presentSound: !_hasAlertedTracking,
     );
 
     NotificationDetails platformDetails = NotificationDetails(
@@ -485,7 +513,8 @@ class NotificationServices {
 
     try {
       await _flutterLocalNotificationsPlugin.cancel(trackingNotificationId);
-      debugPrint('✅ Tracking notification cancelled');
+      _hasAlertedTracking = false; // Reset flag so next session alerts again
+      debugPrint('✅ Tracking notification cancelled and state reset');
     } catch (e) {
       debugPrint('❌ Error cancelling tracking notification: $e');
     }

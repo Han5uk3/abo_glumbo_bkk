@@ -13,6 +13,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
+import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 final String hiveBoxName = 'myBox';
@@ -38,6 +40,21 @@ Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     debugPrint('✅ Flutter binding initialized');
+
+    // Initialize Google Maps Renderer for Android
+    final GoogleMapsFlutterPlatform mapsImplementation =
+        GoogleMapsFlutterPlatform.instance;
+    if (mapsImplementation is GoogleMapsFlutterAndroid) {
+      mapsImplementation.useAndroidViewSurface = true;
+      try {
+        await mapsImplementation.initializeWithRenderer(
+          AndroidMapRenderer.latest,
+        );
+        debugPrint('✅ Google Maps Latest Renderer initialized');
+      } catch (e) {
+        debugPrint('⚠️ Google Maps Renderer initialization failed: $e');
+      }
+    }
 
     // 1. Initialize Firebase FIRST
     try {

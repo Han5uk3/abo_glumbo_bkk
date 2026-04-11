@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
-
 import 'package:abo_glumbo_bbk/apis/google_tracking_polylines.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/tracking_data.dart';
@@ -281,7 +280,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         originLng: _agentLatLng!.longitude,
         destinationLat: _customerLatLng!.latitude,
         destinationLng: _customerLatLng!.longitude,
-        apiKey: 'AIzaSyBl4RQBYM_v-u2Oik_ENyxcGxnvyZGxL2o',
+        apiKey: 'AIzaSyBQglwauOyBM2wKjobljQUdlkD4ECnSPp4',
       );
 
       String? newEta;
@@ -291,24 +290,35 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       if (result is Map) {
         newEta = result['duration'] as String?;
         newDistance = result['distance'] as String?;
-        final polyline = result['polyline'] as String?;
 
-        debugPrint('[LOG] API Result - ETA: $newEta, Distance: $newDistance');
-        debugPrint(
-          '[LOG] Polyline received: ${polyline?.isNotEmpty == true ? "Yes (${polyline!.length} chars)" : "No"}',
-        );
-
-        if (polyline != null && polyline.isNotEmpty) {
-          try {
+        final steps = result['steps'] as List?;
+        if (steps != null && steps.isNotEmpty) {
+          final List<LatLng> stitchedPoints = [];
+          for (var step in steps) {
+            final poly = step['polyline']?['points'] as String?;
+            if (poly != null) {
+              final decodedPoints = PolylinePoints.decodePolyline(poly);
+              stitchedPoints.addAll(
+                decodedPoints.map((p) => LatLng(p.latitude, p.longitude)),
+              );
+            }
+          }
+          newRoute = stitchedPoints;
+          debugPrint(
+            '[LOG] Stitched ${newRoute.length} high-res points from steps',
+          );
+        } else {
+          // Fallback to overview if steps missing
+          final polyline = result['overview_polyline'] as String?;
+          if (polyline != null && polyline.isNotEmpty) {
             final points = PolylinePoints.decodePolyline(polyline);
             newRoute = points
                 .map((p) => LatLng(p.latitude, p.longitude))
                 .toList();
-            debugPrint('[LOG] Decoded ${newRoute.length} route points');
-          } catch (e) {
-            debugPrint('[LOG] Failed to decode polyline: $e');
           }
         }
+
+        debugPrint('[LOG] API Result - ETA: $newEta, Distance: $newDistance');
       } else {
         debugPrint('[LOG] API result is not a Map: $result');
       }
@@ -707,140 +717,117 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+            size: 18,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          AppLocalizations.of(context)!.liveTracking,
+          style: DMSansFont.textStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+            color: Colors.black,
+          ),
+        ),
+      ),
       body: _isLoading || _scooterIcon == null || _customerIcon == null
           ? Center(child: Loader(color: AppColors.primary))
           : _errorMessage != null
           ? _buildErrorWidget()
-          : Stack(
+          : Column(
               children: [
-                Column(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: GoogleMap(
-                          onMapCreated: (controller) {
-                            _mapController = controller;
-                            _controller.complete(controller);
-                            _isMapReady = true;
-                            _applyMapStyle();
-                            if (_customerLatLng != null &&
-                                _agentLatLng != null) {
-                              _moveCameraToBounds(
-                                customerLatLng: _customerLatLng!,
-                                agentLatLng: _agentLatLng!,
-                              );
-                            }
-                          },
-                          initialCameraPosition: CameraPosition(
-                            target: _customerLatLng ?? _mockCustomerLocation,
-                            zoom: _getInitialZoom(),
-                          ),
-                          trafficEnabled: _showTrafficLayer,
-                          myLocationEnabled: false,
-                          myLocationButtonEnabled: false,
-                          zoomControlsEnabled: false,
-                          compassEnabled: false,
-                          markers: {
-                            if (_customerLatLng != null)
-                              Marker(
-                                markerId: const MarkerId('customer'),
-                                position: _customerLatLng!,
-                                icon: _customerIcon!,
-                              ),
-
-                            if (_agentLatLng != null)
-                              Marker(
-                                markerId: const MarkerId('agent'),
-                                position: _agentLatLng!,
-                                icon: _scooterIcon!,
-                                infoWindow: InfoWindow(
-                                  title:
-                                      widget.booking?.agent?.name ??
-                                      'Delivery Agent',
-                                  snippet: 'Live location',
-                                ),
-                              ),
-                          },
-                          polylines: {
-                            if (routePoints.isNotEmpty)
-                              Polyline(
-                                polylineId: const PolylineId("route"),
-                                color: const Color(
-                                  0xFF4A89F3,
-                                ), // Google Maps Blue
-                                width: 5,
-                                startCap: Cap.roundCap,
-                                endCap: Cap.roundCap,
-                                jointType: JointType.round,
-                                points: routePoints,
-                              ),
-                          },
-                        ),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: GoogleMap(
+                      onMapCreated: (controller) {
+                        log(
+                          "[MAP_DEBUG] 🗺️ onMapCreated triggered for LiveTrackingPage",
+                        );
+                        _mapController = controller;
+                        if (!_controller.isCompleted) {
+                          _controller.complete(controller);
+                        }
+                        _isMapReady = true;
+                        _applyMapStyle();
+                        if (_customerLatLng != null && _agentLatLng != null) {
+                          log(
+                            "[MAP_DEBUG] 📍 Auto-moving camera to bounds on initialization",
+                          );
+                          _moveCameraToBounds(
+                            customerLatLng: _customerLatLng!,
+                            agentLatLng: _agentLatLng!,
+                          );
+                        }
+                      },
+                      initialCameraPosition: CameraPosition(
+                        target: _customerLatLng ?? _mockCustomerLocation,
+                        zoom: _getInitialZoom(),
                       ),
-                    ),
-                    TrackingData(
-                      booking: widget.booking!,
-                      timeTakenToArrive:
-                          eta ??
-                          (_agentLatLng == null
-                              ? AppLocalizations.of(context)!.fetching
-                              : AppLocalizations.of(context)!.calculating),
-                      remainingKm:
-                          distance ??
-                          (_agentLatLng == null
-                              ? AppLocalizations.of(
-                                  context,
-                                )!.waitingForAgentLocation
-                              : ""),
-                      worker: widget.booking?.agent,
-                    ),
-                  ],
-                ),
+                      mapType: MapType.normal,
+                      trafficEnabled: _showTrafficLayer,
+                      myLocationEnabled: false,
+                      myLocationButtonEnabled: false,
+                      zoomControlsEnabled: false,
+                      compassEnabled: false,
+                      markers: {
+                        if (_customerLatLng != null)
+                          Marker(
+                            markerId: const MarkerId('customer'),
+                            position: _customerLatLng!,
+                            icon: _customerIcon!,
+                          ),
 
-                // Header
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).padding.top + 10,
-                      bottom: 10,
-                      left: 16,
-                      right: 16,
-                    ),
-                    // color: Colors.white.withOpacity(0.9),
-                    color: AppColors.primary,
-                    child: Row(
-                      children: [
-                        InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.transparent,
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 24,
+                        if (_agentLatLng != null)
+                          Marker(
+                            markerId: const MarkerId('agent'),
+                            position: _agentLatLng!,
+                            icon: _scooterIcon!,
+                            infoWindow: InfoWindow(
+                              title: widget.booking?.agent?.name ??
+                                  'Delivery Agent',
+                              snippet: 'Live location',
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Text(
-                          AppLocalizations.of(context)!.liveTracking,
-                          style: DMSansFont.textStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.white,
+                      },
+                      polylines: {
+                        if (routePoints.isNotEmpty)
+                          Polyline(
+                            polylineId: const PolylineId("route"),
+                            color: const Color(
+                              0xFF4A89F3,
+                            ), // Google Maps Blue
+                            width: 5,
+                            startCap: Cap.roundCap,
+                            endCap: Cap.roundCap,
+                            jointType: JointType.round,
+                            points: routePoints,
                           ),
-                        ),
-                      ],
+                      },
                     ),
                   ),
+                ),
+                TrackingData(
+                  booking: widget.booking!,
+                  timeTakenToArrive: eta ??
+                      (_agentLatLng == null
+                          ? AppLocalizations.of(context)!.fetching
+                          : AppLocalizations.of(context)!.calculating),
+                  remainingKm: distance ??
+                      (_agentLatLng == null
+                          ? AppLocalizations.of(
+                              context,
+                            )!.waitingForAgentLocation
+                          : ""),
+                  worker: widget.booking?.agent,
                 ),
               ],
             ),
