@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:abo_glumbo_bbk/configs/env_config.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -9,7 +10,7 @@ Future<List<LatLng>> getPolylinePointsFromGoogle(
   LatLng start,
   LatLng end,
 ) async {
-  const apiKey = 'AIzaSyBQglwauOyBM2wKjobljQUdlkD4ECnSPp4';
+  final apiKey = EnvConfig.googleMapsApiKey;
   final response = await http.get(
     Uri.parse(
       'https://maps.googleapis.com/maps/api/directions/json?origin=${start.latitude},${start.longitude}&destination=${end.latitude},${end.longitude}&departure_time=now&mode=driving&key=$apiKey',

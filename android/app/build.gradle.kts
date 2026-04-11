@@ -15,6 +15,13 @@ val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
+
+val envProperties = Properties()
+val envFile = rootProject.file("../../.env")
+if (envFile.exists()) {
+    envFile.inputStream().use { envProperties.load(it) }
+}
+val googleMapsApiKey = envProperties.getProperty("GOOGLE_MAPS_API_KEY") ?: ""
 val kotlin_version: String by project
 android {
     namespace = "com.aboglumbo"
@@ -41,6 +48,8 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+        
+        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = googleMapsApiKey
 
         ndk {
             // 16KB page support requires 16KB aligned binaries. 

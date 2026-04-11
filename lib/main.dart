@@ -16,6 +16,7 @@ import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final String hiveBoxName = 'myBox';
 GlobalKey<NavigatorState>? navigatorKey = GlobalKey();
@@ -40,6 +41,9 @@ Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     debugPrint('✅ Flutter binding initialized');
+
+    await dotenv.load(fileName: ".env");
+    debugPrint('✅ .env file loaded');
 
     // Initialize Google Maps Renderer for Android
     final GoogleMapsFlutterPlatform mapsImplementation =

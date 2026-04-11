@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'package:abo_glumbo_bbk/configs/env_config.dart';
 import 'package:abo_glumbo_bbk/apis/google_tracking_polylines.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/tracking_data.dart';
@@ -280,7 +281,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         originLng: _agentLatLng!.longitude,
         destinationLat: _customerLatLng!.latitude,
         destinationLng: _customerLatLng!.longitude,
-        apiKey: 'AIzaSyBQglwauOyBM2wKjobljQUdlkD4ECnSPp4',
+        apiKey: EnvConfig.googleMapsApiKey,
       );
 
       String? newEta;

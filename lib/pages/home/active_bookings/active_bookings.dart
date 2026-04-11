@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:math' as math;
+import 'package:abo_glumbo_bbk/configs/env_config.dart';
 import 'package:abo_glumbo_bbk/apis/google_tracking_polylines.dart';
 import 'package:abo_glumbo_bbk/common_widgets/live_tracking.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -595,7 +596,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         originLng: agentLng,
         destinationLat: customerLat,
         destinationLng: customerLng,
-        apiKey: "AIzaSyBQglwauOyBM2wKjobljQUdlkD4ECnSPp4",
+        apiKey: EnvConfig.googleMapsApiKey,
       ).timeout(const Duration(seconds: 10));
 
       _log('[ETA] API Response for booking ${booking.id}: $result');
