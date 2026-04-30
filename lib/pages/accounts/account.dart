@@ -47,15 +47,12 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentLocale = context.read<AccountBloc>().state.locale;
-      _currentLanguage = currentLocale.languageCode == 'ar'
-          ? 'العربية'
-          : 'English';
+      _currentLanguage = _getDisplayLanguage(currentLocale.languageCode);
 
       // Initialize notification language from customer data
       if (widget.customerData?.lanCode != null) {
-        _currentNotificationLanguage = widget.customerData!.lanCode == 'ar'
-            ? 'العربية'
-            : 'English';
+        _currentNotificationLanguage =
+            _getDisplayLanguage(widget.customerData!.lanCode!);
       }
 
       debugPrint(
@@ -70,14 +67,34 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  static String _getDisplayLanguage(String code) {
+    switch (code) {
+      case 'ar':
+        return 'العربية';
+      case 'ur':
+        return 'اردو';
+      default:
+        return 'English';
+    }
+  }
+
+  static String _getLanguageCode(String displayLanguage) {
+    switch (displayLanguage) {
+      case 'العربية':
+        return 'ar';
+      case 'اردو':
+        return 'ur';
+      default:
+        return 'en';
+    }
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       debugPrint('📱 App resumed, refreshing language state');
       final currentLocale = context.read<AccountBloc>().state.locale;
-      final newLanguage = currentLocale.languageCode == 'ar'
-          ? 'العربية'
-          : 'English';
+      final newLanguage = _getDisplayLanguage(currentLocale.languageCode);
       if (_currentLanguage != newLanguage) {
         setState(() {
           _currentLanguage = newLanguage;
@@ -310,9 +327,8 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         children: [
           BlocBuilder<AccountBloc, AccountState>(
             builder: (context, state) {
-              final displayLanguage = state.locale.languageCode == 'en'
-                  ? 'English'
-                  : 'العربية';
+              final displayLanguage =
+                  _getDisplayLanguage(state.locale.languageCode);
               return AccountListTile.withText(
                 leading: Icon(Icons.translate),
                 title: AppLocalizations.of(context)?.language ?? '',
@@ -443,13 +459,15 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   }
 
   void _showLanguageSelection() {
+    final currentCode = context.read<AccountBloc>().state.locale.languageCode;
     showDialog(
       context: context,
       builder: (context) => LanguageSelectionDialog(
         title: AppLocalizations.of(context)?.selectLanguage ?? '',
-        currentLanguage: _currentLanguage,
+        currentLanguageCode: currentCode,
         onEnglishSelected: () => _handleLanguageChange('English'),
         onArabicSelected: () => _handleLanguageChange('العربية'),
+        onUrduSelected: () => _handleLanguageChange('اردو'),
       ),
     );
   }
@@ -459,7 +477,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       context: context,
       builder: (context) => LanguageSelectionDialog(
         title: AppLocalizations.of(context)?.notificationLanguage ?? '',
-        currentLanguage: _currentNotificationLanguage,
+        currentLanguageCode: _getLanguageCode(_currentNotificationLanguage),
         onEnglishSelected: () => _handleNotificationLanguageChange('English'),
         onArabicSelected: () => _handleNotificationLanguageChange('العربية'),
       ),
@@ -468,7 +486,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
   void _handleLanguageChange(String language) {
     if (mounted) {
-      final languageCode = language == 'English' ? 'en' : 'ar';
+      final languageCode = _getLanguageCode(language);
       context.read<AccountBloc>().add(ChangeLocale(languageCode: languageCode));
       setState(() {
         _currentLanguage = language;
@@ -479,7 +497,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   void _handleNotificationLanguageChange(String language) async {
     try {
       await AppServices.updateNotificationLanguage(
-        language == 'English' ? 'en' : 'ar',
+        _getLanguageCode(language),
       );
       // Update local state
       setState(() {

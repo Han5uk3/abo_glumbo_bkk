@@ -196,7 +196,7 @@ class MyApp extends StatelessWidget {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
-              supportedLocales: const [Locale('en'), Locale('ar')],
+              supportedLocales: const [Locale('en'), Locale('ar'), Locale('ur')],
               localeResolutionCallback: (locale, supportedLocales) {
                 if (supportedLocales.any(
                   (supported) =>
@@ -219,7 +219,7 @@ class MyApp extends StatelessWidget {
                     padding: mq.padding.copyWith(bottom: fixedBottom),
                   ),
                   child: Directionality(
-                    textDirection: state.locale.languageCode == 'ar'
+                    textDirection: (state.locale.languageCode == 'ar' || state.locale.languageCode == 'ur')
                         ? TextDirection.rtl
                         : TextDirection.ltr,
                     child: child!,

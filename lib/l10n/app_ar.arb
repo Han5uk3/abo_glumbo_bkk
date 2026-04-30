@@ -44,6 +44,7 @@
   "tapForLiveLocationTracking": "اضغط لتتبع الموقع المباشر",
   "language": "اللغة",
   "failedToFetchLocation": "فشل في جلب الموقع",
+  "locationWillBeAutomaticallyDetected": "سيتم تحديد الموقع تلقائيًا",
   "highestRating": "أعلى تقييم",
   "nearest": "الأقرب",
   "mostOrders": "الأكثر طلبًا",
@@ -508,7 +509,26 @@
   "noCancelledBookingsMessage": "لا توجد حجوزات ملغاة!",
   "noBookingsMessage": "لا توجد حجوزات حاليًا",
   "noBookingFound": "لا توجد حجوزات {type}",
+  "@noBookingFound": {
+    "description": "Message shown when no bookings are found for a specific type",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "upcoming",
+        "description": "The type of booking (e.g., upcoming, completed, cancelled)"
+      }
+    }
+  },
   "inspectionFeeNote": "رسوم المعاينة: {fee} ر.س — تُدفع فقط بعد وصول الفني ومعاينة المشكلة",
+  "@inspectionFeeNote": {
+    "description": "Message explaining the inspection fee amount and payment terms",
+    "placeholders": {
+      "fee": {
+        "type": "String",
+        "example": "5"
+      }
+    }
+  },
   "pleaseSelectAllLocationFields": "يرجى تحديد جميع حقول الموقع",
   "apply": "تطبيق",
   "clearFilter": "مسح التصفية",

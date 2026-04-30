@@ -126,10 +126,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             top: kToolbarHeight + 6,
             right: Directionality.of(context) == TextDirection.ltr ? 16 : null,
             left: Directionality.of(context) == TextDirection.ltr ? null : 16,
-            child: GestureDetector(
-              onTap: _navigateToLogin,
-              child: LanguageSelectorCard(isInLoginPage: false),
-            ),
+            child: LanguageSelectorCard(isInLoginPage: false),
           ),
         ],
       ),

@@ -454,38 +454,41 @@ class _BookServicePageState extends State<BookServicePage> {
           bottom: BorderSide(color: Colors.black.withOpacity(0.04), width: 1),
         ),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildStepItem(
-              0,
-              Icons.calendar_today_rounded,
-              AppLocalizations.of(context)?.placeAndTiming ??
-                  'Place and timing',
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _buildStepItem(
+                0,
+                Icons.calendar_today_rounded,
+                AppLocalizations.of(context)?.placeAndTiming ??
+                    'Place and timing',
+              ),
             ),
-          ),
-          Expanded(
-            child: _buildStepItem(
-              1,
-              Icons.assignment_rounded,
-              AppLocalizations.of(context)?.details ?? 'Details',
+            Expanded(
+              child: _buildStepItem(
+                1,
+                Icons.assignment_rounded,
+                AppLocalizations.of(context)?.details ?? 'Details',
+              ),
             ),
-          ),
-          Expanded(
-            child: _buildStepItem(
-              2,
-              Icons.person_rounded,
-              AppLocalizations.of(context)?.chooseYourTechnician ?? 'Expert',
+            Expanded(
+              child: _buildStepItem(
+                2,
+                Icons.person_rounded,
+                AppLocalizations.of(context)?.chooseYourTechnician ?? 'Expert',
+              ),
             ),
-          ),
-          Expanded(
-            child: _buildStepItem(
-              3,
-              Icons.checklist_rounded,
-              AppLocalizations.of(context)?.reviewAndConfirm ?? 'Review',
+            Expanded(
+              child: _buildStepItem(
+                3,
+                Icons.checklist_rounded,
+                AppLocalizations.of(context)?.reviewAndConfirm ?? 'Review',
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -577,7 +580,7 @@ class _BookServicePageState extends State<BookServicePage> {
             Text(
               label,
               textAlign: TextAlign.center,
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: DMSansFont.textStyle(
                 fontSize: 10,
@@ -1036,15 +1039,6 @@ class _BookServicePageState extends State<BookServicePage> {
               value: '${discountedPrice.toStringAsFixed(2)} SAR',
               valueColor: Colors.green,
               isBold: true,
-            ),
-          ],
-          if (!hasDiscount) ...[
-            const Divider(height: 20),
-            _buildReviewRow(
-              icon: Icons.discount_outlined,
-              label: AppLocalizations.of(context)?.discount ?? 'Discount',
-              value: AppLocalizations.of(context)?.noDiscount ?? 'No Discount',
-              valueColor: Colors.grey,
             ),
           ],
         ]),

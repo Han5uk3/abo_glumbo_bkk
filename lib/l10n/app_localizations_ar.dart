@@ -2076,7 +2076,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get locationWillBeAutomaticallyDetected =>
-      'Location will be automatically detected';
+      'سيتم تحديد الموقع تلقائيًا';
 
   @override
   String get uploading => 'جاري الرفع...';

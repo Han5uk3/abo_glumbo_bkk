@@ -189,10 +189,14 @@ class _CategoryDetailState extends State<CategoryDetail> {
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(12),
                                   onTap: () => Navigator.pop(context),
-                                  child: Icon(
-                                    Icons.arrow_back_ios_new,
-                                    color: AppColors.primary,
-                                    size: 18,
+                                  child: Directionality(
+                                    textDirection: TextDirection.ltr,
+                                    child: Icon(
+                                      Icons.arrow_back_ios_new,
+
+                                      color: AppColors.primary,
+                                      size: 18,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -411,5 +415,4 @@ class _CategoryDetailState extends State<CategoryDetail> {
       ),
     );
   }
-
 }

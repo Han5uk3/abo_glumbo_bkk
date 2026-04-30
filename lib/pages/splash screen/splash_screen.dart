@@ -190,9 +190,11 @@ class _SplashScreenState extends State<SplashScreen>
 
                                 // Text
                                 Text(
-                                  state.locale.languageCode == "ar"
+                                  (state.locale.languageCode == "ar")
                                       ? "ابو جلمبو"
-                                      : "Abo Glumbo",
+                                      : (state.locale.languageCode == "ur")
+                                          ? "ابو گلمبو"
+                                          : "Abo Glumbo",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 28,

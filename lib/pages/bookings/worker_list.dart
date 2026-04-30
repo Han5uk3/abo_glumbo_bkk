@@ -133,44 +133,6 @@ class _WorkerListState extends State<WorkerList> {
     }
     return Column(
       children: [
-        // Filter Options
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              FilterChip(
-                label: Text(
-                  _filterType == FilterType.premium ? "⭐ Nearby Premium" : "Nearby Premium",
-                  style: TextStyle(
-                    color: _filterType == FilterType.premium ? Colors.white : Colors.black87,
-                  ),
-                ),
-                selected: _filterType == FilterType.premium,
-                onSelected: (selected) {
-                  if (selected) setState(() => _filterType = FilterType.premium);
-                },
-                selectedColor: AppColors.primary,
-                checkmarkColor: Colors.white,
-              ),
-              const SizedBox(width: 8),
-              FilterChip(
-                label: Text(
-                  "Nearby",
-                  style: TextStyle(
-                    color: _filterType == FilterType.nearby ? Colors.white : Colors.black87,
-                  ),
-                ),
-                selected: _filterType == FilterType.nearby,
-                onSelected: (selected) {
-                  if (selected) setState(() => _filterType = FilterType.nearby);
-                },
-                selectedColor: AppColors.primary,
-                checkmarkColor: Colors.white,
-              ),
-            ],
-          ),
-        ),
-
         // Workers List
         Expanded(
           child: StreamBuilder<List<WorkerWithStats>>(
