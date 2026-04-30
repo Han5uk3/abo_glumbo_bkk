@@ -12,6 +12,7 @@ import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/widgets/counter_propose_sheet.dart';
+import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
 
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -1078,6 +1079,25 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       hasChat: false,
       title: AppLocalizations.of(context)!.completionDetails,
       icon: Icons.check_circle,
+      trailing: (booking.bookingStatusCode.toLowerCase() == 'completed' ||
+              booking.bookingStatusCode.toLowerCase() == 'c')
+          ? IconButton(
+              onPressed: () => InvoiceService.generateAndShowInvoice(booking),
+              icon: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.download_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+              ),
+              tooltip: "Download Invoice",
+            )
+          : null,
       children: [
         if (booking.paymentCompleted ||
             booking.bookingStatusCode == 'VP' ||
@@ -1575,6 +1595,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     required List<Widget> children,
     required bool hasChat,
     bool showChatOnHeader = true,
+    Widget? trailing,
   }) {
     return Container(
       width: double.infinity,
@@ -1619,6 +1640,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                   color: Colors.black87,
                 ),
               ),
+              if (trailing != null) ...[
+                const Spacer(),
+                trailing,
+              ],
               if (showChatOnHeader &&
                   ((hasChat && booking.bookingStatusCode == 'A') ||
                       (hasChat &&
