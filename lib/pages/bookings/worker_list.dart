@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:abo_glumbo_bbk/helpers/location_helper.dart';
-import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'dart:async';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
