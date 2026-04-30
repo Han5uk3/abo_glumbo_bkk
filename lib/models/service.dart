@@ -38,6 +38,7 @@ class ServiceModel {
   String? workEndTime;
   double? onWorkHourPrice;
   double? offWorkHourPrice;
+  List<int>? workingDays;
 
   // the price in its highest form
   String? category;
@@ -67,6 +68,7 @@ class ServiceModel {
     this.workEndTime,
     this.onWorkHourPrice,
     this.offWorkHourPrice,
+    this.workingDays,
     this.category,
     this.specialSection,
     this.locations,
@@ -93,6 +95,7 @@ class ServiceModel {
     String? workEndTime,
     double? onWorkHourPrice,
     double? offWorkHourPrice,
+    List<int>? workingDays,
     String? category,
     List<String>? specialSection,
     List<String?>? locations,
@@ -122,6 +125,7 @@ class ServiceModel {
       workEndTime: workEndTime ?? this.workEndTime,
       onWorkHourPrice: onWorkHourPrice ?? this.onWorkHourPrice,
       offWorkHourPrice: offWorkHourPrice ?? this.offWorkHourPrice,
+      workingDays: workingDays ?? this.workingDays,
       category: category ?? this.category,
       specialSection: specialSection ?? this.specialSection,
       locations: locations ?? this.locations,
@@ -161,6 +165,7 @@ class ServiceModel {
               ? (json['offWorkHourPrice'] as int).toDouble()
               : json['offWorkHourPrice'] as double)
           : 0.0,
+      workingDays: json['workingDays']?.cast<int>(),
       category: json['category'],
       specialSection: json['specialSection']?.cast<String>(),
       locations: json['locations']?.cast<String>(),
@@ -206,6 +211,7 @@ class ServiceModel {
               ? (data['offWorkHourPrice'] as int).toDouble()
               : data['offWorkHourPrice'] as double)
           : 0.0,
+      workingDays: data['workingDays']?.cast<int>(),
       category: data['category'],
       specialSection: data['specialSection']?.cast<String>(),
       locations: data['locations']?.cast<String>(),
@@ -250,6 +256,7 @@ class ServiceModel {
               ? (data['offWorkHourPrice'] as int).toDouble()
               : data['offWorkHourPrice'] as double)
           : 0.0,
+      workingDays: data['workingDays']?.cast<int>(),
       category: data['category'],
       specialSection: data['specialSection']?.cast<String>(),
       locations: data['locations']?.cast<String>(),
@@ -280,6 +287,7 @@ class ServiceModel {
       'workEndTime': workEndTime,
       'onWorkHourPrice': onWorkHourPrice,
       'offWorkHourPrice': offWorkHourPrice,
+      'workingDays': workingDays,
       'category': category,
       'specialSection': specialSection,
       'locations': locations,
@@ -337,6 +345,9 @@ class ServiceModel {
         offWorkHourPrice != null) {
       json['offWorkHourPrice'] = offWorkHourPrice;
     }
+    if (workingDays != previous.workingDays && workingDays != null) {
+      json['workingDays'] = workingDays;
+    }
     if (category != previous.category && category != null) {
       json['category'] = category;
     }
@@ -385,8 +396,11 @@ class ServiceModel {
   }
 
   bool isOnWorkHour({DateTime? currentTime}) {
-    if (workStartTime == null || workEndTime == null) return true;
     final referenceTime = currentTime ?? _getMiddleEastNow();
+    if (workingDays != null && !workingDays!.contains(referenceTime.weekday)) {
+      return false; // It's a holiday, therefore off work hour
+    }
+    if (workStartTime == null || workEndTime == null) return true;
     try {
       final startParts = workStartTime!.split(':');
       final endParts = workEndTime!.split(':');

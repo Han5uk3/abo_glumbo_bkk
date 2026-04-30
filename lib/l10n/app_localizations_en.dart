@@ -688,7 +688,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discount => 'Discount';
 
   @override
-  String get off => 'OFF';
+  String get off => 'off';
 
   @override
   String get originalPrice => 'Original Price';
@@ -2325,4 +2325,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get excellent => 'Excellent';
+
+  @override
+  String get reviewAndConfirm => 'Review & Confirm';
+
+  @override
+  String get bookingSummary => 'Booking Summary';
+
+  @override
+  String get serviceName => 'Service';
+
+  @override
+  String get bookingType => 'Booking Type';
+
+  @override
+  String get onHourBooking => 'On-Hour Booking';
+
+  @override
+  String get offHourBooking => 'Off-Hour Booking';
+
+  @override
+  String get discountApplied => 'Discount Applied';
+
+  @override
+  String get noDiscount => 'No Discount';
+
+  @override
+  String get finalPrice => 'Final Price';
+
+  @override
+  String get technicianAssignment => 'Technician Assignment';
+
+  @override
+  String get autoAssignMessage =>
+      'We will assign a technician to your booking 2 hours before your booking time.';
+
+  @override
+  String get youSelectedTechnician => 'You selected a technician';
+
+  @override
+  String get confirmBooking => 'Confirm Booking';
 }

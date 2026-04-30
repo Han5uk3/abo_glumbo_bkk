@@ -18,12 +18,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
 import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
 import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/services/location_service.dart';
 import 'package:abo_glumbo_bbk/models/address_result.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
+
+import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
+import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
 
 class BookServicePage extends StatefulWidget {
   final ServiceModel service;
@@ -36,7 +38,7 @@ class BookServicePage extends StatefulWidget {
 class _BookServicePageState extends State<BookServicePage> {
   final ValueNotifier<int?> selectedIndexNotifier = ValueNotifier<int?>(null);
   UserModel selectedWorker = UserModel(uid: "", role: "customer");
-  int currentStep = 0; // 0: Schedule, 1: Details, 2: Expert
+  int currentStep = 0; // 0: Schedule, 1: Details, 2: Expert/Auto-assign, 3: Review & Confirm
 
   DateTime? selectedDate;
   bool saving = false;
@@ -206,8 +208,8 @@ class _BookServicePageState extends State<BookServicePage> {
         if (mounted) {
           setState(() {
             isValidatingAddress = false;
-            addressValidationError = AppLocalizations.of(context)
-                    ?.serviceAreaNotConfigured ??
+            addressValidationError =
+                AppLocalizations.of(context)?.serviceAreaNotConfigured ??
                 "Service unavailable: No service areas are set currently";
             _matchedServiceZone = null;
           });
@@ -225,7 +227,7 @@ class _BookServicePageState extends State<BookServicePage> {
             isValidatingAddress = false;
             addressValidationError =
                 AppLocalizations.of(context)?.noActiveServiceZones ??
-                    "Service unavailable: No active service zones defined";
+                "Service unavailable: No active service zones defined";
             _matchedServiceZone = null;
           });
         }
@@ -243,7 +245,7 @@ class _BookServicePageState extends State<BookServicePage> {
           isValidatingAddress = false;
           addressValidationError =
               AppLocalizations.of(context)?.serviceUnavailableLongMessage ??
-                  "Service unavailable to this location currently";
+              "Service unavailable to this location currently";
           _matchedServiceZone = null;
         });
         return;
@@ -267,7 +269,7 @@ class _BookServicePageState extends State<BookServicePage> {
           isValidatingAddress = false;
           addressValidationError =
               AppLocalizations.of(context)?.failedToValidateServiceArea ??
-                  "Failed to validate service area";
+              "Failed to validate service area";
           _matchedServiceZone = null;
         });
       }
@@ -295,7 +297,11 @@ class _BookServicePageState extends State<BookServicePage> {
     }
 
     final nowInME = _getMiddleEastNow();
-    final selectedDateOnly = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final selectedDateOnly = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
     final todayOnly = DateTime(nowInME.year, nowInME.month, nowInME.day);
 
     if (selectedDateOnly.isBefore(todayOnly)) return true;
@@ -323,7 +329,11 @@ class _BookServicePageState extends State<BookServicePage> {
     if (selectedDate == null) return false;
 
     final nowInME = _getMiddleEastNow();
-    final selectedDateOnly = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
+    final selectedDateOnly = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
     final todayOnly = DateTime(nowInME.year, nowInME.month, nowInME.day);
 
     if (selectedDateOnly.isBefore(todayOnly)) return true;
@@ -376,55 +386,57 @@ class _BookServicePageState extends State<BookServicePage> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<CustomerModel>(
-          stream: _customerStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              customerData = snapshot.data;
-            }
-            return Scaffold(
-              backgroundColor: AppColors.bgBlueTint,
-              appBar: AppBar(
-                backgroundColor: AppColors.bgBlueTint,
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.black,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    if (currentStep > 0) {
-                      setState(() => currentStep--);
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
-                title: Text(
-                  _getTitle(context),
-                  style: DMSansFont.textStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                centerTitle: true,
+      stream: _customerStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          customerData = snapshot.data;
+        }
+        return Scaffold(
+          backgroundColor: AppColors.bgBlueTint,
+          appBar: AppBar(
+            backgroundColor: AppColors.bgBlueTint,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.black,
+                size: 20,
               ),
-              body: Column(
-                children: [
-                  _buildStepProgressBar(),
-                  Expanded(
-                    child: currentStep == 0
-                        ? _buildFirstStepContent()
-                        : currentStep == 1
-                        ? _buildSecondStepContent()
-                        : _buildThirdStepContent(),
-                  ),
-                ],
+              onPressed: () {
+                if (currentStep > 0) {
+                  setState(() => currentStep--);
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+            ),
+            title: Text(
+              _getTitle(context),
+              style: DMSansFont.textStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              bottomNavigationBar: _buildBottomBar(context),
-            );
-          },
+            ),
+            centerTitle: true,
+          ),
+          body: Column(
+            children: [
+              _buildStepProgressBar(),
+              Expanded(
+                child: currentStep == 0
+                    ? _buildFirstStepContent()
+                    : currentStep == 1
+                    ? _buildSecondStepContent()
+                    : currentStep == 2
+                    ? _buildThirdStepContent()
+                    : _buildReviewStepContent(),
+              ),
+            ],
+          ),
+          bottomNavigationBar: _buildBottomBar(context),
+        );
+      },
     );
   }
 
@@ -459,14 +471,20 @@ class _BookServicePageState extends State<BookServicePage> {
               AppLocalizations.of(context)?.details ?? 'Details',
             ),
           ),
-          if (!_isOnHour())
-            Expanded(
-              child: _buildStepItem(
-                2,
-                Icons.person_rounded,
-                AppLocalizations.of(context)?.chooseYourTechnician ?? 'Expert',
-              ),
+          Expanded(
+            child: _buildStepItem(
+              2,
+              Icons.person_rounded,
+              AppLocalizations.of(context)?.chooseYourTechnician ?? 'Expert',
             ),
+          ),
+          Expanded(
+            child: _buildStepItem(
+              3,
+              Icons.checklist_rounded,
+              AppLocalizations.of(context)?.reviewAndConfirm ?? 'Review',
+            ),
+          ),
         ],
       ),
     );
@@ -498,7 +516,7 @@ class _BookServicePageState extends State<BookServicePage> {
               Expanded(
                 child: Container(
                   height: 2,
-                  color: (step == 2 || (step == 1 && _isOnHour()))
+                  color: step == 3
                       ? Colors.transparent
                       : (isCompleted ? AppColors.primary : Colors.grey[200]!),
                 ),
@@ -825,11 +843,14 @@ class _BookServicePageState extends State<BookServicePage> {
           const SizedBox(height: 12),
           BlocProvider(
             create: (context) =>
-                AddressBloc(AppServicesAddressRepository())..add(LoadAddresses()),
+                AddressBloc(AppServicesAddressRepository())
+                  ..add(LoadAddresses()),
             child: AddIssueImageAndVideo(
               showAddressPicker: false,
-              onImageSelected: (value) => setState(() => _selectedImage = value),
-              onVideoSelected: (value) => setState(() => _selectedVideo = value),
+              onImageSelected: (value) =>
+                  setState(() => _selectedImage = value),
+              onVideoSelected: (value) =>
+                  setState(() => _selectedVideo = value),
             ),
           ),
           const SizedBox(height: 24),
@@ -868,14 +889,235 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildThirdStepContent() {
-    return WorkerList(
-      service: widget.service,
-      category: widget.service.category ?? "",
-      selectedAddress: selectedAddress,
-      selectedIndexNotifier: selectedIndexNotifier,
-      onWorkerSelected: (worker) => selectedWorker = worker,
-      selectedDate: selectedDate!,
-      timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+    if (_isOnHour()) {
+      return WorkerList(
+        service: widget.service,
+        category: widget.service.category ?? "",
+        selectedAddress: selectedAddress,
+        selectedIndexNotifier: selectedIndexNotifier,
+        onWorkerSelected: (worker) => selectedWorker = worker,
+        selectedDate: selectedDate!,
+        timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+      );
+    }
+    // Off-hour: show auto-assignment info
+    return _buildAutoAssignContent();
+  }
+
+  Widget _buildAutoAssignContent() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.engineering_rounded,
+                size: 64,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 28),
+            Text(
+              AppLocalizations.of(context)?.technicianAssignment ?? 'Technician Assignment',
+              style: DMSansFont.textStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.shade100),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline_rounded, color: Colors.blue.shade700, size: 22),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)?.autoAssignMessage ?? 
+                          'We will assign a technician to your booking 2 hours before your booking time.',
+                      style: DMSansFont.textStyle(
+                        fontSize: 14,
+                        color: Colors.blue.shade800,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReviewStepContent() {
+    final isOnHour = _isOnHour();
+    final price = _getSelectedPrice();
+    final hasDiscount = (widget.service.discountPercentage ?? 0) > 0;
+    final discountedPrice = widget.service.getDiscountedPrice(price);
+    final languageCode = AppLocalizations.of(context)?.localeName ?? 'en';
+    final serviceName = widget.service.nameLocalized(languageCode: languageCode) ?? '';
+    final timeLabel = timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"];
+    final dateStr = '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}';
+    final addressName = selectedAddress?.fullName ?? '';
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Text(
+          AppLocalizations.of(context)?.bookingSummary ?? 'Booking Summary',
+          style: DMSansFont.textStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildReviewCard(children: [
+          _buildReviewRow(
+            icon: Icons.home_repair_service_rounded,
+            label: AppLocalizations.of(context)?.serviceName ?? 'Service',
+            value: serviceName,
+          ),
+          const Divider(height: 20),
+          _buildReviewRow(
+            icon: Icons.calendar_month_rounded,
+            label: AppLocalizations.of(context)?.dateAndTime ?? 'Date & Time',
+            value: '$dateStr  •  $timeLabel',
+          ),
+          const Divider(height: 20),
+          _buildReviewRow(
+            icon: Icons.location_on_outlined,
+            label: AppLocalizations.of(context)?.address ?? 'Address',
+            value: addressName,
+          ),
+        ]),
+        const SizedBox(height: 16),
+        _buildReviewCard(children: [
+          _buildReviewRow(
+            icon: Icons.access_time_rounded,
+            label: AppLocalizations.of(context)?.bookingType ?? 'Booking Type',
+            value: isOnHour
+                ? (AppLocalizations.of(context)?.onHourBooking ?? 'On-Hour Booking')
+                : (AppLocalizations.of(context)?.offHourBooking ?? 'Off-Hour Booking'),
+            valueColor: isOnHour ? Colors.green : Colors.orange,
+          ),
+          const Divider(height: 20),
+          _buildReviewRow(
+            icon: Icons.sell_rounded,
+            label: AppLocalizations.of(context)?.price ?? 'Price',
+            value: '${price.toStringAsFixed(2)} SAR',
+          ),
+          if (hasDiscount) ...[
+            const Divider(height: 20),
+            _buildReviewRow(
+              icon: Icons.discount_rounded,
+              label: AppLocalizations.of(context)?.discount ?? 'Discount',
+              value: '${widget.service.discountPercentage!.toStringAsFixed(0)}% ${AppLocalizations.of(context)?.off ?? "off"}',
+              valueColor: Colors.green,
+            ),
+            const Divider(height: 20),
+            _buildReviewRow(
+              icon: Icons.payments_rounded,
+              label: AppLocalizations.of(context)?.finalPrice ?? 'Final Price',
+              value: '${discountedPrice.toStringAsFixed(2)} SAR',
+              valueColor: Colors.green,
+              isBold: true,
+            ),
+          ],
+          if (!hasDiscount) ...[
+            const Divider(height: 20),
+            _buildReviewRow(
+              icon: Icons.discount_outlined,
+              label: AppLocalizations.of(context)?.discount ?? 'Discount',
+              value: AppLocalizations.of(context)?.noDiscount ?? 'No Discount',
+              valueColor: Colors.grey,
+            ),
+          ],
+        ]),
+        const SizedBox(height: 16),
+        _buildReviewCard(children: [
+          _buildReviewRow(
+            icon: Icons.person_rounded,
+            label: AppLocalizations.of(context)?.technicianAssignment ?? 'Technician',
+            value: isOnHour
+                ? (selectedWorker.name ?? (AppLocalizations.of(context)?.youSelectedTechnician ?? 'You selected a technician'))
+                : (AppLocalizations.of(context)?.autoAssignMessage ?? 'We will assign a technician to your booking 2 hours before your booking time.'),
+            valueColor: isOnHour ? AppColors.primary : Colors.blue,
+          ),
+        ]),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  Widget _buildReviewCard({required List<Widget> children}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(children: children),
+    );
+  }
+
+  Widget _buildReviewRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    Color? valueColor,
+    bool isBold = false,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: Colors.grey[500]),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: DMSansFont.textStyle(
+                  fontSize: 12,
+                  color: Colors.grey[500],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: DMSansFont.textStyle(
+                  fontSize: 14,
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+                  color: valueColor ?? Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -900,13 +1142,13 @@ class _BookServicePageState extends State<BookServicePage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildPriceDisplayRow(),
-          const SizedBox(height: 16),
           currentStep == 0
               ? _buildFirstStepBottom()
               : currentStep == 1
               ? _buildSecondStepBottom()
-              : _buildThirdStepBottom(context),
+              : currentStep == 2
+              ? _buildThirdStepBottom(context)
+              : _buildReviewStepBottom(context),
         ],
       ),
     );
@@ -940,94 +1182,6 @@ class _BookServicePageState extends State<BookServicePage> {
     }
 
     return widget.service.getCurrentPrice(currentTime: bookingDateTime);
-  }
-
-  Widget _buildPriceDisplayRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppLocalizations.of(context)?.inspectionFee ?? 'Inspection Fee',
-              style: DMSansFont.textStyle(
-                color: Colors.black.withOpacity(0.6),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 4),
-            _buildPriceTimingIndicator(),
-          ],
-        ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              if ((widget.service.discountPercentage ?? 0) > 0)
-                Text(
-                  "${_getSelectedPrice()} ${AppLocalizations.of(context)?.sar ?? 'SAR'}",
-                  style: DMSansFont.textStyle(
-                    color: Colors.black.withOpacity(0.4),
-                    fontSize: 14,
-                    decoration: TextDecoration.lineThrough,
-                  ),
-                ),
-              Text(
-                "${widget.service.getDiscountedPrice(_getSelectedPrice())} ${AppLocalizations.of(context)?.sar ?? 'SAR'}",
-                style: DMSansFont.textStyle(
-                  color: AppColors.primary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-      ],
-    );
-  }
-
-  Widget _buildPriceTimingIndicator() {
-    final price = _getSelectedPrice();
-    final bool isOnHour = price == widget.service.onWorkHourPrice;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: isOnHour
-            ? Colors.green.withOpacity(0.12)
-            : Colors.orange.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: isOnHour
-              ? Colors.green.withOpacity(0.3)
-              : Colors.orange.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            isOnHour ? Icons.access_time_rounded : Icons.nightlight_round,
-            size: 10,
-            color: isOnHour ? Colors.green[700] : Colors.orange[800],
-          ),
-          const SizedBox(width: 4),
-          Text(
-            (isOnHour
-                    ? AppLocalizations.of(context)?.onHour
-                    : AppLocalizations.of(context)?.offHour) ??
-                (isOnHour ? "On-Hour" : "Off-Hour"),
-            style: DMSansFont.textStyle(
-              color: isOnHour ? Colors.green[700] : Colors.orange[800],
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildFirstStepBottom() {
@@ -1074,7 +1228,8 @@ class _BookServicePageState extends State<BookServicePage> {
 
     if (selectedDate == null) {
       _showSnackBar(
-        AppLocalizations.of(context)?.pleaseSelectADate ?? "Please select a date",
+        AppLocalizations.of(context)?.pleaseSelectADate ??
+            "Please select a date",
       );
       return;
     }
@@ -1104,11 +1259,7 @@ class _BookServicePageState extends State<BookServicePage> {
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              if (_isOnHour()) {
-                _completeBooking(context);
-              } else {
-                setState(() => currentStep = 2);
-              }
+              setState(() => currentStep = 2);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
@@ -1118,9 +1269,7 @@ class _BookServicePageState extends State<BookServicePage> {
               ),
             ),
             child: Text(
-              _isOnHour()
-                  ? (AppLocalizations.of(context)?.completeBooking ?? 'Book Now')
-                  : (AppLocalizations.of(context)?.continueText ?? 'Continue'),
+              AppLocalizations.of(context)?.continueText ?? 'Continue',
               style: DMSansFont.textStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -1133,45 +1282,96 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildThirdStepBottom(BuildContext context) {
+    if (_isOnHour()) {
+      // On-hour: must select a technician before proceeding
+      return Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: ValueListenableBuilder<int?>(
+              valueListenable: selectedIndexNotifier,
+              builder: (context, value, _) {
+                return ElevatedButton(
+                  onPressed: value == null
+                      ? null
+                      : () => setState(() => currentStep = 3),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    minimumSize: const Size(0, 54),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)?.continueText ?? 'Continue',
+                    style: DMSansFont.textStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    }
+    // Off-hour: proceed to review directly
     return Row(
       children: [
         Expanded(
-          flex: 2,
-          child: ValueListenableBuilder<int?>(
-            valueListenable: selectedIndexNotifier,
-            builder: (context, value, _) {
-              return ElevatedButton(
-                onPressed: (saving || value == null) ? null : () => _completeBooking(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  minimumSize: const Size(0, 54),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: saving
-                    ? const Loader(color: Colors.white)
-                    : Text(
-                        AppLocalizations.of(context)?.completeBooking ??
-                            'Book Now',
-                        style: DMSansFont.textStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-              );
-            },
+          child: ElevatedButton(
+            onPressed: () => setState(() => currentStep = 3),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              minimumSize: const Size(0, 54),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              AppLocalizations.of(context)?.continueText ?? 'Continue',
+              style: DMSansFont.textStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
       ],
     );
   }
 
-  void _completeBooking(BuildContext context) {
+  Widget _buildReviewStepBottom(BuildContext context) {
+    return ElevatedButton(
+      onPressed: saving ? null : () => _completeBooking(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        minimumSize: const Size(double.infinity, 54),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      child: saving
+          ? const Loader(color: Colors.white)
+          : Text(
+              AppLocalizations.of(context)?.confirmBooking ?? 'Confirm Booking',
+              style: DMSansFont.textStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+    );
+  }
+
+  Future<void> _completeBooking(BuildContext context) async {
     if (customerData == null || selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please wait for customer data to load or select a date'),
+          content: Text(
+            'Please wait for customer data to load or select a date',
+          ),
           backgroundColor: Colors.orange,
         ),
       );
@@ -1179,26 +1379,45 @@ class _BookServicePageState extends State<BookServicePage> {
     }
     FocusScope.of(context).unfocus();
 
-    // Always go through Telr payment gateway.
-    // Booking is ONLY saved to Firestore after a successful payment response.
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => PaymentWebView(
-          service: widget.service,
-          customerData: customerData!,
-          isFromBooking: true,
-          selectedDate: selectedDate!,
-          timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
-          agent: selectedWorker,
-          selectedAddress: selectedAddress,
-          serviceLocation: _matchedServiceZone,
-          notesController: notesController,
-          selectedImage: _selectedImage,
-          selectedVideo: _selectedVideo,
-          selectedPayment: "Cards",
-        ),
-      ),
+    setState(() => saving = true);
+
+    bool isSuccess = await BookingUtils.saveBooking(
+      service: widget.service,
+      selectedDate: selectedDate!,
+      paymentMode: "Cards",
+      customerData: customerData!,
+      notes: notesController.text,
+      selectedImage: _selectedImage,
+      selectedVideo: _selectedVideo,
+      timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+      agent: selectedWorker.uid != null && selectedWorker.uid!.isNotEmpty
+          ? selectedWorker
+          : UserModel(role: "agent", uid: ""),
+      selectedAddress: selectedAddress,
     );
+
+    setState(() => saving = false);
+
+    if (isSuccess && mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookingCompletedPage(
+            service: widget.service,
+            worker: selectedWorker,
+            selectedDate: selectedDate!,
+            selectedTime:
+                timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+            address: selectedAddress,
+          ),
+        ),
+        (route) => false,
+      );
+    } else if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to complete booking')));
+    }
   }
 
   void _showSnackBar(String message) {

@@ -347,49 +347,6 @@ class _CategoryDetailState extends State<CategoryDetail> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    AppLocalizations.of(
-                                          context,
-                                        )?.inspectionFee ??
-                                        'Inspection Fee',
-                                    style: DMSansFont.textStyle(
-                                      color: Colors.black.withOpacity(0.6),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  if ((service.discountPercentage ?? 0) > 0)
-                                    Text(
-                                      "${service.getCurrentPrice()} ${AppLocalizations.of(context)?.sar ?? 'SAR'}",
-                                      style: DMSansFont.textStyle(
-                                        color: Colors.black.withOpacity(0.4),
-                                        fontSize: 14,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                  Text(
-                                    "${service.getDiscountedPrice(service.getCurrentPrice())} ${AppLocalizations.of(context)?.sar ?? 'SAR'}",
-                                    style: DMSansFont.textStyle(
-                                      color: AppColors.primary,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
                           const SizedBox(height: 16),
                           SizedBox(
                             width: double.infinity,

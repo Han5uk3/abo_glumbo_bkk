@@ -37,7 +37,7 @@ class BookingUtils {
     File? selectedImage,
     File? selectedVideo,
     required Map timeSlot,
-    required UserModel agent,
+    UserModel? agent,
     AddressModel? selectedAddress, // Added selectedAddress
   }) async {
     try {
@@ -113,6 +113,7 @@ class BookingUtils {
         agent: agent,
         selectedAddressId: selectedAddress?.id, // Added selectedAddressId
         isOnHour: service.isOnWorkHour(currentTime: bookingDate), // ✅ Added
+        assignmentScheduledTime: Timestamp.fromDate(bookingDate.subtract(const Duration(hours: 3))),
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),

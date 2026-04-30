@@ -1403,7 +1403,7 @@ abstract class AppLocalizations {
   /// No description provided for @off.
   ///
   /// In en, this message translates to:
-  /// **'OFF'**
+  /// **'off'**
   String get off;
 
   /// No description provided for @originalPrice.
@@ -4477,6 +4477,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Excellent'**
   String get excellent;
+
+  /// No description provided for @reviewAndConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Review & Confirm'**
+  String get reviewAndConfirm;
+
+  /// No description provided for @bookingSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Summary'**
+  String get bookingSummary;
+
+  /// No description provided for @serviceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get serviceName;
+
+  /// No description provided for @bookingType.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Type'**
+  String get bookingType;
+
+  /// No description provided for @onHourBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'On-Hour Booking'**
+  String get onHourBooking;
+
+  /// No description provided for @offHourBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Off-Hour Booking'**
+  String get offHourBooking;
+
+  /// No description provided for @discountApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Applied'**
+  String get discountApplied;
+
+  /// No description provided for @noDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'No Discount'**
+  String get noDiscount;
+
+  /// No description provided for @finalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Final Price'**
+  String get finalPrice;
+
+  /// No description provided for @technicianAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician Assignment'**
+  String get technicianAssignment;
+
+  /// No description provided for @autoAssignMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We will assign a technician to your booking 2 hours before your booking time.'**
+  String get autoAssignMessage;
+
+  /// No description provided for @youSelectedTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'You selected a technician'**
+  String get youSelectedTechnician;
+
+  /// No description provided for @confirmBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Booking'**
+  String get confirmBooking;
 }
 
 class _AppLocalizationsDelegate

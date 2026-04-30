@@ -105,7 +105,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
             backgroundColor: AppColors.primary,
             title: Text(
-              AppLocalizations.of(context)!.account ?? '',
+              AppLocalizations.of(context)!.account,
               style: DMSansFont.textStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

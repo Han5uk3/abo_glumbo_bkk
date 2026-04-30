@@ -70,7 +70,7 @@ Future<void> main() async {
       debugPrint('❌ CRITICAL: Firebase initialization failed: $e');
       debugPrint('Stack trace: $stackTrace');
       // Firebase is critical - rethrow to show error screen
-      rethrow;
+      throw Exception('Firebase Init Error: $e');
     }
 
     // 2. Set database persistence (non-critical, can fail gracefully)
@@ -93,13 +93,20 @@ Future<void> main() async {
     // 4. Initialize Hive
     try {
       await Hive.initFlutter();
-      await Hive.openBox(hiveBoxName);
+
+      try {
+        await Hive.openBox(hiveBoxName);
+      } catch (e) {
+        debugPrint('⚠️ Hive box corrupted or failed to open: $e. Deleting and reopening...');
+        await Hive.deleteBoxFromDisk(hiveBoxName);
+        await Hive.openBox(hiveBoxName);
+      }
       debugPrint('✅ Hive initialized successfully');
     } catch (e, stackTrace) {
       debugPrint('❌ CRITICAL: Hive initialization failed: $e');
       debugPrint('Stack trace: $stackTrace');
       // Hive is critical for app state - rethrow
-      rethrow;
+      throw Exception('Hive Init Error: $e');
     }
 
     // 6. System UI setup (with One UI 8 fix)
@@ -146,7 +153,7 @@ Future<void> main() async {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Error: $e',
+                    'Error: $e\n\nStack trace preview:\n${stackTrace.toString().split('\n').take(3).join('\n')}',
                     style: const TextStyle(fontSize: 14),
                     textAlign: TextAlign.center,
                   ),

@@ -677,7 +677,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sar => 'ر.س';
 
   @override
-  String get discount => 'خصم';
+  String get discount => 'الخصم';
 
   @override
   String get off => 'خصم';
@@ -2288,4 +2288,44 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get excellent => 'ممتاز';
+
+  @override
+  String get reviewAndConfirm => 'مراجعة وتأكيد';
+
+  @override
+  String get bookingSummary => 'ملخص الحجز';
+
+  @override
+  String get serviceName => 'الخدمة';
+
+  @override
+  String get bookingType => 'نوع الحجز';
+
+  @override
+  String get onHourBooking => 'حجز أثناء ساعات العمل';
+
+  @override
+  String get offHourBooking => 'حجز خارج ساعات العمل';
+
+  @override
+  String get discountApplied => 'تم تطبيق الخصم';
+
+  @override
+  String get noDiscount => 'لا يوجد خصم';
+
+  @override
+  String get finalPrice => 'السعر النهائي';
+
+  @override
+  String get technicianAssignment => 'تعيين الفني';
+
+  @override
+  String get autoAssignMessage =>
+      'سنقوم بتعيين فني لحجزك قبل ساعتين من موعد الحجز.';
+
+  @override
+  String get youSelectedTechnician => 'لقد اخترت فنياً';
+
+  @override
+  String get confirmBooking => 'تأكيد الحجز';
 }

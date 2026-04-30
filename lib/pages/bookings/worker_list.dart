@@ -133,16 +133,6 @@ class _WorkerListState extends State<WorkerList> {
     }
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Text(
-            style: const TextStyle(fontSize: 14, color: Colors.black45),
-            AppLocalizations.of(
-              context,
-            )!.inspectionFeeNote(widget.service.price.toString()),
-          ),
-        ),
-
         // Filter Options
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

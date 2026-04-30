@@ -13,7 +13,8 @@ class BookingModel {
   late String bookingStatusCode;
   bool? isEscalated;
   Timestamp? escalatedAt;
-  bool? isOnHour; // ✅ Added: Whether booking is on-hour or off-hour
+  bool? isOnHour; // ✅ Added
+  Timestamp? assignmentScheduledTime; // Scheduled time for auto assignment
 
   late String notes;
   late String? issueImage;
@@ -94,6 +95,7 @@ class BookingModel {
     this.warranty,
     this.paymentProof,
     this.technicianPaymentProof,
+    this.assignmentScheduledTime,
     this.paidAmount,
     this.paidAt,
     this.activeCounterOffer,
@@ -166,6 +168,7 @@ class BookingModel {
       paidAmount = data['paidAmount']?.toDouble(),
       paidAt = data['paidAt'] as Timestamp?,
       isOnHour = data['isOnHour'], // ✅ Added
+      assignmentScheduledTime = data['assignmentScheduledTime'],
       cancelledAt = data['cancelledAt'];
 
   factory BookingModel.fromJson(Map<String, dynamic> data) {
@@ -221,6 +224,7 @@ class BookingModel {
       'paidAt': paidAt,
       'activeCounterOffer': activeCounterOffer?.toMap(),
       'isOnHour': isOnHour, // ✅ Added
+      'assignmentScheduledTime': assignmentScheduledTime,
     };
 
     map['id'] = id;
