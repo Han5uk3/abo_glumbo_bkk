@@ -7,6 +7,7 @@ import 'package:abo_glumbo_bbk/helpers/date_formatter.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
+import 'package:abo_glumbo_bbk/models/warranty.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/timeline.dart';
 import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
@@ -996,7 +997,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           _buildInfoRow(
             AppLocalizations.of(context)!.expiresOn,
             formatDateTime(
-              getExpiryDate(booking.warranty!.createdAt!),
+              getExpiryDate(booking.warranty!),
               AppLocalizations.of(context)?.localeName ?? '',
             ),
           ),
@@ -1047,7 +1048,22 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   }
 
   String getWarrantyStatus(String status, BuildContext context) {
-    switch (status.toLowerCase()) {
+    final s = status.toLowerCase();
+
+    // Check for client-side expiration only for Active or Rejected status
+    if (s == 'a' || s == 'x') {
+      final warranty = booking.warranty;
+      if (warranty != null && warranty.createdAt != null) {
+        final expiryDate =
+            warranty.expiredOn ??
+            warranty.createdAt!.add(const Duration(days: 7));
+        if (DateTime.now().isAfter(expiryDate)) {
+          return AppLocalizations.of(context)!.expired;
+        }
+      }
+    }
+
+    switch (s) {
       case 'a':
         return AppLocalizations.of(context)!.active;
       case 'r':
@@ -1065,9 +1081,9 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     }
   }
 
-  DateTime getExpiryDate(DateTime createdAt) {
-    final expiryDate = createdAt.add(const Duration(days: 7));
-    return expiryDate;
+  DateTime getExpiryDate(WarrantyModel warranty) {
+    return warranty.expiredOn ??
+        warranty.createdAt!.add(const Duration(days: 7));
   }
 
   Widget _buildCompletionDataCard(BuildContext context) {
@@ -1082,7 +1098,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       hasChat: false,
       title: AppLocalizations.of(context)!.completionDetails,
       icon: Icons.check_circle,
-      trailing: (booking.bookingStatusCode.toLowerCase() == 'completed' ||
+      trailing:
+          (booking.bookingStatusCode.toLowerCase() == 'completed' ||
               booking.bookingStatusCode.toLowerCase() == 'c')
           ? IconButton(
               onPressed: () => InvoiceService.generateAndShowInvoice(booking),
@@ -1643,10 +1660,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                   color: Colors.black87,
                 ),
               ),
-              if (trailing != null) ...[
-                const Spacer(),
-                trailing,
-              ],
+              if (trailing != null) ...[const Spacer(), trailing],
               if (showChatOnHeader &&
                   ((hasChat && booking.bookingStatusCode == 'A') ||
                       (hasChat &&
@@ -2065,8 +2079,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                   children: [
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: () =>
-                            _handleCounterOfferResponse(context, booking, 'rejected'),
+                        onPressed: () => _handleCounterOfferResponse(
+                          context,
+                          booking,
+                          'rejected',
+                        ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.red,
                           side: const BorderSide(color: Colors.red),

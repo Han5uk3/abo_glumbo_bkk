@@ -166,7 +166,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
         child: Column(
           children: [
             Text(
-              AppLocalizations.of(context)?.bookingConfirmed ?? "Booking Confirmed!",
+              AppLocalizations.of(context)?.paymentCompleted ?? "Payment Completed",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,

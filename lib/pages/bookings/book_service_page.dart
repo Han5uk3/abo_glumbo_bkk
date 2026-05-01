@@ -37,7 +37,7 @@ class BookServicePage extends StatefulWidget {
 
 class _BookServicePageState extends State<BookServicePage> {
   final ValueNotifier<int?> selectedIndexNotifier = ValueNotifier<int?>(null);
-  UserModel selectedWorker = UserModel(uid: "", role: "customer");
+  UserModel selectedWorker = UserModel(uid: "", role: "agent");
   int currentStep = 0; // 0: Schedule, 1: Details, 2: Expert/Auto-assign, 3: Review & Confirm
 
   DateTime? selectedDate;
@@ -1384,7 +1384,7 @@ class _BookServicePageState extends State<BookServicePage> {
       selectedImage: _selectedImage,
       selectedVideo: _selectedVideo,
       timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
-      agent: selectedWorker.uid != null && selectedWorker.uid!.isNotEmpty
+      agent: _isOnHour() && selectedWorker.uid != null && selectedWorker.uid!.isNotEmpty
           ? selectedWorker
           : UserModel(role: "agent", uid: ""),
       selectedAddress: selectedAddress,
@@ -1398,7 +1398,7 @@ class _BookServicePageState extends State<BookServicePage> {
         MaterialPageRoute(
           builder: (context) => BookingCompletedPage(
             service: widget.service,
-            worker: selectedWorker,
+            worker: _isOnHour() ? selectedWorker : UserModel(role: "agent", uid: ""),
             selectedDate: selectedDate!,
             selectedTime:
                 timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],

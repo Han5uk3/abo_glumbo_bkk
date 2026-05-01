@@ -63,18 +63,23 @@ class InvoiceService {
 
           pw.SizedBox(height: 40),
           
-          // Get the address used for this booking
+          // Get the address used for this booking from the customer data inside the booking
           () {
             final address = booking.customer.addresses.firstWhere(
-              (a) => a.id == booking.selectedAddressId,
-              orElse: () => booking.customer.addresses.firstWhere(
-                (a) => a.isSelected ?? false,
-                orElse: () => booking.customer.addresses.isNotEmpty 
-                    ? booking.customer.addresses.first 
-                    : AddressModel(id: '', fullName: '', buildingNumber: '', phoneNumber: ''),
-              ),
+              (a) => a.isSelected == true,
+              orElse: () => booking.customer.addresses.isNotEmpty 
+                  ? booking.customer.addresses.first 
+                  : AddressModel(id: '', fullName: '', buildingNumber: '', phoneNumber: ''),
             );
             
+            final isThroughApp = booking.paymentModeCode.toUpperCase() == 'C' || 
+                                booking.paymentModeCode.toLowerCase() == 'cards';
+            
+            final warrantyDuration = booking.warranty?.expiredOn != null && 
+                                   (booking.warranty?.createdAt != null || booking.completedAt != null)
+                ? "${booking.warranty!.expiredOn!.difference(booking.warranty!.createdAt ?? booking.completedAt!.toDate()).inDays} Days"
+                : "7 Days";
+
             return pw.Row(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
@@ -85,7 +90,14 @@ class InvoiceService {
                       pw.Text("BILL TO:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                       pw.Text(booking.customer.name ?? "Valued Customer"),
                       pw.Text(booking.customer.phone ?? ""),
+                      pw.Text(booking.customer.email ?? ""),
                       pw.Text("${address.buildingNumber}${address.streetName != null ? ', ${address.streetName}' : ''}"),
+                      if (address.fullName.isNotEmpty && address.fullName != booking.customer.name)
+                        pw.Text(address.fullName),
+                      if (booking.customer.districtName != null || booking.customer.cityName != null)
+                        pw.Text("${booking.customer.districtName ?? ''}${booking.customer.districtName != null && booking.customer.cityName != null ? ', ' : ''}${booking.customer.cityName ?? ''}"),
+                      if (booking.serviceLocation != null) 
+                        pw.Text(booking.serviceLocation!.nameEn),
                     ],
                   ),
                 ),
@@ -95,9 +107,13 @@ class InvoiceService {
                     children: [
                       pw.Text("BOOKING DETAILS:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                       pw.Text("Service: ${booking.service.name}"),
+                      if (booking.agent?.name != null) pw.Text("Technician: ${booking.agent!.name}"),
+                      if (booking.agent?.phone != null) pw.Text("Tech Phone: ${booking.agent!.phone}"),
                       pw.Text("Completed At: $completedAtStr"),
-                      pw.Text("Payment Mode: ${booking.paymentModeCode.toUpperCase()}"),
-                      if (booking.transactionId != null) pw.Text("Transaction ID: ${booking.transactionId}"),
+                      pw.Text("Warranty: $warrantyDuration"),
+                      pw.Text("Payment Mode: ${isThroughApp ? 'Through App' : 'Outside App'}"),
+                      if (booking.orderId != null || booking.transactionId != null) 
+                        pw.Text("Transaction ID: ${booking.orderId ?? booking.transactionId}"),
                     ],
                   ),
                 ),

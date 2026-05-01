@@ -724,6 +724,23 @@ class ServiceBookingTile extends StatelessWidget {
 
     switch (statusCode) {
       case "A":
+      case "X":
+        if (calculateDaysLeft() <= 0) {
+          return _buildWarrantyBadge(
+            label: AppLocalizations.of(context)?.expired ?? '',
+            color: Colors.grey,
+            textColor: Colors.grey,
+            borderOnly: true,
+          );
+        }
+        if (statusCode == "X") {
+          return _buildWarrantyBadge(
+            label: AppLocalizations.of(context)?.rejected ?? '',
+            color: Colors.red,
+            textColor: Colors.red,
+            borderOnly: true,
+          );
+        }
         return _buildWarrantyBadge(
           label: AppLocalizations.of(context)?.repairUnderWarranty ?? '',
           color: AppColors.primary,
@@ -756,13 +773,6 @@ class ServiceBookingTile extends StatelessWidget {
           label: AppLocalizations.of(context)?.completed ?? '',
           color: Colors.green,
           textColor: Colors.green,
-          borderOnly: true,
-        );
-      case "X":
-        return _buildWarrantyBadge(
-          label: AppLocalizations.of(context)?.rejected ?? '',
-          color: Colors.red,
-          textColor: Colors.red,
           borderOnly: true,
         );
       default:
@@ -1328,9 +1338,11 @@ class ServiceBookingTile extends StatelessWidget {
   }
 
   int calculateDaysLeft() {
-    final endDate = booking.warranty?.createdAt!.add(Duration(days: 7));
-    final daysLeft = endDate!.difference(DateTime.now()).inDays;
-    return daysLeft;
+    final endDate = booking.warranty?.expiredOn ??
+        booking.warranty?.createdAt?.add(const Duration(days: 7));
+    if (endDate == null) return 0;
+    final daysLeft = endDate.difference(DateTime.now()).inDays;
+    return daysLeft < 0 ? 0 : daysLeft;
   }
 
   Widget _buildInfoRow(

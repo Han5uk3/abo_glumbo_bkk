@@ -346,74 +346,80 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                       const SizedBox(height: 24),
 
                       // Worker Details Section
-                      _buildAnimatedSection(
-                        delay: 0.15,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSectionTitle(
-                              context,
-                              AppLocalizations.of(context)?.technicianDetails ??
-                                  'Worker Details',
-                            ),
-                            const SizedBox(height: 12),
-                            _buildDetailCard(
-                              context,
-                              children: [
-                                Row(
-                                  children: [
-                                    Hero(
-                                      tag: 'worker_${widget.worker.uid}',
-                                      child: CircleAvatar(
-                                        radius: 30,
-                                        backgroundImage:
-                                            widget.worker.profileUrl != null
-                                            ? NetworkImage(
-                                                widget.worker.profileUrl!,
-                                              )
-                                            : const AssetImage(
-                                                    'assets/images/profile_placeholder.jpg',
-                                                  )
-                                                  as ImageProvider,
+                      if (widget.worker.uid != null &&
+                          widget.worker.uid!.isNotEmpty)
+                        _buildAnimatedSection(
+                          delay: 0.15,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildSectionTitle(
+                                context,
+                                AppLocalizations.of(context)
+                                        ?.technicianDetails ??
+                                    'Worker Details',
+                              ),
+                              const SizedBox(height: 12),
+                              _buildDetailCard(
+                                context,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Hero(
+                                        tag: 'worker_${widget.worker.uid}',
+                                        child: CircleAvatar(
+                                          radius: 30,
+                                          backgroundImage: widget.worker
+                                                      .profileUrl !=
+                                                  null
+                                              ? NetworkImage(
+                                                  widget.worker.profileUrl!,
+                                                )
+                                              : const AssetImage(
+                                                      'assets/images/profile_placeholder.jpg',
+                                                    )
+                                                    as ImageProvider,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            widget.worker.name ?? 'Unknown',
-                                            style: DMSansFont.textStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              widget.worker.name ?? 'Unknown',
+                                              style: DMSansFont.textStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            _isLoadingRole
-                                                ? AppLocalizations.of(
-                                                    context,
-                                                  )!.loading
-                                                : (_localizedRole ?? ''),
-                                            style: DMSansFont.textStyle(
-                                              fontSize: 13,
-                                              color: Colors.grey[600],
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              _isLoadingRole
+                                                  ? AppLocalizations.of(
+                                                      context,
+                                                    )!.loading
+                                                  : (_localizedRole ?? ''),
+                                              style: DMSansFont.textStyle(
+                                                fontSize: 13,
+                                                color: Colors.grey[600],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
 
-                      const SizedBox(height: 24),
+                      if (widget.worker.uid != null &&
+                          widget.worker.uid!.isNotEmpty)
+                        const SizedBox(height: 24),
 
                       // Address Section
                       _buildAnimatedSection(

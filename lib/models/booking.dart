@@ -15,6 +15,7 @@ class BookingModel {
   Timestamp? escalatedAt;
   bool? isOnHour; // ✅ Added
   Timestamp? assignmentScheduledTime; // Scheduled time for auto assignment
+  String? autoAssignmentStatus; // ✅ Added for auto assignment tracking
 
   late String notes;
   late String? issueImage;
@@ -100,6 +101,7 @@ class BookingModel {
     this.paidAt,
     this.activeCounterOffer,
     this.isOnHour, // ✅ Added
+    this.autoAssignmentStatus, // ✅ Added
     this.counterProposalAcceptedAt,
     this.counterProposalStartedAt,
   });
@@ -168,6 +170,7 @@ class BookingModel {
       paidAmount = data['paidAmount']?.toDouble(),
       paidAt = data['paidAt'] as Timestamp?,
       isOnHour = data['isOnHour'], // ✅ Added
+      autoAssignmentStatus = data['autoAssignmentStatus'], // ✅ Added
       assignmentScheduledTime = data['assignmentScheduledTime'],
       cancelledAt = data['cancelledAt'];
 
@@ -224,6 +227,7 @@ class BookingModel {
       'paidAt': paidAt,
       'activeCounterOffer': activeCounterOffer?.toMap(),
       'isOnHour': isOnHour, // ✅ Added
+      'autoAssignmentStatus': autoAssignmentStatus, // ✅ Added
       'assignmentScheduledTime': assignmentScheduledTime,
     };
 

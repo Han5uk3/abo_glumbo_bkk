@@ -101,6 +101,7 @@ class BookingUtils {
         }).toList(),
       );
 
+      bool isOnHour = service.isOnWorkHour(currentTime: bookingDate);
       BookingModel booking = BookingModel(
         id: bookingId,
         service: service,
@@ -110,14 +111,18 @@ class BookingUtils {
         issueImage: selectedImageDownloadUrl ?? "",
         issueVideo: selectedVideoDownloadUrl ?? "",
         customer: updatedCustomerData,
-        agent: agent,
+        agent: isOnHour ? agent : null,
         selectedAddressId: selectedAddress?.id, // Added selectedAddressId
-        isOnHour: service.isOnWorkHour(currentTime: bookingDate),
+        isOnHour: isOnHour,
         assignmentScheduledTime: Timestamp.fromDate(
           bookingDate.subtract(const Duration(hours: 3)).isBefore(DateTime.now())
-              ? DateTime.now()
+              ? DateTime.now().subtract(const Duration(minutes: 5)) // Set 5 mins back to ensure it triggers
               : bookingDate.subtract(const Duration(hours: 3)),
         ),
+        autoAssignmentStatus:
+            bookingDate.subtract(const Duration(hours: 3)).isBefore(DateTime.now())
+                ? "ready_to_assign"
+                : null,
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -213,7 +218,15 @@ class BookingUtils {
         "paymentModeCode": paymentModeCode,
         "paymentCompletedAt": Timestamp.now(),
         "orderId": orderId,
+        "transactionId": orderId, // Set transactionId same as orderId
         "updatedAt": Timestamp.now(),
+        // Apply warranty for 1 week from completion date if it's full work (mode 1)
+        if (booking?.completionData?.mode == 1) ...{
+          'warranty.expiredOn': Timestamp.fromDate(
+            DateTime.now().add(const Duration(days: 7)),
+          ),
+          'warranty.updatedAt': FieldValue.serverTimestamp(),
+        },
       });
       return true;
     } catch (e) {
