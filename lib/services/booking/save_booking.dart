@@ -112,8 +112,12 @@ class BookingUtils {
         customer: updatedCustomerData,
         agent: agent,
         selectedAddressId: selectedAddress?.id, // Added selectedAddressId
-        isOnHour: service.isOnWorkHour(currentTime: bookingDate), // ✅ Added
-        assignmentScheduledTime: Timestamp.fromDate(bookingDate.subtract(const Duration(hours: 3))),
+        isOnHour: service.isOnWorkHour(currentTime: bookingDate),
+        assignmentScheduledTime: Timestamp.fromDate(
+          bookingDate.subtract(const Duration(hours: 3)).isBefore(DateTime.now())
+              ? DateTime.now()
+              : bookingDate.subtract(const Duration(hours: 3)),
+        ),
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
