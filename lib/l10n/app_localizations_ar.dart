@@ -2321,7 +2321,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get autoAssignMessage =>
-      'بما أن هذا الحجز خارج ساعات العمل، سنقوم بتعيين فني لحجزك قبل ساعتين على الأقل من موعد الحجز.';
+      'بما أن هذا الحجز خارج ساعات العمل، سنقوم بتعيين فني لحجزك قبل 3 ساعات على الأقل من موعد الحجز.';
 
   @override
   String get youSelectedTechnician => 'لقد اخترت فنياً';

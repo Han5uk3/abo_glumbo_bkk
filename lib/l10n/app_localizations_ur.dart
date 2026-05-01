@@ -2373,7 +2373,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get autoAssignMessage =>
-      'چونکہ یہ بکنگ آف آورز (غیر دفتری اوقات) میں ہے، اس لیے ہم آپ کی بکنگ کے وقت سے کم از کم 2 گھنٹے پہلے آپ کے لیے ایک ٹیکنیشن متعین کریں گے۔';
+      'چونکہ یہ بکنگ آف آورز (غیر دفتری اوقات) میں ہے، اس لیے ہم آپ کی بکنگ کے وقت سے کم از کم 3 گھنٹے پہلے آپ کے لیے ایک ٹیکنیشن متعین کریں گے۔';
 
   @override
   String get youSelectedTechnician => 'آپ نے ایک ٹیکنیشن منتخب کیا ہے';
