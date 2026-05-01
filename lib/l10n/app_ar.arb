@@ -770,7 +770,7 @@
   "noDiscount": "لا يوجد خصم",
   "finalPrice": "السعر النهائي",
   "technicianAssignment": "تعيين الفني",
-  "autoAssignMessage": "سنقوم بتعيين فني لحجزك قبل ساعتين من موعد الحجز.",
+  "autoAssignMessage": "بما أن هذا الحجز خارج ساعات العمل، سنقوم بتعيين فني لحجزك قبل ساعتين على الأقل من موعد الحجز.",
   "youSelectedTechnician": "لقد اخترت فنياً",
   "confirmBooking": "تأكيد الحجز",
   "off": "خصم",

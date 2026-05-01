@@ -950,7 +950,7 @@ class _BookServicePageState extends State<BookServicePage> {
                   Expanded(
                     child: Text(
                       AppLocalizations.of(context)?.autoAssignMessage ?? 
-                          'We will assign a technician to your booking 2 hours before your booking time.',
+                          'Since this is an off-hour booking, we will assign a technician to your booking atleast 2 hours before your booking time.',
                       style: DMSansFont.textStyle(
                         fontSize: 14,
                         color: Colors.blue.shade800,
@@ -1049,7 +1049,7 @@ class _BookServicePageState extends State<BookServicePage> {
             label: AppLocalizations.of(context)?.technicianAssignment ?? 'Technician',
             value: isOnHour
                 ? (selectedWorker.name ?? (AppLocalizations.of(context)?.youSelectedTechnician ?? 'You selected a technician'))
-                : (AppLocalizations.of(context)?.autoAssignMessage ?? 'We will assign a technician to your booking 2 hours before your booking time.'),
+                : (AppLocalizations.of(context)?.autoAssignMessage ?? 'Since this is an off-hour booking, we will assign a technician to your booking atleast 2 hours before your booking time.'),
             valueColor: isOnHour ? AppColors.primary : Colors.blue,
           ),
         ]),
