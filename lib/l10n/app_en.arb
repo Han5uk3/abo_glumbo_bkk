@@ -730,8 +730,6 @@
   "paidOn": "Paid On",
   "pleaseEnterTransactionId": "Please enter a transaction ID",
   "enterTransactionId": "Enter Transaction ID",
-  "paymentProofFiles": "Payment Proof Files",
-  "uploading": "Uploading...",
   "errorUploading": "Error uploading",
   "counterProposalStarted": "Counter proposal started",
   "counterProposalAccepted": "Counter proposal accepted",
@@ -753,13 +751,9 @@
   "reviewAndConfirm": "Review & Confirm",
   "bookingSummary": "Booking Summary",
   "serviceName": "Service",
-  "dateAndTime": "Date & Time",
-  "address": "Address",
   "bookingType": "Booking Type",
   "onHourBooking": "On-Hour Booking",
   "offHourBooking": "Off-Hour Booking",
-  "price": "Price",
-  "discount": "Discount",
   "discountApplied": "Discount Applied",
   "noDiscount": "No Discount",
   "finalPrice": "Final Price",
@@ -767,5 +761,5 @@
   "autoAssignMessage": "We will assign a technician to your booking 2 hours before your booking time.",
   "youSelectedTechnician": "You selected a technician",
   "confirmBooking": "Confirm Booking",
-  "off": "off"
+  "listeningForSms": "Listening for SMS..."
 }

@@ -1405,7 +1405,7 @@ abstract class AppLocalizations {
   /// No description provided for @off.
   ///
   /// In en, this message translates to:
-  /// **'off'**
+  /// **'OFF'**
   String get off;
 
   /// No description provided for @originalPrice.
@@ -4557,6 +4557,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confirm Booking'**
   String get confirmBooking;
+
+  /// No description provided for @listeningForSms.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening for SMS...'**
+  String get listeningForSms;
 }
 
 class _AppLocalizationsDelegate

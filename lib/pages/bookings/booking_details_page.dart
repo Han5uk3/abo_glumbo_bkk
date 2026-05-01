@@ -12,6 +12,8 @@ import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/widgets/counter_propose_sheet.dart';
+import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
+import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
 import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
 
 import 'package:abo_glumbo_bbk/services/app_services.dart';
@@ -826,6 +828,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 children: tabViews,
               ),
             ),
+            bottomNavigationBar: _buildBottomAction(context, booking),
           ),
         );
       },
@@ -2301,6 +2304,77 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         await _handleCounterOfferResponse(context, booking, response);
       }
     }
+  }
+
+  Widget? _buildBottomAction(BuildContext context, BookingModel booking) {
+    if (isWarranty) return null;
+
+    final bool isPendingPayment =
+        (booking.bookingStatusCode == 'C' ||
+            booking.bookingStatusCode == 'CP') &&
+        !booking.paymentCompleted;
+
+    if (!isPendingPayment) return null;
+
+    final bool isAppPayment = booking.paymentModeCode == 'C';
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: () async {
+          if (isAppPayment) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PaymentWebView(
+                  isFromBooking: true,
+                  customerData: booking.customer,
+                  service: booking.service,
+                  booking: booking,
+                  selectedPayment: "Cards",
+                ),
+              ),
+            );
+          } else {
+            final result = await showUploadPaymentProofSheet(
+              context,
+              booking: booking,
+            );
+            if (result == true && onRefresh != null) {
+              onRefresh!();
+            }
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          minimumSize: const Size(double.infinity, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Text(
+          isAppPayment
+              ? AppLocalizations.of(context)!.completePayment
+              : AppLocalizations.of(context)!.paymentPending,
+          style: DMSansFont.textStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _handleCounterOfferResponse(

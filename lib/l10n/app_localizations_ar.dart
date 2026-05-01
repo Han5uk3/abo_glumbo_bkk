@@ -2328,4 +2328,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get confirmBooking => 'تأكيد الحجز';
+
+  @override
+  String get listeningForSms => 'بانتظار الرسائل القصيرة...';
 }

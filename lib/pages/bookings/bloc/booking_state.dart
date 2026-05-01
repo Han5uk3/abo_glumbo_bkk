@@ -78,8 +78,8 @@ class BookingsLoaded extends BookingState {
         return completed;
       case BookingStatusType.pendingPayment:
         final pending = allBookings.where((e) {
-          final isPending = e.bookingStatusCode == 'C' && !e.paymentCompleted;
-          final isVerification = e.bookingStatusCode == 'VP';
+          final isPending = e.bookingStatusCode == 'CP';
+          final isVerification = e.bookingStatusCode == 'VP'; 
 
           return isPending || isVerification;
         }).toList();

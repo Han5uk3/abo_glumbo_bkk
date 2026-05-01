@@ -688,7 +688,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discount => 'Discount';
 
   @override
-  String get off => 'off';
+  String get off => 'OFF';
 
   @override
   String get originalPrice => 'Original Price';
@@ -2365,4 +2365,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmBooking => 'Confirm Booking';
+
+  @override
+  String get listeningForSms => 'Listening for SMS...';
 }

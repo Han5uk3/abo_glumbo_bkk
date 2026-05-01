@@ -1589,6 +1589,8 @@ PODS:
     - FlutterMacOS
   - pay_ios (0.0.1):
     - Flutter
+  - printing (1.0.0):
+    - Flutter
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
@@ -1641,6 +1643,7 @@ DEPENDENCIES:
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - pay_ios (from `.symlinks/plugins/pay_ios/ios`)
+  - printing (from `.symlinks/plugins/printing/ios`)
   - RecaptchaEnterprise
   - sms_autofill (from `.symlinks/plugins/sms_autofill/ios`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
@@ -1735,6 +1738,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   pay_ios:
     :path: ".symlinks/plugins/pay_ios/ios"
+  printing:
+    :path: ".symlinks/plugins/printing/ios"
   sms_autofill:
     :path: ".symlinks/plugins/sms_autofill/ios"
   sqflite_darwin:
@@ -1801,6 +1806,7 @@ SPEC CHECKSUMS:
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   pay_ios: 2c48d76615ded0cfaff66185669501b8b1dfc55e
+  printing: 54ff03f28fe9ba3aa93358afb80a8595a071dd07
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   RecaptchaEnterprise: 2d06f415c94253c3e92214a4d1472b5875442cdc

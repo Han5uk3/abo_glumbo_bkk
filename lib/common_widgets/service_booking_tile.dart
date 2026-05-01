@@ -10,6 +10,7 @@ import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/booking_bloc.dart';
 
 import 'package:abo_glumbo_bbk/pages/bookings/booking_details_page.dart';
+import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
 import 'package:abo_glumbo_bbk/sheets/cancel_booking_dialog.dart';
 import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -365,6 +366,7 @@ class ServiceBookingTile extends StatelessWidget {
                         Expanded(child: _buildTimestampText(context)),
                         if (!isWarranty &&
                             (booking.bookingStatusCode == "C" ||
+                                booking.bookingStatusCode == "CP" ||
                                 booking.bookingStatusCode == "VP"))
                           _buildBookingActionButtons(context),
                         if (isWarranty) _buildWarrantyStatusBadge(context),
@@ -605,7 +607,7 @@ class ServiceBookingTile extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (booking.bookingStatusCode == "C" &&
+        if ((booking.bookingStatusCode == "C" || booking.bookingStatusCode == "CP") &&
             booking.paymentCompleted == false)
           _buildPaymentButton(context),
         if (booking.paymentCompleted == true) _buildReviewButton(context),
@@ -636,15 +638,32 @@ class ServiceBookingTile extends StatelessWidget {
   }
 
   Widget _buildPaymentButton(BuildContext context) {
+    final bool isAppPayment = booking.paymentModeCode == 'C';
+
     return GestureDetector(
       onTap: () async {
-        final result = await showUploadPaymentProofSheet(
-          context,
-          booking: booking,
-        );
-        if (result == true) {
-          // Refresh the page to show updated status
-          onRefresh.call();
+        if (isAppPayment) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PaymentWebView(
+                isFromBooking: true,
+                customerData: booking.customer,
+                service: booking.service,
+                booking: booking,
+                selectedPayment: "Cards",
+              ),
+            ),
+          );
+        } else {
+          final result = await showUploadPaymentProofSheet(
+            context,
+            booking: booking,
+          );
+          if (result == true) {
+            // Refresh the page to show updated status
+            onRefresh.call();
+          }
         }
       },
       child: SizedBox(
@@ -657,7 +676,11 @@ class ServiceBookingTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           alignment: Alignment.center,
           child: Text(
-            AppLocalizations.of(context)?.paymentPending ?? 'Payment Pending',
+            (isAppPayment
+                    ? AppLocalizations.of(context)!.completePayment
+                    : AppLocalizations.of(context)?.paymentPending ??
+                        'Payment Pending')
+                .toUpperCase(),
             style: DMSansFont.textStyle(
               fontWeight: FontWeight.w500,
               fontSize: 8,

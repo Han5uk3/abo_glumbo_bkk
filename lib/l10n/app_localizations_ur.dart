@@ -2360,10 +2360,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get offHourBooking => 'آف آور بکنگ';
 
   @override
-  String get discountApplied => 'رعایت لاگو ہوگئی';
+  String get discountApplied => 'ڈسکاؤنٹ لاگو ہو گیا';
 
   @override
-  String get noDiscount => ' کوئی رعایت نہیں';
+  String get noDiscount => 'کوئی ڈسکاؤنٹ نہیں';
 
   @override
   String get finalPrice => 'حتمی قیمت';
@@ -2380,4 +2380,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get confirmBooking => 'بکنگ کی تصدیق کریں';
+
+  @override
+  String get listeningForSms => 'ایس ایم ایس کا انتظار ہے...';
 }

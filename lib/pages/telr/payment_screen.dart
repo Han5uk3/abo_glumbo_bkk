@@ -141,14 +141,18 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         ivp_order: OrderData(
           ivp_cart: orderId ?? 'NO ORDER ID',
           ivp_ref: widget.customerData.uid ?? '',
-          ivp_amount: widget.isFromBooking
-              ? (double.tryParse(
-                        widget.service?.price.toString() ??
-                        widget.booking?.service.price.toString() ??
-                        '0.00',
-                      )?.toStringAsFixed(2) ??
-                  '0.00')
-              : widget.review?.tipAmount?.toStringAsFixed(2) ?? '0.00',
+          ivp_amount: widget.booking?.completionData != null
+              ? ((widget.booking!.completionData?.totalCost ?? 0.0) +
+                      (widget.booking!.service.price ?? 0.0))
+                  .toStringAsFixed(2)
+              : widget.isFromBooking
+                  ? (double.tryParse(
+                            widget.service?.price.toString() ??
+                            widget.booking?.service.price.toString() ??
+                            '0.00',
+                          )?.toStringAsFixed(2) ??
+                      '0.00')
+                  : widget.review?.tipAmount?.toStringAsFixed(2) ?? '0.00',
           ivp_desc: widget.notesController?.text.isNotEmpty == true
               ? widget.notesController?.text ?? "No description provided"
               : "No description provided",

@@ -187,6 +187,7 @@ class MyApp extends StatelessWidget {
         child: BlocBuilder<AccountBloc, AccountState>(
           builder: (context, state) {
             return MaterialApp(
+              key: ValueKey(state.locale.languageCode),
               navigatorKey: navigatorKey,
               title: 'Abo Glumbo - Customer',
               locale: state.locale,

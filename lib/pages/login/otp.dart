@@ -683,7 +683,7 @@ class _OtpPageState extends State<OtpPage> {
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      'Listening for SMS...',
+                                      locn.listeningForSms,
                                       style: DMSansFont.textStyle(
                                         fontSize: 12,
                                         color: AppColors.green,
