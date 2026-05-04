@@ -38,7 +38,8 @@ class BookServicePage extends StatefulWidget {
 class _BookServicePageState extends State<BookServicePage> {
   final ValueNotifier<int?> selectedIndexNotifier = ValueNotifier<int?>(null);
   UserModel selectedWorker = UserModel(uid: "", role: "agent");
-  int currentStep = 0; // 0: Schedule, 1: Details, 2: Expert/Auto-assign, 3: Review & Confirm
+  int currentStep =
+      0; // 0: Schedule, 1: Details, 2: Expert/Auto-assign, 3: Review & Confirm
 
   DateTime? selectedDate;
   bool saving = false;
@@ -928,7 +929,8 @@ class _BookServicePageState extends State<BookServicePage> {
             ),
             const SizedBox(height: 28),
             Text(
-              AppLocalizations.of(context)?.technicianAssignment ?? 'Technician Assignment',
+              AppLocalizations.of(context)?.technicianAssignment ??
+                  'Technician Assignment',
               style: DMSansFont.textStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -945,11 +947,15 @@ class _BookServicePageState extends State<BookServicePage> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline_rounded, color: Colors.blue.shade700, size: 22),
+                  Icon(
+                    Icons.info_outline_rounded,
+                    color: Colors.blue.shade700,
+                    size: 22,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      AppLocalizations.of(context)?.autoAssignMessage ?? 
+                      AppLocalizations.of(context)?.autoAssignMessage ??
                           'Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.',
                       style: DMSansFont.textStyle(
                         fontSize: 14,
@@ -973,9 +979,12 @@ class _BookServicePageState extends State<BookServicePage> {
     final hasDiscount = (widget.service.discountPercentage ?? 0) > 0;
     final discountedPrice = widget.service.getDiscountedPrice(price);
     final languageCode = AppLocalizations.of(context)?.localeName ?? 'en';
-    final serviceName = widget.service.nameLocalized(languageCode: languageCode) ?? '';
-    final timeLabel = timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"];
-    final dateStr = '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}';
+    final serviceName =
+        widget.service.nameLocalized(languageCode: languageCode) ?? '';
+    final timeLabel =
+        timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"];
+    final dateStr =
+        '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}';
     final addressName = selectedAddress?.fullName ?? '';
 
     return ListView(
@@ -989,70 +998,86 @@ class _BookServicePageState extends State<BookServicePage> {
           ),
         ),
         const SizedBox(height: 16),
-        _buildReviewCard(children: [
-          _buildReviewRow(
-            icon: Icons.home_repair_service_rounded,
-            label: AppLocalizations.of(context)?.serviceName ?? 'Service',
-            value: serviceName,
-          ),
-          const Divider(height: 20),
-          _buildReviewRow(
-            icon: Icons.calendar_month_rounded,
-            label: AppLocalizations.of(context)?.dateAndTime ?? 'Date & Time',
-            value: '$dateStr  •  $timeLabel',
-          ),
-          const Divider(height: 20),
-          _buildReviewRow(
-            icon: Icons.location_on_outlined,
-            label: AppLocalizations.of(context)?.address ?? 'Address',
-            value: addressName,
-          ),
-        ]),
-        const SizedBox(height: 16),
-        _buildReviewCard(children: [
-          _buildReviewRow(
-            icon: Icons.access_time_rounded,
-            label: AppLocalizations.of(context)?.bookingType ?? 'Booking Type',
-            value: isOnHour
-                ? (AppLocalizations.of(context)?.onHourBooking ?? 'On-Hour Booking')
-                : (AppLocalizations.of(context)?.offHourBooking ?? 'Off-Hour Booking'),
-            valueColor: isOnHour ? Colors.green : Colors.orange,
-          ),
-          const Divider(height: 20),
-          _buildReviewRow(
-            icon: Icons.sell_rounded,
-            label: AppLocalizations.of(context)?.price ?? 'Price',
-            value: '${price.toStringAsFixed(2)} SAR',
-          ),
-          if (hasDiscount) ...[
-            const Divider(height: 20),
+        _buildReviewCard(
+          children: [
             _buildReviewRow(
-              icon: Icons.discount_rounded,
-              label: AppLocalizations.of(context)?.discount ?? 'Discount',
-              value: '${widget.service.discountPercentage!.toStringAsFixed(0)}% ${AppLocalizations.of(context)?.off ?? "off"}',
-              valueColor: Colors.green,
+              icon: Icons.home_repair_service_rounded,
+              label: AppLocalizations.of(context)?.serviceName ?? 'Service',
+              value: serviceName,
             ),
             const Divider(height: 20),
             _buildReviewRow(
-              icon: Icons.payments_rounded,
-              label: AppLocalizations.of(context)?.finalPrice ?? 'Final Price',
-              value: '${discountedPrice.toStringAsFixed(2)} SAR',
-              valueColor: Colors.green,
-              isBold: true,
+              icon: Icons.calendar_month_rounded,
+              label: AppLocalizations.of(context)?.dateAndTime ?? 'Date & Time',
+              value: '$dateStr  •  $timeLabel',
+            ),
+            const Divider(height: 20),
+            _buildReviewRow(
+              icon: Icons.location_on_outlined,
+              label: AppLocalizations.of(context)?.address ?? 'Address',
+              value: addressName,
             ),
           ],
-        ]),
+        ),
         const SizedBox(height: 16),
-        _buildReviewCard(children: [
-          _buildReviewRow(
-            icon: Icons.person_rounded,
-            label: AppLocalizations.of(context)?.technicianAssignment ?? 'Technician',
-            value: isOnHour
-                ? (selectedWorker.name ?? (AppLocalizations.of(context)?.youSelectedTechnician ?? 'You selected a technician'))
-                : (AppLocalizations.of(context)?.autoAssignMessage ?? 'Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.'),
-            valueColor: isOnHour ? AppColors.primary : Colors.blue,
-          ),
-        ]),
+        _buildReviewCard(
+          children: [
+            _buildReviewRow(
+              icon: Icons.access_time_rounded,
+              label:
+                  AppLocalizations.of(context)?.bookingType ?? 'Booking Type',
+              value: isOnHour
+                  ? (AppLocalizations.of(context)?.onHourBooking ??
+                        'On-Hour Booking')
+                  : (AppLocalizations.of(context)?.offHourBooking ??
+                        'Off-Hour Booking'),
+              valueColor: isOnHour ? Colors.green : Colors.orange,
+            ),
+            const Divider(height: 20),
+            _buildReviewRow(
+              icon: Icons.sell_rounded,
+              label: AppLocalizations.of(context)?.price ?? 'Price',
+              value: '${price.toStringAsFixed(2)} SAR',
+            ),
+            if (hasDiscount) ...[
+              const Divider(height: 20),
+              _buildReviewRow(
+                icon: Icons.discount_rounded,
+                label: AppLocalizations.of(context)?.discount ?? 'Discount',
+                value:
+                    '${widget.service.discountPercentage!.toStringAsFixed(0)}% ${AppLocalizations.of(context)?.off ?? "off"}',
+                valueColor: Colors.green,
+              ),
+              const Divider(height: 20),
+              _buildReviewRow(
+                icon: Icons.payments_rounded,
+                label:
+                    AppLocalizations.of(context)?.finalPrice ?? 'Final Price',
+                value: '${discountedPrice.toStringAsFixed(2)} SAR',
+                valueColor: Colors.green,
+                isBold: true,
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 16),
+        _buildReviewCard(
+          children: [
+            _buildReviewRow(
+              icon: Icons.person_rounded,
+              label:
+                  AppLocalizations.of(context)?.technicianAssignment ??
+                  'Technician',
+              value: isOnHour
+                  ? (selectedWorker.name ??
+                        (AppLocalizations.of(context)?.youSelectedTechnician ??
+                            'You selected a technician'))
+                  : (AppLocalizations.of(context)?.autoAssignMessage ??
+                        'Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.'),
+              valueColor: isOnHour ? AppColors.primary : Colors.blue,
+            ),
+          ],
+        ),
         const SizedBox(height: 24),
       ],
     );
@@ -1342,9 +1367,7 @@ class _BookServicePageState extends State<BookServicePage> {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
         minimumSize: const Size(double.infinity, 54),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: saving
           ? const Loader(color: Colors.white)
@@ -1384,9 +1407,12 @@ class _BookServicePageState extends State<BookServicePage> {
       selectedImage: _selectedImage,
       selectedVideo: _selectedVideo,
       timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
-      agent: _isOnHour() && selectedWorker.uid != null && selectedWorker.uid!.isNotEmpty
+      agent:
+          _isOnHour() &&
+              selectedWorker.uid != null &&
+              selectedWorker.uid!.isNotEmpty
           ? selectedWorker
-          : UserModel(role: "agent", uid: ""),
+          : null,
       selectedAddress: selectedAddress,
     );
 
@@ -1398,7 +1424,9 @@ class _BookServicePageState extends State<BookServicePage> {
         MaterialPageRoute(
           builder: (context) => BookingCompletedPage(
             service: widget.service,
-            worker: _isOnHour() ? selectedWorker : UserModel(role: "agent", uid: ""),
+            worker: _isOnHour()
+                ? selectedWorker
+                : UserModel(role: "agent", uid: ""),
             selectedDate: selectedDate!,
             selectedTime:
                 timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],

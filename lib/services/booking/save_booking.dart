@@ -102,6 +102,8 @@ class BookingUtils {
       );
 
       bool isOnHour = service.isOnWorkHour(currentTime: bookingDate);
+      bool shouldAutoAssign =
+          !isOnHour && (service.category?.isNotEmpty == true);
       BookingModel booking = BookingModel(
         id: bookingId,
         service: service,
@@ -111,18 +113,27 @@ class BookingUtils {
         issueImage: selectedImageDownloadUrl ?? "",
         issueVideo: selectedVideoDownloadUrl ?? "",
         customer: updatedCustomerData,
-        agent: isOnHour ? agent : null,
+        agent: (isOnHour && agent?.uid?.isNotEmpty == true) ? agent : null,
         selectedAddressId: selectedAddress?.id, // Added selectedAddressId
         isOnHour: isOnHour,
-        assignmentScheduledTime: Timestamp.fromDate(
-          bookingDate.subtract(const Duration(hours: 3)).isBefore(DateTime.now())
-              ? DateTime.now().subtract(const Duration(minutes: 5)) // Set 5 mins back to ensure it triggers
-              : bookingDate.subtract(const Duration(hours: 3)),
-        ),
+        assignmentScheduledTime: shouldAutoAssign
+            ? Timestamp.fromDate(
+                bookingDate
+                        .subtract(const Duration(hours: 3))
+                        .isBefore(DateTime.now())
+                    ? DateTime.now().subtract(
+                        const Duration(minutes: 5),
+                      ) // Set 5 mins back to ensure it triggers
+                    : bookingDate.subtract(const Duration(hours: 3)),
+              )
+            : null,
         autoAssignmentStatus:
-            bookingDate.subtract(const Duration(hours: 3)).isBefore(DateTime.now())
-                ? "ready_to_assign"
-                : null,
+            shouldAutoAssign &&
+                bookingDate
+                    .subtract(const Duration(hours: 3))
+                    .isBefore(DateTime.now())
+            ? "ready_to_assign"
+            : null,
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -173,9 +184,10 @@ class BookingUtils {
         await userDoc.update({"rating": newRating});
       }
 
-      // Update unified wallet with tip amount
+      // Update unified wallet with tip amount (only for full service bookings - mode 1)
       if ((review?.tipAmount ?? 0) > 0 &&
-          review?.paymentType?.isNotEmpty == true) {
+          review?.paymentType?.isNotEmpty == true &&
+          booking.completionData?.mode == 1) {
         try {
           final isCashTip = review?.paymentType?.toLowerCase() == 'cash';
           await UnifiedPayoutServices.updateWalletAmounts(
@@ -184,7 +196,7 @@ class BookingUtils {
             isCashTip: isCashTip,
           );
           debugPrint(
-            '✅ Unified wallet updated with tip: ${review?.tipAmount} (${isCashTip ? "Cash" : "Card"})',
+            '✅ Unified wallet updated with tip: ${review?.tipAmount} (${isCashTip ? "Cash" : "Card"}) for full service booking',
           );
         } catch (e) {
           debugPrint('❌ Error updating unified wallet with tip: $e');
