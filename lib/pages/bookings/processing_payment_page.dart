@@ -175,19 +175,29 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
         await saveBooking();
         await saveTransaction();
 
-        try {
-          final amount =
-              double.tryParse(
-                widget.booking?.completionData?.totalCost.toString() ?? '0.00',
-              ) ??
-              0.00;
-          await UnifiedPayoutServices.updateWalletAmounts(
-            workerId: widget.booking?.agent?.uid ?? '',
-            earningsIncrement: amount,
+        // Only track full service (mode 1) in-app payments for wallet
+        // Inspection fees (mode 0) are NOT included in payout tracking
+        if (widget.booking?.completionData?.mode == 1) {
+          try {
+            final amount =
+                double.tryParse(
+                  widget.booking?.completionData?.totalCost.toString() ?? '0.00',
+                ) ??
+                0.00;
+            await UnifiedPayoutServices.recordInAppServicePayment(
+              workerId: widget.booking?.agent?.uid ?? '',
+              amount: amount,
+            );
+            debugPrint(
+              '✅ Unified wallet updated with in-app service payment: $amount',
+            );
+          } catch (e) {
+            debugPrint('❌ Error updating unified wallet: $e');
+          }
+        } else {
+          debugPrint(
+            'ℹ️ Skipping wallet update: inspection only (mode ${widget.booking?.completionData?.mode})',
           );
-          debugPrint('✅ Unified wallet updated with earnings: $amount');
-        } catch (e) {
-          debugPrint('❌ Error updating unified wallet: $e');
         }
       } else {
         // New Deferred Flow

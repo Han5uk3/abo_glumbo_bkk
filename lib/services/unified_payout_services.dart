@@ -4,6 +4,12 @@ import 'package:flutter/foundation.dart';
 /// Unified Payout Services for Customer App
 /// This is a lightweight version that only handles wallet updates
 /// Full payout management is in the panel app
+///
+/// PAYOUT RULES:
+/// - Only card tips + bonus count toward payout-requestable balance (totalAvailableBalance)
+/// - In-app service payments (mode 1 only) are tracked separately for informational purposes
+/// - Inspection fees (mode 0) are NEVER included in payout tracking
+/// - Outside-app payments are tracked for lifetime totals only
 class UnifiedPayoutServices {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -19,18 +25,23 @@ class UnifiedPayoutServices {
         // Create new wallet with zero balances
         await _firestore.collection('unified_wallets').doc(workerId).set({
           'workerId': workerId,
-          'totalEarnings': 0.0,
-          'totalCompletionAmount': 0.0, // ✅ Ensure consistency
-          'paidEarnings': 0.0,
-          'availableEarnings': 0.0,
+          // In-app earnings (paid through Telr/Apple Pay in the customer app)
+          'inAppEarnings': 0.0,
+          // Outside-app earnings (cash/manual payments verified by technician)
+          'outsideAppEarnings': 0.0,
+          'totalCompletionAmount': 0.0, // Sum of both in-app + outside-app
+          // Tips
           'totalTips': 0.0,
           'cardTips': 0.0,
           'cashTips': 0.0,
           'paidTips': 0.0,
+          // Bonus
           'totalBonus': 0.0,
           'paidBonus': 0.0,
           'availableBonus': 0.0,
+          // Payout balance: ONLY cardTips + availableBonus (NOT earnings)
           'totalAvailableBalance': 0.0,
+          // Lifetime total: all earnings + tips + bonus for display
           'lifetimeTotal': 0.0,
           'payoutRequested': false,
           'requestedAmount': 0.0,
@@ -49,11 +60,47 @@ class UnifiedPayoutServices {
     }
   }
 
-  /// Update wallet amounts (earnings, tips, or bonus)
-  /// This is called from the customer app when payments are made
+  /// Update wallet amounts when a FULL SERVICE (mode 1) in-app payment is made
+  /// Called from processing_payment_page.dart when customer pays via Telr/Apple Pay
+  ///
+  /// NOTE: Earnings are tracked for informational/lifetime totals only.
+  /// They are NOT added to totalAvailableBalance (payout-requestable amount).
+  /// Only tips and bonus are payoutable.
+  static Future<void> recordInAppServicePayment({
+    required String workerId,
+    required double amount,
+  }) async {
+    try {
+      await getOrCreateUnifiedWallet(workerId);
+
+      final walletRef = _firestore.collection('unified_wallets').doc(workerId);
+
+      await walletRef.update({
+        'inAppEarnings': FieldValue.increment(amount),
+        'totalCompletionAmount': FieldValue.increment(amount),
+        'lifetimeTotal': FieldValue.increment(amount),
+        // NOTE: NOT incrementing totalAvailableBalance — earnings are not payoutable
+        'lastUpdated': FieldValue.serverTimestamp(),
+      });
+
+      if (kDebugMode) {
+        print(
+          '💰 Recorded in-app service payment: $amount for worker: $workerId',
+        );
+        print('   ℹ️ This is tracked for lifetime totals only, NOT for payout');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error recording in-app service payment: $e');
+      }
+      rethrow;
+    }
+  }
+
+  /// Update wallet amounts (tips or bonus)
+  /// This is called from the customer app when tips are given via review
   static Future<void> updateWalletAmounts({
     required String workerId,
-    double earningsIncrement = 0.0,
     double tipsIncrement = 0.0,
     double bonusIncrement = 0.0,
     bool isCashTip = false,
@@ -67,21 +114,6 @@ class UnifiedPayoutServices {
       Map<String, dynamic> updates = {
         'lastUpdated': FieldValue.serverTimestamp(),
       };
-
-      // Update earnings (from service payments)
-      if (earningsIncrement > 0) {
-        updates['totalEarnings'] = FieldValue.increment(earningsIncrement);
-        updates['totalCompletionAmount'] = FieldValue.increment(earningsIncrement); // ✅ Consistent with Model
-        updates['availableEarnings'] = FieldValue.increment(earningsIncrement);
-        updates['lifetimeTotal'] = FieldValue.increment(earningsIncrement);
-        updates['totalAvailableBalance'] = FieldValue.increment(
-          earningsIncrement,
-        );
-
-        if (kDebugMode) {
-          print('💰 Adding earnings: $earningsIncrement to worker: $workerId');
-        }
-      }
 
       // Update tips
       if (tipsIncrement > 0) {
@@ -97,18 +129,20 @@ class UnifiedPayoutServices {
             );
           }
         } else {
-          // Card tips are added to available balance
+          // Card tips ARE added to available balance (payoutable)
           updates['cardTips'] = FieldValue.increment(tipsIncrement);
           updates['totalAvailableBalance'] = FieldValue.increment(
             tipsIncrement,
           );
           if (kDebugMode) {
-            print('💳 Adding card tip: $tipsIncrement to worker: $workerId');
+            print(
+              '💳 Adding card tip: $tipsIncrement to worker: $workerId (payable)',
+            );
           }
         }
       }
 
-      // Update bonus (if needed in the future)
+      // Update bonus (payoutable)
       if (bonusIncrement > 0) {
         updates['totalBonus'] = FieldValue.increment(bonusIncrement);
         updates['availableBonus'] = FieldValue.increment(bonusIncrement);
@@ -116,7 +150,9 @@ class UnifiedPayoutServices {
         updates['totalAvailableBalance'] = FieldValue.increment(bonusIncrement);
 
         if (kDebugMode) {
-          print('🎁 Adding bonus: $bonusIncrement to worker: $workerId');
+          print(
+            '🎁 Adding bonus: $bonusIncrement to worker: $workerId (payable)',
+          );
         }
       }
 

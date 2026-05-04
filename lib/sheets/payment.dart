@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:abo_glumbo_bbk/apis/telr_apple_pay.dart';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
@@ -920,18 +921,14 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
         );
         await saveTransaction();
 
-        // Update unified wallet with earnings
-        try {
-          await UnifiedPayoutServices.updateWalletAmounts(
-            workerId: widget.worker.uid ?? '',
-            earningsIncrement: widget.amount,
-          );
+        // NOTE: Cash payments are "outside-app" payments — the technician collects 
+        // the cash directly. The wallet tracking for these payments is handled by
+        // the technician app's verify_payment_sheet when they upload payment proof.
+        // We do NOT track cash payments as in-app earnings here.
+        if (kDebugMode) {
           debugPrint(
-            '✅ Unified wallet updated with earnings: ${widget.amount}',
+            'ℹ️ Cash payment: wallet tracking handled by technician app verify_payment_sheet',
           );
-        } catch (e) {
-          debugPrint('❌ Error updating unified wallet: $e');
-          // Don't block the payment flow if wallet update fails
         }
 
         if (mounted) {
