@@ -2173,6 +2173,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'service unavailable to the seleceted address, we hope to expand our services to this area in the future';
 
   @override
+  String get serviceNow => 'Service Now';
+
+  @override
+  String get serviceForLater => 'Service for Later';
+
+  @override
   String get placeAndTiming => 'Place and timing';
 
   @override

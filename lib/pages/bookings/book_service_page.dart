@@ -41,6 +41,8 @@ class _BookServicePageState extends State<BookServicePage> {
   int currentStep =
       0; // 0: Schedule, 1: Details, 2: Expert/Auto-assign, 3: Review & Confirm
 
+  bool isServiceNow = true;
+
   DateTime? selectedDate;
   bool saving = false;
   AddressModel? selectedAddress;
@@ -278,7 +280,7 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   DateTime _getMiddleEastNow() {
-    return DateTime.now().toUtc().add(const Duration(hours: 3));
+    return DateTime.now();
   }
 
   void _onDaySelect(DateTime day, DateTime focusedDay) {
@@ -625,13 +627,26 @@ class _BookServicePageState extends State<BookServicePage> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
           child: Text(
-            AppLocalizations.of(context)?.date ?? 'Select Date',
+            AppLocalizations.of(context)?.bookingType ?? 'Booking Type',
             style: DMSansFont.textStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
+        _buildBookingTypeSelector(),
+
+        if (!isServiceNow) ...[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+            child: Text(
+              AppLocalizations.of(context)?.date ?? 'Select Date',
+              style: DMSansFont.textStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
@@ -718,16 +733,84 @@ class _BookServicePageState extends State<BookServicePage> {
           endIndent: 16,
         ),
         if (selectedTimeCategory != -1) _buildTimeSlots(),
-        if (selectedDate != null &&
-            selectedTimeCategory != -1 &&
-            selectedTimeSlot != -1)
+        ],
+        if (isServiceNow ||
+            (selectedDate != null &&
+                selectedTimeCategory != -1 &&
+                selectedTimeSlot != -1))
           _buildInspectionFeeInfo(),
       ],
     );
   }
 
+  Widget _buildBookingTypeSelector() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: () => setState(() {
+                isServiceNow = true;
+                selectedDate = null;
+                selectedTimeCategory = -1;
+                selectedTimeSlot = -1;
+              }),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: isServiceNow ? AppColors.primary : Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isServiceNow ? AppColors.primary : Colors.grey[300]!,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    AppLocalizations.of(context)?.serviceNow ?? 'Service Now',
+                    style: DMSansFont.textStyle(
+                      color: isServiceNow ? Colors.white : Colors.black87,
+                      fontWeight: isServiceNow ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: InkWell(
+              onTap: () => setState(() {
+                isServiceNow = false;
+              }),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: !isServiceNow ? AppColors.primary : Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: !isServiceNow ? AppColors.primary : Colors.grey[300]!,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    AppLocalizations.of(context)?.serviceForLater ?? 'Service for Later',
+                    style: DMSansFont.textStyle(
+                      color: !isServiceNow ? Colors.white : Colors.black87,
+                      fontWeight: !isServiceNow ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildInspectionFeeInfo() {
-    final isOnHour = _isOnHour();
+    final isOnHour = _isInspectionFeeOnHour();
     final price = _getSelectedPrice();
     final hasDiscount = (widget.service.discountPercentage ?? 0) > 0;
     final discountedPrice = widget.service.getDiscountedPrice(price);
@@ -1072,15 +1155,17 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildThirdStepContent() {
-    if (_isOnHour()) {
+    if (_isAssignmentOnHour()) {
       return WorkerList(
         service: widget.service,
         category: widget.service.category ?? "",
         selectedAddress: selectedAddress,
         selectedIndexNotifier: selectedIndexNotifier,
         onWorkerSelected: (worker) => selectedWorker = worker,
-        selectedDate: selectedDate!,
-        timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+        selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
+        timeSlot: isServiceNow
+            ? {"label": "Now", "time": TimeOfDay.now()}
+            : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
       );
     }
     // Off-hour: show auto-assignment info
@@ -1153,17 +1238,19 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildReviewStepContent() {
-    final isOnHour = _isOnHour();
+    final isAssignmentOnHour = _isAssignmentOnHour();
     final price = _getSelectedPrice();
     final hasDiscount = (widget.service.discountPercentage ?? 0) > 0;
     final discountedPrice = widget.service.getDiscountedPrice(price);
     final languageCode = AppLocalizations.of(context)?.localeName ?? 'en';
     final serviceName =
         widget.service.nameLocalized(languageCode: languageCode) ?? '';
-    final timeLabel =
-        timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"];
-    final dateStr =
-        '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}';
+    final timeLabel = isServiceNow
+        ? (AppLocalizations.of(context)?.serviceNow ?? 'Service Now')
+        : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"];
+    final dateStr = isServiceNow
+        ? '${_getMiddleEastNow().day}/${_getMiddleEastNow().month}/${_getMiddleEastNow().year}'
+        : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}';
     final addressName = selectedAddress?.fullName ?? '';
 
     return ListView(
@@ -1205,12 +1292,12 @@ class _BookServicePageState extends State<BookServicePage> {
               icon: Icons.access_time_rounded,
               label:
                   AppLocalizations.of(context)?.bookingType ?? 'Booking Type',
-              value: isOnHour
+              value: isAssignmentOnHour
                   ? (AppLocalizations.of(context)?.onHourBooking ??
                         'On-Hour Booking')
                   : (AppLocalizations.of(context)?.offHourBooking ??
                         'Off-Hour Booking'),
-              valueColor: isOnHour ? Colors.green : Colors.orange,
+              valueColor: isAssignmentOnHour ? Colors.green : Colors.orange,
             ),
             const Divider(height: 20),
             _buildReviewRow(
@@ -1247,13 +1334,13 @@ class _BookServicePageState extends State<BookServicePage> {
               label:
                   AppLocalizations.of(context)?.technicianAssignment ??
                   'Technician',
-              value: isOnHour
+              value: isAssignmentOnHour
                   ? (selectedWorker.name ??
                         (AppLocalizations.of(context)?.youSelectedTechnician ??
                             'You selected a technician'))
                   : (AppLocalizations.of(context)?.autoAssignMessage ??
                         'Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.'),
-              valueColor: isOnHour ? AppColors.primary : Colors.blue,
+              valueColor: isAssignmentOnHour ? AppColors.primary : Colors.blue,
             ),
           ],
         ),
@@ -1352,12 +1439,19 @@ class _BookServicePageState extends State<BookServicePage> {
     );
   }
 
-  bool _isOnHour() {
+  bool _isAssignmentOnHour() {
+    return widget.service.isOnWorkHour(currentTime: DateTime.now());
+  }
+
+  bool _isInspectionFeeOnHour() {
     final price = _getSelectedPrice();
     return price == widget.service.onWorkHourPrice;
   }
 
   double _getSelectedPrice() {
+    if (isServiceNow) {
+      return widget.service.getCurrentPrice(currentTime: _getMiddleEastNow());
+    }
     if (selectedDate == null ||
         selectedTimeCategory == -1 ||
         selectedTimeSlot == -1) {
@@ -1424,28 +1518,30 @@ class _BookServicePageState extends State<BookServicePage> {
       return;
     }
 
-    if (selectedDate == null) {
-      _showSnackBar(
-        AppLocalizations.of(context)?.pleaseSelectADate ??
-            "Please select a date",
-      );
-      return;
-    }
+    if (!isServiceNow) {
+      if (selectedDate == null) {
+        _showSnackBar(
+          AppLocalizations.of(context)?.pleaseSelectADate ??
+              "Please select a date",
+        );
+        return;
+      }
 
-    if (selectedTimeCategory == -1 || selectedTimeSlot == -1) {
-      _showSnackBar(
-        AppLocalizations.of(context)?.pleaseSelectATimeSlot ??
-            "Please select a time slot",
-      );
-      return;
-    }
+      if (selectedTimeCategory == -1 || selectedTimeSlot == -1) {
+        _showSnackBar(
+          AppLocalizations.of(context)?.pleaseSelectATimeSlot ??
+              "Please select a time slot",
+        );
+        return;
+      }
 
-    if (_isTimeSlotPast(selectedTimeCategory, selectedTimeSlot)) {
-      _showSnackBar(
-        AppLocalizations.of(context)?.cannotBookForPastTime ??
-            "Cannot book for past time",
-      );
-      return;
+      if (_isTimeSlotPast(selectedTimeCategory, selectedTimeSlot)) {
+        _showSnackBar(
+          AppLocalizations.of(context)?.cannotBookForPastTime ??
+              "Cannot book for past time",
+        );
+        return;
+      }
     }
 
     setState(() => currentStep = 1);
@@ -1480,7 +1576,7 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildThirdStepBottom(BuildContext context) {
-    if (_isOnHour()) {
+    if (_isAssignmentOnHour()) {
       // On-hour: must select a technician before proceeding
       return Row(
         children: [
@@ -1562,7 +1658,7 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Future<void> _completeBooking(BuildContext context) async {
-    if (customerData == null || selectedDate == null) {
+    if (customerData == null || (!isServiceNow && selectedDate == null)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -1579,15 +1675,17 @@ class _BookServicePageState extends State<BookServicePage> {
 
     bool isSuccess = await BookingUtils.saveBooking(
       service: widget.service,
-      selectedDate: selectedDate!,
+      selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
       paymentMode: "Cards",
       customerData: customerData!,
       notes: notesController.text,
       selectedImage: _selectedImage,
       selectedVideo: _selectedVideo,
-      timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+      timeSlot: isServiceNow
+          ? {"label": "Now", "time": TimeOfDay.now()}
+          : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
       agent:
-          _isOnHour() &&
+          _isAssignmentOnHour() &&
               selectedWorker.uid != null &&
               selectedWorker.uid!.isNotEmpty
           ? selectedWorker
@@ -1603,12 +1701,13 @@ class _BookServicePageState extends State<BookServicePage> {
         MaterialPageRoute(
           builder: (context) => BookingCompletedPage(
             service: widget.service,
-            worker: _isOnHour()
+            worker: _isAssignmentOnHour()
                 ? selectedWorker
                 : UserModel(role: "agent", uid: ""),
-            selectedDate: selectedDate!,
-            selectedTime:
-                timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+            selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
+            selectedTime: isServiceNow
+                ? {"label": "Now", "time": TimeOfDay.now()}
+                : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
             address: selectedAddress,
           ),
         ),

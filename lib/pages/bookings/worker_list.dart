@@ -845,6 +845,8 @@ class _WorkerListViewState extends State<_WorkerListView>
           isTooFar = dist > 50.0;
         }
 
+        bool isBusy = statData.worker.uid != null && busyAgentIds.contains(statData.worker.uid);
+
         return AnimatedBuilder(
           animation: _itemAnimations[index],
           builder: (context, child) {
@@ -878,6 +880,22 @@ class _WorkerListViewState extends State<_WorkerListView>
                     );
                     return;
                   }
+                  if (isBusy) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context)!.technicianIsBusyatThisTime,
+                        ),
+                        backgroundColor: Colors.red.shade600,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
                   widget.selectedIndexNotifier.value = index;
                   widget.onWorkerSelected(statData.worker);
                 },
@@ -895,11 +913,11 @@ class _WorkerListViewState extends State<_WorkerListView>
                         buildingNumber: '',
                         phoneNumber: '',
                       ),
-                  isSelected: isSelected && !isTooFar,
+                  isSelected: isSelected && !isTooFar && !isBusy,
                   localizedJobRoles: _getLocalizedRoles(
                     statData.worker,
                   ),
-                  isBusy: false,
+                  isBusy: isBusy,
                   isTooFar: isTooFar,
                 ),
               );

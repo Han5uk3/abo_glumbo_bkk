@@ -699,6 +699,8 @@
   "serviceNotAvailableInRegion": "This service is not available in your region now. It will be added later.",
   "serviceUnavailable": "Service Unavailable",
   "serviceUnavailableLongMessage": "service unavailable to the seleceted address, we hope to expand our services to this area in the future",
+  "serviceNow": "Service Now",
+  "serviceForLater": "Service for Later",
   "placeAndTiming": "Place and timing",
   "counterOfferFromTechnician": "Technician proposed a new time",
   "technicianProposedNewTime": "Technician has proposed a new time for your booking.",

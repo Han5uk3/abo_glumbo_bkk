@@ -2184,6 +2184,12 @@ class AppLocalizationsUr extends AppLocalizations {
       'منتخب کردہ پتے پر سروس دستیاب نہیں ہے، ہمیں امید ہے کہ مستقبل میں ہم اس علاقے تک اپنی خدمات کو وسعت دیں گے';
 
   @override
+  String get serviceNow => 'فوری سروس';
+
+  @override
+  String get serviceForLater => 'طے شدہ سروس';
+
+  @override
   String get placeAndTiming => 'مقام اور وقت';
 
   @override

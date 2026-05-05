@@ -390,9 +390,7 @@ class ServiceModel {
   }
 
   DateTime _getMiddleEastNow({DateTime? time}) {
-    final now = time ?? DateTime.now();
-    // Middle East / Saudi Arabia is UTC+3
-    return now.toUtc().add(const Duration(hours: 3));
+    return time ?? DateTime.now();
   }
 
   bool isOnWorkHour({DateTime? currentTime}) {

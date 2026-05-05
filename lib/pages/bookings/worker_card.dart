@@ -49,23 +49,23 @@ class WorkerCard extends StatelessWidget {
     }
 
     return Opacity(
-      opacity: isTooFar ? 0.55 : 1.0,
+      opacity: (isTooFar || isBusy) ? 0.55 : 1.0,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: isTooFar ? Colors.grey.shade50 : Colors.white,
+          color: (isTooFar || isBusy) ? Colors.grey.shade50 : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isTooFar
+            color: (isTooFar || isBusy)
                 ? Colors.red.shade200
                 : isSelected
                     ? AppColors.primary
                     : Colors.grey.shade300,
-            width: isSelected && !isTooFar ? 2 : 1,
+            width: isSelected && !(isTooFar || isBusy) ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: isTooFar
+              color: (isTooFar || isBusy)
                   ? Colors.transparent
                   : isSelected
                       ? AppColors.primary.withOpacity(0.1)

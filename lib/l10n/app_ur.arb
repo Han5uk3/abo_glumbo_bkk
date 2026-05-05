@@ -697,6 +697,8 @@
   "serviceNotAvailableInRegion": "یہ سروس ابھی آپ کے علاقے میں دستیاب نہیں ہے۔ اسے بعد میں شامل کیا جائے گا۔",
   "serviceUnavailable": "سروس دستیاب نہیں ہے",
   "serviceUnavailableLongMessage": "منتخب کردہ پتے پر سروس دستیاب نہیں ہے، ہمیں امید ہے کہ مستقبل میں ہم اس علاقے تک اپنی خدمات کو وسعت دیں گے",
+  "serviceNow": "فوری سروس",
+  "serviceForLater": "طے شدہ سروس",
   "placeAndTiming": "مقام اور وقت",
   "counterOfferFromTechnician": "ٹیکنیشن نے نیا وقت تجویز کیا ہے",
   "technicianProposedNewTime": "ٹیکنیشن نے آپ کی بکنگ کے لیے ایک نیا وقت تجویز کیا ہے۔",

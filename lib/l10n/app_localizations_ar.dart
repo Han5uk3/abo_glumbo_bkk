@@ -2134,7 +2134,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get serviceUnavailableLongMessage =>
-      'الخدمة غير متوفرة في العنوان المحدد، نأمل في توسيع خدماتنا لتشمل هذه المنطقة في المستقبل';
+      'الخدمة غير متوفرة في هذا الموقع حاليًا، نأمل في توسيع خدماتنا لتشمل هذه المنطقة في المستقبل';
+
+  @override
+  String get serviceNow => 'خدمة فورية';
+
+  @override
+  String get serviceForLater => 'خدمة مجدولة';
 
   @override
   String get placeAndTiming => 'المكان والوقت';

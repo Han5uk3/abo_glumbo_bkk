@@ -101,7 +101,7 @@ class BookingUtils {
         }).toList(),
       );
 
-      bool isOnHour = service.isOnWorkHour(currentTime: bookingDate);
+      bool isOnHour = service.isOnWorkHour(currentTime: DateTime.now());
       bool shouldAutoAssign =
           !isOnHour && (service.category?.isNotEmpty == true);
       BookingModel booking = BookingModel(

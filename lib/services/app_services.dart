@@ -932,7 +932,7 @@ class AppServices {
                     return false;
                   }
                 }
-                return true;
+                return user.isOnline == true;
               })
               .toList();
         });

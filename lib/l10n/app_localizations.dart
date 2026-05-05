@@ -4186,6 +4186,18 @@ abstract class AppLocalizations {
   /// **'service unavailable to the seleceted address, we hope to expand our services to this area in the future'**
   String get serviceUnavailableLongMessage;
 
+  /// No description provided for @serviceNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Now'**
+  String get serviceNow;
+
+  /// No description provided for @serviceForLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Service for Later'**
+  String get serviceForLater;
+
   /// No description provided for @placeAndTiming.
   ///
   /// In en, this message translates to:
