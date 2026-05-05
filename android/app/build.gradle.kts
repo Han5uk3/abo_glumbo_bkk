@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 val envProperties = Properties()
-val envFile = rootProject.file("../../.env")
+val envFile = rootProject.file("../.env")
 if (envFile.exists()) {
     envFile.inputStream().use { envProperties.load(it) }
 }
