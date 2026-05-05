@@ -342,7 +342,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get noBookingsFound => 'کوئی بکنگ نہیں ملی۔';
 
   @override
-  String get searchServices => 'خدمات تلاش کریں';
+  String get searchServices => 'سروسز تلاش کریں...';
 
   @override
   String get noServicesInYourWishlist =>
@@ -504,7 +504,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get payment => 'ادائیگی';
 
   @override
-  String get cards => 'کارڈ کے ذریعے ادائیگی';
+  String get cards => 'ایپ کے اندر';
 
   @override
   String get applePay => 'ایپل پے کے ذریعے ادائیگی';
@@ -517,7 +517,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'آپ کی ادائیگی کامیابی سے مکمل ہو گئی ہے۔';
 
   @override
-  String get cashOnHands => 'نقد ادائیگی';
+  String get cashOnHands => 'ایپ سے باہر';
+
+  @override
+  String get insideApp => 'ایپ کے اندر';
+
+  @override
+  String get outsideApp => 'ایپ سے باہر';
 
   @override
   String get amount => 'رقم';
@@ -2407,4 +2413,17 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get technicianTooFarMessage =>
       'یہ ٹیکنیشن آپ کی سروس کی جگہ سے بہت دور ہے اور اسے منتخب نہیں کیا جا سکتا';
+
+  @override
+  String get rebookTechnician => 'ٹیکنیشن کو دوبارہ بک کریں';
+
+  @override
+  String get selectService => 'سروس منتخب کریں';
+
+  @override
+  String get rejectionProfessionalMessage =>
+      'کیا آپ اس اپوائنٹمنٹ کے لیے دستیاب نہیں ہیں؟ مسترد کرنے کے بجائے، آپ کسٹمر کے لیے زیادہ مناسب وقت تجویز کر سکتے ہیں۔';
+
+  @override
+  String get proposeAlternativeTime => 'متبادل وقت تجویز کریں';
 }

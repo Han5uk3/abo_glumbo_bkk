@@ -733,7 +733,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchServices.
   ///
   /// In en, this message translates to:
-  /// **'Search services'**
+  /// **'Search services...'**
   String get searchServices;
 
   /// No description provided for @noServicesInYourWishlist.
@@ -1045,7 +1045,7 @@ abstract class AppLocalizations {
   /// No description provided for @cards.
   ///
   /// In en, this message translates to:
-  /// **'Payment by card'**
+  /// **'Inside App'**
   String get cards;
 
   /// No description provided for @applePay.
@@ -1069,8 +1069,20 @@ abstract class AppLocalizations {
   /// No description provided for @cashOnHands.
   ///
   /// In en, this message translates to:
-  /// **'Payment in cash'**
+  /// **'Outside App'**
   String get cashOnHands;
+
+  /// No description provided for @insideApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Inside App'**
+  String get insideApp;
+
+  /// No description provided for @outsideApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Outside App'**
+  String get outsideApp;
 
   /// No description provided for @amount.
   ///
@@ -4605,6 +4617,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This technician is too far from your service location and cannot be selected'**
   String get technicianTooFarMessage;
+
+  /// No description provided for @rebookTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Rebook Technician'**
+  String get rebookTechnician;
+
+  /// No description provided for @selectService.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Service'**
+  String get selectService;
+
+  /// No description provided for @rejectionProfessionalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you currently unavailable for this appointment? Instead of rejecting, you can propose a more convenient time for the customer.'**
+  String get rejectionProfessionalMessage;
+
+  /// No description provided for @proposeAlternativeTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Propose Alternative Time'**
+  String get proposeAlternativeTime;
 }
 
 class _AppLocalizationsDelegate

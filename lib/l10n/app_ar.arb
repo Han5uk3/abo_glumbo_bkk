@@ -175,9 +175,11 @@
   "addImageOrVideoOfIssue": "أضف صورة أو فيديو للمشكلة",
   "completePayment": "أكمل الدفع",
   "payment": "دفع",
-  "cards": "بطاقة",
+  "cards": "داخل التطبيق",
   "applePay": "دفع بواسطة Apple Pay",
-  "cashOnHands": "نقدًا",
+  "cashOnHands": "خارج التطبيق",
+  "insideApp": "داخل التطبيق",
+  "outsideApp": "خارج التطبيق",
   "processingPayment": "جاري معالجة الدفع",
   "processingPaymentDesc": "يرجى الانتظار أثناء معالجة معاملتك بأمان",
   "transactionError": "خطأ في المعاملة",
@@ -781,5 +783,10 @@
   "tryRemovingFilters": "حاول إزالة بعض الفلاتر لرؤية المزيد من الفنيين",
   "showAllTechnicians": "عرض جميع الفنيين",
   "tooFarAway": "بعيد جداً",
-  "technicianTooFarMessage": "هذا الفني بعيد جداً عن موقع الخدمة ولا يمكن اختياره"
+  "technicianTooFarMessage": "هذا الفني بعيد جداً عن موقع الخدمة ولا يمكن اختياره",
+  "rebookTechnician": "إعادة حجز الفني",
+  "selectService": "اختر الخدمة",
+  "searchServices": "ابحث عن الخدمات...",
+  "rejectionProfessionalMessage": "هل أنت غير متاح حالياً لهذا الموعد؟ بدلاً من الرفض، يمكنك اقتراح وقت أكثر ملاءمة للعميل.",
+  "proposeAlternativeTime": "اقتراح وقت بديل"
 }

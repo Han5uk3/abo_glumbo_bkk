@@ -9,26 +9,28 @@ import 'package:abo_glumbo_bbk/models/tipping.dart';
 import 'package:abo_glumbo_bbk/models/total_tip.dart';
 import 'package:abo_glumbo_bbk/models/transaction.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
+import 'package:abo_glumbo_bbk/services/app_services.dart';
 
 class BookingUtils {
   static String getPaymentModeCode(String paymentMode) {
     switch (paymentMode) {
-      case "Cards":
+      case "Inside App":
         return "C";
       case "Apple Pay":
         return "A";
-      case "Cash On Hands":
+      case "Outside App":
         return "O";
       default:
         return "U"; // Unknown
     }
   }
 
-  static Future<bool> saveBooking({
+  static Future<String?> saveBooking({
     required ServiceModel service,
     required DateTime selectedDate,
     required String paymentMode,
@@ -38,7 +40,10 @@ class BookingUtils {
     File? selectedVideo,
     required Map timeSlot,
     UserModel? agent,
-    AddressModel? selectedAddress, // Added selectedAddress
+    AddressModel? selectedAddress,
+    MatchedServiceZone? serviceLocation,
+    String? requestId,
+    String? rebookTechnicianId,
   }) async {
     try {
       DateTime bookingDate = DateTime(
@@ -102,53 +107,131 @@ class BookingUtils {
       );
 
       bool isOnHour = service.isOnWorkHour(currentTime: DateTime.now());
+      bool isRebook = rebookTechnicianId != null && rebookTechnicianId.isNotEmpty;
       bool shouldAutoAssign =
-          !isOnHour && (service.category?.isNotEmpty == true);
+          !isOnHour && (service.category?.isNotEmpty == true) && !isRebook;
+      double bookingTimePrice = service.getCurrentPrice(currentTime: bookingDate);
+      ServiceModel updatedService = service.copyWith(price: bookingTimePrice);
+
       BookingModel booking = BookingModel(
         id: bookingId,
-        service: service,
+        service: updatedService,
         bookingDateTime: Timestamp.fromDate(bookingDate),
-        bookingStatusCode: 'P',
+        bookingStatusCode: requestId != null ? 'A' : 'P',
         notes: notes.trim(),
         issueImage: selectedImageDownloadUrl ?? "",
         issueVideo: selectedVideoDownloadUrl ?? "",
         customer: updatedCustomerData,
-        agent: (isOnHour && agent?.uid?.isNotEmpty == true) ? agent : null,
+        agent: (isOnHour && agent?.uid?.isNotEmpty == true && !isRebook) ? agent : null,
         selectedAddressId: selectedAddress?.id, // Added selectedAddressId
         isOnHour: isOnHour,
         assignmentScheduledTime: shouldAutoAssign
             ? Timestamp.fromDate(
                 bookingDate
-                        .subtract(const Duration(hours: 3))
+                        .subtract(const Duration(hours: 2))
                         .isBefore(DateTime.now())
                     ? DateTime.now().subtract(
                         const Duration(minutes: 5),
                       ) // Set 5 mins back to ensure it triggers
-                    : bookingDate.subtract(const Duration(hours: 3)),
+                    : bookingDate.subtract(const Duration(hours: 2)),
               )
             : null,
-        autoAssignmentStatus:
-            shouldAutoAssign &&
-                bookingDate
-                    .subtract(const Duration(hours: 3))
-                    .isBefore(DateTime.now())
-            ? "ready_to_assign"
-            : null,
+        autoAssignmentStatus: isRebook
+            ? "rebook_pending"
+            : (shouldAutoAssign &&
+                    bookingDate
+                        .subtract(const Duration(hours: 2))
+                        .isBefore(DateTime.now())
+                ? "ready_to_assign"
+                : (isOnHour && agent?.uid?.isNotEmpty == true ? "accepted" : null)),
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
+        serviceLocation: serviceLocation,
       );
 
+      // If it's a direct assignment (not rebook, not auto-assign), status is A
+      if (!isRebook && !shouldAutoAssign && isOnHour && agent?.uid?.isNotEmpty == true) {
+        booking.bookingStatusCode = 'A';
+      } else if (requestId != null) {
+        booking.bookingStatusCode = 'A';
+      }
+
       // Add the booking to Firestore
-      await AppFirestore.bookingsCollectionRef
-          .doc(bookingId)
-          .set(booking.toJson());
+      await AppFirestore.bookingsCollectionRef.doc(bookingId).set({
+        ...booking.toJson(),
+        'requestId': requestId,
+        'rebookTechnicianId': rebookTechnicianId,
+      });
+
+      // If it's a rebook, create the job offer
+      if (isRebook) {
+        final offerId = AppFirestore.jobOffersCollectionRef.doc().id;
+        await AppFirestore.jobOffersCollectionRef.doc(offerId).set({
+          'id': offerId,
+          'bookingId': bookingId,
+          'technicianId': rebookTechnicianId,
+          'status': 'pending',
+          'createdAt': FieldValue.serverTimestamp(),
+          'expiresAt': Timestamp.fromDate(DateTime.now().add(const Duration(hours: 24))),
+          'customerName': updatedCustomerData.name,
+          'serviceLocation': selectedAddress?.toJson(),
+          'serviceName': updatedService.name,
+          'serviceNameAr': updatedService.name_ar,
+          'notes': notes.trim(),
+          'issueImage': selectedImageDownloadUrl ?? "",
+          'issueVideo': selectedVideoDownloadUrl ?? "",
+          'isRebook': true,
+        });
+
+        await AppServices.recordTechnicianNotification(
+          technicianId: rebookTechnicianId!,
+          titleEn: 'New Rebooking Offer',
+          titleAr: 'عرض إعادة حجز جديد',
+          bodyEn: 'A customer has requested to rebook you for a service!',
+          bodyAr: 'لقد طلب عميل إعادة حجزك لخدمة!',
+          type: 'job_offer',
+          data: {'bookingId': bookingId, 'offerId': offerId},
+        );
+      }
+
+      // If this was from a broadcast request, clean up
+      if (requestId != null) {
+        final batch = FirebaseFirestore.instance.batch();
+        
+        // 1. Update request status
+        batch.update(AppFirestore.jobRequestsCollectionRef.doc(requestId), {
+          'status': 'finalized',
+          'bookingId': bookingId,
+        });
+        
+        // 2. Mark all offers for this request as closed
+        final offers = await AppFirestore.jobOffersCollectionRef.where('requestId', isEqualTo: requestId).get();
+        for (var doc in offers.docs) {
+          batch.update(doc.reference, {'status': 'closed'});
+        }
+
+        await batch.commit();
+
+        // 3. Notify the selected technician
+        if (agent != null && agent.uid != null) {
+          await AppServices.recordTechnicianNotification(
+            technicianId: agent.uid!,
+            titleEn: 'Job Confirmed',
+            titleAr: 'تم تأكيد الطلب',
+            bodyEn: 'You have been selected for a new job! Tap to view details.',
+            bodyAr: 'لقد تم اختيارك لطلب جديد! اضغط لعرض التفاصيل.',
+            type: 'booking_confirmed',
+            data: {'bookingId': bookingId},
+          );
+        }
+      }
 
       // If we reach here, the booking was created successfully
-      return true;
+      return bookingId;
     } catch (e) {
       debugPrint("Error during booking process: $e");
-      return false;
+      return null;
     }
   }
 
@@ -232,6 +315,8 @@ class BookingUtils {
         "orderId": orderId,
         "transactionId": orderId, // Set transactionId same as orderId
         "updatedAt": Timestamp.now(),
+        "completionData.paymentMethod":
+            paymentModeCode == "C" ? "Inside App" : "Outside App",
         // Apply warranty for 1 week from completion date if it's full work (mode 1)
         if (booking?.completionData?.mode == 1) ...{
           'warranty.expiredOn': Timestamp.fromDate(

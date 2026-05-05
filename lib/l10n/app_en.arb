@@ -156,11 +156,13 @@
   "addImageOrVideoOfIssue": "Add Image or Video of Issue",
   "completePayment": "Complete Payment",
   "payment": "Payment",
-  "cards": "Payment by card",
+  "cards": "Inside App",
   "applePay": "Payment by Apple Pay",
   "completedBold": "COMPLETED",
   "paymentProcessedSuccessfully": "Your payment has been processed successfully.",
-  "cashOnHands": "Payment in cash",
+  "cashOnHands": "Outside App",
+  "insideApp": "Inside App",
+  "outsideApp": "Outside App",
   "amount": "Amount",
   "processingPayment": "Processing Payment",
   "amountPaid": "Amount paid",
@@ -768,5 +770,10 @@
   "tryRemovingFilters": "Try removing some filters to see more technicians",
   "showAllTechnicians": "Show All Technicians",
   "tooFarAway": "Too Far Away",
-  "technicianTooFarMessage": "This technician is too far from your service location and cannot be selected"
+  "technicianTooFarMessage": "This technician is too far from your service location and cannot be selected",
+  "rebookTechnician": "Rebook Technician",
+  "selectService": "Select Service",
+  "searchServices": "Search services...",
+  "rejectionProfessionalMessage": "Are you currently unavailable for this appointment? Instead of rejecting, you can propose a more convenient time for the customer.",
+  "proposeAlternativeTime": "Propose Alternative Time"
 }

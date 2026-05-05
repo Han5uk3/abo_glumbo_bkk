@@ -140,7 +140,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
     );
 
     try {
-      if (selectedPayment == "Cards") {
+      if (selectedPayment == "Inside App") {
         setState(() {
           isLoading = false;
         });
@@ -260,7 +260,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
             });
           }
         }
-      } else if (selectedPayment == "Cash On Hands") {
+      } else if (selectedPayment == "Outside App") {
         // Prevent duplicate cash payments
         if (isCashPaymentProcessing) {
           return; // Exit early if cash payment is already being processed
@@ -282,7 +282,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
             customer: widget.customerData,
             worker: widget.agent,
             orderId: orderId,
-            paymentModeCode: selectedPayment == "Cards" ? "C" : "O",
+            paymentModeCode: selectedPayment == "Inside App" ? "C" : "O",
             amount: widget.booking.completionData?.totalCost.toString() ?? '',
           );
           // if (isBooked) {
@@ -308,7 +308,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
           isLoading = false;
         });
         // Reset cash payment flag in case of any exception
-        if (selectedPayment == "Cash On Hands") {
+        if (selectedPayment == "Outside App") {
           isCashPaymentProcessing = false;
         }
       }
@@ -581,11 +581,11 @@ class _PaymentWindowState extends State<PaymentWindow> {
             ),
             const SizedBox(height: 10),
             paymentModeButtons(
-              title: AppLocalizations.of(context)?.cards ?? '',
+              title: AppLocalizations.of(context)?.insideApp ?? 'Inside App',
               imageUrl:
                   "https://firebasestorage.googleapis.com/v0/b/worker-app-tnext.appspot.com/o/categories%2Fatm-card.png?alt=media&token=06e60c23-63cf-45e3-9a73-b09ec10ba03b",
-              isSelected: selectedPayment == "Cards",
-              onTap: () => setState(() => selectedPayment = "Cards"),
+              isSelected: selectedPayment == "Inside App",
+              onTap: () => setState(() => selectedPayment = "Inside App"),
             ),
             Platform.isIOS
                 ? paymentModeButtons(
@@ -597,11 +597,11 @@ class _PaymentWindowState extends State<PaymentWindow> {
                   )
                 : Container(),
             paymentModeButtons(
-              title: AppLocalizations.of(context)?.cashPayment ?? '',
+              title: AppLocalizations.of(context)?.outsideApp ?? 'Outside App',
               imageUrl:
                   "https://firebasestorage.googleapis.com/v0/b/worker-app-tnext.appspot.com/o/categories%2Fcash-on-delivery.png?alt=media&token=90773e14-dfe6-4954-86fa-129975ce8a51",
-              isSelected: selectedPayment == "Cash On Hands",
-              onTap: () => setState(() => selectedPayment = "Cash On Hands"),
+              isSelected: selectedPayment == "Outside App",
+              onTap: () => setState(() => selectedPayment = "Outside App"),
             ),
             Spacer(),
             Padding(
@@ -617,7 +617,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                   style: FilledButton.styleFrom(
                     backgroundColor:
                         (selectedPayment == null ||
-                            (selectedPayment == "Cash On Hands" &&
+                            (selectedPayment == "Outside App" &&
                                 isCashPaymentProcessing))
                         ? Colors.grey
                         : AppColors.secondary,
@@ -627,13 +627,13 @@ class _PaymentWindowState extends State<PaymentWindow> {
                   ),
                   onPressed:
                       selectedPayment == null ||
-                          (selectedPayment == "Cash On Hands" &&
+                          (selectedPayment == "Outside App" &&
                               isCashPaymentProcessing)
                       ? null
                       : processPayment,
                   child:
                       (isLoading ||
-                          (selectedPayment == "Cash On Hands" &&
+                          (selectedPayment == "Outside App" &&
                               isCashPaymentProcessing))
                       ? Loader(size: 24, color: Colors.white)
                       : Text(
@@ -777,7 +777,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
       Timestamp.now(),
       amount: widget.amount,
       paymentStatus: "completed",
-      paymentMethod: widget.paymentModeCode == "C" ? "Cards" : "Cash On Hands",
+      paymentMethod: widget.paymentModeCode == "C" ? "Inside App" : "Outside App",
       createdAt: Timestamp.now(),
       orderId: widget.orderId,
       customerId: widget.customer.uid ?? "",

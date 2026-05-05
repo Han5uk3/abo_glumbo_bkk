@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:abo_glumbo_bbk/services/booking/add_booking.dart.dart';
+import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'booking_event.dart';
 import 'booking_state.dart';
 
@@ -16,9 +16,10 @@ class NewBookingBloc extends Bloc<BookingEvent, BookingState> {
 
     try {
       // Call your booking service
-      final bookingId = await NewBookingUtils.addBooking(
+      final bookingId = await BookingUtils.saveBooking(
         service: event.service,
         selectedDate: event.selectedDate,
+        paymentMode: "Outside App", // Default to no upfront payment
         customerData: event.customerData,
         notes: event.notes,
         selectedImage: event.selectedImage,

@@ -13,7 +13,6 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
-import 'package:abo_glumbo_bbk/services/booking/add_booking.dart.dart';
 import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
@@ -82,7 +81,7 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
       Timestamp.now(),
       amount: amount,
       paymentStatus: "completed",
-      paymentMethod: widget.selectedPayment ?? "Cards",
+      paymentMethod: widget.selectedPayment ?? "Inside App",
       createdAt: Timestamp.now(),
       orderId: widget.orderId,
       customerId: widget.customerData.uid ?? "",
@@ -92,49 +91,11 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
     return await BookingUtils.saveTransaction(transaction: transaction);
   }
 
-  Future<void> _createBookingAndConfirm() async {
-    if (widget.booking != null) {
-      await saveBooking();
-      await saveTransaction();
-      return;
-    }
-
-    try {
-      final bookingId = await NewBookingUtils.addBooking(
-        service: widget.service!,
-        selectedDate: widget.selectedDate!,
-        customerData: widget.customerData,
-        notes: widget.notesController?.text ?? "",
-        selectedImage: widget.selectedImage,
-        selectedVideo: widget.selectedVideo,
-        timeSlot: widget.timeSlot!,
-        agent: widget.agent!,
-        selectedAddress: widget.selectedAddress,
-        serviceLocation: widget.serviceLocation,
-      );
-
-      if (bookingId != null) {
-        await BookingUtils.updateBookingStatus(
-          bookingId: bookingId,
-          paymentModeCode: widget.selectedPayment == "Cards" ? "C" : "O",
-          isCompleted: true,
-          orderId: widget.orderId,
-        );
-        _newBookingId = bookingId;
-        await saveTransaction(bookingId: bookingId);
-        log('✅ Booking created and confirmed: $bookingId');
-      } else {
-        log('❌ Failed to create booking after successful payment');
-      }
-    } catch (e) {
-      log('❌ Error creating booking: $e');
-    }
-  }
 
   Future<bool> saveBooking() async {
     return await BookingUtils.updateBookingStatus(
       booking: widget.booking,
-      paymentModeCode: widget.selectedPayment == "Cards" ? "C" : "O",
+      paymentModeCode: widget.selectedPayment == "Inside App" ? "C" : "O",
       isCompleted: true,
       orderId: widget.orderId,
     );
@@ -151,7 +112,7 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
             totalTipAmount: widget.review?.tipAmount,
             proofs: [],
             agentId: widget.review?.workerId,
-            paymentMethod: "cards",
+            paymentMethod: "Inside App",
             id: "id_${DateTime.now().millisecondsSinceEpoch}",
           ),
         );
@@ -170,40 +131,35 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
   }
 
   Future<void> _processPaymentAndBooking() async {
-    if (widget.isFromBooking) {
-      if (widget.booking != null) {
-        await saveBooking();
-        await saveTransaction();
+    if (widget.isFromBooking && widget.booking != null) {
+      await saveBooking();
+      await saveTransaction();
 
-        // Only track full service (mode 1) in-app payments for wallet
-        // Inspection fees (mode 0) are NOT included in payout tracking
-        if (widget.booking?.completionData?.mode == 1) {
-          try {
-            final amount =
-                double.tryParse(
-                  widget.booking?.completionData?.totalCost.toString() ?? '0.00',
-                ) ??
-                0.00;
-            await UnifiedPayoutServices.recordInAppServicePayment(
-              workerId: widget.booking?.agent?.uid ?? '',
-              amount: amount,
-            );
-            debugPrint(
-              '✅ Unified wallet updated with in-app service payment: $amount',
-            );
-          } catch (e) {
-            debugPrint('❌ Error updating unified wallet: $e');
-          }
-        } else {
-          debugPrint(
-            'ℹ️ Skipping wallet update: inspection only (mode ${widget.booking?.completionData?.mode})',
+      // Only track full service (mode 1) in-app payments for wallet
+      // Inspection fees (mode 0) are NOT included in payout tracking
+      if (widget.booking?.completionData?.mode == 1) {
+        try {
+          final amount =
+              double.tryParse(
+                widget.booking?.completionData?.totalCost.toString() ?? '0.00',
+              ) ??
+              0.00;
+          await UnifiedPayoutServices.recordInAppServicePayment(
+            workerId: widget.booking?.agent?.uid ?? '',
+            amount: amount,
           );
+          debugPrint(
+            '✅ Unified wallet updated with in-app service payment: $amount',
+          );
+        } catch (e) {
+          debugPrint('❌ Error updating unified wallet: $e');
         }
       } else {
-        // New Deferred Flow
-        await _createBookingAndConfirm();
+        debugPrint(
+          'ℹ️ Skipping wallet update: inspection only (mode ${widget.booking?.completionData?.mode})',
+        );
       }
-    } else {
+    } else if (!widget.isFromBooking) {
       await saveReview();
     }
 
@@ -233,7 +189,7 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
           bookingDate:
               widget.booking?.bookingDateTime.toDate() ?? widget.selectedDate,
           service: widget.booking?.service ?? widget.service,
-          paymentMethod: "Cards",
+          paymentMethod: "Inside App",
         ),
       ),
     );

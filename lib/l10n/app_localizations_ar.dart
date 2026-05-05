@@ -333,7 +333,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noBookingsFound => 'لم يتم العثور على حجوزات.';
 
   @override
-  String get searchServices => 'ابحث عن الخدمات';
+  String get searchServices => 'ابحث عن الخدمات...';
 
   @override
   String get noServicesInYourWishlist => 'لا توجد خدمات في قائمة المفضلات';
@@ -492,7 +492,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get payment => 'دفع';
 
   @override
-  String get cards => 'بطاقة';
+  String get cards => 'داخل التطبيق';
 
   @override
   String get applePay => 'دفع بواسطة Apple Pay';
@@ -504,7 +504,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get paymentProcessedSuccessfully => 'تمت معالجة الدفع بنجاح';
 
   @override
-  String get cashOnHands => 'نقدًا';
+  String get cashOnHands => 'خارج التطبيق';
+
+  @override
+  String get insideApp => 'داخل التطبيق';
+
+  @override
+  String get outsideApp => 'خارج التطبيق';
 
   @override
   String get amount => 'المبلغ';
@@ -2355,4 +2361,17 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get technicianTooFarMessage =>
       'هذا الفني بعيد جداً عن موقع الخدمة ولا يمكن اختياره';
+
+  @override
+  String get rebookTechnician => 'إعادة حجز الفني';
+
+  @override
+  String get selectService => 'اختر الخدمة';
+
+  @override
+  String get rejectionProfessionalMessage =>
+      'هل أنت غير متاح حالياً لهذا الموعد؟ بدلاً من الرفض، يمكنك اقتراح وقت أكثر ملاءمة للعميل.';
+
+  @override
+  String get proposeAlternativeTime => 'اقتراح وقت بديل';
 }

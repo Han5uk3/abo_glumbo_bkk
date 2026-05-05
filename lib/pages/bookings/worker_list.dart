@@ -17,6 +17,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:abo_glumbo_bbk/models/job_request.dart';
 
 
 
@@ -26,8 +27,10 @@ class WorkerList extends StatefulWidget {
   final AddressModel? selectedAddress;
   final ValueNotifier<int?> selectedIndexNotifier;
   final Function(UserModel) onWorkerSelected;
+  final Function(String) onBroadcastIdCreated;
   final DateTime selectedDate;
   final Map timeSlot;
+  final bool isOnHour;
 
   const WorkerList({
     super.key,
@@ -35,9 +38,11 @@ class WorkerList extends StatefulWidget {
     required this.selectedAddress,
     required this.selectedIndexNotifier,
     required this.onWorkerSelected,
+    required this.onBroadcastIdCreated,
     required this.service,
     required this.selectedDate,
     required this.timeSlot,
+    required this.isOnHour,
   });
 
   @override
@@ -48,27 +53,172 @@ class _WorkerListState extends State<WorkerList> {
 
   CustomerModel? customerData;
   bool isLoadingCustomer = true;
-
-  // Filter states - all ON by default for "best match" view
-  bool _filterByRating = true;
-  bool _filterByCompletedJobs = true;
-  bool _filterByDistance = true;
-
-  // Distance threshold for "nearby" filter (in km)
-  static const double _nearbyThresholdKm = 50.0;
-  // Minimum rating for "high rating" filter
-  static const double _minRatingThreshold = 3.0;
-
-  late Stream<List<WorkerWithStats>> _workersStream;
+  String? _requestId;
+  int _timerSeconds = 120;
+  Timer? _broadcastTimer;
+  StreamSubscription? _responsesSubscription;
+  List<WorkerWithStats> _acceptedWorkers = [];
+  bool _isBroadcasting = true;
+  Set<String> _busyAgentIds = {};
+  StreamSubscription? _busyAgentsSubscription;
+  
+  bool _filterByDistance = false;
+  bool _filterByRating = false;
+  bool _filterByCompletedJobs = false;
+  final double _nearbyThresholdKm = 50.0;
 
   @override
   void initState() {
     super.initState();
-    _workersStream = AppServices.getWorkersByRolesWithStatsRealtime(
-      widget.category,
-    );
     _fetchCustomerData();
-    _fetchcategory();
+    _subscribeToBusyAgents();
+    _startSearchAndBroadcast();
+  }
+
+  void _subscribeToBusyAgents() {
+    try {
+      final timeOfDay = widget.timeSlot["time"] as TimeOfDay;
+      final bookingDate = DateTime(
+        widget.selectedDate.year,
+        widget.selectedDate.month,
+        widget.selectedDate.day,
+        timeOfDay.hour,
+        timeOfDay.minute,
+      );
+
+      _busyAgentsSubscription = AppFirestore.bookingsCollectionRef
+          .where('bookingDateTime', isEqualTo: Timestamp.fromDate(bookingDate))
+          .snapshots()
+          .listen((snapshot) {
+        final busyIds = <String>{};
+        for (var doc in snapshot.docs) {
+          final data = doc.data() as Map<String, dynamic>;
+          if (data['bookingStatusCode'] == 'A') {
+            final agent = data['agent'];
+            if (agent != null && agent['uid'] != null) {
+              busyIds.add(agent['uid']);
+            }
+          }
+        }
+        if (mounted) setState(() => _busyAgentIds = busyIds);
+      });
+    } catch (e) {
+      debugPrint("Error subscribing to busy agents: $e");
+    }
+  }
+
+  Future<void> _startSearchAndBroadcast() async {
+    // 1. Get eligible workers
+    final workers = await AppServices.getWorkersByRolesWithStatsRealtime(
+      widget.category,
+    ).first;
+
+    // 2. Filter technicians (Availability + Proximity)
+    List<WorkerWithStats> eligible = workers.where((w) => !_busyAgentIds.contains(w.worker.uid)).toList();
+    
+    // Sort by proximity
+    eligible.sort((a, b) => _getWorkerDistance(a).compareTo(_getWorkerDistance(b)));
+    
+    // Take top 5
+    final top5 = eligible.take(5).toList();
+
+    if (top5.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _isBroadcasting = false;
+        });
+      }
+      return;
+    }
+
+    // 3. Create Job Request
+    final requestId = AppFirestore.jobRequestsCollectionRef.doc().id;
+    final now = Timestamp.now();
+    final expiresAt = Timestamp.fromDate(DateTime.now().add(const Duration(seconds: 120)));
+
+    final request = JobRequestModel(
+      id: requestId,
+      service: widget.service,
+      customer: customerData!,
+      address: widget.selectedAddress!,
+      notes: widget.service.description ?? '',
+      issueImage: widget.service.image,
+      issueVideo: null,
+      createdAt: now,
+      expiresAt: expiresAt,
+      isOnHour: widget.isOnHour,
+      bookingDateTime: Timestamp.fromDate(
+        DateTime(
+          widget.selectedDate.year,
+          widget.selectedDate.month,
+          widget.selectedDate.day,
+          (widget.timeSlot['time'] as TimeOfDay).hour,
+          (widget.timeSlot['time'] as TimeOfDay).minute,
+        ),
+      ),
+      status: 'pending',
+    );
+
+    // 4. Broadcast
+    await AppServices.broadcastJobRequest(
+      request: request,
+      workerIds: top5.map((w) => w.worker.uid!).toList(),
+    );
+
+    if (mounted) {
+      setState(() {
+        _requestId = requestId;
+        _isBroadcasting = true;
+      });
+      widget.onBroadcastIdCreated(requestId);
+      _startTimer();
+      _listenToResponses(top5);
+    }
+  }
+
+  void _startTimer() {
+    _broadcastTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_timerSeconds > 0) {
+        setState(() {
+          _timerSeconds--;
+        });
+      } else {
+        _stopBroadcast();
+      }
+    });
+  }
+
+  void _listenToResponses(List<WorkerWithStats> top5) {
+    _responsesSubscription = AppServices.listenToInterestedWorkers(_requestId!).listen((workerIds) {
+      if (mounted) {
+        setState(() {
+          _acceptedWorkers = top5.where((w) => workerIds.contains(w.worker.uid)).toList();
+        });
+      }
+    });
+  }
+
+  void _stopBroadcast() {
+    _broadcastTimer?.cancel();
+    _responsesSubscription?.cancel();
+    if (mounted) {
+      setState(() {
+        _isBroadcasting = false;
+      });
+    }
+    // If no one accepted by now, request is essentially failed
+  }
+
+  @override
+  void dispose() {
+    _broadcastTimer?.cancel();
+    _responsesSubscription?.cancel();
+    // If user exits and hasn't selected, cancel request
+    if (_requestId != null && widget.selectedIndexNotifier.value == null) {
+       AppServices.cancelJobRequest(_requestId!);
+    }
+    _busyAgentsSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _fetchCustomerData() async {
@@ -90,23 +240,13 @@ class _WorkerListState extends State<WorkerList> {
     } catch (e) {
       debugPrint('Error fetching customer data: $e');
     } finally {
-      setState(() => isLoadingCustomer = false);
+      if (mounted) {
+        setState(() => isLoadingCustomer = false);
+      }
     }
   }
 
-  Future<void> _fetchcategory() async {
-    final category = await AppServices.fetchCategory(widget.category);
-    category["name"];
-  }
-
-  @override
-  void dispose() {
-
-    super.dispose();
-  }
-
-  bool get _allFiltersOff =>
-      !_filterByRating && !_filterByCompletedJobs && !_filterByDistance;
+  bool get _allFiltersOff => true; // Filters are disabled in this view as it's a dynamic selection
 
   /// Calculate distance between the booking address and a worker
   double _getWorkerDistance(WorkerWithStats workerStat) {
@@ -174,66 +314,68 @@ class _WorkerListState extends State<WorkerList> {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
-    // ✅ Show loading while fetching customer data
     if (isLoadingCustomer) {
       return Center(child: Loader());
     }
     return Column(
       children: [
-        // Filter chips row
-        _buildFilterChips(locale),
+        // Timer display
+        _buildTimerDisplay(),
 
         // Workers List
         Expanded(
-          child: StreamBuilder<List<WorkerWithStats>>(
-            stream: _workersStream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const _FilteringAnimation();
-              }
-
-              if (snapshot.hasError) {
-                debugPrint("Debug - Stream Error: ${snapshot.error}");
-                return Center(
-                  child: Text(
-                    "${locale.error}: ${snapshot.error}",
-                  ),
-                );
-              }
-
-              List<WorkerWithStats> allWorkers = List<WorkerWithStats>.from(snapshot.data ?? []);
-              List<WorkerWithStats> workers = _applyFiltersAndSort(allWorkers);
-
-              if (workers.isEmpty) {
-                return _EmptyState(
-                  searchQuery: '',
-                  hasActiveFilters: !_allFiltersOff,
-                  totalCount: allWorkers.length,
-                  onClearFilter: () {
-                    setState(() {
-                      _filterByRating = false;
-                      _filterByCompletedJobs = false;
-                      _filterByDistance = false;
-                    });
-                  },
-                  onChangeLocation: () {},
-                );
-              }
-
-              return _WorkerListView(
-                key: ValueKey('worker_list_${_filterByRating}_${_filterByCompletedJobs}_$_filterByDistance'),
-                service: widget.service,
-                workers: workers,
-                selectedAddress: widget.selectedAddress,
-                selectedIndexNotifier: widget.selectedIndexNotifier,
-                onWorkerSelected: widget.onWorkerSelected,
-                selectedDate: widget.selectedDate,
-                timeSlot: widget.timeSlot,
-              );
-            },
-          ),
+          child: _acceptedWorkers.isEmpty && _isBroadcasting
+              ? const _FilteringAnimation()
+              : _acceptedWorkers.isEmpty && !_isBroadcasting
+                  ? _EmptyState(
+                      searchQuery: '',
+                      hasActiveFilters: false,
+                      totalCount: 0,
+                      onClearFilter: () {},
+                      onChangeLocation: () {},
+                    )
+                  : _WorkerListView(
+                      key: ValueKey('worker_list_${_acceptedWorkers.length}'),
+                      service: widget.service,
+                      workers: _acceptedWorkers,
+                      selectedAddress: widget.selectedAddress,
+                      selectedIndexNotifier: widget.selectedIndexNotifier,
+                      onWorkerSelected: widget.onWorkerSelected,
+                      selectedDate: widget.selectedDate,
+                      timeSlot: widget.timeSlot,
+                    ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTimerDisplay() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.timer_outlined, color: AppColors.primary, size: 20),
+          const SizedBox(width: 8),
+          Text(
+            _isBroadcasting
+                ? "Selecting experts... ${_timerSeconds}s"
+                : "Selection time over",
+            style: TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -868,7 +1010,7 @@ class _WorkerListViewState extends State<_WorkerListView>
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          AppLocalizations.of(context)!.technicianTooFarMessage,
+                          AppLocalizations.of(context)!.tooFarAway,
                         ),
                         backgroundColor: Colors.red.shade600,
                         behavior: SnackBarBehavior.floating,

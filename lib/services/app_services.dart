@@ -18,6 +18,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:abo_glumbo_bbk/models/job_request.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AppServices {
@@ -915,7 +916,7 @@ class AppServices {
         .where('jobRoles', arrayContains: categoryDocId)
         // .where('isAdmin', isEqualTo: false) // Removed to include admins
         // .where('isOnline', isEqualTo: true)
-        // .where('isVerified', isEqualTo: true)
+        .where('isVerified', isEqualTo: true)
         .snapshots()
         .map((snapshot) {
           return snapshot.docs
@@ -932,7 +933,7 @@ class AppServices {
                     return false;
                   }
                 }
-                return user.isOnline == true;
+                return user.isOnline == true && user.isVerified == true;
               })
               .toList();
         });
@@ -1400,7 +1401,8 @@ class AppServices {
         if (bookingSnapshot.exists) {
           final data = bookingSnapshot.data() as Map<String, dynamic>;
           if (data['counterProposalStartedAt'] == null) {
-            updateData['counterProposalStartedAt'] = FieldValue.serverTimestamp();
+            updateData['counterProposalStartedAt'] =
+                FieldValue.serverTimestamp();
           }
         }
 
@@ -1438,8 +1440,9 @@ class AppServices {
 
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         final bookingRef = AppFirestore.bookingsCollectionRef.doc(bookingId);
-        final offerRef =
-            AppFirestore.counterOffersCollectionRef.doc(activeCounterOffer.id!);
+        final offerRef = AppFirestore.counterOffersCollectionRef.doc(
+          activeCounterOffer.id!,
+        );
 
         if (response == 'accepted') {
           transaction.update(bookingRef, {
@@ -1496,18 +1499,239 @@ class AppServices {
           .doc(technicianId)
           .collection('notifications')
           .add({
-        'titleEn': titleEn,
-        'titleAr': titleAr,
-        'bodyEn': bodyEn,
-        'bodyAr': bodyAr,
-        'type': type,
-        'data': data,
-        'createdAt': FieldValue.serverTimestamp(),
-        'read': false,
-      });
+            'titleEn': titleEn,
+            'titleAr': titleAr,
+            'bodyEn': bodyEn,
+            'bodyAr': bodyAr,
+            'type': type,
+            'data': data,
+            'createdAt': FieldValue.serverTimestamp(),
+            'read': false,
+          });
     } catch (e) {
       debugPrint('Error recording technician notification: $e');
     }
+  }
+
+  static Future<String> broadcastJobRequest({
+    required JobRequestModel request,
+    required List<String> workerIds,
+  }) async {
+    try {
+      // 1. Save Job Request
+      await AppFirestore.jobRequestsCollectionRef
+          .doc(request.id)
+          .set(request.toJson());
+
+      // 2. Create Job Offers for each worker
+      final batch = FirebaseFirestore.instance.batch();
+      for (var workerId in workerIds) {
+        final offerId = AppFirestore.jobOffersCollectionRef.doc().id;
+        batch.set(AppFirestore.jobOffersCollectionRef.doc(offerId), {
+          'id': offerId,
+          'requestId': request.id,
+          'technicianId': workerId,
+          'status': 'pending',
+          'createdAt': FieldValue.serverTimestamp(),
+          'expiresAt': request.expiresAt,
+          'customerName': request.customer.name,
+          'serviceLocation': request.address.toJson(),
+          'serviceName': request.service.name,
+          'serviceNameAr': request.service.name_ar,
+          'notes': request.notes,
+          'issueImage': request.issueImage,
+          'issueVideo': request.issueVideo,
+        });
+      }
+      await batch.commit();
+
+      // 3. Send Push Notifications to each worker
+      for (var workerId in workerIds) {
+        await recordTechnicianNotification(
+          technicianId: workerId,
+          titleEn: 'New Job Offer!',
+          titleAr: 'عرض عمل جديد!',
+          bodyEn:
+              'A new service request is available nearby. Tap to view and accept.',
+          bodyAr: 'يوجد طلب خدمة جديد متاح بالقرب منك. اضغط للعرض والقبول.',
+          type: 'job_offer',
+          data: {'requestId': request.id},
+        );
+      }
+      return request.id;
+    } catch (e) {
+      debugPrint('Error broadcasting job request: $e');
+      rethrow;
+    }
+  }
+
+  static Stream<List<String>> listenToInterestedWorkers(String requestId) {
+    return AppFirestore.jobOffersCollectionRef
+        .where('requestId', isEqualTo: requestId)
+        .where('status', isEqualTo: 'accepted_by_technician')
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => doc['technicianId'] as String)
+              .toList();
+        });
+  }
+
+  static Future<List<UserModel>> getWorkersByIds(List<String> workerIds) async {
+    if (workerIds.isEmpty) return [];
+
+    // Firestore whereIn is limited to 10 items
+    final List<UserModel> workers = [];
+    for (var i = 0; i < workerIds.length; i += 10) {
+      final chunk = workerIds.sublist(
+        i,
+        i + 10 > workerIds.length ? workerIds.length : i + 10,
+      );
+      final snapshot = await AppFirestore.usersCollectionRef
+          .where(FieldPath.documentId, whereIn: chunk)
+          .get();
+      workers.addAll(
+        snapshot.docs.map((doc) => UserModel.fromDocumentSnapshot(doc)),
+      );
+    }
+    return workers;
+  }
+
+  static Future<void> finalizeBooking({
+    required String requestId,
+    required UserModel selectedTechnician,
+  }) async {
+    final requestDoc = await AppFirestore.jobRequestsCollectionRef
+        .doc(requestId)
+        .get();
+    if (!requestDoc.exists) throw Exception('Job request not found');
+
+    final data = requestDoc.data() as Map<String, dynamic>;
+    final request = JobRequestModel.fromJson(data);
+
+    // Create a standard booking from the job request
+    final bookingId = AppFirestore.bookingsCollectionRef.doc().id;
+    final booking = {
+      'id': bookingId,
+      'customerId': request.customer.uid,
+      'customer': request.customer.toJson(),
+      'agent': {
+        'uid': selectedTechnician.uid,
+        'name': selectedTechnician.name,
+        'phone': selectedTechnician.phone,
+        'profileUrl': selectedTechnician.profileUrl,
+      },
+      'service': request.service.toJson(),
+      'address': request.address.toJson(),
+      'bookingDateTime': request.bookingDateTime ?? request.createdAt,
+      'bookingStatusCode': 'A', // Accepted
+      'paymentModeCode': 'O', // Default to Cash (O)
+      'paymentCompleted': false,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+      'isOnHour': request.isOnHour,
+      'notes': request.notes,
+      'issueImage': request.issueImage,
+      'issueVideo': request.issueVideo,
+      'requestId': requestId,
+    };
+
+    final batch = FirebaseFirestore.instance.batch();
+
+    // 1. Create booking
+    batch.set(AppFirestore.bookingsCollectionRef.doc(bookingId), booking);
+
+    // 2. Update request status
+    batch.update(AppFirestore.jobRequestsCollectionRef.doc(requestId), {
+      'status': 'finalized',
+      'bookingId': bookingId,
+    });
+
+    // 3. Mark all offers for this request as closed/finalized
+    final offers = await AppFirestore.jobOffersCollectionRef
+        .where('requestId', isEqualTo: requestId)
+        .get();
+    for (var doc in offers.docs) {
+      batch.update(doc.reference, {'status': 'closed'});
+    }
+
+    await batch.commit();
+  }
+
+  static Future<void> cancelJobRequest(String requestId) async {
+    try {
+      await AppFirestore.jobRequestsCollectionRef.doc(requestId).update({
+        'status': 'cancelled',
+      });
+      // Optionally expire all offers
+      final offers = await AppFirestore.jobOffersCollectionRef
+          .where('requestId', isEqualTo: requestId)
+          .get();
+      final batch = FirebaseFirestore.instance.batch();
+      for (var doc in offers.docs) {
+        batch.update(doc.reference, {'status': 'cancelled'});
+      }
+      await batch.commit();
+    } catch (e) {
+      debugPrint('Error cancelling job request: $e');
+    }
+  }
+
+  static Stream<List<Map<String, dynamic>>> listenToJobOffersForBooking(
+    String bookingId,
+  ) {
+    return AppFirestore.jobOffersCollectionRef
+        .where('bookingId', isEqualTo: bookingId)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => doc.data() as Map<String, dynamic>)
+              .toList(),
+        );
+  }
+
+  static Future<void> respondToJobOffer({
+    required String bookingId,
+    required String offerId,
+    required bool accept,
+    required Timestamp? proposedTime,
+    required String technicianId,
+  }) async {
+    final batch = FirebaseFirestore.instance.batch();
+
+    if (accept && proposedTime != null) {
+      // Fetch technician data
+      final techSnapshot = await AppFirestore.usersCollectionRef
+          .doc(technicianId)
+          .get();
+      if (techSnapshot.exists) {
+        final techData = techSnapshot.data() as Map<String, dynamic>;
+        batch.update(AppFirestore.bookingsCollectionRef.doc(bookingId), {
+          'bookingDateTime': proposedTime,
+          'bookingStatusCode': 'A',
+          'agent': {
+            'uid': techData['uid'],
+            'name': techData['name'],
+            'phone': techData['phone'],
+            'profileUrl': techData['profileUrl'],
+          },
+          'autoAssignmentStatus': 'accepted',
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        batch.update(AppFirestore.jobOffersCollectionRef.doc(offerId), {
+          'status': 'accepted',
+          'acceptedAt': FieldValue.serverTimestamp(),
+        });
+      }
+    } else {
+      batch.update(AppFirestore.jobOffersCollectionRef.doc(offerId), {
+        'status': 'declined',
+        'declinedAt': FieldValue.serverTimestamp(),
+      });
+    }
+
+    await batch.commit();
   }
 }
 

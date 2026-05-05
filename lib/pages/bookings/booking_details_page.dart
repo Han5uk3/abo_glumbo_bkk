@@ -21,6 +21,7 @@ import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/rebook_service_selection.dart';
 import 'package:flutter/services.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart';
@@ -412,6 +413,43 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                 ),
                               ),
                             ),
+                          if (booking.bookingStatusCode == 'C')
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            RebookServiceSelection(
+                                              technician: booking.agent!,
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.blue1,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    localization.rebookTechnician,
+                                    style: DMSansFont.textStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ],
@@ -796,7 +834,21 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                           ),
                         ),
                         SizedBox(height: 10),
-                        _buildCounterOfferUI(context, booking),
+                        StreamBuilder<List<Map<String, dynamic>>>(
+                          stream: AppServices.listenToJobOffersForBooking(
+                            booking.id,
+                          ),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+                            return _buildCounterOfferUI(
+                              context,
+                              booking,
+                              snapshot.data!,
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -1134,14 +1186,14 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ? AppLocalizations.of(context)!.inspection
                 : AppLocalizations.of(context)!.fullService,
           ),
-          if (booking.paymentCompleted)
+          if (booking.paymentCompleted || booking.paymentModeCode.isNotEmpty)
             _buildInfoRow(
               AppLocalizations.of(context)!.paymentMode,
               booking.paymentModeCode.toLowerCase() == 'c'
-                  ? AppLocalizations.of(context)!.card
+                  ? AppLocalizations.of(context)!.insideApp
                   : booking.paymentModeCode.toLowerCase() == 'a'
                   ? AppLocalizations.of(context)!.applePay
-                  : AppLocalizations.of(context)!.cashPayment,
+                  : AppLocalizations.of(context)!.outsideApp,
             ),
         ],
 
@@ -1988,299 +2040,149 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     );
   }
 
-  Widget _buildCounterOfferUI(BuildContext context, BookingModel booking) {
-    final activeOffer = booking.activeCounterOffer;
+  Widget _buildCounterOfferUI(
+    BuildContext context,
+    BookingModel booking,
+    List<Map<String, dynamic>> jobOffers,
+  ) {
     final l10n = AppLocalizations.of(context)!;
     final locale = l10n.localeName;
 
-    if (activeOffer != null) {
-      if (activeOffer.status == 'pending') {
-        if (activeOffer.proposedBy == 'technician') {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.shade200),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.event_repeat_rounded,
-                      color: Colors.blue.shade700,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        l10n.counterOfferFromTechnician,
-                        style: DMSansFont.textStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.blue.shade900,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.technicianProposedNewTime,
-                  style: DMSansFont.textStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue.shade100),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.access_time_filled,
-                        size: 18,
-                        color: Colors.blue.shade400,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          formatDateTimeDay(
-                            activeOffer.proposedTime.toDate(),
-                            locale,
-                          ),
-                          style: DMSansFont.textStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => _handleCounterOfferResponse(
-                          context,
-                          booking,
-                          'rejected',
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.red,
-                          side: const BorderSide(color: Colors.red),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(l10n.rejectOffer),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () =>
-                            _handleCounterConfirm(context, booking, 'accepted'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(l10n.acceptOffer),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        } else {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            padding: const EdgeInsets.all(16),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.orange.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.orange.shade200),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.hourglass_empty_rounded,
-                      color: Colors.orange,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      l10n.waitingForTechnician,
-                      style: DMSansFont.textStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.orange.shade900,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.waitingForYourResponse,
-                  style: DMSansFont.textStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.orange.shade100),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.schedule,
-                        size: 18,
-                        color: Colors.orange.shade400,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          formatDateTimeDay(
-                            activeOffer.proposedTime.toDate(),
-                            locale,
-                          ),
-                          style: DMSansFont.textStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-      } else {
-        // Offer is either 'accepted' or 'rejected'
-        final isRejected = activeOffer.status == 'rejected';
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          padding: const EdgeInsets.all(16),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: isRejected ? Colors.red.shade50 : Colors.green.shade50,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isRejected ? Colors.red.shade200 : Colors.green.shade200,
-            ),
+    final counterOffer = jobOffers.firstWhere(
+      (o) => o['status'] == 'counter_offered',
+      orElse: () => {},
+    );
+
+    if (counterOffer.isEmpty) return const SizedBox.shrink();
+
+    final proposedTime = counterOffer['proposedTime'] as Timestamp?;
+    if (proposedTime == null) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(
-                    isRejected
-                        ? Icons.cancel_outlined
-                        : Icons.check_circle_outline,
-                    color: isRejected ? Colors.red : Colors.green,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    isRejected ? "Proposal Rejected" : "Proposal Accepted",
-                    style: DMSansFont.textStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: isRejected
-                          ? Colors.red.shade900
-                          : Colors.green.shade900,
-                    ),
-                  ),
-                ],
+              Icon(
+                Icons.event_repeat_rounded,
+                color: Colors.blue.shade700,
+                size: 24,
               ),
-              const SizedBox(height: 8),
-              if (isRejected) ...[
-                Text(
-                  activeOffer.proposedBy == 'customer'
-                      ? "Technician rejected your proposal."
-                      : "You rejected technician's proposal.",
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.counterOfferFromTechnician,
                   style: DMSansFont.textStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.blue.shade900,
                   ),
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) =>
-                            CounterProposeSheet(booking: booking),
-                      );
-                    },
-                    icon: const Icon(Icons.history_toggle_off, size: 20),
-                    label: Text(l10n.proposeNewTime),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-              ] else ...[
-                Text(
-                  "Appointment rescheduled to: ${formatDateTimeDay(activeOffer.proposedTime.toDate(), locale)}",
-                  style: DMSansFont.textStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
+              ),
             ],
           ),
-        );
-      }
-    }
-    return const SizedBox.shrink();
+          const SizedBox(height: 12),
+          Text(
+            l10n.technicianProposedNewTime,
+            style: DMSansFont.textStyle(fontSize: 14, color: Colors.black87),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.blue.shade100),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.access_time_filled,
+                  size: 18,
+                  color: Colors.blue.shade400,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    formatDateTimeDay(proposedTime.toDate(), locale),
+                    style: DMSansFont.textStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue.shade900,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    AppServices.respondToJobOffer(
+                      bookingId: booking.id,
+                      offerId: counterOffer['id'],
+                      accept: false,
+                      proposedTime: null,
+                      technicianId: counterOffer['technicianId'],
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: const BorderSide(color: Colors.red),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(l10n.rejectOffer),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    AppServices.respondToJobOffer(
+                      bookingId: booking.id,
+                      offerId: counterOffer['id'],
+                      accept: true,
+                      proposedTime: proposedTime,
+                      technicianId: counterOffer['technicianId'],
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.acceptOffer,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _handleCounterConfirm(

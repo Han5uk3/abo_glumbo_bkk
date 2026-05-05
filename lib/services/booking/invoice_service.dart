@@ -110,7 +110,7 @@ class InvoiceService {
                       if (booking.agent?.phone != null) pw.Text("Tech Phone: ${booking.agent!.phone}"),
                       pw.Text("Completed At: $completedAtStr"),
                       pw.Text("Warranty: $warrantyDuration"),
-                      pw.Text("Payment Mode: ${isThroughApp ? 'Through App' : 'Outside App'}"),
+                      pw.Text("Payment Mode: ${booking.paymentModeCode.toUpperCase() == 'C' ? 'Inside App' : booking.paymentModeCode.toUpperCase() == 'A' ? 'Apple Pay' : 'Outside App'}"),
                       if (booking.orderId != null || booking.transactionId != null) 
                         pw.Text("Transaction ID: ${booking.orderId ?? booking.transactionId}"),
                     ],

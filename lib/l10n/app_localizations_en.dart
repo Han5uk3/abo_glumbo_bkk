@@ -337,7 +337,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noBookingsFound => 'No bookings found.';
 
   @override
-  String get searchServices => 'Search services';
+  String get searchServices => 'Search services...';
 
   @override
   String get noServicesInYourWishlist => 'No services in your wishlist';
@@ -498,7 +498,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get payment => 'Payment';
 
   @override
-  String get cards => 'Payment by card';
+  String get cards => 'Inside App';
 
   @override
   String get applePay => 'Payment by Apple Pay';
@@ -511,7 +511,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your payment has been processed successfully.';
 
   @override
-  String get cashOnHands => 'Payment in cash';
+  String get cashOnHands => 'Outside App';
+
+  @override
+  String get insideApp => 'Inside App';
+
+  @override
+  String get outsideApp => 'Outside App';
 
   @override
   String get amount => 'Amount';
@@ -2391,4 +2397,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get technicianTooFarMessage =>
       'This technician is too far from your service location and cannot be selected';
+
+  @override
+  String get rebookTechnician => 'Rebook Technician';
+
+  @override
+  String get selectService => 'Select Service';
+
+  @override
+  String get rejectionProfessionalMessage =>
+      'Are you currently unavailable for this appointment? Instead of rejecting, you can propose a more convenient time for the customer.';
+
+  @override
+  String get proposeAlternativeTime => 'Propose Alternative Time';
 }

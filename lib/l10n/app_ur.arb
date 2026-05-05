@@ -156,11 +156,13 @@
   "addImageOrVideoOfIssue": "مسئلے کی تصویر یا ویڈیو شامل کریں",
   "completePayment": "ادائیگی مکمل کریں",
   "payment": "ادائیگی",
-  "cards": "کارڈ کے ذریعے ادائیگی",
+  "cards": "ایپ کے اندر",
   "applePay": "ایپل پے کے ذریعے ادائیگی",
   "completedBold": "مکمل شدہ",
   "paymentProcessedSuccessfully": "آپ کی ادائیگی کامیابی سے مکمل ہو گئی ہے۔",
-  "cashOnHands": "نقد ادائیگی",
+  "cashOnHands": "ایپ سے باہر",
+  "insideApp": "ایپ کے اندر",
+  "outsideApp": "ایپ سے باہر",
   "amount": "رقم",
   "processingPayment": "ادائیگی کا عمل جاری ہے",
   "amountPaid": "ادا شدہ رقم",
@@ -768,5 +770,10 @@
   "tryRemovingFilters": "مزید ٹیکنیشنز دیکھنے کے لیے کچھ فلٹرز ہٹائیں",
   "showAllTechnicians": "تمام ٹیکنیشنز دکھائیں",
   "tooFarAway": "بہت دور",
-  "technicianTooFarMessage": "یہ ٹیکنیشن آپ کی سروس کی جگہ سے بہت دور ہے اور اسے منتخب نہیں کیا جا سکتا"
+  "technicianTooFarMessage": "یہ ٹیکنیشن آپ کی سروس کی جگہ سے بہت دور ہے اور اسے منتخب نہیں کیا جا سکتا",
+  "rebookTechnician": "ٹیکنیشن کو دوبارہ بک کریں",
+  "selectService": "سروس منتخب کریں",
+  "searchServices": "سروسز تلاش کریں...",
+  "rejectionProfessionalMessage": "کیا آپ اس اپوائنٹمنٹ کے لیے دستیاب نہیں ہیں؟ مسترد کرنے کے بجائے، آپ کسٹمر کے لیے زیادہ مناسب وقت تجویز کر سکتے ہیں۔",
+  "proposeAlternativeTime": "متبادل وقت تجویز کریں"
 }
