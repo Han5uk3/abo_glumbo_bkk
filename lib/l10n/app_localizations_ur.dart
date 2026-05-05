@@ -2383,4 +2383,22 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get listeningForSms => 'ایس ایم ایس کا انتظار ہے...';
+
+  @override
+  String get noTechniciansMatchFilters =>
+      'آپ کے فلٹرز سے کوئی ٹیکنیشن نہیں ملا';
+
+  @override
+  String get tryRemovingFilters =>
+      'مزید ٹیکنیشنز دیکھنے کے لیے کچھ فلٹرز ہٹائیں';
+
+  @override
+  String get showAllTechnicians => 'تمام ٹیکنیشنز دکھائیں';
+
+  @override
+  String get tooFarAway => 'بہت دور';
+
+  @override
+  String get technicianTooFarMessage =>
+      'یہ ٹیکنیشن آپ کی سروس کی جگہ سے بہت دور ہے اور اسے منتخب نہیں کیا جا سکتا';
 }

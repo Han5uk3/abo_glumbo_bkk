@@ -718,7 +718,186 @@ class _BookServicePageState extends State<BookServicePage> {
           endIndent: 16,
         ),
         if (selectedTimeCategory != -1) _buildTimeSlots(),
+        if (selectedDate != null &&
+            selectedTimeCategory != -1 &&
+            selectedTimeSlot != -1)
+          _buildInspectionFeeInfo(),
       ],
+    );
+  }
+
+  Widget _buildInspectionFeeInfo() {
+    final isOnHour = _isOnHour();
+    final price = _getSelectedPrice();
+    final hasDiscount = (widget.service.discountPercentage ?? 0) > 0;
+    final discountedPrice = widget.service.getDiscountedPrice(price);
+
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isOnHour
+                ? Colors.green.shade200
+                : Colors.orange.shade200,
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: (isOnHour ? Colors.green : Colors.orange).withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // On-hour / Off-hour tag
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isOnHour
+                        ? Colors.green.shade50
+                        : Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isOnHour
+                          ? Colors.green.shade300
+                          : Colors.orange.shade300,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isOnHour
+                            ? Icons.schedule_rounded
+                            : Icons.nightlight_round,
+                        size: 14,
+                        color: isOnHour
+                            ? Colors.green.shade700
+                            : Colors.orange.shade700,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        isOnHour
+                            ? (AppLocalizations.of(context)?.onHourBooking ??
+                                'On-Hour')
+                            : (AppLocalizations.of(context)?.offHourBooking ??
+                                'Off-Hour'),
+                        style: DMSansFont.textStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: isOnHour
+                              ? Colors.green.shade700
+                              : Colors.orange.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 18,
+                  color: Colors.grey.shade400,
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            // Inspection Fee row
+            Row(
+              children: [
+                Icon(
+                  Icons.receipt_long_rounded,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  AppLocalizations.of(context)?.inspectionFee ??
+                      'Inspection Fee',
+                  style: DMSansFont.textStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                const Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (hasDiscount)
+                      Text(
+                        '${price.toStringAsFixed(2)} ${AppLocalizations.of(context)?.sar ?? "SAR"}',
+                        style: DMSansFont.textStyle(
+                          fontSize: 11,
+                          color: Colors.grey.shade400,
+                          decoration: TextDecoration.lineThrough,
+                        ),
+                      ),
+                    Text(
+                      '${(hasDiscount ? discountedPrice : price).toStringAsFixed(2)} ${AppLocalizations.of(context)?.sar ?? "SAR"}',
+                      style: DMSansFont.textStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.green1,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            // Disclaimer note
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.bgBlueTint,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: Icon(
+                      Icons.info_outline,
+                      size: 14,
+                      color: AppColors.secondary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)?.inspectionFeeNote(
+                            (hasDiscount ? discountedPrice : price)
+                                .toStringAsFixed(2),
+                          ) ??
+                          'Inspection fee: ${(hasDiscount ? discountedPrice : price).toStringAsFixed(2)} SAR — paid only after the technician arrives and inspects the issue.',
+                      style: DMSansFont.textStyle(
+                        fontSize: 11,
+                        color: AppColors.secondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

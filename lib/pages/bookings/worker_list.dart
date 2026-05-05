@@ -13,6 +13,7 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/worker_card.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,14 +44,20 @@ class WorkerList extends StatefulWidget {
   State<WorkerList> createState() => _WorkerListState();
 }
 
-enum FilterType { premium, nearby }
-
 class _WorkerListState extends State<WorkerList> {
-
 
   CustomerModel? customerData;
   bool isLoadingCustomer = true;
-  FilterType _filterType = FilterType.premium;
+
+  // Filter states - all ON by default for "best match" view
+  bool _filterByRating = true;
+  bool _filterByCompletedJobs = true;
+  bool _filterByDistance = true;
+
+  // Distance threshold for "nearby" filter (in km)
+  static const double _nearbyThresholdKm = 50.0;
+  // Minimum rating for "high rating" filter
+  static const double _minRatingThreshold = 3.0;
 
   late Stream<List<WorkerWithStats>> _workersStream;
 
@@ -87,10 +94,6 @@ class _WorkerListState extends State<WorkerList> {
     }
   }
 
-
-
-  // ✅ Pre-select customer's location as default filter
-
   Future<void> _fetchcategory() async {
     final category = await AppServices.fetchCategory(widget.category);
     category["name"];
@@ -102,36 +105,84 @@ class _WorkerListState extends State<WorkerList> {
     super.dispose();
   }
 
-  // double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-  //   const R = 6371;
-  //   final dLat = _toRadians(lat2 - lat1);
-  //   final dLon = _toRadians(lon2 - lon1);
-  //   final a =
-  //       sin(dLat / 2) * sin(dLat / 2) +
-  //       cos(_toRadians(lat1)) *
-  //           cos(_toRadians(lat2)) *
-  //           sin(dLon / 2) *
-  //           sin(dLon / 2);
-  //   final c = 2 * atan2(sqrt(a), sqrt(1 - a));
-  //   return R * c;
-  // }
+  bool get _allFiltersOff =>
+      !_filterByRating && !_filterByCompletedJobs && !_filterByDistance;
+
+  /// Calculate distance between the booking address and a worker
+  double _getWorkerDistance(WorkerWithStats workerStat) {
+    if (widget.selectedAddress?.lat != null &&
+        widget.selectedAddress?.lon != null &&
+        workerStat.worker.lastKnownLocation != null) {
+      return LocationHelper.calculateDistance(
+        widget.selectedAddress!.lat!,
+        widget.selectedAddress!.lon!,
+        workerStat.worker.lastKnownLocation!.latitude,
+        workerStat.worker.lastKnownLocation!.longitude,
+      );
+    }
+    return 99999;
+  }
+
+  /// Filter and sort workers based on active filters
+  List<WorkerWithStats> _applyFiltersAndSort(List<WorkerWithStats> workers) {
+    List<WorkerWithStats> filtered = List<WorkerWithStats>.from(workers);
+
+    // When all filters are ON (default), show best match: nearby + high rating
+    // When specific filters are ON, filter by those criteria
+    // When all filters are OFF, show everyone unsorted
+
+    if (_allFiltersOff) {
+      // Show all workers, no filtering, just basic sort by name
+      return filtered;
+    }
+
+    // Apply filters
+    if (_filterByDistance && widget.selectedAddress?.lat != null && widget.selectedAddress?.lon != null) {
+      filtered = filtered.where((w) {
+        final dist = _getWorkerDistance(w);
+        return dist <= _nearbyThresholdKm;
+      }).toList();
+    }
 
 
 
-  // double _toRadians(double degree) {
-  //   return degree * pi / 180;
-  // }
+    // Sort based on active filter priorities
+    filtered.sort((a, b) {
+      if (_filterByRating) {
+        int ratingCompare = b.rating.compareTo(a.rating);
+        if (ratingCompare != 0) return ratingCompare;
+      }
 
+      if (_filterByCompletedJobs) {
+        int jobsCompare = b.completedJobs.compareTo(a.completedJobs);
+        if (jobsCompare != 0) return jobsCompare;
+      }
 
+      if (_filterByDistance) {
+        double distA = _getWorkerDistance(a);
+        double distB = _getWorkerDistance(b);
+        int distCompare = distA.compareTo(distB);
+        if (distCompare != 0) return distCompare;
+      }
+
+      return 0;
+    });
+
+    return filtered;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     // ✅ Show loading while fetching customer data
     if (isLoadingCustomer) {
       return Center(child: Loader());
     }
     return Column(
       children: [
+        // Filter chips row
+        _buildFilterChips(locale),
+
         // Workers List
         Expanded(
           child: StreamBuilder<List<WorkerWithStats>>(
@@ -145,63 +196,32 @@ class _WorkerListState extends State<WorkerList> {
                 debugPrint("Debug - Stream Error: ${snapshot.error}");
                 return Center(
                   child: Text(
-                    "${AppLocalizations.of(context)!.error}: ${snapshot.error}",
+                    "${locale.error}: ${snapshot.error}",
                   ),
                 );
               }
 
-              List<WorkerWithStats> workers = List<WorkerWithStats>.from(snapshot.data ?? []);
-
-              // Sort workers based on filter type
-              if (widget.selectedAddress?.lat != null && widget.selectedAddress?.lon != null) {
-                workers.sort((a, b) {
-                  final lat1 = widget.selectedAddress!.lat!;
-                  final lon1 = widget.selectedAddress!.lon!;
-
-                  double distA = 99999;
-                  if (a.worker.lastKnownLocation != null) {
-                    distA = LocationHelper.calculateDistance(
-                      lat1, lon1, 
-                      a.worker.lastKnownLocation!.latitude, 
-                      a.worker.lastKnownLocation!.longitude
-                    );
-                  }
-
-                  double distB = 99999;
-                  if (b.worker.lastKnownLocation != null) {
-                    distB = LocationHelper.calculateDistance(
-                      lat1, lon1, 
-                      b.worker.lastKnownLocation!.latitude, 
-                      b.worker.lastKnownLocation!.longitude
-                    );
-                  }
-
-                  if (_filterType == FilterType.premium) {
-                    // Premium sort: Rating -> Completion -> Distance
-                    int ratingCompare = b.rating.compareTo(a.rating);
-                    if (ratingCompare != 0) return ratingCompare;
-
-                    int completionCompare = b.completedJobs.compareTo(a.completedJobs);
-                    if (completionCompare != 0) return completionCompare;
-
-                    return distA.compareTo(distB);
-                  } else {
-                    // Nearby sort: Distance
-                    return distA.compareTo(distB);
-                  }
-                });
-              }
+              List<WorkerWithStats> allWorkers = List<WorkerWithStats>.from(snapshot.data ?? []);
+              List<WorkerWithStats> workers = _applyFiltersAndSort(allWorkers);
 
               if (workers.isEmpty) {
                 return _EmptyState(
                   searchQuery: '',
-                  onClearFilter: () {},
+                  hasActiveFilters: !_allFiltersOff,
+                  totalCount: allWorkers.length,
+                  onClearFilter: () {
+                    setState(() {
+                      _filterByRating = false;
+                      _filterByCompletedJobs = false;
+                      _filterByDistance = false;
+                    });
+                  },
                   onChangeLocation: () {},
                 );
               }
 
               return _WorkerListView(
-                key: ValueKey('worker_list_${_filterType.name}'),
+                key: ValueKey('worker_list_${_filterByRating}_${_filterByCompletedJobs}_$_filterByDistance'),
                 service: widget.service,
                 workers: workers,
                 selectedAddress: widget.selectedAddress,
@@ -214,6 +234,150 @@ class _WorkerListState extends State<WorkerList> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildFilterChips(AppLocalizations locale) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _buildFilterChip(
+              label: locale.highestRating,
+              icon: Icons.star_rounded,
+              isActive: _filterByRating,
+              activeColor: Colors.amber,
+              onTap: () {
+                setState(() => _filterByRating = !_filterByRating);
+              },
+            ),
+            const SizedBox(width: 8),
+            _buildFilterChip(
+              label: locale.mostOrders,
+              icon: Icons.workspace_premium_rounded,
+              isActive: _filterByCompletedJobs,
+              activeColor: AppColors.green2,
+              onTap: () {
+                setState(() => _filterByCompletedJobs = !_filterByCompletedJobs);
+              },
+            ),
+            const SizedBox(width: 8),
+            _buildFilterChip(
+              label: locale.nearest,
+              icon: Icons.near_me_rounded,
+              isActive: _filterByDistance,
+              activeColor: AppColors.secondary,
+              onTap: () {
+                setState(() => _filterByDistance = !_filterByDistance);
+              },
+            ),
+            if (!_allFiltersOff) ...[
+              const SizedBox(width: 8),
+              _buildClearAllChip(locale),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChip({
+    required String label,
+    required IconData icon,
+    required bool isActive,
+    required Color activeColor,
+    required VoidCallback onTap,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: isActive ? activeColor.withOpacity(0.12) : Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isActive ? activeColor : Colors.grey.shade300,
+                width: isActive ? 1.5 : 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 16,
+                  color: isActive ? activeColor : Colors.grey.shade500,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                    color: isActive ? activeColor.withOpacity(0.9) : Colors.grey.shade600,
+                  ),
+                ),
+                if (isActive) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.check_circle_rounded,
+                    size: 14,
+                    color: activeColor,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClearAllChip(AppLocalizations locale) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _filterByRating = false;
+            _filterByCompletedJobs = false;
+            _filterByDistance = false;
+          });
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.red.shade50,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.red.shade200),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.close_rounded, size: 14, color: Colors.red.shade400),
+              const SizedBox(width: 4),
+              Text(
+                locale.clear,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.red.shade400,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -358,6 +522,8 @@ class _FilteringAnimationState extends State<_FilteringAnimation>
 // Empty State
 class _EmptyState extends StatelessWidget {
   final String searchQuery;
+  final bool hasActiveFilters;
+  final int totalCount;
   final VoidCallback onClearFilter;
   final VoidCallback onChangeLocation;
 
@@ -365,10 +531,13 @@ class _EmptyState extends StatelessWidget {
     required this.searchQuery,
     required this.onClearFilter,
     required this.onChangeLocation,
+    this.hasActiveFilters = false,
+    this.totalCount = 0,
   });
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Center(
       child: SingleChildScrollView(
         child: Padding(
@@ -377,17 +546,17 @@ class _EmptyState extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.search_off_rounded,
+                hasActiveFilters ? Icons.filter_list_off_rounded : Icons.search_off_rounded,
                 size: 64,
                 color: Colors.grey.shade400,
               ),
               const SizedBox(height: 16),
               Text(
                 searchQuery.isNotEmpty
-                    ? AppLocalizations.of(
-                        context,
-                      )!.noTechniciansFoundMatchingYourSearch
-                    : "No technicians found",
+                    ? locale.noTechniciansFoundMatchingYourSearch
+                    : hasActiveFilters
+                        ? locale.noTechniciansMatchFilters
+                        : locale.noTechniciansFound,
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.black87,
@@ -395,23 +564,35 @@ class _EmptyState extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              if (searchQuery.isNotEmpty) ...[
+              if (hasActiveFilters && totalCount > 0) ...[
                 const SizedBox(height: 8),
                 Text(
-                  '"$searchQuery"',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade500,
-                    fontStyle: FontStyle.italic,
+                  locale.tryRemovingFilters,
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                TextButton.icon(
+                  onPressed: onClearFilter,
+                  icon: const Icon(Icons.filter_list_off_rounded, size: 18),
+                  label: Text(locale.showAllTechnicians),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(color: AppColors.primary.withOpacity(0.3)),
+                    ),
                   ),
                 ),
+              ] else if (!hasActiveFilters) ...[
+                const SizedBox(height: 12),
+                Text(
+                  locale.noTechniciansFound,
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                  textAlign: TextAlign.center,
+                ),
               ],
-              const SizedBox(height: 12),
-              Text(
-                "No technicians are available at the moment.",
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-                textAlign: TextAlign.center,
-              ),
             ],
           ),
         ),
@@ -650,6 +831,20 @@ class _WorkerListViewState extends State<_WorkerListView>
       itemBuilder: (context, index) {
         final statData = widget.workers[index];
 
+        // Calculate if the technician is too far (>50km)
+        bool isTooFar = false;
+        if (widget.selectedAddress?.lat != null &&
+            widget.selectedAddress?.lon != null &&
+            statData.worker.lastKnownLocation != null) {
+          final dist = LocationHelper.calculateDistance(
+            widget.selectedAddress!.lat!,
+            widget.selectedAddress!.lon!,
+            statData.worker.lastKnownLocation!.latitude,
+            statData.worker.lastKnownLocation!.longitude,
+          );
+          isTooFar = dist > 50.0;
+        }
+
         return AnimatedBuilder(
           animation: _itemAnimations[index],
           builder: (context, child) {
@@ -667,20 +862,22 @@ class _WorkerListViewState extends State<_WorkerListView>
               final isSelected = selectedIndex == index;
               return GestureDetector(
                 onTap: () {
-                  /*
-                  if (busyAgentIds.contains(statData.worker.uid)) {
+                  if (isTooFar) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.technicianIsBusyatThisTime,
+                          AppLocalizations.of(context)!.technicianTooFarMessage,
                         ),
+                        backgroundColor: Colors.red.shade600,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                     return;
                   }
-                  */
                   widget.selectedIndexNotifier.value = index;
                   widget.onWorkerSelected(statData.worker);
                 },
@@ -698,11 +895,12 @@ class _WorkerListViewState extends State<_WorkerListView>
                         buildingNumber: '',
                         phoneNumber: '',
                       ),
-                  isSelected: isSelected,
+                  isSelected: isSelected && !isTooFar,
                   localizedJobRoles: _getLocalizedRoles(
                     statData.worker,
-                  ), // Pass localized names
-                  isBusy: false, // temporarily for testing
+                  ),
+                  isBusy: false,
+                  isTooFar: isTooFar,
                 ),
               );
             },

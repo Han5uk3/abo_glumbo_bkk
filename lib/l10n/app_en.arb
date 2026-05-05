@@ -761,5 +761,10 @@
   "autoAssignMessage": "Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.",
   "youSelectedTechnician": "You selected a technician",
   "confirmBooking": "Confirm Booking",
-  "listeningForSms": "Listening for SMS..."
+  "listeningForSms": "Listening for SMS...",
+  "noTechniciansMatchFilters": "No technicians match your filters",
+  "tryRemovingFilters": "Try removing some filters to see more technicians",
+  "showAllTechnicians": "Show All Technicians",
+  "tooFarAway": "Too Far Away",
+  "technicianTooFarMessage": "This technician is too far from your service location and cannot be selected"
 }

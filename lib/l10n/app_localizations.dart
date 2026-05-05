@@ -4563,6 +4563,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Listening for SMS...'**
   String get listeningForSms;
+
+  /// No description provided for @noTechniciansMatchFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'No technicians match your filters'**
+  String get noTechniciansMatchFilters;
+
+  /// No description provided for @tryRemovingFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try removing some filters to see more technicians'**
+  String get tryRemovingFilters;
+
+  /// No description provided for @showAllTechnicians.
+  ///
+  /// In en, this message translates to:
+  /// **'Show All Technicians'**
+  String get showAllTechnicians;
+
+  /// No description provided for @tooFarAway.
+  ///
+  /// In en, this message translates to:
+  /// **'Too Far Away'**
+  String get tooFarAway;
+
+  /// No description provided for @technicianTooFarMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This technician is too far from your service location and cannot be selected'**
+  String get technicianTooFarMessage;
 }
 
 class _AppLocalizationsDelegate

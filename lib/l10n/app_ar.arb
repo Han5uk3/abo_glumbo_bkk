@@ -774,5 +774,10 @@
   "youSelectedTechnician": "لقد اخترت فنياً",
   "confirmBooking": "تأكيد الحجز",
   "off": "خصم",
-  "listeningForSms": "بانتظار الرسائل القصيرة..."
+  "listeningForSms": "بانتظار الرسائل القصيرة...",
+  "noTechniciansMatchFilters": "لا يوجد فنيون يطابقون الفلاتر المحددة",
+  "tryRemovingFilters": "حاول إزالة بعض الفلاتر لرؤية المزيد من الفنيين",
+  "showAllTechnicians": "عرض جميع الفنيين",
+  "tooFarAway": "بعيد جداً",
+  "technicianTooFarMessage": "هذا الفني بعيد جداً عن موقع الخدمة ولا يمكن اختياره"
 }

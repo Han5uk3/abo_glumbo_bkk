@@ -2368,4 +2368,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get listeningForSms => 'Listening for SMS...';
+
+  @override
+  String get noTechniciansMatchFilters => 'No technicians match your filters';
+
+  @override
+  String get tryRemovingFilters =>
+      'Try removing some filters to see more technicians';
+
+  @override
+  String get showAllTechnicians => 'Show All Technicians';
+
+  @override
+  String get tooFarAway => 'Too Far Away';
+
+  @override
+  String get technicianTooFarMessage =>
+      'This technician is too far from your service location and cannot be selected';
 }

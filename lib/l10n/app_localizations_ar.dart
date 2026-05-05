@@ -2331,4 +2331,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get listeningForSms => 'بانتظار الرسائل القصيرة...';
+
+  @override
+  String get noTechniciansMatchFilters =>
+      'لا يوجد فنيون يطابقون الفلاتر المحددة';
+
+  @override
+  String get tryRemovingFilters =>
+      'حاول إزالة بعض الفلاتر لرؤية المزيد من الفنيين';
+
+  @override
+  String get showAllTechnicians => 'عرض جميع الفنيين';
+
+  @override
+  String get tooFarAway => 'بعيد جداً';
+
+  @override
+  String get technicianTooFarMessage =>
+      'هذا الفني بعيد جداً عن موقع الخدمة ولا يمكن اختياره';
 }
