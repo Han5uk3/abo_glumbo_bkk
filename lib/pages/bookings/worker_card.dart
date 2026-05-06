@@ -59,8 +59,8 @@ class WorkerCard extends StatelessWidget {
             color: (isTooFar || isBusy)
                 ? Colors.red.shade200
                 : isSelected
-                    ? AppColors.primary
-                    : Colors.grey.shade300,
+                ? AppColors.primary
+                : Colors.grey.shade300,
             width: isSelected && !(isTooFar || isBusy) ? 2 : 1,
           ),
           boxShadow: [
@@ -68,8 +68,8 @@ class WorkerCard extends StatelessWidget {
               color: (isTooFar || isBusy)
                   ? Colors.transparent
                   : isSelected
-                      ? AppColors.primary.withOpacity(0.1)
-                      : Colors.black.withOpacity(0.05),
+                  ? AppColors.primary.withOpacity(0.1)
+                  : Colors.black.withOpacity(0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -92,7 +92,8 @@ class WorkerCard extends StatelessWidget {
                           TextSpan(
                             children: [
                               TextSpan(text: worker.name ?? 'Unknown'),
-                              if (worker.tier != null && worker.tier!.isNotEmpty)
+                              if (worker.tier != null &&
+                                  worker.tier!.isNotEmpty)
                                 WidgetSpan(
                                   alignment: PlaceholderAlignment.middle,
                                   child: Padding(
@@ -111,14 +112,20 @@ class WorkerCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: isTooFar ? Colors.grey.shade500 : Colors.grey.shade900,
+                            color: isTooFar
+                                ? Colors.grey.shade500
+                                : Colors.grey.shade900,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (isSelected && !isTooFar)
-                        Icon(Icons.check_circle, color: AppColors.primary, size: 24),
+                        Icon(
+                          Icons.check_circle,
+                          color: AppColors.primary,
+                          size: 24,
+                        ),
                       if (isBusy)
                         Text(
                           locale.technicianIsBusy,
@@ -148,8 +155,12 @@ class WorkerCard extends StatelessWidget {
                               '${locale.within} ${distance.toStringAsFixed(1)} ${locale.km} radius',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: isTooFar ? Colors.red.shade600 : Colors.grey.shade700,
-                                fontWeight: isTooFar ? FontWeight.w600 : FontWeight.normal,
+                                color: isTooFar
+                                    ? Colors.red.shade600
+                                    : Colors.grey.shade700,
+                                fontWeight: isTooFar
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
                                 height: 1.4,
                               ),
                               maxLines: 1,
@@ -163,41 +174,40 @@ class WorkerCard extends StatelessWidget {
                   // Rating
                   _InfoRow(
                     icon: '⭐',
-                    text:
-                        '$rating ($reviewCount ${locale.reviews})',
+                    text: '$rating ($reviewCount ${locale.reviews})',
                   ),
 
                   const SizedBox(height: 6),
 
-                  // Completed Orders
-                  _InfoRow(
-                    icon: '📦',
-                    text:
-                        '${locale.completedOrders}: $completedJobs',
-                  ),
+                  // // Completed Orders
+                  // _InfoRow(
+                  //   icon: '📦',
+                  //   text:
+                  //       '${locale.completedOrders}: $completedJobs',
+                  // ),
 
-                  const SizedBox(height: 6),
+                  // const SizedBox(height: 6),
 
                   // Services
-                  if (localizedJobRoles.isNotEmpty)
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('🪪 ', style: TextStyle(fontSize: 16)),
-                        Expanded(
-                          child: Text(
-                            '${locale.services}: ${localizedJobRoles.join(' • ')}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade700,
-                              height: 1.4,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
+                  // if (localizedJobRoles.isNotEmpty)
+                  //   Row(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       Text('🪪 ', style: TextStyle(fontSize: 16)),
+                  //       Expanded(
+                  //         child: Text(
+                  //           '${locale.services}: ${localizedJobRoles.join(' • ')}',
+                  //           style: TextStyle(
+                  //             fontSize: 14,
+                  //             color: Colors.grey.shade700,
+                  //             height: 1.4,
+                  //           ),
+                  //           maxLines: 2,
+                  //           overflow: TextOverflow.ellipsis,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
                 ],
               ),
             ),
@@ -208,7 +218,10 @@ class WorkerCard extends StatelessWidget {
                 top: 8,
                 right: 8,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.red.shade600,
                     borderRadius: BorderRadius.circular(12),

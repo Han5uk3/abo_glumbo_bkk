@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:abo_glumbo_bbk/common_widgets/cached_video_player.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // ✅ Added
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/date_formatter.dart';
@@ -152,6 +153,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         final booking = docData != null
             ? BookingModel.fromMap(docData)
             : widget.booking;
+
+        _checkRebookTimeout(booking);
 
         final textTheme = Theme.of(context).textTheme;
         final colorScheme = Theme.of(context).colorScheme;
@@ -2136,13 +2139,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    AppServices.respondToJobOffer(
-                      bookingId: booking.id,
-                      offerId: counterOffer['id'],
-                      accept: false,
-                      proposedTime: null,
-                      technicianId: counterOffer['technicianId'],
-                    );
+                    _handleCounterReject(context, booking, counterOffer['id'], counterOffer['technicianId']);
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.red,
@@ -2158,13 +2155,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    AppServices.respondToJobOffer(
-                      bookingId: booking.id,
-                      offerId: counterOffer['id'],
-                      accept: true,
-                      proposedTime: proposedTime,
-                      technicianId: counterOffer['technicianId'],
-                    );
+                    _handleCounterConfirm(context, booking, 'accepted', counterOffer['id'], counterOffer['technicianId'], proposedTime);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -2180,18 +2171,115 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => CounterProposeSheet(booking: booking),
+                );
+              },
+              icon: const Icon(Icons.edit_calendar_rounded, size: 18),
+              label: Text(l10n.proposeNewTime),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  bool _isCheckingTimeout = false;
+  void _checkRebookTimeout(BookingModel booking) {
+    if (_isCheckingTimeout) return;
+    if (booking.rebookTechnicianId != null && booking.bookingStatusCode == 'P') {
+      _isCheckingTimeout = true;
+      AppFirestore.jobOffersCollectionRef
+          .where('bookingId', isEqualTo: booking.id)
+          .where('technicianId', isEqualTo: booking.rebookTechnicianId)
+          .get()
+          .then((snapshot) {
+        if (snapshot.docs.isNotEmpty) {
+          final data = snapshot.docs.first.data() as Map<String, dynamic>;
+          final status = data['status'] as String?;
+          final  expiresAt = data['expiresAt'] as Timestamp?;
+          
+          bool shouldFallback = false;
+          
+          if (status == 'declined') {
+            shouldFallback = true;
+          } else if (status == 'pending' && expiresAt != null && expiresAt.toDate().isBefore(DateTime.now())) {
+            shouldFallback = true;
+          }
+          
+          if (shouldFallback) {
+            AppServices.fallbackToGeneralSearch(booking.id);
+          }
+        }
+        _isCheckingTimeout = false;
+      }).catchError((_) {
+        _isCheckingTimeout = false;
+      });
+    }
+  }
+
+  Future<void> _handleCounterReject(
+    BuildContext context,
+    BookingModel booking,
+    String offerId,
+    String technicianId,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.rejectOffer),
+        content: Text(booking.rebookTechnicianId != null 
+          ? "Rejecting this offer will move your request to general search so other technicians can help you. Are you sure?"
+          : "Are you sure you want to reject this proposed time?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.reject, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await AppServices.respondToJobOffer(
+        bookingId: booking.id,
+        offerId: offerId,
+        accept: false,
+        proposedTime: null,
+        technicianId: technicianId,
+        isRebook: booking.rebookTechnicianId != null,
+      );
+    }
   }
 
   Future<void> _handleCounterConfirm(
     BuildContext context,
     BookingModel booking,
     String response,
+    String offerId,
+    String technicianId,
+    Timestamp proposedTime,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-
     bool? confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -2202,23 +2290,25 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.no, style: const TextStyle(color: Colors.grey)),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              l10n.yes,
-              style: const TextStyle(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            child: Text(l10n.accept),
           ),
         ],
       ),
     );
 
     if (confirm == true) {
+      await AppServices.respondToJobOffer(
+        bookingId: booking.id,
+        offerId: offerId,
+        accept: true,
+        proposedTime: proposedTime,
+        technicianId: technicianId,
+        isRebook: booking.rebookTechnicianId != null,
+      );
       if (context.mounted) {
         await _handleCounterOfferResponse(context, booking, response);
       }

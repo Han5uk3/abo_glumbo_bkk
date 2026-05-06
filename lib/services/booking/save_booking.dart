@@ -153,8 +153,12 @@ class BookingUtils {
       // If it's a direct assignment (not rebook, not auto-assign), status is A
       if (!isRebook && !shouldAutoAssign && isOnHour && agent?.uid?.isNotEmpty == true) {
         booking.bookingStatusCode = 'A';
+        booking.assignedAt = booking.createdAt;
+        booking.technicianSelectedAt = Timestamp.now();
       } else if (requestId != null) {
         booking.bookingStatusCode = 'A';
+        booking.assignedAt = booking.createdAt;
+        booking.technicianSelectedAt = Timestamp.now();
       }
 
       // Add the booking to Firestore
@@ -181,18 +185,10 @@ class BookingUtils {
           'notes': notes.trim(),
           'issueImage': selectedImageDownloadUrl ?? "",
           'issueVideo': selectedVideoDownloadUrl ?? "",
+          'bookingDateTime': Timestamp.fromDate(bookingDate),
           'isRebook': true,
         });
 
-        await AppServices.recordTechnicianNotification(
-          technicianId: rebookTechnicianId!,
-          titleEn: 'New Rebooking Offer',
-          titleAr: 'عرض إعادة حجز جديد',
-          bodyEn: 'A customer has requested to rebook you for a service!',
-          bodyAr: 'لقد طلب عميل إعادة حجزك لخدمة!',
-          type: 'job_offer',
-          data: {'bookingId': bookingId, 'offerId': offerId},
-        );
       }
 
       // If this was from a broadcast request, clean up

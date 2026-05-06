@@ -764,7 +764,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reviewedOn => 'تم التقييم في';
 
   @override
-  String get accepted => 'مقبول';
+  String get accepted => 'مؤكد';
 
   @override
   String get rejected => 'مرفوض';
@@ -1634,7 +1634,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookedOn => 'تم الحجز في';
 
   @override
-  String get acceptedOn => 'تم قبوله في';
+  String get acceptedOn => 'تم تأكيده في';
 
   @override
   String get canceledOn => 'تم الغاءه في';
@@ -1814,10 +1814,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'طلب العميل إصلاحًا تحت الضمان';
 
   @override
-  String get warrantyRepairAccepted => 'تم قبول إصلاح الضمان';
+  String get warrantyRepairAccepted => 'تم تأكيد إصلاح الضمان';
 
   @override
-  String get technicianAcceptedTheRequest => 'قبل الفني الطلب';
+  String get technicianAcceptedTheRequest => 'أكد الفني الطلب';
 
   @override
   String get trackingStartedAt => 'بدأ التتبع في';
@@ -1888,7 +1888,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'تم رفض طلب الضمان من قبل الفني';
 
   @override
-  String get acceptedAt => 'تم القبول في';
+  String get acceptedAt => 'مؤكد في';
 
   @override
   String get serviceProviderConfirmedAppointment => 'أكد مقدم الخدمة الموعد';
@@ -2161,6 +2161,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get acceptOffer => 'قبول العرض';
 
   @override
+  String get suggestAnotherTime => 'اقتراح وقت آخر';
+
+  @override
+  String get rescheduleBookingTimeConfirmation =>
+      'هل أنت متأكد من أنك تريد قبول وقت الموعد الجديد هذا؟ سيتم تحديث جدول الحجز على الفور.';
+
+  @override
+  String get counterOfferResponseSent => 'تم إرسال الرد على العرض بنجاح';
+
+  @override
   String get rejectOffer => 'رفض العرض';
 
   @override
@@ -2254,7 +2264,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get counterProposalStarted => 'بدء الاقتراح البديل';
 
   @override
-  String get counterProposalAccepted => 'قبول الاقتراح البديل';
+  String get counterProposalAccepted => 'تأكيد الاقتراح البديل';
 
   @override
   String get counterOfferResponse => 'تم إرسال الرد بنجاح';
@@ -2275,7 +2285,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get proposalRejected => 'تم رفض الاقتراح';
 
   @override
-  String get proposalAccepted => 'تم قبول الاقتراح';
+  String get proposalAccepted => 'تم تأكيد الاقتراح';
 
   @override
   String get technicianRejectedProposal => 'رفض الفني اقتراحك.';
@@ -2374,4 +2384,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get proposeAlternativeTime => 'اقتراح وقت بديل';
+
+  @override
+  String get technicianSelected => 'تم اختيار الفني';
+
+  @override
+  String get technicianArrived => 'وصل الفني';
+
+  @override
+  String get paymentRequested => 'تم طلب الدفع';
+
+  @override
+  String get reassignedAt => 'تمت إعادة التعيين في';
+
+  @override
+  String get newTechnicianAssigned => 'تم تعيين فني جديد';
+
+  @override
+  String get technicianStartedTracking => 'الفني في الطريق';
+
+  @override
+  String get technicianArrivedAtLocation => 'وصل الفني إلى الموقع';
+
+  @override
+  String get inspectionCompleted => 'اكتمل الفحص';
+
+  @override
+  String get fullServiceCompleted => 'اكتملت الخدمة بالكامل';
+
+  @override
+  String get cancelledByAdmin => 'تم الإلغاء من قبل المسؤول';
+
+  @override
+  String get reject => 'رفض';
+
+  @override
+  String get bookingCancelledByAdmin => 'تم إلغاء الطلب من قبل المسؤول';
 }

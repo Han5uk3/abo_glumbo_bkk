@@ -1573,7 +1573,7 @@ abstract class AppLocalizations {
   /// No description provided for @accepted.
   ///
   /// In en, this message translates to:
-  /// **'Accepted'**
+  /// **'Confirmed'**
   String get accepted;
 
   /// No description provided for @rejected.
@@ -3253,7 +3253,7 @@ abstract class AppLocalizations {
   /// No description provided for @acceptedOn.
   ///
   /// In en, this message translates to:
-  /// **'Accepted on'**
+  /// **'Confirmed on'**
   String get acceptedOn;
 
   /// No description provided for @canceledOn.
@@ -3601,13 +3601,13 @@ abstract class AppLocalizations {
   /// No description provided for @warrantyRepairAccepted.
   ///
   /// In en, this message translates to:
-  /// **'Warranty Repair Accepted'**
+  /// **'Warranty Repair Confirmed'**
   String get warrantyRepairAccepted;
 
   /// No description provided for @technicianAcceptedTheRequest.
   ///
   /// In en, this message translates to:
-  /// **'Technician accepted the request'**
+  /// **'Technician confirmed the request'**
   String get technicianAcceptedTheRequest;
 
   /// No description provided for @trackingStartedAt.
@@ -3745,7 +3745,7 @@ abstract class AppLocalizations {
   /// No description provided for @acceptedAt.
   ///
   /// In en, this message translates to:
-  /// **'Accepted At'**
+  /// **'Confirmed At'**
   String get acceptedAt;
 
   /// No description provided for @serviceProviderConfirmedAppointment.
@@ -4234,6 +4234,24 @@ abstract class AppLocalizations {
   /// **'Accept Offer'**
   String get acceptOffer;
 
+  /// No description provided for @suggestAnotherTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest another time'**
+  String get suggestAnotherTime;
+
+  /// No description provided for @rescheduleBookingTimeConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to accept this new appointment time? The booking schedule will be updated immediately.'**
+  String get rescheduleBookingTimeConfirmation;
+
+  /// No description provided for @counterOfferResponseSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Counter offer response sent successfully'**
+  String get counterOfferResponseSent;
+
   /// No description provided for @rejectOffer.
   ///
   /// In en, this message translates to:
@@ -4411,7 +4429,7 @@ abstract class AppLocalizations {
   /// No description provided for @counterProposalAccepted.
   ///
   /// In en, this message translates to:
-  /// **'Counter proposal accepted'**
+  /// **'Counter proposal confirmed'**
   String get counterProposalAccepted;
 
   /// No description provided for @counterOfferResponse.
@@ -4453,7 +4471,7 @@ abstract class AppLocalizations {
   /// No description provided for @proposalAccepted.
   ///
   /// In en, this message translates to:
-  /// **'Proposal Accepted'**
+  /// **'Proposal Confirmed'**
   String get proposalAccepted;
 
   /// No description provided for @technicianRejectedProposal.
@@ -4641,6 +4659,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Propose Alternative Time'**
   String get proposeAlternativeTime;
+
+  /// No description provided for @technicianSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician Selected'**
+  String get technicianSelected;
+
+  /// No description provided for @technicianArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician Arrived'**
+  String get technicianArrived;
+
+  /// No description provided for @paymentRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Requested'**
+  String get paymentRequested;
+
+  /// No description provided for @reassignedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Reassigned At'**
+  String get reassignedAt;
+
+  /// No description provided for @newTechnicianAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'New Technician Assigned'**
+  String get newTechnicianAssigned;
+
+  /// No description provided for @technicianStartedTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician is on the way'**
+  String get technicianStartedTracking;
+
+  /// No description provided for @technicianArrivedAtLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician arrived at location'**
+  String get technicianArrivedAtLocation;
+
+  /// No description provided for @inspectionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection Completed'**
+  String get inspectionCompleted;
+
+  /// No description provided for @fullServiceCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Service Completed'**
+  String get fullServiceCompleted;
+
+  /// No description provided for @cancelledByAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by Admin'**
+  String get cancelledByAdmin;
+
+  /// No description provided for @reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get reject;
+
+  /// No description provided for @bookingCancelledByAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking was cancelled by admin'**
+  String get bookingCancelledByAdmin;
 }
 
 class _AppLocalizationsDelegate

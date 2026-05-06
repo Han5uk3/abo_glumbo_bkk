@@ -17,6 +17,8 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 import 'package:abo_glumbo_bbk/models/job_request.dart';
 
 
@@ -32,6 +34,10 @@ class WorkerList extends StatefulWidget {
   final Map timeSlot;
   final bool isOnHour;
 
+  final String? notes;
+  final File? issueImageFile;
+  final File? issueVideoFile;
+
   const WorkerList({
     super.key,
     required this.category,
@@ -43,13 +49,16 @@ class WorkerList extends StatefulWidget {
     required this.selectedDate,
     required this.timeSlot,
     required this.isOnHour,
+    this.notes,
+    this.issueImageFile,
+    this.issueVideoFile,
   });
 
   @override
   State<WorkerList> createState() => _WorkerListState();
 }
 
-class _WorkerListState extends State<WorkerList> {
+class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
 
   CustomerModel? customerData;
   bool isLoadingCustomer = true;
@@ -70,6 +79,7 @@ class _WorkerListState extends State<WorkerList> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _fetchCustomerData();
     _subscribeToBusyAgents();
     _startSearchAndBroadcast();
@@ -131,7 +141,33 @@ class _WorkerListState extends State<WorkerList> {
       return;
     }
 
-    // 3. Create Job Request
+    // 3. Handle File Uploads
+    String? issueImageUrl;
+    String? issueVideoUrl;
+
+    try {
+      if (widget.issueImageFile != null) {
+        String fileName = 'users/${customerData?.uid}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final storageRef = FirebaseStorage.instance.ref().child(fileName);
+        final uploadTask = storageRef.putFile(widget.issueImageFile!);
+        final snapshot = await uploadTask;
+        issueImageUrl = await snapshot.ref.getDownloadURL();
+      }
+      if (widget.issueVideoFile != null) {
+        String fileName = 'users/${customerData?.uid}/${DateTime.now().millisecondsSinceEpoch}.mp4';
+        final storageRef = FirebaseStorage.instance.ref().child(fileName);
+        final uploadTask = storageRef.putFile(
+          widget.issueVideoFile!,
+          SettableMetadata(contentType: 'video/mp4'),
+        );
+        final snapshot = await uploadTask;
+        issueVideoUrl = await snapshot.ref.getDownloadURL();
+      }
+    } catch (e) {
+      debugPrint("Error uploading files in WorkerList: $e");
+    }
+
+    // 4. Create Job Request
     final requestId = AppFirestore.jobRequestsCollectionRef.doc().id;
     final now = Timestamp.now();
     final expiresAt = Timestamp.fromDate(DateTime.now().add(const Duration(seconds: 120)));
@@ -141,9 +177,9 @@ class _WorkerListState extends State<WorkerList> {
       service: widget.service,
       customer: customerData!,
       address: widget.selectedAddress!,
-      notes: widget.service.description ?? '',
-      issueImage: widget.service.image,
-      issueVideo: null,
+      notes: widget.notes ?? '',
+      issueImage: issueImageUrl ?? "",
+      issueVideo: issueVideoUrl ?? "",
       createdAt: now,
       expiresAt: expiresAt,
       isOnHour: widget.isOnHour,
@@ -160,16 +196,19 @@ class _WorkerListState extends State<WorkerList> {
     );
 
     // 4. Broadcast
+    if (mounted) {
+      setState(() {
+        _requestId = requestId;
+        _isBroadcasting = true;
+      });
+    }
+
     await AppServices.broadcastJobRequest(
       request: request,
       workerIds: top5.map((w) => w.worker.uid!).toList(),
     );
 
     if (mounted) {
-      setState(() {
-        _requestId = requestId;
-        _isBroadcasting = true;
-      });
       widget.onBroadcastIdCreated(requestId);
       _startTimer();
       _listenToResponses(top5);
@@ -210,13 +249,27 @@ class _WorkerListState extends State<WorkerList> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // If app is closed or put in background during selection, cleanup the request
+    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
+      _cleanupRequest();
+    }
+  }
+
+  void _cleanupRequest() {
+    // If user exits and hasn't selected a worker, delete the request and its offers
+    if (_requestId != null && widget.selectedIndexNotifier.value == null) {
+      AppServices.deleteJobRequest(_requestId!);
+      _requestId = null; // Prevent duplicate deletions
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _broadcastTimer?.cancel();
     _responsesSubscription?.cancel();
-    // If user exits and hasn't selected, cancel request
-    if (_requestId != null && widget.selectedIndexNotifier.value == null) {
-       AppServices.cancelJobRequest(_requestId!);
-    }
+    _cleanupRequest();
     _busyAgentsSubscription?.cancel();
     super.dispose();
   }

@@ -230,7 +230,7 @@ class _CounterProposeSheetState extends State<CounterProposeSheet> {
       proposedByUid: LocalStoreHelper.getUID() ?? '',
       proposedByName: widget.booking.customer.name ?? 'Customer',
       proposedTime: Timestamp.fromDate(selectedDateTime),
-      agentUid: widget.booking.agent?.uid,
+      agentUid: widget.booking.agent?.uid ?? widget.booking.rebookTechnicianId,
     );
 
     if (mounted) {

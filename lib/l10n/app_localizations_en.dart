@@ -773,7 +773,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewedOn => 'Reviewed on';
 
   @override
-  String get accepted => 'Accepted';
+  String get accepted => 'Confirmed';
 
   @override
   String get rejected => 'Rejected';
@@ -1655,7 +1655,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookedOn => 'Booked on';
 
   @override
-  String get acceptedOn => 'Accepted on';
+  String get acceptedOn => 'Confirmed on';
 
   @override
   String get canceledOn => 'Canceled on';
@@ -1838,10 +1838,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Customer requested repair under warranty';
 
   @override
-  String get warrantyRepairAccepted => 'Warranty Repair Accepted';
+  String get warrantyRepairAccepted => 'Warranty Repair Confirmed';
 
   @override
-  String get technicianAcceptedTheRequest => 'Technician accepted the request';
+  String get technicianAcceptedTheRequest => 'Technician confirmed the request';
 
   @override
   String get trackingStartedAt => 'Tracking Started At';
@@ -1916,7 +1916,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Warranty request was rejected by technician';
 
   @override
-  String get acceptedAt => 'Accepted At';
+  String get acceptedAt => 'Confirmed At';
 
   @override
   String get serviceProviderConfirmedAppointment =>
@@ -2198,6 +2198,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get acceptOffer => 'Accept Offer';
 
   @override
+  String get suggestAnotherTime => 'Suggest another time';
+
+  @override
+  String get rescheduleBookingTimeConfirmation =>
+      'Are you sure you want to accept this new appointment time? The booking schedule will be updated immediately.';
+
+  @override
+  String get counterOfferResponseSent =>
+      'Counter offer response sent successfully';
+
+  @override
   String get rejectOffer => 'Reject Offer';
 
   @override
@@ -2291,7 +2302,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get counterProposalStarted => 'Counter proposal started';
 
   @override
-  String get counterProposalAccepted => 'Counter proposal accepted';
+  String get counterProposalAccepted => 'Counter proposal confirmed';
 
   @override
   String get counterOfferResponse => 'Response sent successfully';
@@ -2312,7 +2323,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get proposalRejected => 'Proposal Rejected';
 
   @override
-  String get proposalAccepted => 'Proposal Accepted';
+  String get proposalAccepted => 'Proposal Confirmed';
 
   @override
   String get technicianRejectedProposal => 'Technician rejected your proposal.';
@@ -2410,4 +2421,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proposeAlternativeTime => 'Propose Alternative Time';
+
+  @override
+  String get technicianSelected => 'Technician Selected';
+
+  @override
+  String get technicianArrived => 'Technician Arrived';
+
+  @override
+  String get paymentRequested => 'Payment Requested';
+
+  @override
+  String get reassignedAt => 'Reassigned At';
+
+  @override
+  String get newTechnicianAssigned => 'New Technician Assigned';
+
+  @override
+  String get technicianStartedTracking => 'Technician is on the way';
+
+  @override
+  String get technicianArrivedAtLocation => 'Technician arrived at location';
+
+  @override
+  String get inspectionCompleted => 'Inspection Completed';
+
+  @override
+  String get fullServiceCompleted => 'Full Service Completed';
+
+  @override
+  String get cancelledByAdmin => 'Cancelled by Admin';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String get bookingCancelledByAdmin => 'Booking was cancelled by admin';
 }

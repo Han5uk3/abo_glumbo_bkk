@@ -783,7 +783,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get reviewedOn => 'ریویو کی تاریخ';
 
   @override
-  String get accepted => 'قبول شدہ';
+  String get accepted => 'تصدیق شدہ';
 
   @override
   String get rejected => 'مسترد شدہ';
@@ -1668,7 +1668,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bookedOn => 'بکنگ کی تاریخ';
 
   @override
-  String get acceptedOn => 'قبول ہونے کی تاریخ';
+  String get acceptedOn => 'تصدیق ہونے کی تاریخ';
 
   @override
   String get canceledOn => 'منسوخ ہونے کی تاریخ';
@@ -1850,10 +1850,11 @@ class AppLocalizationsUr extends AppLocalizations {
       'کسٹمر نے وارنٹی کے تحت مرمت کی درخواست کی';
 
   @override
-  String get warrantyRepairAccepted => 'وارنٹی مرمت قبول کر لی گئی';
+  String get warrantyRepairAccepted => 'وارنٹی مرمت کی تصدیق ہو گئی';
 
   @override
-  String get technicianAcceptedTheRequest => 'ٹیکنیشن نے درخواست قبول کر لی';
+  String get technicianAcceptedTheRequest =>
+      'ٹیکنیشن نے درخواست کی تصدیق کر دی';
 
   @override
   String get trackingStartedAt => 'ٹریکنگ شروع ہونے کا وقت';
@@ -1925,7 +1926,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'وارنٹی کی درخواست ٹیکنیشن نے مسترد کر دی';
 
   @override
-  String get acceptedAt => 'قبول ہونے کا وقت';
+  String get acceptedAt => 'تصدیق ہونے کا وقت';
 
   @override
   String get serviceProviderConfirmedAppointment =>
@@ -2209,6 +2210,17 @@ class AppLocalizationsUr extends AppLocalizations {
   String get acceptOffer => 'پیشکش قبول کریں';
 
   @override
+  String get suggestAnotherTime => 'Suggest another time';
+
+  @override
+  String get rescheduleBookingTimeConfirmation =>
+      'Are you sure you want to accept this new appointment time? The booking schedule will be updated immediately.';
+
+  @override
+  String get counterOfferResponseSent =>
+      'Counter offer response sent successfully';
+
+  @override
   String get rejectOffer => 'پیشکش مسترد کریں';
 
   @override
@@ -2305,7 +2317,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get counterProposalStarted => 'جوابی تجویز شروع ہوگئی';
 
   @override
-  String get counterProposalAccepted => 'جوابی تجویز قبول کر لی گئی';
+  String get counterProposalAccepted => 'جوابی تجویز کی تصدیق ہو گئی';
 
   @override
   String get counterOfferResponse => 'جواب کامیابی سے بھیج دیا گیا';
@@ -2326,7 +2338,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get proposalRejected => 'تجویز مسترد کر دی گئی';
 
   @override
-  String get proposalAccepted => 'تجویز قبول کر لی گئی';
+  String get proposalAccepted => 'تجویز کی تصدیق ہو گئی';
 
   @override
   String get technicianRejectedProposal =>
@@ -2426,4 +2438,40 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get proposeAlternativeTime => 'متبادل وقت تجویز کریں';
+
+  @override
+  String get technicianSelected => 'Technician Selected';
+
+  @override
+  String get technicianArrived => 'Technician Arrived';
+
+  @override
+  String get paymentRequested => 'Payment Requested';
+
+  @override
+  String get reassignedAt => 'Reassigned At';
+
+  @override
+  String get newTechnicianAssigned => 'New Technician Assigned';
+
+  @override
+  String get technicianStartedTracking => 'Technician is on the way';
+
+  @override
+  String get technicianArrivedAtLocation => 'Technician arrived at location';
+
+  @override
+  String get inspectionCompleted => 'Inspection Completed';
+
+  @override
+  String get fullServiceCompleted => 'Full Service Completed';
+
+  @override
+  String get cancelledByAdmin => 'Cancelled by Admin';
+
+  @override
+  String get reject => 'مسترد کریں';
+
+  @override
+  String get bookingCancelledByAdmin => 'Booking was cancelled by admin';
 }

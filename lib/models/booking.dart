@@ -37,6 +37,12 @@ class BookingModel {
   Timestamp? trackingStartedAt;
   Timestamp? trackingStoppedAt;
   Timestamp? cancelledAt;
+  Timestamp? arrivedAt; // ✅ Added
+  Timestamp? paymentRequestedAt; // ✅ Added
+  Timestamp? assignedAt; // ✅ Added
+  Timestamp? reassignedAt; // ✅ Added
+  Timestamp? technicianSelectedAt; // ✅ Added
+  String? cancelledBy; // ✅ Added (Customer, Technician, Admin)
   String? cancellationReason;
   bool paymentCompleted = false;
   String? orderId;
@@ -51,6 +57,7 @@ class BookingModel {
   Timestamp? counterProposalAcceptedAt;
   Timestamp? counterProposalStartedAt;
   CounterOfferModel? activeCounterOffer;
+  String? rebookTechnicianId; // ✅ Added
 
   /// The service location zone that the customer's address matched during
   /// booking validation. Used by the technician/admin app to display which
@@ -86,6 +93,12 @@ class BookingModel {
     this.rejectedAt,
     this.completedAt,
     this.cancelledAt,
+    this.arrivedAt, // ✅ Added
+    this.paymentRequestedAt, // ✅ Added
+    this.assignedAt, // ✅ Added
+    this.reassignedAt, // ✅ Added
+    this.technicianSelectedAt, // ✅ Added
+    this.cancelledBy, // ✅ Added
     this.cancellationReason,
     this.orderId,
     this.transactionId, // Added transactionId
@@ -104,6 +117,7 @@ class BookingModel {
     this.autoAssignmentStatus, // ✅ Added
     this.counterProposalAcceptedAt,
     this.counterProposalStartedAt,
+    this.rebookTechnicianId, // ✅ Added
   });
 
   BookingModel.fromMap(Map<String, dynamic> data)
@@ -154,6 +168,7 @@ class BookingModel {
           : null,
       counterProposalAcceptedAt = data['counterProposalAcceptedAt'] as Timestamp?,
       counterProposalStartedAt = data['counterProposalStartedAt'] as Timestamp?,
+      rebookTechnicianId = data['rebookTechnicianId'] as String?, // ✅ Added
       transactionId = data['transactionId'], // Added transactionId
       selectedAddressId = data['selectedAddressId'], // Added selectedAddressId
       serviceLocation = data['serviceLocation'] != null
@@ -172,6 +187,12 @@ class BookingModel {
       isOnHour = data['isOnHour'], // ✅ Added
       autoAssignmentStatus = data['autoAssignmentStatus'], // ✅ Added
       assignmentScheduledTime = data['assignmentScheduledTime'],
+      arrivedAt = data['arrivedAt'], // ✅ Added
+      paymentRequestedAt = data['paymentRequestedAt'], // ✅ Added
+      assignedAt = data['assignedAt'], // ✅ Added
+      reassignedAt = data['reassignedAt'], // ✅ Added
+      technicianSelectedAt = data['technicianSelectedAt'], // ✅ Added
+      cancelledBy = data['cancelledBy'], // ✅ Added
       cancelledAt = data['cancelledAt'];
 
   factory BookingModel.fromJson(Map<String, dynamic> data) {
@@ -215,6 +236,12 @@ class BookingModel {
       'rejectedAt': rejectedAt,
       'completedAt': completedAt,
       'cancelledAt': cancelledAt,
+      'arrivedAt': arrivedAt, // ✅ Added
+      'paymentRequestedAt': paymentRequestedAt, // ✅ Added
+      'assignedAt': assignedAt, // ✅ Added
+      'reassignedAt': reassignedAt, // ✅ Added
+      'technicianSelectedAt': technicianSelectedAt, // ✅ Added
+      'cancelledBy': cancelledBy, // ✅ Added
       'orderId': orderId,
       'transactionId': transactionId, // Added transactionId
       'selectedAddressId': selectedAddressId, // Added selectedAddressId
@@ -229,6 +256,7 @@ class BookingModel {
       'isOnHour': isOnHour, // ✅ Added
       'autoAssignmentStatus': autoAssignmentStatus, // ✅ Added
       'assignmentScheduledTime': assignmentScheduledTime,
+      'rebookTechnicianId': rebookTechnicianId, // ✅ Added
     };
 
     map['id'] = id;

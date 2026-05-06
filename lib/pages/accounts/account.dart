@@ -812,8 +812,14 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   Future<void> _performDeleteAccount() async {
     try {
       await AppServices.deleteAccount();
+      final uid = LocalStoreHelper.getUID() ?? LocalStoreHelper.getLastValidUID();
+      if (uid != null) {
+        await LocalStoreHelper.clearBiometricAuthEnabled(uid);
+      }
       await LocalStoreHelper.clearUID();
+      await LocalStoreHelper.clearLastValidUID();
       await FirebaseAuth.instance.signOut();
+
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,

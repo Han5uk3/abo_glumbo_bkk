@@ -1173,7 +1173,6 @@ class _BookServicePageState extends State<BookServicePage> {
         onWorkerSelected: (worker) {
           setState(() {
             selectedWorker = worker;
-            currentStep = 3;
           });
         },
         onBroadcastIdCreated: (id) => broadcastRequestId = id,
@@ -1182,6 +1181,9 @@ class _BookServicePageState extends State<BookServicePage> {
             ? {"label": "Now", "time": TimeOfDay.now()}
             : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
         isOnHour: _isAssignmentOnHour(),
+        notes: notesController.text,
+        issueImageFile: _selectedImage,
+        issueVideoFile: _selectedVideo,
       );
     }
     // Off-hour: show auto-assignment info
@@ -1689,19 +1691,43 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildThirdStepBottom(BuildContext context) {
-    if (_isAssignmentOnHour()) {
-      // On-hour: must select a technician before proceeding
+    if (widget.rebookTechnician != null) {
       return Row(
         children: [
           Expanded(
-            flex: 2,
-            child: ValueListenableBuilder<int?>(
-              valueListenable: selectedIndexNotifier,
-              builder: (context, value, _) {
-                return ElevatedButton(
-                  onPressed: value == null
-                      ? null
-                      : () => setState(() => currentStep = 3),
+            child: ElevatedButton(
+              onPressed: () => setState(() => currentStep = 3),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                minimumSize: const Size(0, 54),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(context)?.continueText ?? 'Continue',
+                style: DMSansFont.textStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    if (_isAssignmentOnHour()) {
+      // On-hour broadcast: hide continue button until a technician is selected
+      return ValueListenableBuilder<int?>(
+        valueListenable: selectedIndexNotifier,
+        builder: (context, value, _) {
+          if (value == null) return const SizedBox.shrink();
+          return Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => setState(() => currentStep = 3),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     minimumSize: const Size(0, 54),
@@ -1716,13 +1742,14 @@ class _BookServicePageState extends State<BookServicePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-        ],
+                ),
+              ),
+            ],
+          );
+        },
       );
     }
+
     // Off-hour: proceed to review directly
     return Row(
       children: [

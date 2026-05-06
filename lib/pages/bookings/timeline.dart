@@ -211,53 +211,78 @@ Widget buildBookingTimelineCard(
           });
         }
 
-        // Accepted
-        if (booking.acceptedAt != null) {
+        // Technician Selected
+        if (booking.technicianSelectedAt != null) {
+          timelineItems.add({
+            'title': AppLocalizations.of(context)!.technicianSelected,
+            'time': _formatDateLocalized(booking.technicianSelectedAt!.toDate(), context),
+            'description': AppLocalizations.of(context)!.youSelectedTechnician,
+            'status': 'completed',
+            'date': booking.technicianSelectedAt!.toDate(),
+          });
+        }
+
+        // Confirmed / Assigned
+        if (booking.assignedAt != null) {
           timelineItems.add({
             'title': AppLocalizations.of(context)!.acceptedAt,
-            'time': _formatDateLocalized(booking.acceptedAt!.toDate(), context),
+            'time': _formatDateLocalized(booking.assignedAt!.toDate(), context),
             'description': AppLocalizations.of(
               context,
             )!.serviceProviderConfirmedAppointment,
             'status': 'completed',
-            'date': booking.acceptedAt!.toDate(),
+            'date': booking.assignedAt!.toDate(),
+          });
+        }
+
+        // New Technician Assigned (Reassigned)
+        if (booking.reassignedAt != null) {
+          timelineItems.add({
+            'title': AppLocalizations.of(context)!.newTechnicianAssigned,
+            'time': _formatDateLocalized(booking.reassignedAt!.toDate(), context),
+            'description': AppLocalizations.of(context)!.serviceProviderConfirmedAppointment,
+            'status': 'completed',
+            'date': booking.reassignedAt!.toDate(),
           });
         }
 
         // Tracking started
         if (booking.trackingStartedAt != null) {
           timelineItems.add({
-            'title': AppLocalizations.of(context)!.trackingStartedAt,
+            'title': AppLocalizations.of(context)!.technicianStartedTracking,
             'time': _formatDateLocalized(
               booking.trackingStartedAt!.toDate(),
               context,
             ),
             'description': AppLocalizations.of(
               context,
-            )!.serviceTrackingInitiated,
+            )!.yourTechnicianIsOnTheWay,
             'status': 'completed',
             'date': booking.trackingStartedAt!.toDate(),
           });
         }
 
-        // Tracking stopped
-        if (booking.trackingStoppedAt != null) {
+        // Arrived at location
+        if (booking.arrivedAt != null) {
           timelineItems.add({
-            'title': AppLocalizations.of(context)!.trackingStoppedAt,
+            'title': AppLocalizations.of(context)!.technicianArrived,
             'time': _formatDateLocalized(
-              booking.trackingStoppedAt!.toDate(),
+              booking.arrivedAt!.toDate(),
               context,
             ),
-            'description': AppLocalizations.of(context)!.serviceTrackingStopped,
+            'description': AppLocalizations.of(context)!.technicianArrivedAtLocation,
             'status': 'completed',
-            'date': booking.trackingStoppedAt!.toDate(),
+            'date': booking.arrivedAt!.toDate(),
           });
         }
 
         // Completed
         if (booking.completedAt != null) {
+          bool isInspection = booking.completionData?.mode == 0;
           timelineItems.add({
-            'title': AppLocalizations.of(context)!.completedAt,
+            'title': isInspection 
+                ? AppLocalizations.of(context)!.inspectionCompleted
+                : AppLocalizations.of(context)!.fullServiceCompleted,
             'time': _formatDateLocalized(
               booking.completedAt!.toDate(),
               context,
@@ -270,8 +295,19 @@ Widget buildBookingTimelineCard(
           });
         }
 
-        // Payment status
-        if (booking.paidAt != null) {
+        // Payment Requested
+        if (booking.paymentRequestedAt != null) {
+          timelineItems.add({
+            'title': AppLocalizations.of(context)!.paymentRequested,
+            'time': _formatDateLocalized(booking.paymentRequestedAt!.toDate(), context),
+            'description': AppLocalizations.of(context)!.waitingForYourPayment,
+            'status': 'completed',
+            'date': booking.paymentRequestedAt!.toDate(),
+          });
+        }
+
+        // Payment status (Legacy verification pending)
+        if (booking.paidAt != null && booking.paymentCompletedAt == null) {
           timelineItems.add({
             'title': AppLocalizations.of(context)!.verificationPending,
             'time': _formatDateLocalized(booking.paidAt!.toDate(), context),
@@ -282,66 +318,66 @@ Widget buildBookingTimelineCard(
           });
         }
 
-        if (booking.paymentCompleted == true &&
-            (booking.bookingStatusCode != 'P' &&
-                booking.bookingStatusCode != "A")) {
+        // Payment Completed
+        if (booking.paymentCompleted == true) {
           timelineItems.add({
             'title': AppLocalizations.of(context)!.paymentCompleted,
-            'time': AppLocalizations.of(context)!.completed,
+            'time': _formatDateLocalized(
+              booking.paymentCompletedAt?.toDate() ?? 
+              booking.completedAt?.toDate() ?? 
+              DateTime.now(), 
+              context
+            ),
             'description':
                 AppLocalizations.of(context)!.paymentSuccessfullyCompleted,
             'status': 'completed',
             'date': booking.paymentCompletedAt?.toDate() ??
                 booking.completedAt?.toDate() ??
-                booking.cancelledAt?.toDate() ??
-                booking.createdAt?.toDate() ??
                 DateTime.now(),
           });
-        } else if (booking.paymentCompleted == false &&
-            booking.bookingStatusCode == 'C') {
-          // If customer hasn't paid yet but booking is done
+        }
+
+        // Reviewed
+        if (booking.review != null && booking.review!.createdAt != null) {
           timelineItems.add({
-            'title': AppLocalizations.of(context)!.paymentPending,
-            'time': AppLocalizations.of(context)!.pending,
-            'description': AppLocalizations.of(context)!.waitingForYourPayment,
-            'status': 'current',
-            'date': DateTime.now(),
+            'title': AppLocalizations.of(context)!.review,
+            'time': _formatDateLocalized(booking.review!.createdAt!.toDate(), context),
+            'description': AppLocalizations.of(context)!.reviewSubmittedSuccessfully,
+            'status': 'completed',
+            'date': booking.review!.createdAt!.toDate(),
           });
         }
 
-        // Rejected
+        // Rejected by Admin
         if (booking.bookingStatusCode.toLowerCase() == 'r') {
           timelineItems.add({
-            'title': AppLocalizations.of(context)!.rejectedAt,
-            'time': _formatDateLocalized(booking.rejectedAt!.toDate(), context),
+            'title': AppLocalizations.of(context)!.cancelledByAdmin,
+            'time': _formatDateLocalized(booking.rejectedAt?.toDate() ?? booking.updatedAt?.toDate() ?? DateTime.now(), context),
             'description': AppLocalizations.of(
               context,
-            )!.bookingWasRejectedByServiceProvider,
+            )!.bookingCancelledByAdmin,
             'status': 'rejected',
-            'date': booking.rejectedAt!.toDate(),
+            'date': booking.rejectedAt?.toDate() ?? booking.updatedAt?.toDate() ?? DateTime.now(),
           });
         }
-
-        // Counter Proposal Started (redundant if already added above but good for clarity in normal path if needed)
-        // Actually, I'll add them outside the if/else if they apply to both.
 
         // Cancelled by customer
         if (booking.bookingStatusCode.toLowerCase() == 'xc') {
           timelineItems.add({
             'title': AppLocalizations.of(context)!.cancelledByYou,
             'time': _formatDateLocalized(
-              booking.cancelledAt!.toDate(),
+              booking.cancelledAt?.toDate() ?? DateTime.now(),
               context,
             ),
             'description': AppLocalizations.of(
               context,
             )!.youCancelledThisBooking,
             'status': 'rejected',
-            'date': booking.cancelledAt!.toDate(),
+            'date': booking.cancelledAt?.toDate() ?? DateTime.now(),
           });
         }
 
-        // Worker cancellations
+        // Worker cancellations (Technician declined/cancelled)
         if (booking.cancelledWorkers.isNotEmpty) {
           for (var worker in booking.cancelledWorkers) {
             final workerName = worker.agentName.isNotEmpty

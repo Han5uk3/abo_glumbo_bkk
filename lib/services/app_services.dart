@@ -1388,6 +1388,11 @@ class AppServices {
         createdAt: Timestamp.now(),
       );
 
+      final offers = await AppFirestore.jobOffersCollectionRef
+          .where('bookingId', isEqualTo: bookingId)
+          .where('status', isEqualTo: 'counter_offered')
+          .get();
+
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         final bookingRef = AppFirestore.bookingsCollectionRef.doc(bookingId);
         final bookingSnapshot = await transaction.get(bookingRef);
@@ -1408,6 +1413,15 @@ class AppServices {
 
         transaction.set(docRef, counterOffer.toMap());
         transaction.update(bookingRef, updateData);
+
+        // Update any associated rebook job offers
+        for (var doc in offers.docs) {
+          transaction.update(doc.reference, {
+            'status': 'customer_counter_offered',
+            'proposedTime': proposedTime,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+        }
       });
 
       if (agentUid != null && agentUid.isNotEmpty) {
@@ -1541,23 +1555,11 @@ class AppServices {
           'notes': request.notes,
           'issueImage': request.issueImage,
           'issueVideo': request.issueVideo,
+          'bookingDateTime': request.bookingDateTime,
         });
       }
       await batch.commit();
-
-      // 3. Send Push Notifications to each worker
-      for (var workerId in workerIds) {
-        await recordTechnicianNotification(
-          technicianId: workerId,
-          titleEn: 'New Job Offer!',
-          titleAr: 'عرض عمل جديد!',
-          bodyEn:
-              'A new service request is available nearby. Tap to view and accept.',
-          bodyAr: 'يوجد طلب خدمة جديد متاح بالقرب منك. اضغط للعرض والقبول.',
-          type: 'job_offer',
-          data: {'requestId': request.id},
-        );
-      }
+      
       return request.id;
     } catch (e) {
       debugPrint('Error broadcasting job request: $e');
@@ -1634,6 +1636,8 @@ class AppServices {
       'issueImage': request.issueImage,
       'issueVideo': request.issueVideo,
       'requestId': requestId,
+      'assignedAt': FieldValue.serverTimestamp(),
+      'technicianSelectedAt': FieldValue.serverTimestamp(),
     };
 
     final batch = FirebaseFirestore.instance.batch();
@@ -1677,6 +1681,31 @@ class AppServices {
     }
   }
 
+  static Future<void> deleteJobRequest(String requestId) async {
+    try {
+      debugPrint('🗑️ Deleting Job Request and Offers for: $requestId');
+      
+      // 1. Delete associated Job Offers
+      final offers = await AppFirestore.jobOffersCollectionRef
+          .where('requestId', isEqualTo: requestId)
+          .get();
+      
+      final batch = FirebaseFirestore.instance.batch();
+      for (var doc in offers.docs) {
+        batch.delete(doc.reference);
+      }
+      
+      // 2. Delete the Job Request itself
+      batch.delete(AppFirestore.jobRequestsCollectionRef.doc(requestId));
+      
+      await batch.commit();
+
+      debugPrint('✅ Successfully deleted Job Request and Offers');
+    } catch (e) {
+      debugPrint('❌ Error deleting job request: $e');
+    }
+  }
+
   static Stream<List<Map<String, dynamic>>> listenToJobOffersForBooking(
     String bookingId,
   ) {
@@ -1696,6 +1725,7 @@ class AppServices {
     required bool accept,
     required Timestamp? proposedTime,
     required String technicianId,
+    bool isRebook = false,
   }) async {
     final batch = FirebaseFirestore.instance.batch();
 
@@ -1717,6 +1747,8 @@ class AppServices {
           },
           'autoAssignmentStatus': 'accepted',
           'updatedAt': FieldValue.serverTimestamp(),
+          'assignedAt': FieldValue.serverTimestamp(),
+          'technicianSelectedAt': FieldValue.serverTimestamp(),
         });
 
         batch.update(AppFirestore.jobOffersCollectionRef.doc(offerId), {
@@ -1725,9 +1757,48 @@ class AppServices {
         });
       }
     } else {
+      // Decline offer
       batch.update(AppFirestore.jobOffersCollectionRef.doc(offerId), {
         'status': 'declined',
         'declinedAt': FieldValue.serverTimestamp(),
+      });
+
+      if (isRebook) {
+        // If rebook and rejected/declined, fallback to general search
+        batch.update(AppFirestore.bookingsCollectionRef.doc(bookingId), {
+          'rebookTechnicianId': null,
+          'agent': null,
+          'bookingStatusCode': 'P',
+          'autoAssignmentStatus': null, // Clear to allow broadcast
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+    }
+
+    await batch.commit();
+  }
+
+  static Future<void> fallbackToGeneralSearch(String bookingId) async {
+    final batch = FirebaseFirestore.instance.batch();
+
+    batch.update(AppFirestore.bookingsCollectionRef.doc(bookingId), {
+      'rebookTechnicianId': null,
+      'agent': null,
+      'bookingStatusCode': 'P',
+      'autoAssignmentStatus': null, // Allow general broadcast
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+
+    // Mark any pending rebook offers as expired
+    final offers = await AppFirestore.jobOffersCollectionRef
+        .where('bookingId', isEqualTo: bookingId)
+        .where('status', isEqualTo: 'pending')
+        .get();
+
+    for (var doc in offers.docs) {
+      batch.update(doc.reference, {
+        'status': 'expired',
+        'updatedAt': FieldValue.serverTimestamp(),
       });
     }
 

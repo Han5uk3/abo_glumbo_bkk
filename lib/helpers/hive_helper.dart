@@ -110,6 +110,15 @@ class LocalStoreHelper {
         false;
   }
 
+  static Future<void> clearBiometricAuthEnabled(String uid) async {
+    await MyApp.box.delete('biometric_auth_enabled_$uid');
+  }
+
+  static Future<void> clearLastValidUID() {
+    return MyApp.box.delete('last_valid_uid');
+  }
+
+
   static Future<void> saveBackgroundTime() async {
     final now = DateTime.now();
     await MyApp.box.put('backgroundTime', now.toIso8601String());

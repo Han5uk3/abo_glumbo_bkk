@@ -1,1 +1,18 @@
-{}
+{
+  "ur": [
+    "suggestAnotherTime",
+    "rescheduleBookingTimeConfirmation",
+    "counterOfferResponseSent",
+    "technicianSelected",
+    "technicianArrived",
+    "paymentRequested",
+    "reassignedAt",
+    "newTechnicianAssigned",
+    "technicianStartedTracking",
+    "technicianArrivedAtLocation",
+    "inspectionCompleted",
+    "fullServiceCompleted",
+    "cancelledByAdmin",
+    "bookingCancelledByAdmin"
+  ]
+}
