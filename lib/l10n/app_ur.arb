@@ -776,5 +776,21 @@
   "searchServices": "سروسز تلاش کریں...",
   "reject":"مسترد کریں",
   "rejectionProfessionalMessage": "کیا آپ اس اپوائنٹمنٹ کے لیے دستیاب نہیں ہیں؟ مسترد کرنے کے بجائے، آپ کسٹمر کے لیے زیادہ مناسب وقت تجویز کر سکتے ہیں۔",
-  "proposeAlternativeTime": "متبادل وقت تجویز کریں"
+  "proposeAlternativeTime": "متبادل وقت تجویز کریں",
+  "waitingForRequestedTechnician": "درخواست کردہ ٹیکنیشن کے جواب کا انتظار ہے",
+  "lookingForTechnicians": "قریبی ٹیکنیشنز تلاش کیے جا رہے ہیں...",
+  "suggestAnotherTime": "کوئی دوسرا وقت تجویز کریں",
+  "rescheduleBookingTimeConfirmation": "کیا آپ واقعی بکنگ کا وقت تبدیل کرنا چاہتے ہیں؟ شیڈول فوری طور پر اپ ڈیٹ کر دیا جائے گا۔",
+  "counterOfferResponseSent": "جوابی پیشکش کا جواب کامیابی سے بھیج دیا گیا",
+  "technicianSelected": "ٹیکنیشن منتخب کر لیا گیا",
+  "technicianArrived": "ٹیکنیشن پہنچ گیا",
+  "paymentRequested": "ادائیگی کی درخواست کی گئی",
+  "reassignedAt": "دوبارہ تعینات کیا گیا بمقام",
+  "newTechnicianAssigned": "نیا ٹیکنیشن متعین کر دیا گیا",
+  "technicianStartedTracking": "ٹیکنیشن راستے میں ہے",
+  "technicianArrivedAtLocation": "ٹیکنیشن مقام پر پہنچ گیا",
+  "inspectionCompleted": "معائنہ مکمل ہو گیا",
+  "fullServiceCompleted": "مکمل سروس مکمل ہو گئی",
+  "cancelledByAdmin": "ایڈمن کی طرف سے منسوخ",
+  "bookingCancelledByAdmin": "بکنگ ایڈمن کی طرف سے منسوخ کر دی گئی"
 }

@@ -13,10 +13,10 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get waitingForRequestedTechnician =>
-      'Waiting for the requested technician to respond';
+      'درخواست کردہ ٹیکنیشن کے جواب کا انتظار ہے';
 
   @override
-  String get lookingForTechnicians => 'Looking for nearby technicians...';
+  String get lookingForTechnicians => 'قریبی ٹیکنیشنز تلاش کیے جا رہے ہیں...';
 
   @override
   String get appLoginCaption =>
@@ -2217,15 +2217,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get acceptOffer => 'پیشکش قبول کریں';
 
   @override
-  String get suggestAnotherTime => 'Suggest another time';
+  String get suggestAnotherTime => 'کوئی دوسرا وقت تجویز کریں';
 
   @override
   String get rescheduleBookingTimeConfirmation =>
-      'Are you sure you want to accept this new appointment time? The booking schedule will be updated immediately.';
+      'کیا آپ واقعی بکنگ کا وقت تبدیل کرنا چاہتے ہیں؟ شیڈول فوری طور پر اپ ڈیٹ کر دیا جائے گا۔';
 
   @override
   String get counterOfferResponseSent =>
-      'Counter offer response sent successfully';
+      'جوابی پیشکش کا جواب کامیابی سے بھیج دیا گیا';
 
   @override
   String get rejectOffer => 'پیشکش مسترد کریں';
@@ -2447,38 +2447,38 @@ class AppLocalizationsUr extends AppLocalizations {
   String get proposeAlternativeTime => 'متبادل وقت تجویز کریں';
 
   @override
-  String get technicianSelected => 'Technician Selected';
+  String get technicianSelected => 'ٹیکنیشن منتخب کر لیا گیا';
 
   @override
-  String get technicianArrived => 'Technician Arrived';
+  String get technicianArrived => 'ٹیکنیشن پہنچ گیا';
 
   @override
-  String get paymentRequested => 'Payment Requested';
+  String get paymentRequested => 'ادائیگی کی درخواست کی گئی';
 
   @override
-  String get reassignedAt => 'Reassigned At';
+  String get reassignedAt => 'دوبارہ تعینات کیا گیا بمقام';
 
   @override
-  String get newTechnicianAssigned => 'New Technician Assigned';
+  String get newTechnicianAssigned => 'نیا ٹیکنیشن متعین کر دیا گیا';
 
   @override
-  String get technicianStartedTracking => 'Technician is on the way';
+  String get technicianStartedTracking => 'ٹیکنیشن راستے میں ہے';
 
   @override
-  String get technicianArrivedAtLocation => 'Technician arrived at location';
+  String get technicianArrivedAtLocation => 'ٹیکنیشن مقام پر پہنچ گیا';
 
   @override
-  String get inspectionCompleted => 'Inspection Completed';
+  String get inspectionCompleted => 'معائنہ مکمل ہو گیا';
 
   @override
-  String get fullServiceCompleted => 'Full Service Completed';
+  String get fullServiceCompleted => 'مکمل سروس مکمل ہو گئی';
 
   @override
-  String get cancelledByAdmin => 'Cancelled by Admin';
+  String get cancelledByAdmin => 'ایڈمن کی طرف سے منسوخ';
 
   @override
   String get reject => 'مسترد کریں';
 
   @override
-  String get bookingCancelledByAdmin => 'Booking was cancelled by admin';
+  String get bookingCancelledByAdmin => 'بکنگ ایڈمن کی طرف سے منسوخ کر دی گئی';
 }
