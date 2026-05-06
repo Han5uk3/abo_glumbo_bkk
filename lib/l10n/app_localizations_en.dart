@@ -12,6 +12,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'abo glumbo';
 
   @override
+  String get waitingForRequestedTechnician =>
+      'Waiting for the requested technician to respond';
+
+  @override
+  String get lookingForTechnicians => 'Looking for nearby technicians...';
+
+  @override
   String get appLoginCaption =>
       'Your go-to app for finding qualified professionals.';
 

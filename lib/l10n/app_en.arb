@@ -1,5 +1,7 @@
 {
   "appName": "abo glumbo",
+  "waitingForRequestedTechnician": "Waiting for the requested technician to respond",
+  "lookingForTechnicians": "Looking for nearby technicians...",
   "appLoginCaption": "Your go-to app for finding qualified professionals.",
   "mobileNumber": "Mobile Number",
   "continueText": "Continue",

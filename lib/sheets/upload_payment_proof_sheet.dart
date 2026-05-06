@@ -47,8 +47,9 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
   void initState() {
     super.initState();
     if (widget.booking.completionData != null) {
-      _amountController.text = widget.booking.completionData!.totalCost
-          .toString();
+      final totalServiceCost = widget.booking.completionData!.totalCost;
+      final inspectionFee = widget.booking.completionData!.inspectionFee;
+      _amountController.text = (totalServiceCost + inspectionFee).toStringAsFixed(2);
     }
   }
 

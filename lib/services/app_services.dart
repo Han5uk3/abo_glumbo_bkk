@@ -784,17 +784,12 @@ class AppServices {
         });
   }
 
-  static Future<AddressModel> getCustomerSelectedAddress() async {
+  static Future<AddressModel?> getCustomerSelectedAddress() async {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
         debugPrint('❌ Cannot get customer address: User ID is empty');
-        return AddressModel(
-          id: '',
-          fullName: '',
-          buildingNumber: '',
-          phoneNumber: '',
-        );
+        return null;
       }
 
       final docSnapshot = await AppFirestore.customersCollectionRef
@@ -802,39 +797,29 @@ class AppServices {
           .get();
       final data = docSnapshot.data() as Map<String, dynamic>?;
       if (data == null) {
-        return AddressModel(
-          id: '',
-          fullName: '',
-          buildingNumber: '',
-          phoneNumber: '',
-        );
+        return null;
       }
 
       final addresses = data['addresses'] as List<dynamic>?;
       if (addresses == null || addresses.isEmpty) {
-        return AddressModel(
-          id: '',
-          fullName: '',
-          buildingNumber: '',
-          phoneNumber: '',
-        );
+        return null;
       }
 
-      final selectedAddress =
+      final selectedAddressMap =
           addresses.firstWhere(
                 (a) => (a as Map<String, dynamic>)['isSelected'] == true,
                 orElse: () => null,
               )
               as Map<String, dynamic>?;
 
-      return AddressModel.fromJson(selectedAddress ?? {});
+      if (selectedAddressMap == null) {
+        return null;
+      }
+
+      return AddressModel.fromJson(selectedAddressMap);
     } catch (e) {
-      return AddressModel(
-        id: '',
-        fullName: '',
-        buildingNumber: '',
-        phoneNumber: '',
-      );
+      debugPrint('❌ Error getting selected address: $e');
+      return null;
     }
   }
 
@@ -1272,10 +1257,13 @@ class AppServices {
         });
   }
 
-  static void requestWarrantyRepair(BookingModel booking) async {
+  static Future<void> requestWarrantyRepair(BookingModel booking) async {
     try {
       await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
         'warranty.availability': true,
+        'warranty.warrantyStatusCode': 'R',
+        'warranty.requestedOn': FieldValue.serverTimestamp(),
+        'warranty.updatedAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -1530,6 +1518,7 @@ class AppServices {
   static Future<String> broadcastJobRequest({
     required JobRequestModel request,
     required List<String> workerIds,
+    bool isRebook = false,
   }) async {
     try {
       // 1. Save Job Request
@@ -1556,6 +1545,8 @@ class AppServices {
           'issueImage': request.issueImage,
           'issueVideo': request.issueVideo,
           'bookingDateTime': request.bookingDateTime,
+          'isRebook': isRebook,
+          'customerId': request.customer.uid,
         });
       }
       await batch.commit();
@@ -1719,6 +1710,36 @@ class AppServices {
         );
   }
 
+  static Stream<List<Map<String, dynamic>>> listenToJobOffersForRequest(
+    String requestId,
+  ) {
+    return AppFirestore.jobOffersCollectionRef
+        .where('requestId', isEqualTo: requestId)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => doc.data() as Map<String, dynamic>)
+              .toList(),
+        );
+  }
+
+  static Future<bool> respondToJobOfferForRequest({
+    required String requestId,
+    required String offerId,
+    required String status,
+  }) async {
+    try {
+      await AppFirestore.jobOffersCollectionRef.doc(offerId).update({
+        'status': status,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      return true;
+    } catch (e) {
+      debugPrint('Error responding to job offer for request: $e');
+      return false;
+    }
+  }
+
   static Future<void> respondToJobOffer({
     required String bookingId,
     required String offerId,
@@ -1755,6 +1776,19 @@ class AppServices {
           'status': 'accepted',
           'acceptedAt': FieldValue.serverTimestamp(),
         });
+
+        // Mark all other offers as closed
+        final allOffers = await AppFirestore.jobOffersCollectionRef
+            .where('bookingId', isEqualTo: bookingId)
+            .get();
+        for (var doc in allOffers.docs) {
+          if (doc.id != offerId) {
+            batch.update(doc.reference, {
+              'status': 'closed',
+              'updatedAt': FieldValue.serverTimestamp(),
+            });
+          }
+        }
       }
     } else {
       // Decline offer

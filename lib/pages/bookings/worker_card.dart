@@ -35,17 +35,31 @@ class WorkerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
-    // Calculate distance between the booking address and technician's last known location
+    // Calculate distance using the best available technician coordinates
     double? distance;
-    if (customerAddress.lat != null &&
-        customerAddress.lon != null &&
-        worker.lastKnownLocation != null) {
-      distance = LocationHelper.calculateDistance(
-        customerAddress.lat!,
-        customerAddress.lon!,
-        worker.lastKnownLocation!.latitude,
-        worker.lastKnownLocation!.longitude,
-      );
+    if (customerAddress.lat != null && customerAddress.lon != null) {
+      double? techLat;
+      double? techLon;
+
+      if (worker.liveLocation?.latitude != null) {
+        techLat = worker.liveLocation!.latitude;
+        techLon = worker.liveLocation!.longitude;
+      } else if (worker.lastKnownLocation != null) {
+        techLat = worker.lastKnownLocation!.latitude;
+        techLon = worker.lastKnownLocation!.longitude;
+      } else if (worker.location?.lat != null) {
+        techLat = worker.location!.lat;
+        techLon = worker.location!.lon;
+      }
+
+      if (techLat != null && techLon != null) {
+        distance = LocationHelper.calculateDistance(
+          customerAddress.lat!,
+          customerAddress.lon!,
+          techLat,
+          techLon,
+        );
+      }
     }
 
     return Opacity(

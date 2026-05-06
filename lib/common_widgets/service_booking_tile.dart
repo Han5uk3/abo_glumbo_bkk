@@ -967,240 +967,10 @@ class ServiceBookingTile extends StatelessWidget {
               Flexible(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // What's Covered Section
-                      _buildSectionCard(
-                        context: context,
-                        icon: Icons.check_circle_rounded,
-                        iconColor: Color(0xFF4CAF50),
-                        iconBgColor: Color(0xFF4CAF50).withOpacity(0.1),
-                        title: AppLocalizations.of(context)?.whatsCovered ?? '',
-                        titleColor: Color(0xFF2E7D32),
-                        items: [
-                          AppLocalizations.of(context)?.issueone ?? '',
-                          AppLocalizations.of(context)?.issuetwo ?? '',
-                          AppLocalizations.of(context)?.issuethree ?? '',
-                          AppLocalizations.of(context)?.issuefour ?? '',
-                        ],
-                        gradientColors: [
-                          Color(0xFF4CAF50).withOpacity(0.05),
-                          Color(0xFF81C784).withOpacity(0.05),
-                        ],
-                      ),
-
-                      SizedBox(height: 16),
-
-                      // What's NOT Covered Section
-                      _buildSectionCard(
-                        context: context,
-                        icon: Icons.cancel_rounded,
-                        iconColor: Color(0xFFE53935),
-                        iconBgColor: Color(0xFFE53935).withOpacity(0.1),
-                        title:
-                            AppLocalizations.of(context)?.whatsNotCovered ?? '',
-                        titleColor: Color(0xFFC62828),
-                        items: [
-                          AppLocalizations.of(context)?.notissueone ?? '',
-                          AppLocalizations.of(context)?.notissuetwo ?? '',
-                          AppLocalizations.of(context)?.notissuethree ?? '',
-                          AppLocalizations.of(context)?.notissuefour ?? '',
-                          AppLocalizations.of(context)?.notissuefive ?? '',
-                        ],
-                        gradientColors: [
-                          Color(0xFFE53935).withOpacity(0.05),
-                          Color(0xFFEF5350).withOpacity(0.05),
-                        ],
-                      ),
-
-                      SizedBox(height: 16),
-
-                      // Important Info Card
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: Color(0xFF2196F3).withOpacity(0.3),
-                            width: 1.5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0xFF2196F3).withOpacity(0.1),
-                              blurRadius: 8,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Color(0xFF2196F3).withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Icon(
-                                Icons.info_rounded,
-                                size: 24,
-                                color: Color(0xFF1565C0),
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    AppLocalizations.of(
-                                          context,
-                                        )?.importantInformation ??
-                                        '',
-                                    style: DMSansFont.textStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF1565C0),
-                                    ),
-                                  ),
-                                  SizedBox(height: 6),
-                                  Text(
-                                    AppLocalizations.of(context)?.claimText ??
-                                        '',
-                                    style: DMSansFont.textStyle(
-                                      fontSize: 13,
-                                      color: Color(0xFF424242),
-                                      height: 1.4,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(height: 24),
-
-                      // Action Buttons
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              height: 52,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color(0xFF4CAF50),
-                                    Color(0xFF66BB6A),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(14),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0xFF4CAF50).withOpacity(0.4),
-                                    blurRadius: 12,
-                                    offset: Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  try {
-                                    await AppFirestore.bookingsCollectionRef
-                                        .doc(booking.id)
-                                        .update({
-                                          'warranty.warrantyStatusCode': 'R',
-                                          'warranty.updatedAt': Timestamp.now(),
-                                          'warranty.claimrequested': true,
-                                          'warranty.requestedOn':
-                                              Timestamp.now(),
-                                          'warranty.assignedTechnicianId':
-                                              booking.agent!.uid,
-                                        });
-                                    showSnackBar(
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.repairRequestedSuccessfully,
-                                      context,
-                                      backgroundColor: Colors.green,
-                                    );
-                                    Navigator.pop(context);
-                                  } catch (e) {
-                                    log(e.toString());
-                                    Navigator.pop(context);
-                                    showSnackBar(
-                                      "${AppLocalizations.of(context)!.error} : $e",
-                                      context,
-                                      backgroundColor: Colors.red,
-                                    );
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  foregroundColor: Colors.white,
-                                  shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.build_circle_rounded, size: 20),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      AppLocalizations.of(
-                                            context,
-                                          )?.requestRepair ??
-                                          '',
-                                      style: DMSansFont.textStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Container(
-                            height: 52,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFE0E0E0),
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Color(0xFF757575),
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                padding: EdgeInsets.symmetric(horizontal: 24),
-                              ),
-                              child: Icon(Icons.close_rounded, size: 24),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: 40),
-                    ],
+                  child: _WarrantyClaimForm(
+                    booking: booking,
+                    isExpiringSoon: isExpiringSoon,
+                    onRefresh: onRefresh,
                   ),
                 ),
               ),
@@ -1208,89 +978,6 @@ class ServiceBookingTile extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildSectionCard({
-    required BuildContext context,
-    required IconData icon,
-    required Color iconColor,
-    required Color iconBgColor,
-    required String title,
-    required Color titleColor,
-    required List<String> items,
-    required List<Color> gradientColors,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: gradientColors,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: iconColor.withOpacity(0.2), width: 1.5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: iconBgColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, color: iconColor, size: 22),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: DMSansFont.textStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: titleColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 14),
-          ...items.map(
-            (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 6),
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: iconColor,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      item,
-                      style: DMSansFont.textStyle(
-                        fontSize: 13,
-                        color: Color(0xFF424242),
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -1406,6 +1093,576 @@ class ServiceBookingTile extends StatelessWidget {
           },
         ],
       ),
+    );
+  }
+}
+
+/// Shared section card builder used by both [ServiceBookingTile] and [_WarrantyClaimForm].
+Widget _buildSectionCardWidget({
+  required BuildContext context,
+  required IconData icon,
+  required Color iconColor,
+  required Color iconBgColor,
+  required String title,
+  required Color titleColor,
+  required List<String> items,
+  required List<Color> gradientColors,
+}) {
+  return Container(
+    padding: const EdgeInsets.all(18),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: gradientColors,
+      ),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: iconColor.withOpacity(0.2), width: 1.5),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: iconColor, size: 22),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: DMSansFont.textStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: titleColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 14),
+        ...items.map(
+          (item) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 6),
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: iconColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    item,
+                    style: DMSansFont.textStyle(
+                      fontSize: 13,
+                      color: const Color(0xFF424242),
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+/// Shared section card builder (alias for use in [_WarrantyClaimForm]).
+Widget _buildSectionCard({
+  required BuildContext context,
+  required IconData icon,
+  required Color iconColor,
+  required Color iconBgColor,
+  required String title,
+  required Color titleColor,
+  required List<String> items,
+  required List<Color> gradientColors,
+}) {
+  return _buildSectionCardWidget(
+    context: context,
+    icon: icon,
+    iconColor: iconColor,
+    iconBgColor: iconBgColor,
+    title: title,
+    titleColor: titleColor,
+    items: items,
+    gradientColors: gradientColors,
+  );
+}
+
+/// Stateful form widget for warranty claim with date/time picker.
+class _WarrantyClaimForm extends StatefulWidget {
+  final BookingModel booking;
+  final bool isExpiringSoon;
+  final VoidCallback onRefresh;
+
+  const _WarrantyClaimForm({
+    required this.booking,
+    required this.isExpiringSoon,
+    required this.onRefresh,
+  });
+
+  @override
+  State<_WarrantyClaimForm> createState() => _WarrantyClaimFormState();
+}
+
+class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
+  bool _isSubmitting = false;
+
+  DateTime get _warrantyExpiry {
+    final warranty = widget.booking.warranty;
+    if (warranty?.expiredOn != null) return warranty!.expiredOn!;
+    return (warranty?.createdAt ?? DateTime.now()).add(const Duration(days: 7));
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final expiry = _warrantyExpiry;
+    // Ensure lastDate is at least tomorrow
+    final lastDate = expiry.isAfter(tomorrow) ? expiry : tomorrow;
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? tomorrow,
+      firstDate: tomorrow,
+      lastDate: lastDate,
+    );
+    if (picked != null) setState(() => _selectedDate = picked);
+  }
+
+  Future<void> _pickTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime ?? const TimeOfDay(hour: 9, minute: 0),
+    );
+    if (picked != null) setState(() => _selectedTime = picked);
+  }
+
+  Future<void> _submitClaim() async {
+    if (_selectedDate == null || _selectedTime == null) {
+      showSnackBar(
+        AppLocalizations.of(context)!.selectDateTime,
+        context,
+        backgroundColor: Colors.orange,
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    final preferredDateTime = DateTime(
+      _selectedDate!.year,
+      _selectedDate!.month,
+      _selectedDate!.day,
+      _selectedTime!.hour,
+      _selectedTime!.minute,
+    );
+
+    try {
+      await AppFirestore.bookingsCollectionRef
+          .doc(widget.booking.id)
+          .update({
+        'warranty.warrantyStatusCode': 'R',
+        'warranty.availability': true,
+        'warranty.updatedAt': Timestamp.now(),
+        'warranty.claimrequested': true,
+        'warranty.requestedOn': Timestamp.now(),
+        'warranty.preferredDateTime': Timestamp.fromDate(preferredDateTime),
+        'warranty.assignedTechnicianId': widget.booking.agent!.uid,
+        'updatedAt': Timestamp.now(),
+      });
+
+      if (!context.mounted) return;
+      showSnackBar(
+        AppLocalizations.of(context)!.repairRequestedSuccessfully,
+        context,
+        backgroundColor: Colors.green,
+      );
+      widget.onRefresh.call();
+      Navigator.pop(context);
+    } catch (e) {
+      log(e.toString());
+      if (!context.mounted) return;
+      Navigator.pop(context);
+      showSnackBar(
+        "${AppLocalizations.of(context)!.error} : $e",
+        context,
+        backgroundColor: Colors.red,
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // What's Covered Section
+        _buildSectionCard(
+          context: context,
+          icon: Icons.check_circle_rounded,
+          iconColor: const Color(0xFF4CAF50),
+          iconBgColor: const Color(0xFF4CAF50).withOpacity(0.1),
+          title: localization.whatsCovered,
+          titleColor: const Color(0xFF2E7D32),
+          items: [
+            localization.issueone,
+            localization.issuetwo,
+            localization.issuethree,
+            localization.issuefour,
+          ],
+          gradientColors: [
+            const Color(0xFF4CAF50).withOpacity(0.05),
+            const Color(0xFF81C784).withOpacity(0.05),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // What's NOT Covered Section
+        _buildSectionCard(
+          context: context,
+          icon: Icons.cancel_rounded,
+          iconColor: const Color(0xFFE53935),
+          iconBgColor: const Color(0xFFE53935).withOpacity(0.1),
+          title: localization.whatsNotCovered,
+          titleColor: const Color(0xFFC62828),
+          items: [
+            localization.notissueone,
+            localization.notissuetwo,
+            localization.notissuethree,
+            localization.notissuefour,
+            localization.notissuefive,
+          ],
+          gradientColors: [
+            const Color(0xFFE53935).withOpacity(0.05),
+            const Color(0xFFEF5350).withOpacity(0.05),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // Preferred Date & Time Picker
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade200, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E88E5).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.calendar_month_rounded,
+                      size: 20,
+                      color: Color(0xFF1565C0),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    localization.selectDateTime,
+                    style: DMSansFont.textStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF1565C0),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  // Date picker
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _pickDate,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _selectedDate != null
+                              ? const Color(0xFFE3F2FD)
+                              : Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _selectedDate != null
+                                ? const Color(0xFF1E88E5)
+                                : Colors.grey.shade300,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.today_rounded,
+                              size: 18,
+                              color: _selectedDate != null
+                                  ? const Color(0xFF1565C0)
+                                  : Colors.grey,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _selectedDate != null
+                                    ? DateFormat('MMM d, y')
+                                        .format(_selectedDate!)
+                                    : localization.selectDate,
+                                style: DMSansFont.textStyle(
+                                  fontSize: 13,
+                                  fontWeight: _selectedDate != null
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                  color: _selectedDate != null
+                                      ? const Color(0xFF1565C0)
+                                      : Colors.grey.shade600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // Time picker
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _pickTime,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _selectedTime != null
+                              ? const Color(0xFFE3F2FD)
+                              : Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _selectedTime != null
+                                ? const Color(0xFF1E88E5)
+                                : Colors.grey.shade300,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_time_rounded,
+                              size: 18,
+                              color: _selectedTime != null
+                                  ? const Color(0xFF1565C0)
+                                  : Colors.grey,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _selectedTime != null
+                                    ? _selectedTime!.format(context)
+                                    : localization.selectTime,
+                                style: DMSansFont.textStyle(
+                                  fontSize: 13,
+                                  fontWeight: _selectedTime != null
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                  color: _selectedTime != null
+                                      ? const Color(0xFF1565C0)
+                                      : Colors.grey.shade600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Important Info Card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xFF2196F3).withOpacity(0.3),
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2196F3).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.info_rounded,
+                  size: 24,
+                  color: Color(0xFF1565C0),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      localization.importantInformation,
+                      style: DMSansFont.textStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF1565C0),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      localization.claimText,
+                      style: DMSansFont.textStyle(
+                        fontSize: 13,
+                        color: const Color(0xFF424242),
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Action Buttons
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 52,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: _isSubmitting
+                        ? [Colors.grey, Colors.grey.shade400]
+                        : [const Color(0xFF4CAF50), const Color(0xFF66BB6A)],
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    if (!_isSubmitting)
+                      BoxShadow(
+                        color: const Color(0xFF4CAF50).withOpacity(0.4),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  onPressed: _isSubmitting ? null : _submitClaim,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.build_circle_rounded, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              localization.requestRepair,
+                              style: DMSansFont.textStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Container(
+              height: 52,
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF757575),
+                  shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                ),
+                child: const Icon(Icons.close_rounded, size: 24),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 40),
+      ],
     );
   }
 }

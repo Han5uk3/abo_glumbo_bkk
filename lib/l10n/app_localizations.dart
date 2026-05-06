@@ -106,6 +106,18 @@ abstract class AppLocalizations {
   /// **'abo glumbo'**
   String get appName;
 
+  /// No description provided for @waitingForRequestedTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the requested technician to respond'**
+  String get waitingForRequestedTechnician;
+
+  /// No description provided for @lookingForTechnicians.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for nearby technicians...'**
+  String get lookingForTechnicians;
+
   /// No description provided for @appLoginCaption.
   ///
   /// In en, this message translates to:

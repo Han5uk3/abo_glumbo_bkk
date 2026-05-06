@@ -1,6 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:abo_glumbo_bbk/common_widgets/cached_video_player.dart';
+import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/sheets/payment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // ✅ Added
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
@@ -14,10 +16,7 @@ import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/widgets/counter_propose_sheet.dart';
-import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
-import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
 import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
-
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,9 +27,6 @@ import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class BookingDetailsPage extends StatefulWidget {
   final BookingModel booking;
   final VoidCallback? onRefresh;
@@ -836,6 +832,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                             ],
                           ),
                         ),
+                        SizedBox(height: 10),
                         SizedBox(height: 10),
                         StreamBuilder<List<Map<String, dynamic>>>(
                           stream: AppServices.listenToJobOffersForBooking(
@@ -2248,6 +2245,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     }
   }
 
+
   Future<void> _handleCounterReject(
     BuildContext context,
     BookingModel booking,
@@ -2338,12 +2336,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
 
     final bool isPendingPayment =
         (booking.bookingStatusCode == 'C' ||
-            booking.bookingStatusCode == 'CP') &&
+            booking.bookingStatusCode == 'CP' ||
+            booking.bookingStatusCode == 'VP') &&
         !booking.paymentCompleted;
 
     if (!isPendingPayment) return null;
-
-    final bool isAppPayment = booking.paymentModeCode == 'C';
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -2359,28 +2356,13 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       ),
       child: ElevatedButton(
         onPressed: () async {
-          if (isAppPayment) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PaymentWebView(
-                  isFromBooking: true,
-                  customerData: booking.customer,
-                  service: booking.service,
-                  booking: booking,
-                  selectedPayment: "Cards",
-                ),
-              ),
-            );
-          } else {
-            final result = await showUploadPaymentProofSheet(
-              context,
-              booking: booking,
-            );
-            if (result == true && onRefresh != null) {
-              onRefresh!();
-            }
-          }
+          showPaymentBottomSheet(
+            context,
+            agent: booking.agent ?? UserModel(role: 'technician'),
+            service: booking.service,
+            customerData: booking.customer,
+            booking: booking,
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
@@ -2391,9 +2373,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           ),
         ),
         child: Text(
-          isAppPayment
-              ? AppLocalizations.of(context)!.completePayment
-              : AppLocalizations.of(context)!.paymentPending,
+          AppLocalizations.of(context)!.completePayment,
           style: DMSansFont.textStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,

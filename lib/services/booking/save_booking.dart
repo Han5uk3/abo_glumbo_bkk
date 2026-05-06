@@ -109,7 +109,7 @@ class BookingUtils {
       bool isOnHour = service.isOnWorkHour(currentTime: DateTime.now());
       bool isRebook = rebookTechnicianId != null && rebookTechnicianId.isNotEmpty;
       bool shouldAutoAssign =
-          !isOnHour && (service.category?.isNotEmpty == true) && !isRebook;
+          !isOnHour && (service.category?.isNotEmpty == true);
       double bookingTimePrice = service.getCurrentPrice(currentTime: bookingDate);
       ServiceModel updatedService = service.copyWith(price: bookingTimePrice);
 
@@ -122,7 +122,7 @@ class BookingUtils {
         issueImage: selectedImageDownloadUrl ?? "",
         issueVideo: selectedVideoDownloadUrl ?? "",
         customer: updatedCustomerData,
-        agent: (isOnHour && agent?.uid?.isNotEmpty == true && !isRebook) ? agent : null,
+        agent: (isOnHour && agent?.uid?.isNotEmpty == true) ? agent : null,
         selectedAddressId: selectedAddress?.id, // Added selectedAddressId
         isOnHour: isOnHour,
         assignmentScheduledTime: shouldAutoAssign
@@ -136,14 +136,17 @@ class BookingUtils {
                     : bookingDate.subtract(const Duration(hours: 2)),
               )
             : null,
-        autoAssignmentStatus: isRebook
-            ? "rebook_pending"
-            : (shouldAutoAssign &&
-                    bookingDate
+        autoAssignmentStatus: shouldAutoAssign
+            ? (bookingDate
                         .subtract(const Duration(hours: 2))
                         .isBefore(DateTime.now())
                 ? "ready_to_assign"
-                : (isOnHour && agent?.uid?.isNotEmpty == true ? "accepted" : null)),
+                : null)
+            : (isRebook && requestId == null
+                ? "rebook_pending"
+                : (isOnHour && agent?.uid?.isNotEmpty == true
+                    ? "accepted"
+                    : null)),
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -168,28 +171,6 @@ class BookingUtils {
         'rebookTechnicianId': rebookTechnicianId,
       });
 
-      // If it's a rebook, create the job offer
-      if (isRebook) {
-        final offerId = AppFirestore.jobOffersCollectionRef.doc().id;
-        await AppFirestore.jobOffersCollectionRef.doc(offerId).set({
-          'id': offerId,
-          'bookingId': bookingId,
-          'technicianId': rebookTechnicianId,
-          'status': 'pending',
-          'createdAt': FieldValue.serverTimestamp(),
-          'expiresAt': Timestamp.fromDate(DateTime.now().add(const Duration(hours: 24))),
-          'customerName': updatedCustomerData.name,
-          'serviceLocation': selectedAddress?.toJson(),
-          'serviceName': updatedService.name,
-          'serviceNameAr': updatedService.name_ar,
-          'notes': notes.trim(),
-          'issueImage': selectedImageDownloadUrl ?? "",
-          'issueVideo': selectedVideoDownloadUrl ?? "",
-          'bookingDateTime': Timestamp.fromDate(bookingDate),
-          'isRebook': true,
-        });
-
-      }
 
       // If this was from a broadcast request, clean up
       if (requestId != null) {

@@ -13,6 +13,7 @@ class WarrantyModel {
   DateTime? acceptedAt;
   DateTime? rejectedAt;
   DateTime? expiredOn;
+  DateTime? preferredDateTime;
 
   WarrantyModel({
     this.id,
@@ -27,6 +28,7 @@ class WarrantyModel {
     this.acceptedAt,
     this.rejectedAt,
     this.expiredOn,
+    this.preferredDateTime,
   });
 
   factory WarrantyModel.fromJson(Map<String, dynamic> json) {
@@ -59,6 +61,9 @@ class WarrantyModel {
       expiredOn: json['expiredOn'] is Timestamp
           ? (json['expiredOn'] as Timestamp).toDate()
           : json['expiredOn'] as DateTime?,
+      preferredDateTime: json['preferredDateTime'] is Timestamp
+          ? (json['preferredDateTime'] as Timestamp).toDate()
+          : json['preferredDateTime'] as DateTime?,
       rejectedTechnicians: (json['rejectedTechnicians'] is List)
           ? (json['rejectedTechnicians'] as List)
                 .map(
@@ -84,6 +89,7 @@ class WarrantyModel {
       'acceptedAt': acceptedAt,
       'rejectedAt': rejectedAt,
       'expiredOn': expiredOn,
+      'preferredDateTime': preferredDateTime,
       'rejectedTechnicians': rejectedTechnicians
           ?.map((e) => e.toJson())
           .toList(),

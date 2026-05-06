@@ -23,6 +23,7 @@ import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/services/location_service.dart';
 import 'package:abo_glumbo_bbk/models/address_result.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/widgets/rebook_wait_widget.dart';
 
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
@@ -46,6 +47,8 @@ class _BookServicePageState extends State<BookServicePage> {
 
   DateTime? selectedDate;
   bool saving = false;
+  bool _rebookFailed = false;
+  String? broadcastRequestId;
   AddressModel? selectedAddress;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController notesController = TextEditingController();
@@ -132,8 +135,6 @@ class _BookServicePageState extends State<BookServicePage> {
       LocalStoreHelper.getUID() ?? '',
     );
   }
-
-  String? broadcastRequestId;
 
   @override
   void dispose() {
@@ -1161,11 +1162,40 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildThirdStepContent() {
-    if (widget.rebookTechnician != null) {
-      return _buildRebookTechnicianCard();
+    if (widget.rebookTechnician != null && !_rebookFailed) {
+      return RebookWaitWidget(
+        technician: widget.rebookTechnician!,
+        service: widget.service,
+        selectedAddress: selectedAddress!,
+        selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
+        timeSlot: isServiceNow
+            ? {"label": "Now", "time": TimeOfDay.now()}
+            : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+        notes: notesController.text,
+        issueImageFile: _selectedImage,
+        issueVideoFile: _selectedVideo,
+        onAccepted: (worker) {
+          setState(() {
+            selectedWorker = worker;
+            currentStep = 3;
+          });
+        },
+        onBroadcastIdCreated: (id) {
+          setState(() {
+            broadcastRequestId = id;
+          });
+        },
+        onFailed: () {
+          setState(() {
+            _rebookFailed = true;
+          });
+        },
+      );
     }
-    if (_isAssignmentOnHour()) {
-      return WorkerList(
+    if (!_isAssignmentOnHour()) {
+      return _buildAutoAssignContent();
+    }
+    return WorkerList(
         service: widget.service,
         category: widget.service.category ?? "",
         selectedAddress: selectedAddress,
@@ -1175,7 +1205,11 @@ class _BookServicePageState extends State<BookServicePage> {
             selectedWorker = worker;
           });
         },
-        onBroadcastIdCreated: (id) => broadcastRequestId = id,
+        onBroadcastIdCreated: (id) {
+          setState(() {
+            broadcastRequestId = id;
+          });
+        },
         selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
         timeSlot: isServiceNow
             ? {"label": "Now", "time": TimeOfDay.now()}
@@ -1185,9 +1219,6 @@ class _BookServicePageState extends State<BookServicePage> {
         issueImageFile: _selectedImage,
         issueVideoFile: _selectedVideo,
       );
-    }
-    // Off-hour: show auto-assignment info
-    return _buildAutoAssignContent();
   }
 
   Widget _buildAutoAssignContent() {
@@ -1248,106 +1279,6 @@ class _BookServicePageState extends State<BookServicePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildRebookTechnicianCard() {
-    final l10n = AppLocalizations.of(context)!;
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: widget.rebookTechnician!.profileUrl != null
-                      ? NetworkImage(widget.rebookTechnician!.profileUrl!)
-                      : null,
-                  child: widget.rebookTechnician!.profileUrl == null
-                      ? const Icon(Icons.person, size: 40)
-                      : null,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  widget.rebookTechnician!.name ?? "",
-                  style: DMSansFont.textStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.star, color: Colors.orange, size: 16),
-                    const SizedBox(width: 4),
-                    Text(
-                      widget.rebookTechnician!.rating?.toStringAsFixed(1) ?? "0.0",
-                      style: DMSansFont.textStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    l10n.rebookTechnician,
-                    style: DMSansFont.textStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 32),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() => currentStep = 3);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                l10n.reviewAndConfirm,
-                style: DMSansFont.textStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -1691,30 +1622,10 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildThirdStepBottom(BuildContext context) {
-    if (widget.rebookTechnician != null) {
-      return Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () => setState(() => currentStep = 3),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                minimumSize: const Size(0, 54),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                AppLocalizations.of(context)?.continueText ?? 'Continue',
-                style: DMSansFont.textStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
+    if (widget.rebookTechnician != null && !_rebookFailed) {
+      // While RebookWaitWidget is active, we don't show a continue button.
+      // The widget will call onAccepted which moves to step 3.
+      return const SizedBox.shrink();
     }
 
     if (_isAssignmentOnHour()) {

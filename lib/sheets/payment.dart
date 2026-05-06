@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:abo_glumbo_bbk/apis/telr_apple_pay.dart';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
@@ -134,9 +135,13 @@ class _PaymentWindowState extends State<PaymentWindow> {
       isLoading = true;
     });
 
+    double finalAmount = widget.booking.completionData?.totalCost ??
+        double.tryParse(widget.service.price.toString()) ??
+        0;
+
     String orderId = generateOrderId(
       widget.customerData.uid ?? "guest",
-      double.tryParse(widget.service.price.toString()) ?? 0,
+      finalAmount,
     );
 
     try {
@@ -261,20 +266,29 @@ class _PaymentWindowState extends State<PaymentWindow> {
           }
         }
       } else if (selectedPayment == "Outside App") {
-        // Prevent duplicate cash payments
-        if (isCashPaymentProcessing) {
-          return; // Exit early if cash payment is already being processed
-        }
+        setState(() {
+          isLoading = false;
+        });
 
-        // Set the flag to prevent duplicate processing
-        isCashPaymentProcessing = true;
+        // If it's an existing booking being completed, show proof upload sheet
+        if (widget.booking.completionData != null) {
+          Navigator.pop(context); // Close the payment mode selector
+          final result = await showUploadPaymentProofSheet(
+            context,
+            booking: widget.booking,
+          );
+          if (result == true) {
+            // Success
+          }
+        } else {
+          // Prevent duplicate cash payments
+          if (isCashPaymentProcessing) {
+            return; // Exit early if cash payment is already being processed
+          }
 
-        // Cash payment logic
-        // final isBooked = await saveBooking();
-        if (mounted) {
-          setState(() {
-            isLoading = false;
-          });
+          // Set the flag to prevent duplicate processing
+          isCashPaymentProcessing = true;
+
           Navigator.pop(context); // Close the payment bottom sheet
           showCashDetailBottomSheet(
             booking: widget.booking,
@@ -282,24 +296,9 @@ class _PaymentWindowState extends State<PaymentWindow> {
             customer: widget.customerData,
             worker: widget.agent,
             orderId: orderId,
-            paymentModeCode: selectedPayment == "Inside App" ? "C" : "O",
-            amount: widget.booking.completionData?.totalCost.toString() ?? '',
+            paymentModeCode: "O",
+            amount: finalAmount.toString(),
           );
-          // if (isBooked) {
-          //   Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => BookingSuccessPage(
-          //         orderId: orderId,
-          //         isFromCashOnDelivery: true,
-          //       ),
-          //     ),
-          //   );
-          // } else {
-          //   showSnackBar(AppLocalizations.of(context)!.bookingFailed, context);
-          //   // Reset the flag if booking failed so user can try again
-          //   isCashPaymentProcessing = false;
-          // }
         }
       }
     } catch (e) {

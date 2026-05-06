@@ -12,6 +12,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get appName => 'ابو گلمبو';
 
   @override
+  String get waitingForRequestedTechnician =>
+      'Waiting for the requested technician to respond';
+
+  @override
+  String get lookingForTechnicians => 'Looking for nearby technicians...';
+
+  @override
   String get appLoginCaption =>
       'کوالیفائیڈ پیشہ ور افراد کو تلاش کرنے کے لیے آپ کی پسندیدہ ایپ۔';
 

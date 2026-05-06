@@ -1,5 +1,7 @@
 {
   "ur": [
+    "waitingForRequestedTechnician",
+    "lookingForTechnicians",
     "suggestAnotherTime",
     "rescheduleBookingTimeConfirmation",
     "counterOfferResponseSent",

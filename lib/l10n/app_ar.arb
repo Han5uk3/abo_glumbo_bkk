@@ -1,5 +1,7 @@
 {
   "appName": "أبو جلمبو",
+  "waitingForRequestedTechnician": "في انتظار رد الفني المطلوب",
+  "lookingForTechnicians": "جاري البحث عن فنيين قريبين...",
   "appLoginCaption": "التطبيق للعثور على محترفين مؤهلين.",
   "mobileNumber": "رقم الهاتف",
   "continueText": "متابعة",

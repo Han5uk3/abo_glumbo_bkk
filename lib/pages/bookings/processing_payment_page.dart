@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'dart:io';
-
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
@@ -69,13 +67,13 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
   }
 
   Future<bool> saveTransaction({String? bookingId}) async {
+    final inspectionFee = widget.booking?.completionData?.inspectionFee ?? 0.0;
+    final serviceCost = widget.booking?.completionData?.totalCost ?? 0.0;
     final amount =
-        double.tryParse(
-          widget.booking?.completionData?.totalCost.toString() ??
-              widget.service?.price.toString() ??
-              '0.00',
-        ) ??
-        0.00;
+        widget.booking?.completionData != null
+            ? (serviceCost + inspectionFee)
+            : double.tryParse(widget.service?.price.toString() ?? '0.00') ??
+                0.00;
 
     TransactionModel transaction = TransactionModel(
       Timestamp.now(),
@@ -139,11 +137,10 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
       // Inspection fees (mode 0) are NOT included in payout tracking
       if (widget.booking?.completionData?.mode == 1) {
         try {
-          final amount =
-              double.tryParse(
-                widget.booking?.completionData?.totalCost.toString() ?? '0.00',
-              ) ??
-              0.00;
+          final inspectionFee = widget.booking?.completionData?.inspectionFee ?? 0.0;
+          final serviceCost = widget.booking?.completionData?.totalCost ?? 0.0;
+          final amount = serviceCost + inspectionFee;
+          
           await UnifiedPayoutServices.recordInAppServicePayment(
             workerId: widget.booking?.agent?.uid ?? '',
             amount: amount,
@@ -171,16 +168,12 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
         builder: (context) => PaymentSuccessPage(
           isFromBooking: widget.isFromBooking,
           amount: widget.isFromBooking
-              ? (widget.booking != null
-                    ? (double.tryParse(
-                            widget.booking?.completionData?.totalCost
-                                    .toString() ??
-                                '0.00',
-                          ) ??
-                          0.00)
+              ? (widget.booking?.completionData != null
+                    ? ((widget.booking!.completionData?.totalCost ?? 0.0) +
+                        (widget.booking!.completionData?.inspectionFee ?? 0.0))
                     : (widget.service
-                              ?.getDiscountedPrice(widget.service?.price ?? 0.0)
-                              .toDouble() ??
+                               ?.getDiscountedPrice(widget.service?.price ?? 0.0)
+                               .toDouble() ??
                           0.00))
               : widget.review?.tipAmount ?? 0.00,
           orderId: widget.orderId,

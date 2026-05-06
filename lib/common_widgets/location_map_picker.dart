@@ -80,19 +80,27 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     }
 
     log("getting user details");
-    final user = AppFirestore.customersCollectionRef.doc(
-      LocalStoreHelper.getUID(),
-    );
-    user.get().then((value) {
-      if (value.exists) {
-        final data = value.data() as Map<String, dynamic>?;
+    try {
+      final uid = LocalStoreHelper.getUID();
+      if (uid == null || uid.isEmpty) {
+        log("⚠️ No UID found, skipping user details fetch");
+        return;
+      }
+
+      final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
+      if (userDoc.exists) {
+        final data = userDoc.data() as Map<String, dynamic>?;
         log("got user details: ${data.toString()}");
-        if (data != null) {
-          _fullNameController.text = data['name'] ?? '';
-          _phoneNumberController.text = data['phone'] ?? '';
+        if (data != null && mounted) {
+          setState(() {
+            _fullNameController.text = data['name'] ?? '';
+            _phoneNumberController.text = data['phone'] ?? '';
+          });
         }
       }
-    });
+    } catch (e) {
+      log("❌ Error fetching user details: $e");
+    }
   }
 
   void _initializeLocation() {

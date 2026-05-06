@@ -111,12 +111,24 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             ),
     );
 
-    orderId = generateOrderId(
-      widget.customerData.uid ?? '',
-      widget.isFromBooking
-          ? double.tryParse(widget.service?.price.toString() ?? '0.00') ?? 0.00
-          : widget.review?.tipAmount ?? 0.00,
-    );
+    double inspectionFee = widget.booking?.completionData?.inspectionFee ??
+        widget.booking?.service.price ??
+        widget.service?.price ??
+        0.0;
+    double totalServiceCost = widget.booking?.completionData?.totalCost ?? 0.0;
+    double finalAmount =
+        widget.booking?.completionData != null
+            ? (totalServiceCost + inspectionFee)
+            : widget.isFromBooking
+            ? (double.tryParse(
+                  widget.service?.price.toString() ??
+                      widget.booking?.service.price.toString() ??
+                      '0.00',
+                ) ??
+                0.0)
+            : widget.review?.tipAmount ?? 0.0;
+
+    orderId = generateOrderId(widget.customerData.uid ?? '', finalAmount);
 
     // Extract city from the full city address (fullName)
     String city = "";
@@ -141,18 +153,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         ivp_order: OrderData(
           ivp_cart: orderId ?? 'NO ORDER ID',
           ivp_ref: widget.customerData.uid ?? '',
-          ivp_amount: widget.booking?.completionData != null
-              ? ((widget.booking!.completionData?.totalCost ?? 0.0) +
-                      (widget.booking!.service.price ?? 0.0))
-                  .toStringAsFixed(2)
-              : widget.isFromBooking
-                  ? (double.tryParse(
-                            widget.service?.price.toString() ??
-                            widget.booking?.service.price.toString() ??
-                            '0.00',
-                          )?.toStringAsFixed(2) ??
-                      '0.00')
-                  : widget.review?.tipAmount?.toStringAsFixed(2) ?? '0.00',
+          ivp_amount: finalAmount.toStringAsFixed(2),
           ivp_desc: widget.notesController?.text.isNotEmpty == true
               ? widget.notesController?.text ?? "No description provided"
               : "No description provided",

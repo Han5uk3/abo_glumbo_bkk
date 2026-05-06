@@ -12,6 +12,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appName => 'أبو جلمبو';
 
   @override
+  String get waitingForRequestedTechnician => 'في انتظار رد الفني المطلوب';
+
+  @override
+  String get lookingForTechnicians => 'جاري البحث عن فنيين قريبين...';
+
+  @override
   String get appLoginCaption => 'التطبيق للعثور على محترفين مؤهلين.';
 
   @override
