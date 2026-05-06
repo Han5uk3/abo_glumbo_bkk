@@ -2139,7 +2139,12 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    _handleCounterReject(context, booking, counterOffer['id'], counterOffer['technicianId']);
+                    _handleCounterReject(
+                      context,
+                      booking,
+                      counterOffer['id'],
+                      counterOffer['technicianId'],
+                    );
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.red,
@@ -2155,7 +2160,14 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    _handleCounterConfirm(context, booking, 'accepted', counterOffer['id'], counterOffer['technicianId'], proposedTime);
+                    _handleCounterConfirm(
+                      context,
+                      booking,
+                      'accepted',
+                      counterOffer['id'],
+                      counterOffer['technicianId'],
+                      proposedTime,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -2201,34 +2213,38 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   bool _isCheckingTimeout = false;
   void _checkRebookTimeout(BookingModel booking) {
     if (_isCheckingTimeout) return;
-    if (booking.rebookTechnicianId != null && booking.bookingStatusCode == 'P') {
+    if (booking.rebookTechnicianId != null &&
+        booking.bookingStatusCode == 'P') {
       _isCheckingTimeout = true;
       AppFirestore.jobOffersCollectionRef
           .where('bookingId', isEqualTo: booking.id)
           .where('technicianId', isEqualTo: booking.rebookTechnicianId)
           .get()
           .then((snapshot) {
-        if (snapshot.docs.isNotEmpty) {
-          final data = snapshot.docs.first.data() as Map<String, dynamic>;
-          final status = data['status'] as String?;
-          final  expiresAt = data['expiresAt'] as Timestamp?;
-          
-          bool shouldFallback = false;
-          
-          if (status == 'declined') {
-            shouldFallback = true;
-          } else if (status == 'pending' && expiresAt != null && expiresAt.toDate().isBefore(DateTime.now())) {
-            shouldFallback = true;
-          }
-          
-          if (shouldFallback) {
-            AppServices.fallbackToGeneralSearch(booking.id);
-          }
-        }
-        _isCheckingTimeout = false;
-      }).catchError((_) {
-        _isCheckingTimeout = false;
-      });
+            if (snapshot.docs.isNotEmpty) {
+              final data = snapshot.docs.first.data() as Map<String, dynamic>;
+              final status = data['status'] as String?;
+              final expiresAt = data['expiresAt'] as Timestamp?;
+
+              bool shouldFallback = false;
+
+              if (status == 'declined') {
+                shouldFallback = true;
+              } else if (status == 'pending' &&
+                  expiresAt != null &&
+                  expiresAt.toDate().isBefore(DateTime.now())) {
+                shouldFallback = true;
+              }
+
+              if (shouldFallback) {
+                AppServices.fallbackToGeneralSearch(booking.id);
+              }
+            }
+            _isCheckingTimeout = false;
+          })
+          .catchError((_) {
+            _isCheckingTimeout = false;
+          });
     }
   }
 
@@ -2243,9 +2259,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.rejectOffer),
-        content: Text(booking.rebookTechnicianId != null 
-          ? "Rejecting this offer will move your request to general search so other technicians can help you. Are you sure?"
-          : "Are you sure you want to reject this proposed time?"),
+        content: Text(
+          booking.rebookTechnicianId != null
+              ? "Rejecting this offer will move your request to general search so other technicians can help you. Are you sure?"
+              : "Are you sure you want to reject this proposed time?",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
