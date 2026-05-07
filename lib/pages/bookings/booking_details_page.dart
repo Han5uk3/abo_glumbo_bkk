@@ -18,6 +18,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/widgets/counter_propose_sheet.dart';
 import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/utils/whatsapp_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -386,6 +387,28 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                   'assets/icons/chat2.png',
                                   width: 16,
                                   height: 16,
+                                ),
+                              ),
+                            ),
+                          if (booking.agent?.phone != null &&
+                              booking.bookingStatusCode == 'A')
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: GestureDetector(
+                                onTap: () => WhatsAppUtils.launchWhatsApp(
+                                  booking.agent!.phone!,
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.green.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Image.asset(
+                                    'assets/images/whatsapp.png',
+                                    width: 16,
+                                    height: 16,
+                                  ),
                                 ),
                               ),
                             ),
@@ -1300,8 +1323,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
 
         _buildCostRow(
           context,
-          label: AppLocalizations.of(context)!.price,
-          amount: booking.service.price ?? 0.0,
+          label: AppLocalizations.of(context)!.inspectionFee,
+          amount: booking.effectiveInspectionFee,
         ),
 
         const SizedBox(height: 12),
@@ -1325,7 +1348,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ),
               ),
               Text(
-                '${AppLocalizations.of(context)!.sar} ${((completionData.totalCost) + (booking.service.price ?? 0.0)).toStringAsFixed(2)}',
+                '${AppLocalizations.of(context)!.sar} ${((completionData.totalCost) + (booking.effectiveInspectionFee)).toStringAsFixed(2)}',
                 style: DMSansFont.textStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -1761,6 +1784,31 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       ),
                     );
                   },
+                ),
+              ],
+              if (showChatOnHeader &&
+                  booking.agent?.phone != null &&
+                  ((hasChat && booking.bookingStatusCode == 'A') ||
+                      (hasChat &&
+                          booking.warranty?.warrantyStatusCode == 'S' &&
+                          isWarranty))) ...[
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () => WhatsAppUtils.launchWhatsApp(
+                    booking.agent!.phone!,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.green.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Image.asset(
+                      'assets/images/whatsapp.png',
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
                 ),
               ],
             ],

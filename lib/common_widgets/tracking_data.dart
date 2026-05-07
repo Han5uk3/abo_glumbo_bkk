@@ -4,6 +4,7 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
+import 'package:abo_glumbo_bbk/utils/whatsapp_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -306,15 +307,65 @@ class TrackingData extends StatelessWidget {
                     : Stream.value(0),
                 builder: (context, snapshot) {
                   final unreadCount = snapshot.data ?? 0;
-                  return SizedBox(
-                    width: 60,
-                    height: 60,
-                    child: GestureDetector(
-                      onTap: () => _openOrCreateChat(context),
-                      child: Stack(
-                        children: [
-                          Container(
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 50,
+                        height: 60,
+                        child: GestureDetector(
+                          onTap: () => _openOrCreateChat(context),
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  color: AppColors.bgWhite,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26.withAlpha(40),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 5),
+                                    ),
+                                  ],
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Image.asset(
+                                    'assets/icons/chat2.png',
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                ),
+                              ),
+                              if (unreadCount > 0)
+                                Positioned(
+                                  right: 10,
+                                  top: 10,
+                                  child: Container(
+                                    width: 12,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (worker?.phone != null) ...[
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => WhatsAppUtils.launchWhatsApp(worker!.phone!),
+                          child: Container(
                             width: 50,
+                            height: 50,
                             decoration: BoxDecoration(
                               color: AppColors.bgWhite,
                               boxShadow: [
@@ -328,32 +379,15 @@ class TrackingData extends StatelessWidget {
                             ),
                             child: Center(
                               child: Image.asset(
-                                'assets/icons/chat2.png',
+                                'assets/images/whatsapp.png',
                                 width: 24,
                                 height: 24,
                               ),
                             ),
                           ),
-                          if (unreadCount > 0)
-                            Positioned(
-                              right: 10,
-                              top: 10,
-                              child: Container(
-                                width: 12,
-                                height: 12,
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      ],
+                    ],
                   );
                 },
               ),
