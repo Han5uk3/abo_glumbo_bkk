@@ -36,6 +36,10 @@ class UserModel {
   String? tier;
   GeoPoint? lastKnownLocation;
   String? geohash;
+  String? residenceIdUrl;
+  String? sponsorWorkPermitUrl;
+  String? chamberOfCommerceApprovalUrl;
+
 
   UserModel({
     required this.role,
@@ -69,7 +73,11 @@ class UserModel {
     this.tier,
     this.lastKnownLocation,
     this.geohash,
+    this.residenceIdUrl,
+    this.sponsorWorkPermitUrl,
+    this.chamberOfCommerceApprovalUrl,
   });
+
 
   UserModel copyWith({
     String? uid,
@@ -102,7 +110,11 @@ class UserModel {
     double? paidoutTips,
     bool? isOnline,
     String? tier,
+    String? residenceIdUrl,
+    String? sponsorWorkPermitUrl,
+    String? chamberOfCommerceApprovalUrl,
   }) {
+
     return UserModel(
       uid: uid ?? this.uid,
       role: role ?? this.role,
@@ -135,7 +147,11 @@ class UserModel {
       tier: tier ?? this.tier,
       lastKnownLocation: lastKnownLocation ?? this.lastKnownLocation,
       geohash: geohash ?? this.geohash,
+      residenceIdUrl: residenceIdUrl ?? this.residenceIdUrl,
+      sponsorWorkPermitUrl: sponsorWorkPermitUrl ?? this.sponsorWorkPermitUrl,
+      chamberOfCommerceApprovalUrl: chamberOfCommerceApprovalUrl ?? this.chamberOfCommerceApprovalUrl,
     );
+
   }
 
   factory UserModel.fromDocumentSnapshot(DocumentSnapshot doc) {
@@ -192,7 +208,11 @@ class UserModel {
       tier: json['tier'],
       lastKnownLocation: json['last_known_location'],
       geohash: json['geohash'],
+      residenceIdUrl: json['residenceIdUrl'],
+      sponsorWorkPermitUrl: json['sponsorWorkPermitUrl'],
+      chamberOfCommerceApprovalUrl: json['chamberOfCommerceApprovalUrl'],
     );
+
   }
 
   Map<String, dynamic> toJson() {
@@ -238,7 +258,11 @@ class UserModel {
       'tier': tier,
       'last_known_location': lastKnownLocation,
       'geohash': geohash,
+      'residenceIdUrl': residenceIdUrl,
+      'sponsorWorkPermitUrl': sponsorWorkPermitUrl,
+      'chamberOfCommerceApprovalUrl': chamberOfCommerceApprovalUrl,
     };
+
   }
 
   Map<String, dynamic> toFirestore() {

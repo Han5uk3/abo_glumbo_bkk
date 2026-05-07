@@ -181,7 +181,9 @@ Widget buildBookingTimelineCard(
         }
 
         // Warranty expired
-        if (booking.warranty?.expiredOn != null) {
+        if (booking.warranty?.expiredOn != null &&
+            booking.warranty?.availability == false &&
+            booking.warranty?.warrantyStatusCode == 'E') {
           timelineItems.add({
             'title': AppLocalizations.of(context)!.warrantyExpired,
             'time': _formatDateLocalized(booking.warranty!.expiredOn!, context),

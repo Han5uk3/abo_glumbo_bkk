@@ -564,7 +564,7 @@ class ServiceBookingTile extends StatelessWidget {
       "C": (warranty.completedAt != null)
           ? "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(warranty.completedAt!, locale)}"
           : null,
-      "E": (warranty.expiredOn != null)
+      "E": (warranty.expiredOn != null && warranty.availability == false)
           ? "${AppLocalizations.of(context)!.expiredOn} : ${formatBookingDateTime(warranty.expiredOn!, locale)}"
           : null,
       "X": (warranty.rejectedAt != null)
@@ -725,14 +725,6 @@ class ServiceBookingTile extends StatelessWidget {
     switch (statusCode) {
       case "A":
       case "X":
-        if (calculateDaysLeft() <= 0) {
-          return _buildWarrantyBadge(
-            label: AppLocalizations.of(context)?.expired ?? '',
-            color: Colors.grey,
-            textColor: Colors.grey,
-            borderOnly: true,
-          );
-        }
         if (statusCode == "X") {
           return _buildWarrantyBadge(
             label: AppLocalizations.of(context)?.rejected ?? '',
@@ -748,12 +740,15 @@ class ServiceBookingTile extends StatelessWidget {
           onTap: () => showWarrantyClaimedBottomSheet(context, booking),
         );
       case "E":
-        return _buildWarrantyBadge(
-          label: AppLocalizations.of(context)?.expired ?? '',
-          color: Colors.grey,
-          textColor: Colors.grey,
-          borderOnly: true,
-        );
+        if (warranty.availability == false) {
+          return _buildWarrantyBadge(
+            label: AppLocalizations.of(context)?.expired ?? '',
+            color: Colors.grey,
+            textColor: Colors.grey,
+            borderOnly: true,
+          );
+        }
+        return SizedBox.shrink();
       case "R":
         return _buildWarrantyBadge(
           label: AppLocalizations.of(context)?.requested ?? '',

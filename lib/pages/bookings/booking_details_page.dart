@@ -109,7 +109,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       "C": (warranty.completedAt != null)
           ? "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(warranty.completedAt!, locale)}"
           : null,
-      "E": (warranty.expiredOn != null)
+      "E": (warranty.expiredOn != null && warranty.availability == false)
           ? "${AppLocalizations.of(context)!.expiredOn} : ${formatBookingDateTime(warranty.expiredOn!, locale)}"
           : null,
       "X": (warranty.rejectedAt != null)
