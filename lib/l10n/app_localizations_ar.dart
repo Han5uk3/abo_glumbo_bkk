@@ -1117,16 +1117,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get selectPaymentMethod => 'حدد طريقة الدفع';
 
   @override
-  String get payInCash => 'الدفع نقدًا';
+  String get payInCash => 'الدفع خارج التطبيق';
 
   @override
   String get tip => 'إكرامية:';
 
   @override
-  String get card => 'بطاقة';
+  String get card => 'داخل التطبيق';
 
   @override
-  String get cash => 'نقدًا';
+  String get cash => 'خارج التطبيق';
 
   @override
   String get custom => 'مخصص';
@@ -1144,7 +1144,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get submitTip => 'إرسال & إكرامية';
 
   @override
-  String get payWithCard => 'الدفع بالبطاقة';
+  String get payWithCard => 'الدفع داخل التطبيق';
 
   @override
   String get pleaseSelectRating => 'يرجى تحديد التقييم';

@@ -1143,16 +1143,16 @@ class AppLocalizationsUr extends AppLocalizations {
   String get selectPaymentMethod => 'ادائیگی کا طریقہ منتخب کریں';
 
   @override
-  String get payInCash => 'نقد ادائیگی کریں';
+  String get payInCash => 'ایپ کے باہر ادائیگی کریں';
 
   @override
   String get tip => 'ٹپ:';
 
   @override
-  String get card => 'کارڈ';
+  String get card => 'ایپ کے اندر';
 
   @override
-  String get cash => 'نقد';
+  String get cash => 'ایپ کے باہر';
 
   @override
   String get custom => 'کسٹم';
@@ -1170,7 +1170,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get submitTip => 'جمع کرائیں اور ٹپ دیں';
 
   @override
-  String get payWithCard => 'کارڈ کے ذریعے ادائیگی کریں';
+  String get payWithCard => 'ایپ کے اندر ادائیگی کریں';
 
   @override
   String get pleaseSelectRating => 'براہ کرم ریٹنگ منتخب کریں';

@@ -47,9 +47,8 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
   void initState() {
     super.initState();
     if (widget.booking.completionData != null) {
-      final totalServiceCost = widget.booking.completionData!.totalCost;
-      final inspectionFee = widget.booking.completionData!.inspectionFee;
-      _amountController.text = (totalServiceCost + inspectionFee).toStringAsFixed(2);
+      final totalCost = widget.booking.completionData!.totalCost;
+      _amountController.text = totalCost.toStringAsFixed(2);
     }
   }
 
@@ -97,6 +96,8 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
   }
 
   Future<void> _uploadPaymentProof() async {
+    // Payment proof files are now optional
+    /*
     if (_selectedFiles.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -109,6 +110,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
       );
       return;
     }
+    */
 
     final amount = double.tryParse(_amountController.text.trim());
     if (amount == null || amount <= 0) {
@@ -124,6 +126,8 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
       return;
     }
 
+    // Transaction ID is now optional
+    /*
     final transactionId = _transactionIdController.text.trim();
     if (transactionId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -137,6 +141,8 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
       );
       return;
     }
+    */
+    final transactionId = _transactionIdController.text.trim();
 
     setState(() {
       _isUploading = true;

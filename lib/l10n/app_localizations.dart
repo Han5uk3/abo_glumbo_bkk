@@ -2263,7 +2263,7 @@ abstract class AppLocalizations {
   /// No description provided for @payInCash.
   ///
   /// In en, this message translates to:
-  /// **'Pay in Cash'**
+  /// **'Pay Outside App'**
   String get payInCash;
 
   /// No description provided for @tip.
@@ -2275,13 +2275,13 @@ abstract class AppLocalizations {
   /// No description provided for @card.
   ///
   /// In en, this message translates to:
-  /// **'Card'**
+  /// **'Inside App'**
   String get card;
 
   /// No description provided for @cash.
   ///
   /// In en, this message translates to:
-  /// **'Cash'**
+  /// **'Outside App'**
   String get cash;
 
   /// No description provided for @custom.
@@ -2317,7 +2317,7 @@ abstract class AppLocalizations {
   /// No description provided for @payWithCard.
   ///
   /// In en, this message translates to:
-  /// **'Pay with Card'**
+  /// **'Pay Inside App'**
   String get payWithCard;
 
   /// No description provided for @pleaseSelectRating.

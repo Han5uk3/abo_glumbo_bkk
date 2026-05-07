@@ -1132,16 +1132,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectPaymentMethod => 'Select Payment Method';
 
   @override
-  String get payInCash => 'Pay in Cash';
+  String get payInCash => 'Pay Outside App';
 
   @override
   String get tip => 'Tip:';
 
   @override
-  String get card => 'Card';
+  String get card => 'Inside App';
 
   @override
-  String get cash => 'Cash';
+  String get cash => 'Outside App';
 
   @override
   String get custom => 'Custom';
@@ -1159,7 +1159,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get submitTip => 'Submit & Tip';
 
   @override
-  String get payWithCard => 'Pay with Card';
+  String get payWithCard => 'Pay Inside App';
 
   @override
   String get pleaseSelectRating => 'Please select rating';

@@ -6,10 +6,10 @@ import 'package:flutter/foundation.dart';
 /// Full payout management is in the panel app
 ///
 /// PAYOUT RULES:
-/// - Only card tips + bonus count toward payout-requestable balance (totalAvailableBalance)
-/// - In-app service payments (mode 1 only) are tracked separately for informational purposes
+/// - Only Inside App tips + bonus count toward payout-requestable balance (totalAvailableBalance)
+/// - Inside App service payments (mode 1 only) are tracked separately for informational purposes
 /// - Inspection fees (mode 0) are NEVER included in payout tracking
-/// - Outside-app payments are tracked for lifetime totals only
+/// - Outside App payments are tracked for lifetime totals only
 class UnifiedPayoutServices {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -65,7 +65,7 @@ class UnifiedPayoutServices {
   ///
   /// NOTE: Earnings are tracked for informational/lifetime totals only.
   /// They are NOT added to totalAvailableBalance (payout-requestable amount).
-  /// Only tips and bonus are payoutable.
+  /// Only Inside App tips and bonus are payoutable.
   static Future<void> recordInAppServicePayment({
     required String workerId,
     required double amount,
@@ -129,14 +129,14 @@ class UnifiedPayoutServices {
             );
           }
         } else {
-          // Card tips ARE added to available balance (payoutable)
+          // Inside App tips ARE added to available balance (payoutable)
           updates['cardTips'] = FieldValue.increment(tipsIncrement);
           updates['totalAvailableBalance'] = FieldValue.increment(
             tipsIncrement,
           );
           if (kDebugMode) {
             print(
-              '💳 Adding card tip: $tipsIncrement to worker: $workerId (payable)',
+              '💳 Adding Inside App tip: $tipsIncrement to worker: $workerId (payable)',
             );
           }
         }
