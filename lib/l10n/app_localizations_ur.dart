@@ -2285,8 +2285,14 @@ class AppLocalizationsUr extends AppLocalizations {
       'براہ کرم انتظار کریں جب تک ہم آپ کی بکنگ کو حتمی شکل دے رہے ہیں...';
 
   @override
-  String get technicianAssignmentNotification =>
-      'ٹیکنیشن کے متعین ہوتے ہی ہم آپ کو مطلع کر دیں گے۔';
+  String technicianAssignmentNotification(String name) {
+    return 'ٹیکنیشن $name کامیابی کے ساتھ بک ہو گیا ہے۔';
+  }
+
+  @override
+  String technicianBookedSuccessfully(String name) {
+    return 'ٹیکنیشن $name کامیابی کے ساتھ بک ہو گیا ہے۔';
+  }
 
   @override
   String get verificationPending => 'تصدیق زیر التوا';

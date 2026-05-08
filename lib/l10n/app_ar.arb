@@ -734,7 +734,26 @@
   "pleaseSelectATimeSlot": "يرجى اختيار الموعد المتاح",
   "cannotBookForPastTime": "لا يمكن حجز موعد في الماضي",
   "finalizingBookingInfo": "يرجى الانتظار بينما نقوم بإنهاء إجراءات الحجز...",
-  "technicianAssignmentNotification": "سنقوم بإعلامك بمجرد تعيين فني لك.",
+  "technicianAssignmentNotification": "تم حجز الفني {name} بنجاح.",
+  "@technicianAssignmentNotification": {
+    "description": "Message shown when a technician is successfully assigned to a booking",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+  "technicianBookedSuccessfully": "تم حجز الفني {name} بنجاح.",
+  "@technicianBookedSuccessfully": {
+    "description": "Message shown when a technician is successfully assigned to a booking",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
   "verificationPending": "قيد التحقق من الدفع",
   "waitingForTechnicianVerification": "في انتظار تحقق الفني من الدفع",
   "verifyPayment": "التحقق من الدفع",

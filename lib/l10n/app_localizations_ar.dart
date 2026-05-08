@@ -2232,8 +2232,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'يرجى الانتظار بينما نقوم بإنهاء إجراءات الحجز...';
 
   @override
-  String get technicianAssignmentNotification =>
-      'سنقوم بإعلامك بمجرد تعيين فني لك.';
+  String technicianAssignmentNotification(String name) {
+    return 'تم حجز الفني $name بنجاح.';
+  }
+
+  @override
+  String technicianBookedSuccessfully(String name) {
+    return 'تم حجز الفني $name بنجاح.';
+  }
 
   @override
   String get verificationPending => 'قيد التحقق من الدفع';

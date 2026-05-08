@@ -1515,6 +1515,34 @@ class AppServices {
     }
   }
 
+  static Future<void> recordCustomerNotification({
+    required String customerId,
+    required String titleEn,
+    required String titleAr,
+    required String bodyEn,
+    required String bodyAr,
+    required String type,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      await AppFirestore.customersCollectionRef
+          .doc(customerId)
+          .collection('notifications')
+          .add({
+        'titleEn': titleEn,
+        'titleAr': titleAr,
+        'bodyEn': bodyEn,
+        'bodyAr': bodyAr,
+        'type': type,
+        'data': data,
+        'createdAt': FieldValue.serverTimestamp(),
+        'read': false,
+      });
+    } catch (e) {
+      debugPrint('Error recording customer notification: $e');
+    }
+  }
+
   static Future<String> broadcastJobRequest({
     required JobRequestModel request,
     required List<String> workerIds,

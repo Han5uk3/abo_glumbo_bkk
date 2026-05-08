@@ -2271,8 +2271,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please wait while we finalize your booking...';
 
   @override
-  String get technicianAssignmentNotification =>
-      'We will notify you once a technician has been assigned to you.';
+  String technicianAssignmentNotification(String name) {
+    return 'Technician $name has been booked successfully.';
+  }
+
+  @override
+  String technicianBookedSuccessfully(String name) {
+    return 'Technician $name has been booked successfully.';
+  }
 
   @override
   String get verificationPending => 'Verification Pending';

@@ -722,7 +722,26 @@
   "pleaseSelectATimeSlot": "براہ کرم وقت کا ایک سلاٹ منتخب کریں",
   "cannotBookForPastTime": "ماضی کے وقت کے لیے بکنگ نہیں کی جا سکتی",
   "finalizingBookingInfo": "براہ کرم انتظار کریں جب تک ہم آپ کی بکنگ کو حتمی شکل دے رہے ہیں...",
-  "technicianAssignmentNotification": "ٹیکنیشن کے متعین ہوتے ہی ہم آپ کو مطلع کر دیں گے۔",
+  "technicianAssignmentNotification": "ٹیکنیشن {name} کامیابی کے ساتھ بک ہو گیا ہے۔",
+  "@technicianAssignmentNotification": {
+    "description": "Message shown when a technician is successfully assigned to a booking",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+  "technicianBookedSuccessfully": "ٹیکنیشن {name} کامیابی کے ساتھ بک ہو گیا ہے۔",
+  "@technicianBookedSuccessfully": {
+    "description": "Message shown when a technician is successfully assigned to a booking",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
   "verificationPending": "تصدیق زیر التوا",
   "waitingForTechnicianVerification": "ٹیکنیشن کی طرف سے ادائیگی کی تصدیق کا انتظار ہے",
   "verifyPayment": "ادائیگی کی تصدیق کریں",

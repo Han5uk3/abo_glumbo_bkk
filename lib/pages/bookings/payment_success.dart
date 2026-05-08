@@ -176,7 +176,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
             ),
             const SizedBox(height: 16),
             Text(
-              AppLocalizations.of(context)?.technicianAssignmentNotification ?? "We will notify you once a technician has been assigned to you.",
+              AppLocalizations.of(context)?.technicianAssignmentNotification(widget.booking?.agent?.name ?? "A technician") ?? "Technician has been booked successfully.",
               style: const TextStyle(fontSize: 12, color: Colors.white, height: 1.5),
               textAlign: TextAlign.center,
             ),

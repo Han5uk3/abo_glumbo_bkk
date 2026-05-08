@@ -729,7 +729,26 @@
   "pleaseSelectATimeSlot": "Please select a time slot",
   "cannotBookForPastTime": "Cannot book for past time",
   "finalizingBookingInfo": "Please wait while we finalize your booking...",
-  "technicianAssignmentNotification": "We will notify you once a technician has been assigned to you.",
+  "technicianAssignmentNotification": "Technician {name} has been booked successfully.",
+  "@technicianAssignmentNotification": {
+    "description": "Message shown when a technician is successfully assigned to a booking",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+  "technicianBookedSuccessfully": "Technician {name} has been booked successfully.",
+  "@technicianBookedSuccessfully": {
+    "description": "Message shown when a technician is successfully assigned to a booking",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
   "verificationPending": "Verification Pending",
   "waitingForTechnicianVerification": "Waiting for technician to verify payment",
   "verifyPayment": "Verify Payment",

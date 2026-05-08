@@ -4366,11 +4366,17 @@ abstract class AppLocalizations {
   /// **'Please wait while we finalize your booking...'**
   String get finalizingBookingInfo;
 
-  /// No description provided for @technicianAssignmentNotification.
+  /// Message shown when a technician is successfully assigned to a booking
   ///
   /// In en, this message translates to:
-  /// **'We will notify you once a technician has been assigned to you.'**
-  String get technicianAssignmentNotification;
+  /// **'Technician {name} has been booked successfully.'**
+  String technicianAssignmentNotification(String name);
+
+  /// Message shown when a technician is successfully assigned to a booking
+  ///
+  /// In en, this message translates to:
+  /// **'Technician {name} has been booked successfully.'**
+  String technicianBookedSuccessfully(String name);
 
   /// No description provided for @verificationPending.
   ///

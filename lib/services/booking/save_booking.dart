@@ -107,10 +107,13 @@ class BookingUtils {
       );
 
       bool isOnHour = service.isOnWorkHour(currentTime: DateTime.now());
-      bool isRebook = rebookTechnicianId != null && rebookTechnicianId.isNotEmpty;
+      bool isRebook =
+          rebookTechnicianId != null && rebookTechnicianId.isNotEmpty;
       bool shouldAutoAssign =
           !isOnHour && (service.category?.isNotEmpty == true);
-      double bookingTimePrice = service.getCurrentPrice(currentTime: bookingDate);
+      double bookingTimePrice = service.getCurrentPrice(
+        currentTime: bookingDate,
+      );
       ServiceModel updatedService = service.copyWith(price: bookingTimePrice);
 
       BookingModel booking = BookingModel(
@@ -138,15 +141,15 @@ class BookingUtils {
             : null,
         autoAssignmentStatus: shouldAutoAssign
             ? (bookingDate
-                        .subtract(const Duration(hours: 2))
-                        .isBefore(DateTime.now())
-                ? "ready_to_assign"
-                : null)
+                      .subtract(const Duration(hours: 2))
+                      .isBefore(DateTime.now())
+                  ? "ready_to_assign"
+                  : null)
             : (isRebook && requestId == null
-                ? "rebook_pending"
-                : (isOnHour && agent?.uid?.isNotEmpty == true
-                    ? "accepted"
-                    : null)),
+                  ? "rebook_pending"
+                  : (isOnHour && agent?.uid?.isNotEmpty == true
+                        ? "accepted"
+                        : null)),
         paymentModeCode: getPaymentModeCode(paymentMode),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -154,7 +157,10 @@ class BookingUtils {
       );
 
       // If it's a direct assignment (not rebook, not auto-assign), status is A
-      if (!isRebook && !shouldAutoAssign && isOnHour && agent?.uid?.isNotEmpty == true) {
+      if (!isRebook &&
+          !shouldAutoAssign &&
+          isOnHour &&
+          agent?.uid?.isNotEmpty == true) {
         booking.bookingStatusCode = 'A';
         booking.assignedAt = booking.createdAt;
         booking.technicianSelectedAt = Timestamp.now();
@@ -171,19 +177,20 @@ class BookingUtils {
         'rebookTechnicianId': rebookTechnicianId,
       });
 
-
       // If this was from a broadcast request, clean up
       if (requestId != null) {
         final batch = FirebaseFirestore.instance.batch();
-        
+
         // 1. Update request status
         batch.update(AppFirestore.jobRequestsCollectionRef.doc(requestId), {
           'status': 'finalized',
           'bookingId': bookingId,
         });
-        
+
         // 2. Mark all offers for this request as closed
-        final offers = await AppFirestore.jobOffersCollectionRef.where('requestId', isEqualTo: requestId).get();
+        final offers = await AppFirestore.jobOffersCollectionRef
+            .where('requestId', isEqualTo: requestId)
+            .get();
         for (var doc in offers.docs) {
           batch.update(doc.reference, {'status': 'closed'});
         }
@@ -196,9 +203,21 @@ class BookingUtils {
             technicianId: agent.uid!,
             titleEn: 'Job Confirmed',
             titleAr: 'تم تأكيد الطلب',
-            bodyEn: 'You have been selected for a new job! Tap to view details.',
-            bodyAr: 'لقد تم اختيارك لطلب جديد! اضغط لعرض التفاصيل.',
+            bodyEn: 'You have been assigned to a booking.',
+            bodyAr: 'لقد تم تعيينك في حجز جديد.',
             type: 'booking_confirmed',
+            data: {'bookingId': bookingId},
+          );
+
+          // 4. Notify the customer
+          await AppServices.recordCustomerNotification(
+            customerId: customerData.uid ?? "",
+            titleEn: 'Technician Booked',
+            titleAr: 'تم حجز فني',
+            bodyEn:
+                'Technician ${agent.name ?? "A technician"} has been booked successfully.',
+            bodyAr: 'تم حجز الفني ${agent.name ?? "فني"} بنجاح.',
+            type: 'technician_assigned',
             data: {'bookingId': bookingId},
           );
         }
@@ -292,8 +311,9 @@ class BookingUtils {
         "orderId": orderId,
         "transactionId": orderId, // Set transactionId same as orderId
         "updatedAt": Timestamp.now(),
-        "completionData.paymentMethod":
-            paymentModeCode == "C" ? "Inside App" : "Outside App",
+        "completionData.paymentMethod": paymentModeCode == "C"
+            ? "Inside App"
+            : "Outside App",
         // Apply warranty for 1 week from completion date if it's full work (mode 1)
         if (booking?.completionData?.mode == 1) ...{
           'warranty.expiredOn': Timestamp.fromDate(
