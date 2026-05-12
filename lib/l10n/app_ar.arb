@@ -824,5 +824,12 @@
   "fullServiceCompleted": "اكتملت الخدمة بالكامل",
   "cancelledByAdmin": "تم الإلغاء من قبل المسؤول",
   "reject":"رفض",
-  "bookingCancelledByAdmin": "تم إلغاء الطلب من قبل المسؤول"
+  "bookingCancelledByAdmin": "تم إلغاء الطلب من قبل المسؤول",
+  "trustBarWarranty": "ضمان",
+  "trustBarWarrantyDesc": "ضمان الخدمة لمدة ٧ أيام",
+  "trustBarSpeed": "سرعة",
+  "trustBarSpeedDesc": "خدمة سريعة وموثوقة",
+  "trustBarQuality": "جودة",
+  "trustBarQualityDesc": "فنيين محترفين ومعتمدين",
+  "howCanWeHelp": "كيف يمكننا مساعدتك اليوم؟"
 }

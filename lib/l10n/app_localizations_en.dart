@@ -2470,4 +2470,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookingCancelledByAdmin => 'Booking was cancelled by admin';
+
+  @override
+  String get trustBarWarranty => 'Warranty';
+
+  @override
+  String get trustBarWarrantyDesc => '7-day service guarantee';
+
+  @override
+  String get trustBarSpeed => 'Speed';
+
+  @override
+  String get trustBarSpeedDesc => 'Fast & reliable service';
+
+  @override
+  String get trustBarQuality => 'Quality';
+
+  @override
+  String get trustBarQualityDesc => 'Certified professionals';
+
+  @override
+  String get howCanWeHelp => 'How can we help you today?';
 }

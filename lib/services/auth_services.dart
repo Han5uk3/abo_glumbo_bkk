@@ -322,7 +322,7 @@ class AuthServices {
         return;
       }
 
-      debugPrint("🔍 Checking user: $uid");
+      debugPrint("🔍 Checking user in customers collection: $uid");
       final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
 
       if (!context.mounted) {
@@ -333,7 +333,36 @@ class AuthServices {
       await LocalStoreHelper.putGuestUser(false);
 
       if (userDoc.exists) {
-        debugPrint("✅ User exists, logging in...");
+        final userData = userDoc.data() as Map<String, dynamic>?;
+        final userRole = userData?['role']?.toString().toLowerCase() ?? 'customer';
+
+        debugPrint("🔍 User found with role: $userRole");
+
+        // Only allow users with role "customer" to log in via customer app
+        if (userRole != 'customer') {
+          debugPrint("❌ User role is '$userRole', not 'customer'. Access denied.");
+          // Sign out the Firebase Auth session since this user isn't a customer
+          await FirebaseAuth.instance.signOut();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text(
+                  'This account is not registered as a customer.',
+                ),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                margin: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            );
+            Navigator.pop(context);
+          }
+          return;
+        }
+
+        debugPrint("✅ User exists with role 'customer', logging in...");
 
         // Setup authenticated state within the code
         await LocalStoreHelper.putUID(uid);
@@ -356,7 +385,57 @@ class AuthServices {
           );
         }
       } else {
-        debugPrint("📝 User doesn't exist, navigating to signup...");
+        // UID not found — check by phone number to prevent duplicate accounts
+        final phone = userCredential.user?.phoneNumber;
+        debugPrint("🔍 UID not found, checking customers by phone: $phone");
+
+        if (phone != null && phone.isNotEmpty) {
+          final phoneQuery = await AppFirestore.customersCollectionRef
+              .where('phone', isEqualTo: phone)
+              .limit(1)
+              .get();
+
+          if (phoneQuery.docs.isNotEmpty) {
+            // Existing customer found by phone — migrate doc to new UID
+            final oldDoc = phoneQuery.docs.first;
+            final oldData = oldDoc.data() as Map<String, dynamic>;
+            final oldDocId = oldDoc.id;
+
+            debugPrint("✅ Existing customer found by phone (old UID: $oldDocId), migrating to new UID: $uid");
+
+            // Update UID field and write to new doc
+            oldData['uid'] = uid;
+            oldData['updatedAt'] = Timestamp.now();
+            await AppFirestore.customersCollectionRef.doc(uid).set(oldData);
+
+            // Delete old document
+            if (oldDocId != uid) {
+              await AppFirestore.customersCollectionRef.doc(oldDocId).delete();
+              debugPrint("🗑️ Old customer doc ($oldDocId) deleted");
+            }
+
+            // Login with migrated account
+            await LocalStoreHelper.putUID(uid);
+            await LocalStoreHelper.putlogoutStatus(false);
+            await LocalStoreHelper.putBlockStatus(false);
+
+            await _updateCurrentLocationAddress(uid);
+            await NotificationServices.refreshFCMToken();
+
+            if (context.mounted) {
+              debugPrint("🏠 Navigating to home (migrated account)...");
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const Home()),
+                (route) => false,
+              );
+            }
+            return;
+          }
+        }
+
+        // Truly new user — redirect to signup
+        debugPrint("📝 No existing customer found by phone, navigating to signup...");
         if (context.mounted) {
           Navigator.pushAndRemoveUntil(
             context,

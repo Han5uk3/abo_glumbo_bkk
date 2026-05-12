@@ -792,6 +792,108 @@ class _HomePageState extends State<HomePage>
     if (!_isGuest) _fetchActiveBookings();
   }
 
+  Widget _buildTrustBar() {
+    final locale = AppLocalizations.of(context);
+    final items = [
+      _TrustItem(
+        icon: Icons.verified_user_outlined,
+        title: locale?.trustBarWarranty ?? 'Warranty',
+        subtitle: locale?.trustBarWarrantyDesc ?? '7-day service guarantee',
+      ),
+      _TrustItem(
+        icon: Icons.bolt_outlined,
+        title: locale?.trustBarSpeed ?? 'Speed',
+        subtitle: locale?.trustBarSpeedDesc ?? 'Fast & reliable service',
+      ),
+      _TrustItem(
+        icon: Icons.workspace_premium_outlined,
+        title: locale?.trustBarQuality ?? 'Quality',
+        subtitle: locale?.trustBarQualityDesc ?? 'Certified professionals',
+      ),
+    ];
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primary.withOpacity(0.06),
+            AppColors.secondary.withOpacity(0.04),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: AppColors.primary.withOpacity(0.08),
+        ),
+      ),
+      child: Row(
+        children: List.generate(items.length * 2 - 1, (index) {
+          if (index.isOdd) {
+            return Container(
+              width: 1,
+              height: 32,
+              color: AppColors.grey.withOpacity(0.2),
+            );
+          }
+          final item = items[index ~/ 2];
+          return Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  item.icon,
+                  size: 22,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  item.title,
+                  style: DMSansFont.textStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                const SizedBox(height: 1),
+                Text(
+                  item.subtitle,
+                  style: DMSansFont.textStyle(
+                    fontSize: 8.5,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.grey2,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildHowCanWeHelp() {
+    final locale = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 4),
+      child: Text(
+        locale?.howCanWeHelp ?? 'How can we help you today?',
+        style: DMSansFont.textStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.w700,
+          color: AppColors.black1,
+          letterSpacing: -0.2,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -804,7 +906,10 @@ class _HomePageState extends State<HomePage>
         physics: ClampingScrollPhysics(),
         slivers: [
           SliverToBoxAdapter(child: _buildHeader(safePadding)),
-          SliverToBoxAdapter(child: SizedBox(height: 24)),
+          SliverToBoxAdapter(child: SizedBox(height: 16)),
+          SliverToBoxAdapter(child: _buildTrustBar()),
+          SliverToBoxAdapter(child: _buildHowCanWeHelp()),
+          SliverToBoxAdapter(child: SizedBox(height: 12)),
           SliverToBoxAdapter(
             child: HomeCarouselWidget(banners: primaryBanners),
           ),
@@ -880,4 +985,15 @@ class _HomePageState extends State<HomePage>
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+}
+
+class _TrustItem {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  const _TrustItem({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
 }

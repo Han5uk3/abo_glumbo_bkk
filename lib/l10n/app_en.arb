@@ -811,5 +811,12 @@
   "fullServiceCompleted": "Full Service Completed",
   "cancelledByAdmin": "Cancelled by Admin",
   "reject":"Reject",
-  "bookingCancelledByAdmin": "Booking was cancelled by admin"
+  "bookingCancelledByAdmin": "Booking was cancelled by admin",
+  "trustBarWarranty": "Warranty",
+  "trustBarWarrantyDesc": "7-day service guarantee",
+  "trustBarSpeed": "Speed",
+  "trustBarSpeedDesc": "Fast & reliable service",
+  "trustBarQuality": "Quality",
+  "trustBarQualityDesc": "Certified professionals",
+  "howCanWeHelp": "How can we help you today?"
 }

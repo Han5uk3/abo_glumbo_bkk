@@ -2432,4 +2432,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bookingCancelledByAdmin => 'تم إلغاء الطلب من قبل المسؤول';
+
+  @override
+  String get trustBarWarranty => 'ضمان';
+
+  @override
+  String get trustBarWarrantyDesc => 'ضمان الخدمة لمدة ٧ أيام';
+
+  @override
+  String get trustBarSpeed => 'سرعة';
+
+  @override
+  String get trustBarSpeedDesc => 'خدمة سريعة وموثوقة';
+
+  @override
+  String get trustBarQuality => 'جودة';
+
+  @override
+  String get trustBarQualityDesc => 'فنيين محترفين ومعتمدين';
+
+  @override
+  String get howCanWeHelp => 'كيف يمكننا مساعدتك اليوم؟';
 }

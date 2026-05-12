@@ -2487,4 +2487,25 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get bookingCancelledByAdmin => 'بکنگ ایڈمن کی طرف سے منسوخ کر دی گئی';
+
+  @override
+  String get trustBarWarranty => 'وارنٹی';
+
+  @override
+  String get trustBarWarrantyDesc => '۷ دن کی سروس گارنٹی';
+
+  @override
+  String get trustBarSpeed => 'تیزی';
+
+  @override
+  String get trustBarSpeedDesc => 'تیز اور قابل اعتماد سروس';
+
+  @override
+  String get trustBarQuality => 'معیار';
+
+  @override
+  String get trustBarQualityDesc => 'مصدقہ پیشہ ور افراد';
+
+  @override
+  String get howCanWeHelp => 'آج ہم آپ کی کیا مدد کر سکتے ہیں؟';
 }

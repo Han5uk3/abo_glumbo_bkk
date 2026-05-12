@@ -811,5 +811,12 @@
   "inspectionCompleted": "معائنہ مکمل ہو گیا",
   "fullServiceCompleted": "مکمل سروس مکمل ہو گئی",
   "cancelledByAdmin": "ایڈمن کی طرف سے منسوخ",
-  "bookingCancelledByAdmin": "بکنگ ایڈمن کی طرف سے منسوخ کر دی گئی"
+  "bookingCancelledByAdmin": "بکنگ ایڈمن کی طرف سے منسوخ کر دی گئی",
+  "trustBarWarranty": "وارنٹی",
+  "trustBarWarrantyDesc": "۷ دن کی سروس گارنٹی",
+  "trustBarSpeed": "تیزی",
+  "trustBarSpeedDesc": "تیز اور قابل اعتماد سروس",
+  "trustBarQuality": "معیار",
+  "trustBarQualityDesc": "مصدقہ پیشہ ور افراد",
+  "howCanWeHelp": "آج ہم آپ کی کیا مدد کر سکتے ہیں؟"
 }

@@ -4749,6 +4749,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Booking was cancelled by admin'**
   String get bookingCancelledByAdmin;
+
+  /// No description provided for @trustBarWarranty.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty'**
+  String get trustBarWarranty;
+
+  /// No description provided for @trustBarWarrantyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'7-day service guarantee'**
+  String get trustBarWarrantyDesc;
+
+  /// No description provided for @trustBarSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get trustBarSpeed;
+
+  /// No description provided for @trustBarSpeedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast & reliable service'**
+  String get trustBarSpeedDesc;
+
+  /// No description provided for @trustBarQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality'**
+  String get trustBarQuality;
+
+  /// No description provided for @trustBarQualityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Certified professionals'**
+  String get trustBarQualityDesc;
+
+  /// No description provided for @howCanWeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'How can we help you today?'**
+  String get howCanWeHelp;
 }
 
 class _AppLocalizationsDelegate
