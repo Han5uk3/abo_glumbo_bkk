@@ -706,7 +706,7 @@
   "serviceNow": "Service Now",
   "serviceForLater": "Service for Later",
   "placeAndTiming": "Place and timing",
-  "counterOfferFromTechnician": "Technician proposed a new time",
+  "counterOfferFromTechnician": "Update Regarding Your Request",
   "technicianProposedNewTime": "Technician has proposed a new time for your booking.",
   "acceptOffer": "Accept Offer",
   "suggestAnotherTime": "Suggest another time",
@@ -797,7 +797,6 @@
   "technicianTooFarMessage": "This technician is too far from your service location and cannot be selected",
   "rebookTechnician": "Rebook Technician",
   "selectService": "Select Service",
-  "searchServices": "Search services...",
   "rejectionProfessionalMessage": "Are you currently unavailable for this appointment? Instead of rejecting, you can propose a more convenient time for the customer.",
   "proposeAlternativeTime": "Propose Alternative Time",
   "technicianSelected": "Technician Selected",
@@ -818,5 +817,10 @@
   "trustBarSpeedDesc": "Fast & reliable service",
   "trustBarQuality": "Quality",
   "trustBarQualityDesc": "Certified professionals",
-  "howCanWeHelp": "How can we help you today?"
+  "howCanWeHelp": "How can we help you today?",
+  "visualizeYourIssueSubtitle": "Photos and videos help the technician prepare and save your time.",
+  "problemDescription": "Problem Description",
+  "problemDescriptionHint": "Example: AC not cooling...",
+  "shareInvoice": "Share Invoice",
+  "downloadInvoice": "Download Invoice"
 }

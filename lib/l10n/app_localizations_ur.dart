@@ -2207,7 +2207,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get placeAndTiming => 'مقام اور وقت';
 
   @override
-  String get counterOfferFromTechnician => 'ٹیکنیشن نے نیا وقت تجویز کیا ہے';
+  String get counterOfferFromTechnician => 'آپ کی درخواست کے حوالے سے اپ ڈیٹ';
 
   @override
   String get technicianProposedNewTime =>
@@ -2508,4 +2508,20 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get howCanWeHelp => 'آج ہم آپ کی کیا مدد کر سکتے ہیں؟';
+
+  @override
+  String get visualizeYourIssueSubtitle =>
+      'تصاویر اور ویڈیوز ٹیکنیشن کو تیاری کرنے میں مدد دیتے ہیں اور آپ کا وقت بچاتے ہیں۔';
+
+  @override
+  String get problemDescription => 'مسئلہ کی تفصیل';
+
+  @override
+  String get problemDescriptionHint => 'مثال: اے سی ٹھنڈا نہیں کر رہا...';
+
+  @override
+  String get shareInvoice => 'انوائس شیئر کریں';
+
+  @override
+  String get downloadInvoice => 'انوائس ڈاؤن لوڈ کریں';
 }

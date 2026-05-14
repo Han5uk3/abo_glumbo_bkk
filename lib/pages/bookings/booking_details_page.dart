@@ -1173,24 +1173,48 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       hasChat: false,
       title: AppLocalizations.of(context)!.completionDetails,
       icon: Icons.check_circle,
-      trailing:
-          (booking.bookingStatusCode.toLowerCase() == 'completed' ||
+      trailing: (booking.bookingStatusCode.toLowerCase() == 'completed' ||
               booking.bookingStatusCode.toLowerCase() == 'c')
-          ? IconButton(
-              onPressed: () => InvoiceService.generateAndShowInvoice(booking),
-              icon: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () =>
+                      InvoiceService.generateAndShareInvoice(booking),
+                  icon: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.share_rounded,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
+                  ),
+                  tooltip: AppLocalizations.of(context)?.shareInvoice ??
+                      "Share Invoice",
                 ),
-                child: Icon(
-                  Icons.download_rounded,
-                  color: AppColors.primary,
-                  size: 20,
+                IconButton(
+                  onPressed: () =>
+                      InvoiceService.generateAndShowInvoice(booking),
+                  icon: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.download_rounded,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
+                  ),
+                  tooltip: AppLocalizations.of(context)?.downloadInvoice ??
+                      "Download Invoice",
                 ),
-              ),
-              tooltip: "Download Invoice",
+              ],
             )
           : null,
       children: [

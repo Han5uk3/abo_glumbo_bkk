@@ -344,7 +344,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noBookingsFound => 'No bookings found.';
 
   @override
-  String get searchServices => 'Search services...';
+  String get searchServices => 'Search services';
 
   @override
   String get noServicesInYourWishlist => 'No services in your wishlist';
@@ -2195,7 +2195,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get placeAndTiming => 'Place and timing';
 
   @override
-  String get counterOfferFromTechnician => 'Technician proposed a new time';
+  String get counterOfferFromTechnician => 'Update Regarding Your Request';
 
   @override
   String get technicianProposedNewTime =>
@@ -2491,4 +2491,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get howCanWeHelp => 'How can we help you today?';
+
+  @override
+  String get visualizeYourIssueSubtitle =>
+      'Photos and videos help the technician prepare and save your time.';
+
+  @override
+  String get problemDescription => 'Problem Description';
+
+  @override
+  String get problemDescriptionHint => 'Example: AC not cooling...';
+
+  @override
+  String get shareInvoice => 'Share Invoice';
+
+  @override
+  String get downloadInvoice => 'Download Invoice';
 }

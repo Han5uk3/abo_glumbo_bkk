@@ -7,7 +7,7 @@ import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:intl/intl.dart';
 
 class InvoiceService {
-  static Future<void> generateAndShowInvoice(BookingModel booking) async {
+  static Future<pw.Document?> _buildInvoiceDocument(BookingModel booking) async {
     final pdf = pw.Document();
     
     // Load logo if exists
@@ -20,7 +20,7 @@ class InvoiceService {
     }
 
     final data = booking.completionData;
-    if (data == null) return;
+    if (data == null) return null;
 
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
     final completedAtStr = booking.completedAt != null 
@@ -191,10 +191,27 @@ class InvoiceService {
       ),
     );
 
-    // Show preview/print dialog
+    return pdf;
+  }
+
+  static Future<void> generateAndShowInvoice(BookingModel booking) async {
+    final pdf = await _buildInvoiceDocument(booking);
+    if (pdf == null) return;
+
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) => pdf.save(),
       name: 'Invoice_${booking.id.substring(0, 8)}',
+    );
+  }
+
+  static Future<void> generateAndShareInvoice(BookingModel booking) async {
+    final pdf = await _buildInvoiceDocument(booking);
+    if (pdf == null) return;
+
+    final bytes = await pdf.save();
+    await Printing.sharePdf(
+      bytes: bytes,
+      filename: 'Invoice_${booking.id.substring(0, 8)}.pdf',
     );
   }
 }

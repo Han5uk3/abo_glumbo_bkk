@@ -702,7 +702,7 @@
   "serviceNow": "فوری سروس",
   "serviceForLater": "طے شدہ سروس",
   "placeAndTiming": "مقام اور وقت",
-  "counterOfferFromTechnician": "ٹیکنیشن نے نیا وقت تجویز کیا ہے",
+  "counterOfferFromTechnician": "آپ کی درخواست کے حوالے سے اپ ڈیٹ",
   "technicianProposedNewTime": "ٹیکنیشن نے آپ کی بکنگ کے لیے ایک نیا وقت تجویز کیا ہے۔",
   "acceptOffer": "پیشکش قبول کریں",
   "rejectOffer": "پیشکش مسترد کریں",
@@ -818,5 +818,10 @@
   "trustBarSpeedDesc": "تیز اور قابل اعتماد سروس",
   "trustBarQuality": "معیار",
   "trustBarQualityDesc": "مصدقہ پیشہ ور افراد",
-  "howCanWeHelp": "آج ہم آپ کی کیا مدد کر سکتے ہیں؟"
+  "howCanWeHelp": "آج ہم آپ کی کیا مدد کر سکتے ہیں؟",
+  "visualizeYourIssueSubtitle": "تصاویر اور ویڈیوز ٹیکنیشن کو تیاری کرنے میں مدد دیتے ہیں اور آپ کا وقت بچاتے ہیں۔",
+  "problemDescription": "مسئلہ کی تفصیل",
+  "problemDescriptionHint": "مثال: اے سی ٹھنڈا نہیں کر رہا...",
+  "shareInvoice": "انوائس شیئر کریں",
+  "downloadInvoice": "انوائس ڈاؤن لوڈ کریں"
 }

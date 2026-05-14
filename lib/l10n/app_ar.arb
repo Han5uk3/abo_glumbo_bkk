@@ -711,7 +711,7 @@
   "serviceNow": "خدمة فورية",
   "serviceForLater": "خدمة مجدولة",
   "placeAndTiming": "المكان والوقت",
-  "counterOfferFromTechnician": "الفني اقترح وقتاً جديداً",
+  "counterOfferFromTechnician": "تحديث بخصوص طلبك",
   "technicianProposedNewTime": "لقد اقترح الفني وقتاً جديداً لحجزك.",
   "acceptOffer": "قبول العرض",
   "suggestAnotherTime": "اقتراح وقت آخر",
@@ -831,5 +831,10 @@
   "trustBarSpeedDesc": "خدمة سريعة وموثوقة",
   "trustBarQuality": "جودة",
   "trustBarQualityDesc": "فنيين محترفين ومعتمدين",
-  "howCanWeHelp": "كيف يمكننا مساعدتك اليوم؟"
+  "howCanWeHelp": "كيف يمكننا مساعدتك اليوم؟",
+  "visualizeYourIssueSubtitle": "تساعد الصور ومقاطع الفيديو الفني على الاستعداد وتوفر وقتك.",
+  "problemDescription": "وصف المشكلة",
+  "problemDescriptionHint": "مثال: المكيف لا يبرد...",
+  "shareInvoice": "مشاركة الفاتورة",
+  "downloadInvoice": "تنزيل الفاتورة"
 }

@@ -2158,7 +2158,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get placeAndTiming => 'المكان والوقت';
 
   @override
-  String get counterOfferFromTechnician => 'الفني اقترح وقتاً جديداً';
+  String get counterOfferFromTechnician => 'تحديث بخصوص طلبك';
 
   @override
   String get technicianProposedNewTime => 'لقد اقترح الفني وقتاً جديداً لحجزك.';
@@ -2453,4 +2453,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get howCanWeHelp => 'كيف يمكننا مساعدتك اليوم؟';
+
+  @override
+  String get visualizeYourIssueSubtitle =>
+      'تساعد الصور ومقاطع الفيديو الفني على الاستعداد وتوفر وقتك.';
+
+  @override
+  String get problemDescription => 'وصف المشكلة';
+
+  @override
+  String get problemDescriptionHint => 'مثال: المكيف لا يبرد...';
+
+  @override
+  String get shareInvoice => 'مشاركة الفاتورة';
+
+  @override
+  String get downloadInvoice => 'تنزيل الفاتورة';
 }

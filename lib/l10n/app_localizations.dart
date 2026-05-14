@@ -745,7 +745,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchServices.
   ///
   /// In en, this message translates to:
-  /// **'Search services...'**
+  /// **'Search services'**
   String get searchServices;
 
   /// No description provided for @noServicesInYourWishlist.
@@ -4231,7 +4231,7 @@ abstract class AppLocalizations {
   /// No description provided for @counterOfferFromTechnician.
   ///
   /// In en, this message translates to:
-  /// **'Technician proposed a new time'**
+  /// **'Update Regarding Your Request'**
   String get counterOfferFromTechnician;
 
   /// No description provided for @technicianProposedNewTime.
@@ -4791,6 +4791,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'How can we help you today?'**
   String get howCanWeHelp;
+
+  /// No description provided for @visualizeYourIssueSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos and videos help the technician prepare and save your time.'**
+  String get visualizeYourIssueSubtitle;
+
+  /// No description provided for @problemDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Problem Description'**
+  String get problemDescription;
+
+  /// No description provided for @problemDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: AC not cooling...'**
+  String get problemDescriptionHint;
+
+  /// No description provided for @shareInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Invoice'**
+  String get shareInvoice;
+
+  /// No description provided for @downloadInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Invoice'**
+  String get downloadInvoice;
 }
 
 class _AppLocalizationsDelegate

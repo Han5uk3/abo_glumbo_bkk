@@ -1114,21 +1114,8 @@ class _BookServicePageState extends State<BookServicePage> {
             ),
           ),
           const SizedBox(height: 12),
-          BlocProvider(
-            create: (context) =>
-                AddressBloc(AppServicesAddressRepository())
-                  ..add(LoadAddresses()),
-            child: AddIssueImageAndVideo(
-              showAddressPicker: false,
-              onImageSelected: (value) =>
-                  setState(() => _selectedImage = value),
-              onVideoSelected: (value) =>
-                  setState(() => _selectedVideo = value),
-            ),
-          ),
-          const SizedBox(height: 24),
           Text(
-            AppLocalizations.of(context)!.notes,
+            AppLocalizations.of(context)!.problemDescription,
             style: DMSansFont.textStyle(
               fontSize: 14,
               fontWeight: FontWeight.normal,
@@ -1142,8 +1129,7 @@ class _BookServicePageState extends State<BookServicePage> {
             style: TextStyle(fontSize: 14),
             decoration: InputDecoration(
               hintStyle: TextStyle(fontSize: 14),
-
-              hintText: AppLocalizations.of(context)!.describeYourIssueInDetail,
+              hintText: AppLocalizations.of(context)!.problemDescriptionHint,
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
@@ -1154,6 +1140,19 @@ class _BookServicePageState extends State<BookServicePage> {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.grey[200]!),
               ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          BlocProvider(
+            create: (context) =>
+                AddressBloc(AppServicesAddressRepository())
+                  ..add(LoadAddresses()),
+            child: AddIssueImageAndVideo(
+              showAddressPicker: false,
+              onImageSelected: (value) =>
+                  setState(() => _selectedImage = value),
+              onVideoSelected: (value) =>
+                  setState(() => _selectedVideo = value),
             ),
           ),
         ],

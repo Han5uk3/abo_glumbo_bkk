@@ -319,13 +319,22 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
               top: 10,
               left: 0,
               right: 0,
-              bottom: 8,
+              bottom: 4,
             ),
             child: heading(
               AppLocalizations.of(context)?.visualizeYourIssue ?? '',
             ),
           ),
-          const SizedBox(height: 5),
+          Text(
+            AppLocalizations.of(context)?.visualizeYourIssueSubtitle ??
+                'Photos and videos help the technician prepare and save your time.',
+            style: DMSansFont.textStyle(
+              fontSize: 12,
+              color: Colors.black54,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
