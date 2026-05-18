@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:abo_glumbo_bbk/common_widgets/customNavigationBar.dart';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
@@ -7,6 +8,7 @@ import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/common_widgets/welcome_modal.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/account.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bookings_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/home_page.dart';
@@ -41,6 +43,7 @@ class _HomeState extends State<Home> {
   bool? _isGuest;
   int currentIndex = 0;
   bool _hasShownWelcome = false;
+  StreamSubscription<List<BookingModel>>? _bookingsSubscription;
 
   String whatsapp = "";
   String phone = "";
@@ -79,11 +82,76 @@ class _HomeState extends State<Home> {
       await NotificationServices.initializeNotifications();
       NotificationServices.setupFCMListeners();
       await NotificationServices.checkForInitialMessage();
+      
+      if (!(_isGuest ?? false) && uid != null && uid.isNotEmpty) {
+        _subscribeToAcceptedBookings();
+      }
+    });
+  }
+
+  void _subscribeToAcceptedBookings() {
+    _bookingsSubscription?.cancel();
+    _bookingsSubscription = AppServices.listenToAcceptedBookings().listen((bookings) {
+      for (final booking in bookings) {
+        final bookingId = booking.id;
+        final technicianName = booking.agent?.name ?? 'Technician';
+
+        // 1. Technician is on the way (technician clicked start tracking)
+        // Triggered when isStartTracking == true (which is booking.isStartTracking)
+        if (booking.isStartTracking == true) {
+          if (!NotificationServices.hasTriggeredLocalNotification(bookingId, 'on_the_way')) {
+            // Check if recently started to prevent historical alerts on initial load
+            bool shouldNotify = false;
+            if (booking.trackingStartedAt != null) {
+              final diff = DateTime.now().difference(booking.trackingStartedAt!.toDate());
+              if (diff.inMinutes <= 2) {
+                shouldNotify = true;
+              }
+            } else {
+              shouldNotify = true;
+            }
+            if (shouldNotify) {
+              NotificationServices.showLocalLiveTrackingNotification(
+                type: 'on_the_way',
+                bookingId: bookingId,
+                technicianName: technicianName,
+              );
+              NotificationServices.markLocalNotificationTriggered(bookingId, 'on_the_way');
+            }
+          }
+        }
+
+        // 2. Technician arrived (when technician clicks on arrived at location button)
+        // Triggered when arrivedAt != null
+        if (booking.arrivedAt != null) {
+          if (!NotificationServices.hasTriggeredLocalNotification(bookingId, 'arrived')) {
+            // Check if recently arrived to prevent historical alerts on initial load
+            bool shouldNotify = false;
+            if (booking.arrivedAt != null) {
+              final diff = DateTime.now().difference(booking.arrivedAt!.toDate());
+              if (diff.inMinutes <= 2) {
+                shouldNotify = true;
+              }
+            } else {
+              shouldNotify = true;
+            }
+            if (shouldNotify) {
+              NotificationServices.showLocalLiveTrackingNotification(
+                type: 'arrived',
+                bookingId: bookingId,
+                technicianName: technicianName,
+              );
+              NotificationServices.markLocalNotificationTriggered(bookingId, 'arrived');
+            }
+          }
+        }
+      }
     });
   }
 
   @override
   void dispose() {
+    _bookingsSubscription?.cancel();
     super.dispose();
   }
 

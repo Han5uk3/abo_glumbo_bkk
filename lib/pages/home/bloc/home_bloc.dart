@@ -17,8 +17,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     try {
       emit(FetchActiveBookingLoading());
-      final activeBookings = await AppServices.getActiveBookings();
-      emit(FetchActiveBookingSuccess(activeBookings));
+      await emit.forEach<List<BookingModel>>(
+        AppServices.listenToActiveBookings(),
+        onData: (activeBookings) => FetchActiveBookingSuccess(activeBookings),
+        onError: (error, stackTrace) => FetchActiveBookingError(error.toString()),
+      );
     } catch (e) {
       emit(FetchActiveBookingError(e.toString()));
     }

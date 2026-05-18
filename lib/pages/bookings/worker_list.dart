@@ -13,6 +13,7 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/worker_card.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 
 import 'package:flutter/material.dart';
@@ -74,7 +75,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
   bool _filterByDistance = false;
   bool _filterByRating = false;
   bool _filterByCompletedJobs = false;
-  final double _nearbyThresholdKm = 50.0;
+  final double _nearbyThresholdKm = 60.0;
 
   @override
   void initState() {
@@ -118,21 +119,50 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
   }
 
   Future<void> _startSearchAndBroadcast() async {
-    // 1. Get eligible workers
+    // 1. Fetch service locations/zones from Firestore
+    List<dynamic> serviceLocations = [];
+    try {
+      final serviceLocationsQuery = await AppFirestore.locationsCollectionRef
+          .where('service_id', isEqualTo: widget.service.id)
+          .get();
+      if (serviceLocationsQuery.docs.isNotEmpty) {
+        final data = serviceLocationsQuery.docs.first.data() as Map<String, dynamic>;
+        serviceLocations = data['locations'] as List<dynamic>? ?? [];
+      }
+    } catch (e) {
+      debugPrint("Error fetching service locations in WorkerList: $e");
+    }
+
+    // 2. Get eligible workers
     final workers = await AppServices.getWorkersByRolesWithStatsRealtime(
       widget.category,
     ).first;
 
-    // 2. Filter technicians (Availability + Proximity)
-    List<WorkerWithStats> eligible = workers.where((w) => !_busyAgentIds.contains(w.worker.uid)).toList();
+    // 3. Filter technicians (Availability + Proximity within 60km + Service Zone)
+    List<WorkerWithStats> eligible = workers.where((w) {
+      if (_busyAgentIds.contains(w.worker.uid)) return false;
+      
+      // Proximity check
+      final distance = _getWorkerDistance(w);
+      if (distance > 60.0) return false;
+
+      // Service Zone check
+      if (w.worker.lastKnownLocation == null) return false;
+      final isWithinServiceZone = LocationMatcherService.isAddressInServiceZones(
+        customerLat: w.worker.lastKnownLocation!.latitude,
+        customerLon: w.worker.lastKnownLocation!.longitude,
+        serviceLocations: serviceLocations,
+      );
+      return isWithinServiceZone;
+    }).toList();
     
     // Sort by proximity
     eligible.sort((a, b) => _getWorkerDistance(a).compareTo(_getWorkerDistance(b)));
     
-    // Take top 5
-    final top5 = eligible.take(5).toList();
+    // Take all eligible qualified technicians within 60km
+    final qualifiedTechnicians = eligible;
 
-    if (top5.isEmpty) {
+    if (qualifiedTechnicians.isEmpty) {
       if (mounted) {
         setState(() {
           _isBroadcasting = false;
@@ -205,13 +235,13 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
 
     await AppServices.broadcastJobRequest(
       request: request,
-      workerIds: top5.map((w) => w.worker.uid!).toList(),
+      workerIds: qualifiedTechnicians.map((w) => w.worker.uid!).toList(),
     );
 
     if (mounted) {
       widget.onBroadcastIdCreated(requestId);
       _startTimer();
-      _listenToResponses(top5);
+      _listenToResponses(qualifiedTechnicians);
     }
   }
 
@@ -227,11 +257,11 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
     });
   }
 
-  void _listenToResponses(List<WorkerWithStats> top5) {
+  void _listenToResponses(List<WorkerWithStats> qualifiedTechniciansList) {
     _responsesSubscription = AppServices.listenToInterestedWorkers(_requestId!).listen((workerIds) {
       if (mounted) {
         setState(() {
-          _acceptedWorkers = top5.where((w) => workerIds.contains(w.worker.uid)).toList();
+          _acceptedWorkers = qualifiedTechniciansList.where((w) => workerIds.contains(w.worker.uid)).toList();
         });
       }
     });
@@ -299,7 +329,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
     }
   }
 
-  bool get _allFiltersOff => true; // Filters are disabled in this view as it's a dynamic selection
+  bool get _allFiltersOff => !_filterByRating && !_filterByCompletedJobs && !_filterByDistance;
 
   /// Calculate distance between the booking address and a worker
   double _getWorkerDistance(WorkerWithStats workerStat) {
@@ -370,10 +400,16 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
     if (isLoadingCustomer) {
       return Center(child: Loader());
     }
+
+    final displayedWorkers = _applyFiltersAndSort(_acceptedWorkers);
+
     return Column(
       children: [
         // Timer display
         _buildTimerDisplay(),
+
+        // Show filters once technicians are listed (i.e. _acceptedWorkers is not empty)
+        if (_acceptedWorkers.isNotEmpty) _buildFilterChips(locale),
 
         // Workers List
         Expanded(
@@ -387,16 +423,31 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
                       onClearFilter: () {},
                       onChangeLocation: () {},
                     )
-                  : _WorkerListView(
-                      key: ValueKey('worker_list_${_acceptedWorkers.length}'),
-                      service: widget.service,
-                      workers: _acceptedWorkers,
-                      selectedAddress: widget.selectedAddress,
-                      selectedIndexNotifier: widget.selectedIndexNotifier,
-                      onWorkerSelected: widget.onWorkerSelected,
-                      selectedDate: widget.selectedDate,
-                      timeSlot: widget.timeSlot,
-                    ),
+                  : displayedWorkers.isEmpty
+                      ? _EmptyState(
+                          searchQuery: '',
+                          hasActiveFilters: !_allFiltersOff,
+                          totalCount: _acceptedWorkers.length,
+                          onClearFilter: () {
+                            setState(() {
+                              _filterByRating = false;
+                              _filterByCompletedJobs = false;
+                              _filterByDistance = false;
+                              widget.selectedIndexNotifier.value = null;
+                            });
+                          },
+                          onChangeLocation: () {},
+                        )
+                      : _WorkerListView(
+                          key: ValueKey('worker_list_${displayedWorkers.map((w) => w.worker.uid ?? '').join('_')}'),
+                          service: widget.service,
+                          workers: displayedWorkers,
+                          selectedAddress: widget.selectedAddress,
+                          selectedIndexNotifier: widget.selectedIndexNotifier,
+                          onWorkerSelected: widget.onWorkerSelected,
+                          selectedDate: widget.selectedDate,
+                          timeSlot: widget.timeSlot,
+                        ),
         ),
       ],
     );
@@ -445,7 +496,10 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
               isActive: _filterByRating,
               activeColor: Colors.amber,
               onTap: () {
-                setState(() => _filterByRating = !_filterByRating);
+                setState(() {
+                  _filterByRating = !_filterByRating;
+                  widget.selectedIndexNotifier.value = null;
+                });
               },
             ),
             const SizedBox(width: 8),
@@ -455,7 +509,10 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
               isActive: _filterByCompletedJobs,
               activeColor: AppColors.green2,
               onTap: () {
-                setState(() => _filterByCompletedJobs = !_filterByCompletedJobs);
+                setState(() {
+                  _filterByCompletedJobs = !_filterByCompletedJobs;
+                  widget.selectedIndexNotifier.value = null;
+                });
               },
             ),
             const SizedBox(width: 8),
@@ -465,7 +522,10 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
               isActive: _filterByDistance,
               activeColor: AppColors.secondary,
               onTap: () {
-                setState(() => _filterByDistance = !_filterByDistance);
+                setState(() {
+                  _filterByDistance = !_filterByDistance;
+                  widget.selectedIndexNotifier.value = null;
+                });
               },
             ),
             if (!_allFiltersOff) ...[
@@ -546,6 +606,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
             _filterByRating = false;
             _filterByCompletedJobs = false;
             _filterByDistance = false;
+            widget.selectedIndexNotifier.value = null;
           });
         },
         borderRadius: BorderRadius.circular(20),
@@ -829,8 +890,8 @@ class _WorkerListViewState extends State<_WorkerListView>
   final List<Animation<double>> _itemAnimations = [];
   bool _isLoadingCategories = true;
 
-  Map<String, String> jobRoleToCategoryId = {}; // jobRole -> categoryId
-  Map<String, Map<String, String>> categoryIdToNames =
+  static final Map<String, String> jobRoleToCategoryId = {}; // jobRole -> categoryId
+  static final Map<String, Map<String, String>> categoryIdToNames =
       {}; // categoryId -> {name, name_ar}
 
   @override
@@ -917,6 +978,17 @@ class _WorkerListViewState extends State<_WorkerListView>
         }
       }
 
+      // Check if all needed roles are already cached in our static map
+      final bool allRolesCached = allJobRoles.every((role) => jobRoleToCategoryId.containsKey(role));
+      if (allRolesCached && jobRoleToCategoryId.isNotEmpty) {
+        if (mounted) {
+          setState(() {
+            _isLoadingCategories = false;
+          });
+        }
+        return;
+      }
+
       if (allJobRoles.isEmpty) {
         if (mounted) setState(() => _isLoadingCategories = false);
         return;
@@ -964,8 +1036,10 @@ class _WorkerListViewState extends State<_WorkerListView>
 
       if (mounted) {
         setState(() {
-          jobRoleToCategoryId = roleToIdMap;
-          categoryIdToNames = idToNamesMap;
+          jobRoleToCategoryId.clear();
+          jobRoleToCategoryId.addAll(roleToIdMap);
+          categoryIdToNames.clear();
+          categoryIdToNames.addAll(idToNamesMap);
         });
       }
     } catch (e) {
@@ -1017,16 +1091,13 @@ class _WorkerListViewState extends State<_WorkerListView>
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoadingCategories) {
-      return const _FilteringAnimation();
-    }
     return ListView.builder(
       padding: const EdgeInsets.only(top: 8, bottom: 16),
       itemCount: widget.workers.length,
       itemBuilder: (context, index) {
         final statData = widget.workers[index];
 
-        // Calculate if the technician is too far (>50km)
+        // Calculate if the technician is too far (>60km)
         bool isTooFar = false;
         if (widget.selectedAddress?.lat != null &&
             widget.selectedAddress?.lon != null &&
@@ -1037,7 +1108,7 @@ class _WorkerListViewState extends State<_WorkerListView>
             statData.worker.lastKnownLocation!.latitude,
             statData.worker.lastKnownLocation!.longitude,
           );
-          isTooFar = dist > 50.0;
+          isTooFar = dist > 60.0;
         }
 
         bool isBusy = statData.worker.uid != null && busyAgentIds.contains(statData.worker.uid);

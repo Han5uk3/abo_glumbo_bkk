@@ -743,6 +743,128 @@ class AppServices {
     }
   }
 
+  static Stream<List<BookingModel>> listenToActiveBookings() {
+    try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot listen to active bookings: User ID is empty');
+        return Stream.value([]);
+      }
+
+      // 1. Normal Active Bookings
+      final activeBookingsStream = AppFirestore.bookingsCollectionRef
+          .where('customer.uid', isEqualTo: currentUid)
+          .where('bookingStatusCode', isEqualTo: 'A')
+          .where('isStarted', isEqualTo: true)
+          .snapshots();
+
+      // 2. Active Warranty Bookings (Accepted & Started)
+      final warrantyBookingsStream = AppFirestore.bookingsCollectionRef
+          .where('customer.uid', isEqualTo: currentUid)
+          .where('warranty.warrantyStatusCode', isEqualTo: 'S')
+          .where('isStarted', isEqualTo: true)
+          .snapshots();
+
+      return Rx.combineLatest2<QuerySnapshot, QuerySnapshot, List<BookingModel>>(
+        activeBookingsStream,
+        warrantyBookingsStream,
+        (activeSnapshot, warrantySnapshot) {
+          final Map<String, BookingModel> bookingMap = {};
+
+          // Process normal active bookings
+          for (var doc in activeSnapshot.docs) {
+            final booking = BookingModel.fromJson(
+              doc.data() as Map<String, dynamic>,
+            );
+            bookingMap[booking.id] = booking;
+          }
+
+          // Process active warranty bookings
+          for (var doc in warrantySnapshot.docs) {
+            final booking = BookingModel.fromJson(
+              doc.data() as Map<String, dynamic>,
+            );
+            bookingMap[booking.id] = booking;
+          }
+
+          final combined = bookingMap.values.toList();
+
+          // Sort by createdAt descending
+          combined.sort((a, b) {
+            final aTime = a.createdAt?.toDate() ?? DateTime(0);
+            final bTime = b.createdAt?.toDate() ?? DateTime(0);
+            return bTime.compareTo(aTime);
+          });
+
+          return combined;
+        },
+      );
+    } catch (e) {
+      debugPrint('❌ Error listening to active bookings: $e');
+      return Stream.value([]);
+    }
+  }
+
+  static Stream<List<BookingModel>> listenToAcceptedBookings() {
+    try {
+      String currentUid = LocalStoreHelper.getUID() ?? '';
+      if (currentUid.isEmpty) {
+        debugPrint('❌ Cannot listen to accepted bookings: User ID is empty');
+        return Stream.value([]);
+      }
+
+      // 1. Normal Accepted Bookings
+      final activeBookingsStream = AppFirestore.bookingsCollectionRef
+          .where('customer.uid', isEqualTo: currentUid)
+          .where('bookingStatusCode', isEqualTo: 'A')
+          .snapshots();
+
+      // 2. Warranty Active/Started Bookings
+      final warrantyBookingsStream = AppFirestore.bookingsCollectionRef
+          .where('customer.uid', isEqualTo: currentUid)
+          .where('warranty.warrantyStatusCode', isEqualTo: 'S')
+          .snapshots();
+
+      return Rx.combineLatest2<QuerySnapshot, QuerySnapshot, List<BookingModel>>(
+        activeBookingsStream,
+        warrantyBookingsStream,
+        (activeSnapshot, warrantySnapshot) {
+          final Map<String, BookingModel> bookingMap = {};
+
+          // Process normal active bookings
+          for (var doc in activeSnapshot.docs) {
+            final booking = BookingModel.fromJson(
+              doc.data() as Map<String, dynamic>,
+            );
+            bookingMap[booking.id] = booking;
+          }
+
+          // Process active warranty bookings
+          for (var doc in warrantySnapshot.docs) {
+            final booking = BookingModel.fromJson(
+              doc.data() as Map<String, dynamic>,
+            );
+            bookingMap[booking.id] = booking;
+          }
+
+          final combined = bookingMap.values.toList();
+
+          // Sort by createdAt descending
+          combined.sort((a, b) {
+            final aTime = a.createdAt?.toDate() ?? DateTime(0);
+            final bTime = b.createdAt?.toDate() ?? DateTime(0);
+            return bTime.compareTo(aTime);
+          });
+
+          return combined;
+        },
+      );
+    } catch (e) {
+      debugPrint('❌ Error listening to accepted bookings: $e');
+      return Stream.value([]);
+    }
+  }
+
   static Stream<List<FaqModel>> getFaq() {
     return AppFirestore.faqCollectionRef.snapshots().map((snapshot) {
       List<FaqModel> faqList = snapshot.docs

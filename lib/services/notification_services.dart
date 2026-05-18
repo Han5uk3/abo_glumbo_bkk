@@ -7,6 +7,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:io' show Platform;
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'app_services.dart';
 import '../main.dart';
 
@@ -728,5 +729,176 @@ class NotificationServices {
     } catch (e) {
       debugPrint('❌ Error initializing FCM: $e');
     }
+  }
+
+  /// Cache of triggered local notifications to prevent spamming
+  /// Structure: { bookingId: { 'on_the_way': true, '10_minutes': true, ... } }
+  static final Map<String, Map<String, bool>> _triggeredLocalNotifications = {};
+
+  /// Check if a local notification has already been triggered for a booking
+  static bool hasTriggeredLocalNotification(String bookingId, String type) {
+    return _triggeredLocalNotifications[bookingId]?[type] ?? false;
+  }
+
+  /// Mark a local notification as triggered for a booking
+  static void markLocalNotificationTriggered(String bookingId, String type) {
+    if (!_triggeredLocalNotifications.containsKey(bookingId)) {
+      _triggeredLocalNotifications[bookingId] = {};
+    }
+    _triggeredLocalNotifications[bookingId]![type] = true;
+    debugPrint('🔔 Marked tracking notification $type as triggered for $bookingId');
+  }
+
+  /// Clear the local notification triggers for a booking (e.g. when tracking stops/resets)
+  static void clearLocalNotificationTriggers(String bookingId) {
+    _triggeredLocalNotifications.remove(bookingId);
+    debugPrint('🗑️ Cleared tracking notification flags for $bookingId');
+  }
+
+  /// Display local live tracking notifications for the customer in multiple languages
+  static Future<void> showLocalLiveTrackingNotification({
+    required String type, // 'on_the_way', '10_minutes', 'nearby', 'arrived'
+    required String bookingId,
+    required String technicianName,
+  }) async {
+    final languageCode = LocalStoreHelper.getUserlanguage();
+    
+    String title = '';
+    String body = '';
+    
+    if (languageCode == 'ar') {
+      switch (type) {
+        case 'on_the_way':
+          title = 'الفني في الطريق';
+          body = 'الفني $technicianName في طريقه إلى موقعك.';
+          break;
+        case '10_minutes':
+          title = 'الفني على بعد 10 دقائق';
+          body = 'سيصل الفني $technicianName خلال 10 دقائق.';
+          break;
+        case 'nearby':
+          title = 'الفني قريب منك';
+          body = 'الفني $technicianName على بعد أقل من 5 دقائق.';
+          break;
+        case 'arrived':
+          title = 'وصل الفني';
+          body = 'وصل الفني $technicianName إلى موقعك.';
+          break;
+      }
+    } else if (languageCode == 'ur') {
+      switch (type) {
+        case 'on_the_way':
+          title = 'ٹیکنیشن راستے میں ہے';
+          body = 'آپ کا ٹیکنیشن $technicianName آپ کے مقام پر آ رہا ہے۔';
+          break;
+        case '10_minutes':
+          title = 'ٹیکنیشن 10 منٹ کی دوری پر ہے';
+          body = 'آپ کا ٹیکنیشن $technicianName 10 منٹ میں پہنچ جائے گا۔';
+          break;
+        case 'nearby':
+          title = 'ٹیکنیشن قریب ہی ہے';
+          body = 'آپ کا ٹیکنیشن $technicianName 5 منٹ سے भी कम وقت میں پہنچ رہا ہے۔';
+          break;
+        case 'arrived':
+          title = 'ٹیکنیشن پہنچ گیا ہے';
+          body = 'آپ کا ٹیکنیشن $technicianName آپ کے مقام پر پہنچ گیا ہے۔';
+          break;
+      }
+    } else {
+      // Default to English
+      switch (type) {
+        case 'on_the_way':
+          title = 'Technician is on the way';
+          body = 'Your technician $technicianName is on the way to your location.';
+          break;
+        case '10_minutes':
+          title = 'Technician is 10 minutes away';
+          body = 'Your technician $technicianName will arrive in 10 minutes.';
+          break;
+        case 'nearby':
+          title = 'Technician is nearby';
+          body = 'Your technician $technicianName is less than 5 minutes away.';
+          break;
+        case 'arrived':
+          title = 'Technician Arrived';
+          body = 'Your technician $technicianName has arrived at your location.';
+          break;
+      }
+    }
+
+    if (title.isEmpty || body.isEmpty) return;
+
+    // Use a unique notification ID per booking + type combination to avoid collision
+    final int notificationId = (bookingId.hashCode + type.hashCode).abs();
+
+    await showNotification(
+      id: notificationId,
+      title: title,
+      body: body,
+      payload: jsonEncode({
+        'type': 'tracking_update',
+        'bookingId': bookingId,
+        'trackingType': type,
+      }),
+    );
+    debugPrint('🔔 Local live tracking notification shown: $title - $body');
+  }
+
+  /// Parse a duration string (e.g. "10 mins") into an integer representing minutes
+  static int extractMinutesFromDuration(String duration) {
+    if (duration.isEmpty) return 15;
+
+    // Clean the input string
+    final cleanDuration = duration.toLowerCase().trim();
+
+    // Pattern 1: Simple formats like "15 min", "30 mins", "5 minutes"
+    final RegExp simpleMinRegex = RegExp(r'(\d+)\s*(?:min|minute)s?\b');
+    final simpleMatch = simpleMinRegex.firstMatch(cleanDuration);
+    if (simpleMatch != null) {
+      final minutes = int.tryParse(simpleMatch.group(1) ?? '0') ?? 0;
+      return minutes > 0 ? minutes : 15;
+    }
+
+    // Pattern 2: Hour formats like "1 hour", "2 hrs", "1.5 hours"
+    final RegExp hourOnlyRegex = RegExp(r'(\d+(?:\.\d+)?)\s*(?:hour|hr)s?\b');
+    final hourOnlyMatch = hourOnlyRegex.firstMatch(cleanDuration);
+    if (hourOnlyMatch != null &&
+        !cleanDuration.contains(RegExp(r'\d+\s*(?:min|minute)'))) {
+      final hoursStr = hourOnlyMatch.group(1) ?? '0';
+      final hours = double.tryParse(hoursStr) ?? 0.0;
+      final minutes = (hours * 60).round();
+      return minutes > 0 ? minutes : 15;
+    }
+
+    // Pattern 3: Complex formats like "1 hour 30 mins", "2 hrs 45 minutes"
+    final RegExp hourRegex = RegExp(r'(\d+)\s*(?:hour|hr)s?');
+    final RegExp minRegex = RegExp(r'(\d+)\s*(?:min|minute)s?');
+
+    final hourMatch = hourRegex.firstMatch(cleanDuration);
+    final minMatch = minRegex.firstMatch(cleanDuration);
+
+    int totalMinutes = 0;
+
+    if (hourMatch != null) {
+      final hours = int.tryParse(hourMatch.group(1) ?? '0') ?? 0;
+      totalMinutes += hours * 60;
+    }
+
+    if (minMatch != null) {
+      final minutes = int.tryParse(minMatch.group(1) ?? '0') ?? 0;
+      totalMinutes += minutes;
+    }
+
+    // Pattern 4: Just numbers (assume minutes)
+    if (totalMinutes == 0) {
+      final RegExp numberRegex = RegExp(r'(\d+)');
+      final numberMatch = numberRegex.firstMatch(cleanDuration);
+      if (numberMatch != null) {
+        totalMinutes = int.tryParse(numberMatch.group(1) ?? '0') ?? 0;
+      }
+    }
+
+    // Fallback to 15 minutes if no valid duration found
+    return totalMinutes > 0 ? totalMinutes : 15;
   }
 }

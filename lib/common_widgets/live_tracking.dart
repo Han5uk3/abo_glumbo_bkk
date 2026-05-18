@@ -10,6 +10,7 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -322,6 +323,34 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         debugPrint('[LOG] API Result - ETA: $newEta, Distance: $newDistance');
       } else {
         debugPrint('[LOG] API result is not a Map: $result');
+      }
+
+      if (newEta != null && newEta.isNotEmpty) {
+        final etaMinutes = NotificationServices.extractMinutesFromDuration(newEta);
+        final bookingId = widget.booking?.id;
+        final technicianName = widget.booking?.agent?.name ?? 'Technician';
+
+        if (bookingId != null) {
+          if (etaMinutes == 10) {
+            if (!NotificationServices.hasTriggeredLocalNotification(bookingId, '10_minutes')) {
+              NotificationServices.showLocalLiveTrackingNotification(
+                type: '10_minutes',
+                bookingId: bookingId,
+                technicianName: technicianName,
+              );
+              NotificationServices.markLocalNotificationTriggered(bookingId, '10_minutes');
+            }
+          } else if (etaMinutes < 5 && etaMinutes >= 0) {
+            if (!NotificationServices.hasTriggeredLocalNotification(bookingId, 'nearby')) {
+              NotificationServices.showLocalLiveTrackingNotification(
+                type: 'nearby',
+                bookingId: bookingId,
+                technicianName: technicianName,
+              );
+              NotificationServices.markLocalNotificationTriggered(bookingId, 'nearby');
+            }
+          }
+        }
       }
 
       if ((newDistance == null || newDistance.isEmpty)) {

@@ -640,6 +640,27 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
             };
           });
 
+          // Trigger local notifications for 10 minutes or nearby
+          if (etaMinutes == 10) {
+            if (!NotificationServices.hasTriggeredLocalNotification(booking.id, '10_minutes')) {
+              NotificationServices.showLocalLiveTrackingNotification(
+                type: '10_minutes',
+                bookingId: booking.id,
+                technicianName: booking.agent?.name ?? 'Technician',
+              );
+              NotificationServices.markLocalNotificationTriggered(booking.id, '10_minutes');
+            }
+          } else if (etaMinutes < 5 && etaMinutes >= 0) {
+            if (!NotificationServices.hasTriggeredLocalNotification(booking.id, 'nearby')) {
+              NotificationServices.showLocalLiveTrackingNotification(
+                type: 'nearby',
+                bookingId: booking.id,
+                technicianName: booking.agent?.name ?? 'Technician',
+              );
+              NotificationServices.markLocalNotificationTriggered(booking.id, 'nearby');
+            }
+          }
+
           // Update the tracking notification with new ETA
           _updateTrackingNotification();
         }
