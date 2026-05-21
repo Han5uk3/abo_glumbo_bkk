@@ -2469,4 +2469,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get downloadInvoice => 'تنزيل الفاتورة';
+
+  @override
+  String get cannotBookDuringOffHours =>
+      'لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة أثناء ساعات العمل.';
+
+  @override
+  String get lookingForAvailableTechniciansNearby => 'جاري البحث عن فنيين متاحين بالقرب منك...';
+
+  @override
+  String get noTechniciansAvailableAtTheMoment => 'لا يوجد فنيون متاحون لتلبية طلبك في الوقت الحالي.';
+
+  @override
+  String get searchAgain => 'البحث مجدداً';
 }

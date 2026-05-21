@@ -823,5 +823,9 @@
   "problemDescription": "مسئلہ کی تفصیل",
   "problemDescriptionHint": "مثال: اے سی ٹھنڈا نہیں کر رہا...",
   "shareInvoice": "انوائس شیئر کریں",
-  "downloadInvoice": "انوائس ڈاؤن لوڈ کریں"
+  "downloadInvoice": "انوائس ڈاؤن لوڈ کریں",
+  "cannotBookDuringOffHours": "آف آورز کے دوران بک نہیں کر سکتے۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔",
+  "lookingForAvailableTechniciansNearby": "قریبی دستیاب ٹیکنیشنز تلاش کیے جا رہے ہیں...",
+  "noTechniciansAvailableAtTheMoment": "اس وقت آپ کی درخواست کو پورا کرنے کے لیے کوئی ٹیکنیشن دستیاب نہیں ہے۔",
+  "searchAgain": "دوبارہ تلاش کریں"
 }

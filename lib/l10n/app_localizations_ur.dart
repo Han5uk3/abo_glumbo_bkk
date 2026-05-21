@@ -2524,4 +2524,17 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get downloadInvoice => 'انوائس ڈاؤن لوڈ کریں';
+
+  @override
+  String get cannotBookDuringOffHours =>
+      'آف آورز کے دوران بک نہیں کر سکتے۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔';
+
+  @override
+  String get lookingForAvailableTechniciansNearby => 'قریبی دستیاب ٹیکنیشنز تلاش کیے جا رہے ہیں...';
+
+  @override
+  String get noTechniciansAvailableAtTheMoment => 'اس وقت آپ کی درخواست کو پورا کرنے کے لیے کوئی ٹیکنیشن دستیاب نہیں ہے۔';
+
+  @override
+  String get searchAgain => 'دوبارہ تلاش کریں';
 }

@@ -2507,4 +2507,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get downloadInvoice => 'Download Invoice';
+
+  @override
+  String get cannotBookDuringOffHours =>
+      'Cannot book during off hours. Please try again during working hours.';
+
+  @override
+  String get lookingForAvailableTechniciansNearby => 'Looking for available technicians nearby...';
+
+  @override
+  String get noTechniciansAvailableAtTheMoment => 'No technicians available to handle your request at the moment.';
+
+  @override
+  String get searchAgain => 'Search Again';
 }

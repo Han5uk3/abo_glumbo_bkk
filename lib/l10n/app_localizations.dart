@@ -4821,6 +4821,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download Invoice'**
   String get downloadInvoice;
+
+  /// No description provided for @cannotBookDuringOffHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot book during off hours. Please try again during working hours.'**
+  String get cannotBookDuringOffHours;
+
+  /// No description provided for @lookingForAvailableTechniciansNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for available technicians nearby...'**
+  String get lookingForAvailableTechniciansNearby;
+
+  /// No description provided for @noTechniciansAvailableAtTheMoment.
+  ///
+  /// In en, this message translates to:
+  /// **'No technicians available to handle your request at the moment.'**
+  String get noTechniciansAvailableAtTheMoment;
+
+  /// No description provided for @searchAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Again'**
+  String get searchAgain;
 }
 
 class _AppLocalizationsDelegate

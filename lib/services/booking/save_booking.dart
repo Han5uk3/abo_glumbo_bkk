@@ -106,11 +106,13 @@ class BookingUtils {
         }).toList(),
       );
 
-      bool isOnHour = service.isOnWorkHour(currentTime: DateTime.now());
+      bool isOnHour = service.isOnWorkHour(currentTime: bookingDate);
       bool isRebook =
           rebookTechnicianId != null && rebookTechnicianId.isNotEmpty;
+      // Auto-assign when no agent is explicitly selected by the customer
+      // (the UI already enforces the decision matrix for technician selection vs auto-assign)
       bool shouldAutoAssign =
-          !isOnHour && (service.category?.isNotEmpty == true);
+          !isRebook && (agent == null || agent.uid?.isEmpty != false) && (service.category?.isNotEmpty == true);
       double bookingTimePrice = service.getCurrentPrice(
         currentTime: bookingDate,
       );
@@ -125,7 +127,7 @@ class BookingUtils {
         issueImage: selectedImageDownloadUrl ?? "",
         issueVideo: selectedVideoDownloadUrl ?? "",
         customer: updatedCustomerData,
-        agent: (isOnHour && agent?.uid?.isNotEmpty == true) ? agent : null,
+        agent: (agent?.uid?.isNotEmpty == true) ? agent : null,
         selectedAddressId: selectedAddress?.id, // Added selectedAddressId
         isOnHour: isOnHour,
         assignmentScheduledTime: shouldAutoAssign
@@ -147,7 +149,7 @@ class BookingUtils {
                   : null)
             : (isRebook && requestId == null
                   ? "rebook_pending"
-                  : (isOnHour && agent?.uid?.isNotEmpty == true
+                  : (agent?.uid?.isNotEmpty == true
                         ? "accepted"
                         : null)),
         paymentModeCode: getPaymentModeCode(paymentMode),
@@ -159,7 +161,6 @@ class BookingUtils {
       // If it's a direct assignment (not rebook, not auto-assign), status is A
       if (!isRebook &&
           !shouldAutoAssign &&
-          isOnHour &&
           agent?.uid?.isNotEmpty == true) {
         booking.bookingStatusCode = 'A';
         booking.assignedAt = booking.createdAt;

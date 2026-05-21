@@ -728,6 +728,7 @@
   "currentTiming": "Current Timing:",
   "pleaseSelectATimeSlot": "Please select a time slot",
   "cannotBookForPastTime": "Cannot book for past time",
+  "cannotBookDuringOffHours": "Cannot book during off hours. Please try again during working hours.",
   "finalizingBookingInfo": "Please wait while we finalize your booking...",
   "technicianAssignmentNotification": "Technician {name} has been booked successfully.",
   "@technicianAssignmentNotification": {
@@ -822,5 +823,8 @@
   "problemDescription": "Problem Description",
   "problemDescriptionHint": "Example: AC not cooling...",
   "shareInvoice": "Share Invoice",
-  "downloadInvoice": "Download Invoice"
+  "downloadInvoice": "Download Invoice",
+  "lookingForAvailableTechniciansNearby": "Looking for available technicians nearby...",
+  "noTechniciansAvailableAtTheMoment": "No technicians available to handle your request at the moment.",
+  "searchAgain": "Search Again"
 }

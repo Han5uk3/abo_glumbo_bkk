@@ -829,10 +829,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                   );
 
                   // Display text for locations
-                  final toLocationText =
-                      customerSelectedAddress?.streetName ??
-                      customerSelectedAddress?.streetName ??
-                      'Unknown Address';
+                  final toLocationText = customerSelectedAddress == null
+                      ? 'Unknown Address'
+                      : "${customerSelectedAddress.buildingNumber.isNotEmpty ? '${customerSelectedAddress.buildingNumber}, ' : ''}${customerSelectedAddress.streetName ?? 'Unknown Address'}";
                   final fromLocationText =
                       booking.agent?.districtName ??
                       booking.agent?.name ??

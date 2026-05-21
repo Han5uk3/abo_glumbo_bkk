@@ -479,10 +479,8 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                     const SizedBox(height: 2),
 
                     Text(
-                      selectedAddress.streetName?.isNotEmpty == true
-                          ? selectedAddress.streetName!
-                          : selectedAddress.buildingNumber.isNotEmpty
-                          ? selectedAddress.buildingNumber
+                      (selectedAddress.buildingNumber.isNotEmpty || selectedAddress.streetName?.isNotEmpty == true)
+                          ? "${selectedAddress.buildingNumber.isNotEmpty ? '${selectedAddress.buildingNumber}, ' : ''}${selectedAddress.streetName ?? ''}"
                           : "Address location",
                       style: PoppinsFont.textStyle(
                         color: const Color(0xFF959595),

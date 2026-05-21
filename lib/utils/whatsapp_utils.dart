@@ -6,8 +6,17 @@ class WhatsAppUtils {
     // wa.me expects the number with country code, no + or spaces
     final cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
     final url = "https://wa.me/$cleanPhone";
-    if (await canLaunchUrlString(url)) {
-      await launchUrlString(url, mode: LaunchMode.externalApplication);
+    try {
+      final success = await launchUrlString(url, mode: LaunchMode.externalApplication);
+      if (!success) {
+        await launchUrlString(url);
+      }
+    } catch (e) {
+      try {
+        await launchUrlString(url);
+      } catch (err) {
+        // Fail silently or log
+      }
     }
   }
 }

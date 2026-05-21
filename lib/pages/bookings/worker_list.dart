@@ -278,6 +278,17 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
     // If no one accepted by now, request is essentially failed
   }
 
+  void _retryBroadcasting() {
+    _cleanupRequest();
+    setState(() {
+      _timerSeconds = 120;
+      _isBroadcasting = true;
+      _acceptedWorkers.clear();
+      _requestId = null;
+    });
+    _startSearchAndBroadcast();
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // If app is closed or put in background during selection, cleanup the request
@@ -422,6 +433,8 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
                       totalCount: 0,
                       onClearFilter: () {},
                       onChangeLocation: () {},
+                      isBroadcastEnded: true,
+                      onBroadcastAgain: _retryBroadcasting,
                     )
                   : displayedWorkers.isEmpty
                       ? _EmptyState(
@@ -454,6 +467,10 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
   }
 
   Widget _buildTimerDisplay() {
+    if (!_isBroadcasting) {
+      return const SizedBox.shrink();
+    }
+    final locale = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -469,9 +486,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
           Icon(Icons.timer_outlined, color: AppColors.primary, size: 20),
           const SizedBox(width: 8),
           Text(
-            _isBroadcasting
-                ? "Selecting experts... ${_timerSeconds}s"
-                : "Selection time over",
+            "${locale.lookingForAvailableTechniciansNearby} ${_timerSeconds}s",
             style: TextStyle(
               color: AppColors.primary,
               fontWeight: FontWeight.bold,
@@ -782,6 +797,8 @@ class _EmptyState extends StatelessWidget {
   final int totalCount;
   final VoidCallback onClearFilter;
   final VoidCallback onChangeLocation;
+  final bool isBroadcastEnded;
+  final VoidCallback? onBroadcastAgain;
 
   const _EmptyState({
     required this.searchQuery,
@@ -789,6 +806,8 @@ class _EmptyState extends StatelessWidget {
     required this.onChangeLocation,
     this.hasActiveFilters = false,
     this.totalCount = 0,
+    this.isBroadcastEnded = false,
+    this.onBroadcastAgain,
   });
 
   @override
@@ -802,17 +821,23 @@ class _EmptyState extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                hasActiveFilters ? Icons.filter_list_off_rounded : Icons.search_off_rounded,
+                isBroadcastEnded
+                    ? Icons.wifi_tethering_off_rounded
+                    : hasActiveFilters
+                        ? Icons.filter_list_off_rounded
+                        : Icons.search_off_rounded,
                 size: 64,
-                color: Colors.grey.shade400,
+                color: isBroadcastEnded ? AppColors.primary : Colors.grey.shade400,
               ),
               const SizedBox(height: 16),
               Text(
-                searchQuery.isNotEmpty
-                    ? locale.noTechniciansFoundMatchingYourSearch
-                    : hasActiveFilters
-                        ? locale.noTechniciansMatchFilters
-                        : locale.noTechniciansFound,
+                isBroadcastEnded
+                    ? locale.noTechniciansAvailableAtTheMoment
+                    : searchQuery.isNotEmpty
+                        ? locale.noTechniciansFoundMatchingYourSearch
+                        : hasActiveFilters
+                            ? locale.noTechniciansMatchFilters
+                            : locale.noTechniciansFound,
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.black87,
@@ -820,7 +845,29 @@ class _EmptyState extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              if (hasActiveFilters && totalCount > 0) ...[
+              if (isBroadcastEnded && onBroadcastAgain != null) ...[
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: onBroadcastAgain,
+                  icon: const Icon(Icons.refresh_rounded, color: Colors.white, size: 20),
+                  label: Text(
+                    locale.searchAgain,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    elevation: 2,
+                  ),
+                ),
+              ] else if (hasActiveFilters && totalCount > 0) ...[
                 const SizedBox(height: 8),
                 Text(
                   locale.tryRemovingFilters,

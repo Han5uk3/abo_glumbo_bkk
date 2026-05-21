@@ -160,8 +160,20 @@ class _HomeState extends State<Home> {
   }
 
   static Future<void> launchWhatsApp(String phoneNumber) async {
-    final whatsappUrl = 'https://wa.me/$phoneNumber';
-    await launchUrlString(whatsappUrl);
+    final cleanPhone = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+    final whatsappUrl = 'https://wa.me/$cleanPhone';
+    try {
+      final success = await launchUrlString(whatsappUrl, mode: LaunchMode.externalApplication);
+      if (!success) {
+        await launchUrlString(whatsappUrl);
+      }
+    } catch (e) {
+      try {
+        await launchUrlString(whatsappUrl);
+      } catch (err) {
+        // Fail silently
+      }
+    }
   }
 
   static Future<void> launchPhone(String phoneNumber) async {

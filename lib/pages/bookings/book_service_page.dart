@@ -1191,7 +1191,7 @@ class _BookServicePageState extends State<BookServicePage> {
         },
       );
     }
-    if (!_isAssignmentOnHour()) {
+    if (!_shouldShowTechnicianSelection()) {
       return _buildAutoAssignContent();
     }
     return WorkerList(
@@ -1213,7 +1213,7 @@ class _BookServicePageState extends State<BookServicePage> {
         timeSlot: isServiceNow
             ? {"label": "Now", "time": TimeOfDay.now()}
             : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
-        isOnHour: _isAssignmentOnHour(),
+        isOnHour: _shouldShowTechnicianSelection(),
         notes: notesController.text,
         issueImageFile: _selectedImage,
         issueVideoFile: _selectedVideo,
@@ -1283,7 +1283,7 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildReviewStepContent() {
-    final isAssignmentOnHour = _isAssignmentOnHour();
+    final isAssignmentOnHour = _shouldShowTechnicianSelection();
     final price = _getSelectedPrice();
     final hasDiscount = (widget.service.discountPercentage ?? 0) > 0;
     final discountedPrice = widget.service.getDiscountedPrice(price);
@@ -1484,8 +1484,50 @@ class _BookServicePageState extends State<BookServicePage> {
     );
   }
 
-  bool _isAssignmentOnHour() {
-    return widget.service.isOnWorkHour(currentTime: DateTime.now());
+  /// Determines whether to show the technician selection screen (true)
+  /// or use auto-assign (false).
+  ///
+  /// Rules:
+  /// - Service Now + On Hour → technician selection
+  /// - Service Now + Off Hours → blocked (handled in _onContinueFromFirstStep)
+  /// - Service Later + Current Off Hours → auto-assign
+  /// - Service Later + Current On Hour + Today → technician selection
+  /// - Service Later + Current On Hour + Future Date → auto-assign
+  bool _shouldShowTechnicianSelection() {
+    final now = DateTime.now();
+    final isCurrentlyOnHour = widget.service.isOnWorkHour(currentTime: now);
+
+    if (isServiceNow) {
+      // Service Now: show technician selection only if on-hour
+      // (off-hour blocking is handled before reaching this step)
+      return isCurrentlyOnHour;
+    }
+
+    // Service Later
+    if (!isCurrentlyOnHour) {
+      // Current time is off-hours → always auto-assign
+      return false;
+    }
+
+    // Current time is on-hour — check if scheduled date is today
+    final todayOnly = DateTime(now.year, now.month, now.day);
+    final scheduledDateOnly = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
+
+    if (scheduledDateOnly.isAtSameMomentAs(todayOnly)) {
+      // Today → technician selection (regardless of scheduled time on/off hour)
+      return true;
+    }
+
+    // Future date → auto-assign
+    return false;
+  }
+
+  bool _isCurrentTimeOffHour() {
+    return !widget.service.isOnWorkHour(currentTime: DateTime.now());
   }
 
   bool _isInspectionFeeOnHour() {
@@ -1563,6 +1605,15 @@ class _BookServicePageState extends State<BookServicePage> {
       return;
     }
 
+    // Block Service Now bookings during off-hours
+    if (isServiceNow && _isCurrentTimeOffHour()) {
+      _showSnackBar(
+        AppLocalizations.of(context)?.cannotBookDuringOffHours ??
+            "Cannot book during off hours. Please try again during working hours.",
+      );
+      return;
+    }
+
     if (!isServiceNow) {
       if (selectedDate == null) {
         _showSnackBar(
@@ -1627,7 +1678,7 @@ class _BookServicePageState extends State<BookServicePage> {
       return const SizedBox.shrink();
     }
 
-    if (_isAssignmentOnHour()) {
+    if (_shouldShowTechnicianSelection()) {
       // On-hour broadcast: hide continue button until a technician is selected
       return ValueListenableBuilder<int?>(
         valueListenable: selectedIndexNotifier,
@@ -1735,7 +1786,7 @@ class _BookServicePageState extends State<BookServicePage> {
           ? {"label": "Now", "time": TimeOfDay.now()}
           : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
       agent:
-          _isAssignmentOnHour() &&
+          _shouldShowTechnicianSelection() &&
               selectedWorker.uid != null &&
               selectedWorker.uid!.isNotEmpty
           ? selectedWorker
@@ -1753,7 +1804,7 @@ class _BookServicePageState extends State<BookServicePage> {
         MaterialPageRoute(
           builder: (context) => BookingCompletedPage(
             service: widget.service,
-            worker: _isAssignmentOnHour()
+            worker: _shouldShowTechnicianSelection()
                 ? selectedWorker
                 : UserModel(role: "agent", uid: ""),
             selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
@@ -1833,8 +1884,8 @@ class _BookServicePageState extends State<BookServicePage> {
                         Text(
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          selectedAddress!.streetName?.isNotEmpty == true
-                              ? selectedAddress!.streetName!
+                          (selectedAddress!.buildingNumber.isNotEmpty || selectedAddress!.streetName?.isNotEmpty == true)
+                              ? "${selectedAddress!.buildingNumber.isNotEmpty ? '${selectedAddress!.buildingNumber}, ' : ''}${selectedAddress!.streetName ?? ''}"
                               : "Saved Location",
                           style: DMSansFont.textStyle(
                             color: Colors.black,

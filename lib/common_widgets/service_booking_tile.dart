@@ -329,26 +329,11 @@ class ServiceBookingTile extends StatelessWidget {
             // Wrap(
             //   alignment: WrapAlignment.start,
             //   children: [
-            if (customerSelectedAddress != null &&
-                customerSelectedAddress.buildingNumber.isNotEmpty)
-              // _buildSectionCards(
-              //   context: context,
-              //   hasChat: false,
-              // // title: localization.location,
-              // icon: Icons.location_on_rounded,
-              // children: [
-              // _buildInfoRow(
-              //   localization.address,
-              //   customerSelectedAddress.buildingNumber,
-              // ),
+            if (customerSelectedAddress != null)
               _buildInfoRow(
                 localization.location,
-                customerSelectedAddress.streetName ?? 'N/A',
-                icon: Icon(Icons.location_on_outlined),
-                //     ),
-                //   ],
-                // ),
-                // ],
+                "${customerSelectedAddress.buildingNumber.isNotEmpty ? '${customerSelectedAddress.buildingNumber}, ' : ''}${customerSelectedAddress.streetName ?? 'N/A'}",
+                icon: const Icon(Icons.location_on_outlined),
               ),
 
             //   ],

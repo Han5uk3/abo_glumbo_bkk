@@ -349,7 +349,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                             ),
                                             const SizedBox(height: 2),
                                             Text(
-                                              address.streetName ?? '',
+                                              "${address.buildingNumber.isNotEmpty ? '${address.buildingNumber}, ' : ''}${address.streetName ?? ''}",
                                               style: PoppinsFont.textStyle(
                                                 color: isSelected
                                                     ? AppColors.primary

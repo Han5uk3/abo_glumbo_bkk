@@ -957,7 +957,9 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           ),
           Divider(thickness: 1, color: Colors.grey.shade300),
           Text(
-            customerSelectedAddress?.streetName ?? "",
+            customerSelectedAddress == null
+                ? ""
+                : "${customerSelectedAddress.buildingNumber.isNotEmpty ? '${customerSelectedAddress.buildingNumber}, ' : ''}${customerSelectedAddress.streetName ?? ""}",
             style: DMSansFont.textStyle(fontSize: 12, color: Colors.black),
           ),
         ],

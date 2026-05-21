@@ -93,7 +93,6 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
         log("got user details: ${data.toString()}");
         if (data != null && mounted) {
           setState(() {
-            _fullNameController.text = data['name'] ?? '';
             _phoneNumberController.text = data['phone'] ?? '';
           });
         }
@@ -305,6 +304,9 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     }
     _locationTitle = title.trim();
     _locationSubtitle = uniqueSubtitleParts.join(', ');
+    if (widget.existingAddress == null) {
+      _fullNameController.text = _locationTitle;
+    }
   }
 
   Future<void> _getAddressFromLatLng(

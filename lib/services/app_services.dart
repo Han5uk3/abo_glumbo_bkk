@@ -1711,11 +1711,17 @@ class AppServices {
   static Stream<List<String>> listenToInterestedWorkers(String requestId) {
     return AppFirestore.jobOffersCollectionRef
         .where('requestId', isEqualTo: requestId)
-        .where('status', isEqualTo: 'accepted_by_technician')
         .snapshots()
         .map((snapshot) {
           return snapshot.docs
-              .map((doc) => doc['technicianId'] as String)
+              .where((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                return data['status'] == 'accepted_by_technician';
+              })
+              .map((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                return data['technicianId'] as String;
+              })
               .toList();
         });
   }
