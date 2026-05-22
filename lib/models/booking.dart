@@ -144,14 +144,14 @@ class BookingModel {
       escalatedAt = data['escalatedAt'],
       chatroomId = data['chatroomId'] ?? '',
       bookingDateTime = data['bookingDateTime'],
-      bookingStatusCode = data['bookingStatusCode'],
+      bookingStatusCode = data['bookingStatusCode'] ?? '',
       isStartTracking = data['isStarted'] ?? false,
-      notes = data['notes'],
+      notes = data['notes'] ?? '',
       id = data['id'] ?? '',
       issueImage = data['issueImage'],
       issueVideo = data['issueVideo'],
       customer = CustomerModel.fromJson(data['customer']),
-      paymentModeCode = data['paymentModeCode'],
+      paymentModeCode = data['paymentModeCode'] ?? '',
       review = data['review'] != null
           ? ReviewModel.fromMap(data['review'])
           : null,
@@ -376,9 +376,9 @@ class CancelledWorkers {
 
   factory CancelledWorkers.fromMap(Map<String, dynamic> data) {
     return CancelledWorkers(
-      uid: data['uid'],
-      agentName: data['agentName'],
-      cancelledAt: data['cancelledAt'],
+      uid: data['uid'] ?? '',
+      agentName: data['agentName'] ?? '',
+      cancelledAt: data['cancelledAt'] ?? Timestamp.now(),
     );
   }
 

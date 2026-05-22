@@ -840,5 +840,7 @@
   "downloadInvoice": "تنزيل الفاتورة",
   "lookingForAvailableTechniciansNearby": "جاري البحث عن فنيين متاحين بالقرب منك...",
   "noTechniciansAvailableAtTheMoment": "لا يوجد فنيون متاحون لتلبية طلبك في الوقت الحالي.",
-  "searchAgain": "البحث مجدداً"
+  "searchAgain": "البحث مجدداً",
+  "technicianAutoAssignedBeforeAppointment": "سيتم تعيين فني تلقائيًا قبل الموعد بناءً على التوفر."
 }
+

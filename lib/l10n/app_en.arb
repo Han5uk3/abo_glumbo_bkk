@@ -826,5 +826,7 @@
   "downloadInvoice": "Download Invoice",
   "lookingForAvailableTechniciansNearby": "Looking for available technicians nearby...",
   "noTechniciansAvailableAtTheMoment": "No technicians available to handle your request at the moment.",
-  "searchAgain": "Search Again"
+  "searchAgain": "Search Again",
+  "technicianAutoAssignedBeforeAppointment": "A technician will be automatically assigned before the appointment based on availability."
 }
+

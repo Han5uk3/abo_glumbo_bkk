@@ -2523,4 +2523,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchAgain => 'Search Again';
+
+  @override
+  String get technicianAutoAssignedBeforeAppointment =>
+      'A technician will be automatically assigned before the appointment based on availability.';
 }

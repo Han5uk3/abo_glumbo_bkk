@@ -2540,4 +2540,8 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get searchAgain => 'دوبارہ تلاش کریں';
+
+  @override
+  String get technicianAutoAssignedBeforeAppointment =>
+      'دستیابی کی بنیاد پر ملاقات سے پہلے ایک ٹیکنیشن خود بخود تفویض کر دیا جائے گا۔';
 }

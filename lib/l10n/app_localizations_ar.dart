@@ -2483,4 +2483,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get searchAgain => 'البحث مجدداً';
+
+  @override
+  String get technicianAutoAssignedBeforeAppointment =>
+      'سيتم تعيين فني تلقائيًا قبل الموعد بناءً على التوفر.';
 }

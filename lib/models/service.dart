@@ -345,16 +345,16 @@ class ServiceModel {
         offWorkHourPrice != null) {
       json['offWorkHourPrice'] = offWorkHourPrice;
     }
-    if (workingDays != previous.workingDays && workingDays != null) {
+    if (workingDays != null && !_areListsEqual(workingDays, previous.workingDays)) {
       json['workingDays'] = workingDays;
     }
     if (category != previous.category && category != null) {
       json['category'] = category;
     }
-    if (specialSection != previous.specialSection && specialSection != null) {
+    if (specialSection != null && !_areListsEqual(specialSection, previous.specialSection)) {
       json['specialSection'] = specialSection;
     }
-    if (locations != previous.locations && locations != null) {
+    if (locations != null && !_areListsEqual(locations, previous.locations)) {
       json['locations'] = locations;
     }
     if (createdAt != previous.createdAt && createdAt != null) {
@@ -371,6 +371,16 @@ class ServiceModel {
       json['discountPercentage'] = discountPercentage;
     }
     return json;
+  }
+
+  bool _areListsEqual(List? a, List? b) {
+    if (a == b) return true;
+    if (a == null || b == null) return false;
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 
   // Helper method to calculate average rating

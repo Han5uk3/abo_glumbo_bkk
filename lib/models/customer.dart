@@ -65,7 +65,7 @@ class CustomerModel {
       uid: json['uid'] ?? '',
       name: json['name'],
       email: json['email'],
-      role: json['role'],
+      role: json['role'] ?? 'customer',
       phone: json['phone'],
       fcmToken: json['fcmToken'],
       lanCode: json['lanCode'],

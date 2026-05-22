@@ -31,7 +31,11 @@ import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
 class BookServicePage extends StatefulWidget {
   final ServiceModel service;
   final UserModel? rebookTechnician;
-  const BookServicePage({super.key, required this.service, this.rebookTechnician});
+  const BookServicePage({
+    super.key,
+    required this.service,
+    this.rebookTechnician,
+  });
 
   @override
   State<BookServicePage> createState() => _BookServicePageState();
@@ -656,92 +660,97 @@ class _BookServicePageState extends State<BookServicePage> {
               ),
             ),
           ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10),
-            ],
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: TableCalendar(
+              locale: AppLocalizations.of(context)?.localeName,
+              headerStyle: HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+                titleTextStyle: DMSansFont.textStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              daysOfWeekStyle: DaysOfWeekStyle(
+                weekdayStyle: DMSansFont.textStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+                weekendStyle: DMSansFont.textStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              calendarStyle: CalendarStyle(
+                selectedDecoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(8),
+                  shape: BoxShape.rectangle,
+                ),
+                todayDecoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.primary, width: 1.5),
+                  shape: BoxShape.rectangle,
+                ),
+                defaultDecoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                weekendDecoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                holidayDecoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                outsideDecoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                disabledDecoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                todayTextStyle: DMSansFont.textStyle(color: AppColors.primary),
+              ),
+              selectedDayPredicate: (day) => isSameDay(day, selectedDate),
+              focusedDay: selectedDate ?? DateTime.now(),
+              firstDay: DateTime.now(),
+              lastDay: DateTime.utc(2050, 01, 16),
+              onDaySelected: _onDaySelect,
+            ),
           ),
-          child: TableCalendar(
-            locale: AppLocalizations.of(context)?.localeName,
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-              titleTextStyle: DMSansFont.textStyle(fontWeight: FontWeight.bold),
-            ),
-            daysOfWeekStyle: DaysOfWeekStyle(
-              weekdayStyle: DMSansFont.textStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-              ),
-              weekendStyle: DMSansFont.textStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            calendarStyle: CalendarStyle(
-              selectedDecoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(8),
-                shape: BoxShape.rectangle,
-              ),
-              todayDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.primary, width: 1.5),
-                shape: BoxShape.rectangle,
-              ),
-              defaultDecoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              weekendDecoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              holidayDecoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              outsideDecoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              disabledDecoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              todayTextStyle: DMSansFont.textStyle(color: AppColors.primary),
-            ),
-            selectedDayPredicate: (day) => isSameDay(day, selectedDate),
-            focusedDay: selectedDate ?? DateTime.now(),
-            firstDay: DateTime.now(),
-            lastDay: DateTime.utc(2050, 01, 16),
-            onDaySelected: _onDaySelect,
-          ),
-        ),
 
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-          child: Text(
-            AppLocalizations.of(context)?.time ?? 'Available Slots',
-            style: DMSansFont.textStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+            child: Text(
+              AppLocalizations.of(context)?.time ?? 'Available Slots',
+              style: DMSansFont.textStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        _buildTimeCategories(),
-        SizedBox(height: 16),
-        Divider(
-          color: Colors.grey.shade300,
-          thickness: 1,
-          indent: 16,
-          endIndent: 16,
-        ),
-        if (selectedTimeCategory != -1) _buildTimeSlots(),
+          _buildTimeCategories(),
+          SizedBox(height: 16),
+          Divider(
+            color: Colors.grey.shade300,
+            thickness: 1,
+            indent: 16,
+            endIndent: 16,
+          ),
+          if (selectedTimeCategory != -1) _buildTimeSlots(),
         ],
         if (isServiceNow ||
             (selectedDate != null &&
@@ -784,7 +793,9 @@ class _BookServicePageState extends State<BookServicePage> {
                     AppLocalizations.of(context)?.serviceNow ?? 'Service Now',
                     style: DMSansFont.textStyle(
                       color: isServiceNow ? Colors.white : Colors.black87,
-                      fontWeight: isServiceNow ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isServiceNow
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -803,15 +814,20 @@ class _BookServicePageState extends State<BookServicePage> {
                   color: !isServiceNow ? AppColors.primary : Colors.white,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: !isServiceNow ? AppColors.primary : Colors.grey[300]!,
+                    color: !isServiceNow
+                        ? AppColors.primary
+                        : Colors.grey[300]!,
                   ),
                 ),
                 child: Center(
                   child: Text(
-                    AppLocalizations.of(context)?.serviceForLater ?? 'Service for Later',
+                    AppLocalizations.of(context)?.serviceForLater ??
+                        'Service for Later',
                     style: DMSansFont.textStyle(
                       color: !isServiceNow ? Colors.white : Colors.black87,
-                      fontWeight: !isServiceNow ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: !isServiceNow
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -839,8 +855,8 @@ class _BookServicePageState extends State<BookServicePage> {
         (AppLocalizations.of(context)?.localeName == 'ar'
             ? "لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة مرة أخرى خلال ساعات العمل."
             : AppLocalizations.of(context)?.localeName == 'ur'
-                ? "کام کے اوقات کے علاوہ بکنگ نہیں کی جا سکتی۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔"
-                : "Cannot book during off hours. Please try again during working hours.");
+            ? "کام کے اوقات کے علاوہ بکنگ نہیں کی جا سکتی۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔"
+            : "Cannot book during off hours. Please try again during working hours.");
   }
 
   String _getBookForLaterText() {
@@ -855,12 +871,12 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   String _getCancelText() {
-    return AppLocalizations.of(context)?.cancel ?? 
+    return AppLocalizations.of(context)?.cancel ??
         (AppLocalizations.of(context)?.localeName == 'ar'
             ? "إلغاء"
             : AppLocalizations.of(context)?.localeName == 'ur'
-                ? "منسوخ کریں"
-                : "Cancel");
+            ? "منسوخ کریں"
+            : "Cancel");
   }
 
   void _showOffHoursDialog() {
@@ -980,10 +996,7 @@ class _BookServicePageState extends State<BookServicePage> {
       decoration: BoxDecoration(
         color: Colors.amber.shade50,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.amber.shade200,
-          width: 1.5,
-        ),
+        border: Border.all(color: Colors.amber.shade200, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.amber.withOpacity(0.05),
@@ -1046,14 +1059,14 @@ class _BookServicePageState extends State<BookServicePage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isOnHour
-                ? Colors.green.shade200
-                : Colors.orange.shade200,
+            color: isOnHour ? Colors.green.shade200 : Colors.orange.shade200,
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: (isOnHour ? Colors.green : Colors.orange).withOpacity(0.08),
+              color: (isOnHour ? Colors.green : Colors.orange).withOpacity(
+                0.08,
+              ),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -1097,9 +1110,9 @@ class _BookServicePageState extends State<BookServicePage> {
                       Text(
                         isOnHour
                             ? (AppLocalizations.of(context)?.onHourBooking ??
-                                'On-Hour')
+                                  'On-Hour')
                             : (AppLocalizations.of(context)?.offHourBooking ??
-                                'Off-Hour'),
+                                  'Off-Hour'),
                         style: DMSansFont.textStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -1409,29 +1422,29 @@ class _BookServicePageState extends State<BookServicePage> {
       return _buildAutoAssignContent();
     }
     return WorkerList(
-        service: widget.service,
-        category: widget.service.category ?? "",
-        selectedAddress: selectedAddress,
-        selectedIndexNotifier: selectedIndexNotifier,
-        onWorkerSelected: (worker) {
-          setState(() {
-            selectedWorker = worker;
-          });
-        },
-        onBroadcastIdCreated: (id) {
-          setState(() {
-            broadcastRequestId = id;
-          });
-        },
-        selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
-        timeSlot: isServiceNow
-            ? {"label": "Now", "time": TimeOfDay.now()}
-            : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
-        isOnHour: _shouldShowTechnicianSelection(),
-        notes: notesController.text,
-        issueImageFile: _selectedImage,
-        issueVideoFile: _selectedVideo,
-      );
+      service: widget.service,
+      category: widget.service.category ?? "",
+      selectedAddress: selectedAddress,
+      selectedIndexNotifier: selectedIndexNotifier,
+      onWorkerSelected: (worker) {
+        setState(() {
+          selectedWorker = worker;
+        });
+      },
+      onBroadcastIdCreated: (id) {
+        setState(() {
+          broadcastRequestId = id;
+        });
+      },
+      selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
+      timeSlot: isServiceNow
+          ? {"label": "Now", "time": TimeOfDay.now()}
+          : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+      isOnHour: _shouldShowTechnicianSelection(),
+      notes: notesController.text,
+      issueImageFile: _selectedImage,
+      issueVideoFile: _selectedVideo,
+    );
   }
 
   Widget _buildAutoAssignContent() {
@@ -1455,10 +1468,11 @@ class _BookServicePageState extends State<BookServicePage> {
             ),
             const SizedBox(height: 24),
             Text(
-              "A technician will be automatically assigned before the appointment based on availability.",
+              AppLocalizations.of(
+                context,
+              )!.technicianAutoAssignedBeforeAppointment,
               textAlign: TextAlign.center,
-              style: DMSansFont.textStyle(
-              ),
+              style: DMSansFont.textStyle(),
             ),
             const SizedBox(height: 16),
             Container(
@@ -2102,7 +2116,9 @@ class _BookServicePageState extends State<BookServicePage> {
                         Text(
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          (selectedAddress!.buildingNumber.isNotEmpty || selectedAddress!.streetName?.isNotEmpty == true)
+                          (selectedAddress!.buildingNumber.isNotEmpty ||
+                                  selectedAddress!.streetName?.isNotEmpty ==
+                                      true)
                               ? "${selectedAddress!.buildingNumber.isNotEmpty ? '${selectedAddress!.buildingNumber}, ' : ''}${selectedAddress!.streetName ?? ''}"
                               : "Saved Location",
                           style: DMSansFont.textStyle(

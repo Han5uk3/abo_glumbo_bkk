@@ -355,8 +355,9 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                             children: [
                               _buildSectionTitle(
                                 context,
-                                AppLocalizations.of(context)
-                                        ?.technicianDetails ??
+                                AppLocalizations.of(
+                                      context,
+                                    )?.technicianDetails ??
                                     'Worker Details',
                               ),
                               const SizedBox(height: 12),
@@ -369,9 +370,8 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                                         tag: 'worker_${widget.worker.uid}',
                                         child: CircleAvatar(
                                           radius: 30,
-                                          backgroundImage: widget.worker
-                                                      .profileUrl !=
-                                                  null
+                                          backgroundImage:
+                                              widget.worker.profileUrl != null
                                               ? NetworkImage(
                                                   widget.worker.profileUrl!,
                                                 )

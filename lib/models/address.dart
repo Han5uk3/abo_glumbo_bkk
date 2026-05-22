@@ -25,10 +25,10 @@ class AddressModel {
 
   factory AddressModel.fromJson(Map<String, dynamic> json) {
     return AddressModel(
-      id: json['id'] as String,
-      fullName: json['fullName'] as String,
-      buildingNumber: json['buildingNumber'] as String,
-      phoneNumber: json['phoneNumber'] as String,
+      id: json['id']?.toString() ?? '',
+      fullName: json['fullName']?.toString() ?? '',
+      buildingNumber: json['buildingNumber']?.toString() ?? '',
+      phoneNumber: json['phoneNumber']?.toString() ?? '',
       streetName: json['streetName'] as String?,
       lon: (json['lon'] as num?)?.toDouble(),
       lat: (json['lat'] as num?)?.toDouble(),

@@ -4845,6 +4845,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search Again'**
   String get searchAgain;
+
+  /// No description provided for @technicianAutoAssignedBeforeAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'A technician will be automatically assigned before the appointment based on availability.'**
+  String get technicianAutoAssignedBeforeAppointment;
 }
 
 class _AppLocalizationsDelegate
