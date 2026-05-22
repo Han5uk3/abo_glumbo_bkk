@@ -642,6 +642,8 @@ class _BookServicePageState extends State<BookServicePage> {
           ),
         ),
         _buildBookingTypeSelector(),
+        if (isServiceNow && _isCurrentTimeOffHour())
+          _buildOffHoursWarningCard(),
 
         if (!isServiceNow) ...[
           Padding(
@@ -757,12 +759,17 @@ class _BookServicePageState extends State<BookServicePage> {
         children: [
           Expanded(
             child: InkWell(
-              onTap: () => setState(() {
-                isServiceNow = true;
-                selectedDate = null;
-                selectedTimeCategory = -1;
-                selectedTimeSlot = -1;
-              }),
+              onTap: () {
+                setState(() {
+                  isServiceNow = true;
+                  selectedDate = null;
+                  selectedTimeCategory = -1;
+                  selectedTimeSlot = -1;
+                });
+                if (_isCurrentTimeOffHour()) {
+                  _showOffHoursDialog();
+                }
+              },
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
@@ -809,6 +816,213 @@ class _BookServicePageState extends State<BookServicePage> {
                   ),
                 ),
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getOffHoursTitle() {
+    final locale = AppLocalizations.of(context)?.localeName;
+    if (locale == 'ar') {
+      return "تنبيه الحجز خارج ساعات العمل";
+    } else if (locale == 'ur') {
+      return "آف آورز بکنگ الرٹ";
+    } else {
+      return "Off-Hours Booking Alert";
+    }
+  }
+
+  String _getOffHoursMessage() {
+    return AppLocalizations.of(context)?.cannotBookDuringOffHours ??
+        (AppLocalizations.of(context)?.localeName == 'ar'
+            ? "لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة مرة أخرى خلال ساعات العمل."
+            : AppLocalizations.of(context)?.localeName == 'ur'
+                ? "کام کے اوقات کے علاوہ بکنگ نہیں کی جا سکتی۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔"
+                : "Cannot book during off hours. Please try again during working hours.");
+  }
+
+  String _getBookForLaterText() {
+    final locale = AppLocalizations.of(context)?.localeName;
+    if (locale == 'ar') {
+      return "احجز لوقت لاحق";
+    } else if (locale == 'ur') {
+      return "بعد کے لیے بک کریں";
+    } else {
+      return "Book for Later";
+    }
+  }
+
+  String _getCancelText() {
+    return AppLocalizations.of(context)?.cancel ?? 
+        (AppLocalizations.of(context)?.localeName == 'ar'
+            ? "إلغاء"
+            : AppLocalizations.of(context)?.localeName == 'ur'
+                ? "منسوخ کریں"
+                : "Cancel");
+  }
+
+  void _showOffHoursDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 10,
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.history_toggle_off_rounded,
+                    color: Colors.amber.shade800,
+                    size: 40,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  _getOffHoursTitle(),
+                  textAlign: TextAlign.center,
+                  style: DMSansFont.textStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  _getOffHoursMessage(),
+                  textAlign: TextAlign.center,
+                  style: DMSansFont.textStyle(
+                    fontSize: 14,
+                    height: 1.5,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(color: Colors.grey.shade300),
+                          ),
+                        ),
+                        child: Text(
+                          _getCancelText(),
+                          style: DMSansFont.textStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          setState(() {
+                            isServiceNow = false;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          _getBookForLaterText(),
+                          style: DMSansFont.textStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildOffHoursWarningCard() {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.amber.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.amber.shade200,
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.amber.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.warning_amber_rounded,
+            color: Colors.amber.shade800,
+            size: 24,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _getOffHoursTitle(),
+                  style: DMSansFont.textStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.amber.shade900,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _getOffHoursMessage(),
+                  style: DMSansFont.textStyle(
+                    fontSize: 12,
+                    height: 1.4,
+                    color: Colors.amber.shade900.withOpacity(0.85),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -1564,20 +1778,24 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildFirstStepBottom() {
+    final isBlocked = isServiceNow && _isCurrentTimeOffHour();
     return ElevatedButton(
-      onPressed: _onContinueFromFirstStep,
+      onPressed: isBlocked ? null : _onContinueFromFirstStep,
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        disabledBackgroundColor: Colors.grey.shade300,
+        disabledForegroundColor: Colors.grey.shade500,
         minimumSize: const Size(double.infinity, 54),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: isBlocked ? 0 : null,
       ),
       child: Text(
         AppLocalizations.of(context)?.continueText ?? 'Continue',
         style: DMSansFont.textStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: isBlocked ? Colors.grey.shade500 : Colors.white,
         ),
       ),
     );

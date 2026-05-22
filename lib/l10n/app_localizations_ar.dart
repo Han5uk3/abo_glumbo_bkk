@@ -113,11 +113,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get getStarted => 'ابدأ';
 
   @override
-  String get onboard1 => 'خدمات منزلية موثوقة في متناول يدك';
+  String get onboard1 => 'مرحباً بك في أبو جلمبو! نحن شريكك الجديد لراحة بالك.';
 
   @override
-  String get onboard1desc =>
-      'ابحث عن محترفين موثوقين للإصلاحات والتركيبات والصيانة ببضع نقرات فقط.';
+  String get onboard1desc => 'هل أنت مستعد لصيانة منزلك؟ ابدأ طلبك الأول الآن.';
 
   @override
   String get namehomeworketc => 'الاسم (المنزل، العمل، إلخ)';
@@ -2228,6 +2227,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cannotBookForPastTime => 'لا يمكن حجز موعد في الماضي';
 
   @override
+  String get cannotBookDuringOffHours =>
+      'لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة أثناء ساعات العمل.';
+
+  @override
   String get finalizingBookingInfo =>
       'يرجى الانتظار بينما نقوم بإنهاء إجراءات الحجز...';
 
@@ -2471,14 +2474,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get downloadInvoice => 'تنزيل الفاتورة';
 
   @override
-  String get cannotBookDuringOffHours =>
-      'لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة أثناء ساعات العمل.';
+  String get lookingForAvailableTechniciansNearby =>
+      'جاري البحث عن فنيين متاحين بالقرب منك...';
 
   @override
-  String get lookingForAvailableTechniciansNearby => 'جاري البحث عن فنيين متاحين بالقرب منك...';
-
-  @override
-  String get noTechniciansAvailableAtTheMoment => 'لا يوجد فنيون متاحون لتلبية طلبك في الوقت الحالي.';
+  String get noTechniciansAvailableAtTheMoment =>
+      'لا يوجد فنيون متاحون لتلبية طلبك في الوقت الحالي.';
 
   @override
   String get searchAgain => 'البحث مجدداً';

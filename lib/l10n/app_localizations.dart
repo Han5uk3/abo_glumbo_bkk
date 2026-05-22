@@ -307,13 +307,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboard1.
   ///
   /// In en, this message translates to:
-  /// **'Reliable Home Services at Your Fingertips'**
+  /// **'Welcome to Abo Glumbo!  We are your new partner for peace of mind.'**
   String get onboard1;
 
   /// No description provided for @onboard1desc.
   ///
   /// In en, this message translates to:
-  /// **'Find trusted professionals for repairs, installations, and maintenance in just a few taps.'**
+  /// **'Ready for your home maintenance? Start your first request now.'**
   String get onboard1desc;
 
   /// No description provided for @namehomeworketc.
@@ -4360,6 +4360,12 @@ abstract class AppLocalizations {
   /// **'Cannot book for past time'**
   String get cannotBookForPastTime;
 
+  /// No description provided for @cannotBookDuringOffHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot book during off hours. Please try again during working hours.'**
+  String get cannotBookDuringOffHours;
+
   /// No description provided for @finalizingBookingInfo.
   ///
   /// In en, this message translates to:
@@ -4821,12 +4827,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download Invoice'**
   String get downloadInvoice;
-
-  /// No description provided for @cannotBookDuringOffHours.
-  ///
-  /// In en, this message translates to:
-  /// **'Cannot book during off hours. Please try again during working hours.'**
-  String get cannotBookDuringOffHours;
 
   /// No description provided for @lookingForAvailableTechniciansNearby.
   ///

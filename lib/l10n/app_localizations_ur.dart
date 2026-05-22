@@ -117,11 +117,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get getStarted => 'شروع کریں';
 
   @override
-  String get onboard1 => 'آپ کی انگلیوں پر قابل اعتماد گھریلو خدمات';
+  String get onboard1 =>
+      'ابو گلمبو میں خوش آمدید! ہم آپ کے ذہنی سکون کے نئے ساتھی ہیں۔';
 
   @override
   String get onboard1desc =>
-      'مرمت، تنصیب، اور دیکھ بھال کے لیے قابل اعتماد پیشہ ور افراد کو صرف چند ٹیپس میں تلاش کریں۔';
+      'کیا آپ اپنے گھر کے رکھ رکھاؤ کے لیے تیار ہیں؟ اپنا پہلا آرڈر ابھی شروع کریں۔';
 
   @override
   String get namehomeworketc => 'نام (گھر، کام وغیرہ)';
@@ -2281,6 +2282,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get cannotBookForPastTime => 'ماضی کے وقت کے لیے بکنگ نہیں کی جا سکتی';
 
   @override
+  String get cannotBookDuringOffHours =>
+      'آف آورز کے دوران بک نہیں کر سکتے۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔';
+
+  @override
   String get finalizingBookingInfo =>
       'براہ کرم انتظار کریں جب تک ہم آپ کی بکنگ کو حتمی شکل دے رہے ہیں...';
 
@@ -2526,14 +2531,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get downloadInvoice => 'انوائس ڈاؤن لوڈ کریں';
 
   @override
-  String get cannotBookDuringOffHours =>
-      'آف آورز کے دوران بک نہیں کر سکتے۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔';
+  String get lookingForAvailableTechniciansNearby =>
+      'قریبی دستیاب ٹیکنیشنز تلاش کیے جا رہے ہیں...';
 
   @override
-  String get lookingForAvailableTechniciansNearby => 'قریبی دستیاب ٹیکنیشنز تلاش کیے جا رہے ہیں...';
-
-  @override
-  String get noTechniciansAvailableAtTheMoment => 'اس وقت آپ کی درخواست کو پورا کرنے کے لیے کوئی ٹیکنیشن دستیاب نہیں ہے۔';
+  String get noTechniciansAvailableAtTheMoment =>
+      'اس وقت آپ کی درخواست کو پورا کرنے کے لیے کوئی ٹیکنیشن دستیاب نہیں ہے۔';
 
   @override
   String get searchAgain => 'دوبارہ تلاش کریں';

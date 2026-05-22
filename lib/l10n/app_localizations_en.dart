@@ -116,11 +116,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get getStarted => 'Get Started';
 
   @override
-  String get onboard1 => 'Reliable Home Services at Your Fingertips';
+  String get onboard1 =>
+      'Welcome to Abo Glumbo!  We are your new partner for peace of mind.';
 
   @override
   String get onboard1desc =>
-      'Find trusted professionals for repairs, installations, and maintenance in just a few taps.';
+      'Ready for your home maintenance? Start your first request now.';
 
   @override
   String get namehomeworketc => 'Name (Home,Work,etc)';
@@ -2267,6 +2268,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cannotBookForPastTime => 'Cannot book for past time';
 
   @override
+  String get cannotBookDuringOffHours =>
+      'Cannot book during off hours. Please try again during working hours.';
+
+  @override
   String get finalizingBookingInfo =>
       'Please wait while we finalize your booking...';
 
@@ -2509,14 +2514,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadInvoice => 'Download Invoice';
 
   @override
-  String get cannotBookDuringOffHours =>
-      'Cannot book during off hours. Please try again during working hours.';
+  String get lookingForAvailableTechniciansNearby =>
+      'Looking for available technicians nearby...';
 
   @override
-  String get lookingForAvailableTechniciansNearby => 'Looking for available technicians nearby...';
-
-  @override
-  String get noTechniciansAvailableAtTheMoment => 'No technicians available to handle your request at the moment.';
+  String get noTechniciansAvailableAtTheMoment =>
+      'No technicians available to handle your request at the moment.';
 
   @override
   String get searchAgain => 'Search Again';
