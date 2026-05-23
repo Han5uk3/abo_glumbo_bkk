@@ -810,7 +810,7 @@
   "inspectionCompleted": "Inspection Completed",
   "fullServiceCompleted": "Full Service Completed",
   "cancelledByAdmin": "Cancelled by Admin",
-  "reject":"Reject",
+  "reject": "Reject",
   "bookingCancelledByAdmin": "Booking was cancelled by admin",
   "trustBarWarranty": "Warranty",
   "trustBarWarrantyDesc": "7-day service guarantee",
@@ -827,6 +827,130 @@
   "lookingForAvailableTechniciansNearby": "Looking for available technicians nearby...",
   "noTechniciansAvailableAtTheMoment": "No technicians available to handle your request at the moment.",
   "searchAgain": "Search Again",
-  "technicianAutoAssignedBeforeAppointment": "A technician will be automatically assigned before the appointment based on availability."
+  "technicianAutoAssignedBeforeAppointment": "A technician will be automatically assigned before the appointment based on availability.",
+  "searchCancelledBackgrounded": "Searching Cancelled. The app was backgrounded.",
+  "stayOnScreenWarning": "Please stay on this screen. Navigating away, closing the app, or backgrounding the app will cancel the search.",
+  "failedResendOtp": "Failed to resend OTP. Please try again.",
+  "verificationIdNotFound": "Verification ID not found. Please try again.",
+  "failedToOpenChat": "Failed to open chat: {error}",
+  "@failedToOpenChat": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSendMessage": "Failed to send message: {error}",
+  "@failedToSendMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToCompleteBooking": "Failed to complete booking",
+  "errorUpdatingFavorite": "Error updating favorite: {error}",
+  "@errorUpdatingFavorite": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGeneral": "Error: {error}",
+  "@errorGeneral": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceTitle": "Service Booking Invoice",
+  "invoiceWord": "INVOICE",
+  "invoiceNumber": "Invoice #: {number}",
+  "@invoiceNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "dateString": "Date: {date}",
+  "@dateString": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "statusPaid": "Status: PAID",
+  "billTo": "BILL TO:",
+  "bookingDetailsInvoice": "BOOKING DETAILS:",
+  "serviceLabel": "Service: {service}",
+  "@serviceLabel": {
+    "placeholders": {
+      "service": {
+        "type": "String"
+      }
+    }
+  },
+  "technicianLabel": "Technician: {technician}",
+  "@technicianLabel": {
+    "placeholders": {
+      "technician": {
+        "type": "String"
+      }
+    }
+  },
+  "techPhoneLabel": "Tech Phone: {phone}",
+  "@techPhoneLabel": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "completedAtLabel": "Completed At: {time}",
+  "@completedAtLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "warrantyLabel": "Warranty: {duration}",
+  "@warrantyLabel": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentModeLabel": "Payment Mode: {mode}",
+  "@paymentModeLabel": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionIdLabel": "Transaction ID: {id}",
+  "@transactionIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "subtotal": "Subtotal:",
+  "sarAmount": "SAR {amount}",
+  "@sarAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "totalLabel": "Total:",
+  "thankYouInvoice": "Thank you for choosing Abo Glumbo!"
 }
-

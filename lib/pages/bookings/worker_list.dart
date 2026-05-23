@@ -76,6 +76,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
   bool _filterByRating = false;
   bool _filterByCompletedJobs = false;
   final double _nearbyThresholdKm = 60.0;
+  bool _isCancelled = false;
 
   @override
   void initState() {
@@ -291,15 +292,20 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // If app is closed or put in background during selection, cleanup the request
     if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
-      _cleanupRequest();
+      _cleanupRequest(markAsCancelled: true);
     }
   }
 
-  void _cleanupRequest() {
+  void _cleanupRequest({bool markAsCancelled = false}) {
     // If user exits and hasn't selected a worker, delete the request and its offers
     if (_requestId != null && widget.selectedIndexNotifier.value == null) {
+      if (markAsCancelled && mounted) {
+        setState(() {
+          _isCancelled = true;
+          _isBroadcasting = false;
+        });
+      }
       AppServices.deleteJobRequest(_requestId!);
       _requestId = null; // Prevent duplicate deletions
     }
@@ -424,34 +430,45 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
 
         // Workers List
         Expanded(
-          child: _acceptedWorkers.isEmpty && _isBroadcasting
-              ? const _FilteringAnimation()
-              : _acceptedWorkers.isEmpty && !_isBroadcasting
-                  ? _EmptyState(
-                      searchQuery: '',
-                      hasActiveFilters: false,
-                      totalCount: 0,
-                      onClearFilter: () {},
-                      onChangeLocation: () {},
-                      isBroadcastEnded: true,
-                      onBroadcastAgain: _retryBroadcasting,
-                    )
-                  : displayedWorkers.isEmpty
+          child: _isCancelled
+              ? _EmptyState(
+                  searchQuery: '',
+                  hasActiveFilters: false,
+                  totalCount: 0,
+                  onClearFilter: () {},
+                  onChangeLocation: () {},
+                  isBroadcastEnded: true,
+                  onBroadcastAgain: _retryBroadcasting,
+                  customMessage: AppLocalizations.of(context)?.searchCancelledBackgrounded ?? 'Searching Cancelled. The app was backgrounded.',
+                )
+              : _acceptedWorkers.isEmpty && _isBroadcasting
+                  ? const _FilteringAnimation()
+                  : _acceptedWorkers.isEmpty && !_isBroadcasting
                       ? _EmptyState(
                           searchQuery: '',
-                          hasActiveFilters: !_allFiltersOff,
-                          totalCount: _acceptedWorkers.length,
-                          onClearFilter: () {
-                            setState(() {
-                              _filterByRating = false;
-                              _filterByCompletedJobs = false;
-                              _filterByDistance = false;
-                              widget.selectedIndexNotifier.value = null;
-                            });
-                          },
+                          hasActiveFilters: false,
+                          totalCount: 0,
+                          onClearFilter: () {},
                           onChangeLocation: () {},
+                          isBroadcastEnded: true,
+                          onBroadcastAgain: _retryBroadcasting,
                         )
-                      : _WorkerListView(
+                      : displayedWorkers.isEmpty
+                          ? _EmptyState(
+                              searchQuery: '',
+                              hasActiveFilters: true,
+                              totalCount: 0,
+                              onClearFilter: () {
+                                setState(() {
+                                  _filterByRating = false;
+                                  _filterByCompletedJobs = false;
+                                  _filterByDistance = false;
+                                  widget.selectedIndexNotifier.value = null;
+                                });
+                              },
+                              onChangeLocation: () {},
+                            )
+                          : _WorkerListView(
                           key: ValueKey('worker_list_${displayedWorkers.map((w) => w.worker.uid ?? '').join('_')}'),
                           service: widget.service,
                           workers: displayedWorkers,
@@ -471,30 +488,46 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
       return const SizedBox.shrink();
     }
     final locale = AppLocalizations.of(context)!;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.timer_outlined, color: AppColors.primary, size: 20),
-          const SizedBox(width: 8),
-          Text(
-            "${locale.lookingForAvailableTechniciansNearby} ${_timerSeconds}s",
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.timer_outlined, color: AppColors.primary, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                "${locale.lookingForAvailableTechniciansNearby} ${_timerSeconds}s",
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
+          child: Text(
+            AppLocalizations.of(context)?.stayOnScreenWarning ?? "Please stay on this screen. Navigating away, closing the app, or backgrounding the app will cancel the search.",
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: AppColors.primary,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+              color: Colors.orange.shade800,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -799,6 +832,7 @@ class _EmptyState extends StatelessWidget {
   final VoidCallback onChangeLocation;
   final bool isBroadcastEnded;
   final VoidCallback? onBroadcastAgain;
+  final String? customMessage;
 
   const _EmptyState({
     required this.searchQuery,
@@ -808,6 +842,7 @@ class _EmptyState extends StatelessWidget {
     this.totalCount = 0,
     this.isBroadcastEnded = false,
     this.onBroadcastAgain,
+    this.customMessage,
   });
 
   @override
@@ -831,13 +866,13 @@ class _EmptyState extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                isBroadcastEnded
+                customMessage ?? (isBroadcastEnded
                     ? locale.noTechniciansAvailableAtTheMoment
                     : searchQuery.isNotEmpty
                         ? locale.noTechniciansFoundMatchingYourSearch
                         : hasActiveFilters
                             ? locale.noTechniciansMatchFilters
-                            : locale.noTechniciansFound,
+                            : locale.noTechniciansFound),
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.black87,

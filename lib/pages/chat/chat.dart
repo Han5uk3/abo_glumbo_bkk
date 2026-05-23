@@ -143,7 +143,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to send message: $e'),
+            content: Text(AppLocalizations.of(context)?.failedToSendMessage(e.toString()) ?? 'Failed to send message: $e'),
             backgroundColor: Colors.red,
           ),
         );

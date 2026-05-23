@@ -2544,4 +2544,117 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get technicianAutoAssignedBeforeAppointment =>
       'دستیابی کی بنیاد پر ملاقات سے پہلے ایک ٹیکنیشن خود بخود تفویض کر دیا جائے گا۔';
+
+  @override
+  String get searchCancelledBackgrounded =>
+      'تلاش منسوخ کر دی گئی۔ ایپ پس منظر میں چلی گئی تھی۔';
+
+  @override
+  String get stayOnScreenWarning =>
+      'براہ کرم اسی اسکرین پر رہیں۔ اس اسکرین سے نکلنے، ایپ بند کرنے، یا ایپ کو پس منظر میں بھیجنے سے تلاش منسوخ ہو جائے گی۔';
+
+  @override
+  String get failedResendOtp =>
+      'OTP دوبارہ بھیجنے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get verificationIdNotFound =>
+      'ویریفکیشن آئی ڈی نہیں ملی۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String failedToOpenChat(String error) {
+    return 'چیٹ کھولنے میں ناکامی: $error';
+  }
+
+  @override
+  String failedToSendMessage(String error) {
+    return 'پیغام بھیجنے میں ناکامی: $error';
+  }
+
+  @override
+  String get failedToCompleteBooking => 'بکنگ مکمل کرنے میں ناکامی';
+
+  @override
+  String errorUpdatingFavorite(String error) {
+    return 'پسندیدہ اپڈیٹ کرنے میں خرابی: $error';
+  }
+
+  @override
+  String errorGeneral(String error) {
+    return 'خرابی: $error';
+  }
+
+  @override
+  String get invoiceTitle => 'سروس بکنگ انوائس';
+
+  @override
+  String get invoiceWord => 'انوائس';
+
+  @override
+  String invoiceNumber(String number) {
+    return 'انوائس نمبر: $number';
+  }
+
+  @override
+  String dateString(String date) {
+    return 'تاریخ: $date';
+  }
+
+  @override
+  String get statusPaid => 'اسٹیٹس: ادا شدہ';
+
+  @override
+  String get billTo => 'بل برائے:';
+
+  @override
+  String get bookingDetailsInvoice => 'بکنگ کی تفصیلات:';
+
+  @override
+  String serviceLabel(String service) {
+    return 'سروس: $service';
+  }
+
+  @override
+  String technicianLabel(String technician) {
+    return 'ٹیکنیشن: $technician';
+  }
+
+  @override
+  String techPhoneLabel(String phone) {
+    return 'ٹیکنیشن فون: $phone';
+  }
+
+  @override
+  String completedAtLabel(String time) {
+    return 'مکمل ہونے کا وقت: $time';
+  }
+
+  @override
+  String warrantyLabel(String duration) {
+    return 'وارنٹی: $duration';
+  }
+
+  @override
+  String paymentModeLabel(String mode) {
+    return 'ادائیگی کا طریقہ: $mode';
+  }
+
+  @override
+  String transactionIdLabel(String id) {
+    return 'ٹرانزیکشن آئی ڈی: $id';
+  }
+
+  @override
+  String get subtotal => 'ذیلی مجموعہ:';
+
+  @override
+  String sarAmount(String amount) {
+    return 'SAR $amount';
+  }
+
+  @override
+  String get totalLabel => 'کل:';
+
+  @override
+  String get thankYouInvoice => 'Abo Glumbo منتخب کرنے کا شکریہ!';
 }

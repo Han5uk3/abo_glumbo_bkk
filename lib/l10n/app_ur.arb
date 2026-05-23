@@ -104,7 +104,7 @@
   "jobCategories": "ملازمت کے زمرے",
   "failedToLoadDataPleaseTryAgainLater": "ڈیٹا لوڈ کرنے میں ناکامی۔ براہ کرم بعد میں دوبارہ کوشش کریں۔",
   "noBookingsFound": "کوئی بکنگ نہیں ملی۔",
-  "searchServices": "خدمات تلاش کریں",
+  "searchServices": "سروسز تلاش کریں...",
   "noServicesInYourWishlist": "آپ کی خواہش کی فہرست میں کوئی خدمات نہیں ہیں",
   "failedToSaveBooking": "بکنگ محفوظ کرنے میں ناکامی",
   "morning": "صبح",
@@ -792,8 +792,7 @@
   "technicianTooFarMessage": "یہ ٹیکنیشن آپ کی سروس کی جگہ سے بہت دور ہے اور اسے منتخب نہیں کیا جا سکتا",
   "rebookTechnician": "ٹیکنیشن کو دوبارہ بک کریں",
   "selectService": "سروس منتخب کریں",
-  "searchServices": "سروسز تلاش کریں...",
-  "reject":"مسترد کریں",
+  "reject": "مسترد کریں",
   "rejectionProfessionalMessage": "کیا آپ اس اپوائنٹمنٹ کے لیے دستیاب نہیں ہیں؟ مسترد کرنے کے بجائے، آپ کسٹمر کے لیے زیادہ مناسب وقت تجویز کر سکتے ہیں۔",
   "proposeAlternativeTime": "متبادل وقت تجویز کریں",
   "waitingForRequestedTechnician": "درخواست کردہ ٹیکنیشن کے جواب کا انتظار ہے",
@@ -828,6 +827,130 @@
   "lookingForAvailableTechniciansNearby": "قریبی دستیاب ٹیکنیشنز تلاش کیے جا رہے ہیں...",
   "noTechniciansAvailableAtTheMoment": "اس وقت آپ کی درخواست کو پورا کرنے کے لیے کوئی ٹیکنیشن دستیاب نہیں ہے۔",
   "searchAgain": "دوبارہ تلاش کریں",
-  "technicianAutoAssignedBeforeAppointment": "دستیابی کی بنیاد پر ملاقات سے پہلے ایک ٹیکنیشن خود بخود تفویض کر دیا جائے گا۔"
+  "technicianAutoAssignedBeforeAppointment": "دستیابی کی بنیاد پر ملاقات سے پہلے ایک ٹیکنیشن خود بخود تفویض کر دیا جائے گا۔",
+  "searchCancelledBackgrounded": "تلاش منسوخ کر دی گئی۔ ایپ پس منظر میں چلی گئی تھی۔",
+  "stayOnScreenWarning": "براہ کرم اسی اسکرین پر رہیں۔ اس اسکرین سے نکلنے، ایپ بند کرنے، یا ایپ کو پس منظر میں بھیجنے سے تلاش منسوخ ہو جائے گی۔",
+  "failedResendOtp": "OTP دوبارہ بھیجنے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔",
+  "verificationIdNotFound": "ویریفکیشن آئی ڈی نہیں ملی۔ براہ کرم دوبارہ کوشش کریں۔",
+  "failedToOpenChat": "چیٹ کھولنے میں ناکامی: {error}",
+  "@failedToOpenChat": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSendMessage": "پیغام بھیجنے میں ناکامی: {error}",
+  "@failedToSendMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToCompleteBooking": "بکنگ مکمل کرنے میں ناکامی",
+  "errorUpdatingFavorite": "پسندیدہ اپڈیٹ کرنے میں خرابی: {error}",
+  "@errorUpdatingFavorite": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGeneral": "خرابی: {error}",
+  "@errorGeneral": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceTitle": "سروس بکنگ انوائس",
+  "invoiceWord": "انوائس",
+  "invoiceNumber": "انوائس نمبر: {number}",
+  "@invoiceNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "dateString": "تاریخ: {date}",
+  "@dateString": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "statusPaid": "اسٹیٹس: ادا شدہ",
+  "billTo": "بل برائے:",
+  "bookingDetailsInvoice": "بکنگ کی تفصیلات:",
+  "serviceLabel": "سروس: {service}",
+  "@serviceLabel": {
+    "placeholders": {
+      "service": {
+        "type": "String"
+      }
+    }
+  },
+  "technicianLabel": "ٹیکنیشن: {technician}",
+  "@technicianLabel": {
+    "placeholders": {
+      "technician": {
+        "type": "String"
+      }
+    }
+  },
+  "techPhoneLabel": "ٹیکنیشن فون: {phone}",
+  "@techPhoneLabel": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "completedAtLabel": "مکمل ہونے کا وقت: {time}",
+  "@completedAtLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "warrantyLabel": "وارنٹی: {duration}",
+  "@warrantyLabel": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentModeLabel": "ادائیگی کا طریقہ: {mode}",
+  "@paymentModeLabel": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionIdLabel": "ٹرانزیکشن آئی ڈی: {id}",
+  "@transactionIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "subtotal": "ذیلی مجموعہ:",
+  "sarAmount": "SAR {amount}",
+  "@sarAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "totalLabel": "کل:",
+  "thankYouInvoice": "Abo Glumbo منتخب کرنے کا شکریہ!"
 }
-

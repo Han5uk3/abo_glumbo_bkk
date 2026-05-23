@@ -26,7 +26,7 @@ class RebookWaitWidget extends StatefulWidget {
   final String? notes;
   final File? issueImageFile;
   final File? issueVideoFile;
-  final Function(UserModel) onAccepted;
+  final Function(UserModel, DateTime?) onAccepted;
   final Function(String) onBroadcastIdCreated;
   final Function() onFailed;
 
@@ -188,7 +188,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
 
       if (status == 'accepted_by_technician') {
         _hasResponded = true;
-        widget.onAccepted(widget.technician);
+        widget.onAccepted(widget.technician, null);
       } else if (status == 'declined' || status == 'expired') {
         _hasResponded = true;
         widget.onFailed();
@@ -343,7 +343,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
                       AppFirestore.jobRequestsCollectionRef.doc(_requestId).update({
                         'bookingDateTime': proposedTime,
                       });
-                      widget.onAccepted(widget.technician);
+                      widget.onAccepted(widget.technician, proposedTime.toDate());
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,

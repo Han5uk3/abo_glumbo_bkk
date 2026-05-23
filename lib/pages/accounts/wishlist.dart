@@ -48,7 +48,7 @@ class _WishListPageState extends State<WishListPage> {
           if (state is FavoriteServiceError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Error updating favorite: ${state.error}'),
+                content: Text(AppLocalizations.of(context)?.errorUpdatingFavorite(state.error.toString()) ?? 'Error updating favorite: ${state.error}'),
                 backgroundColor: Colors.red,
               ),
             );
@@ -63,7 +63,7 @@ class _WishListPageState extends State<WishListPage> {
               );
             }
             if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: Text(AppLocalizations.of(context)?.errorGeneral(snapshot.error.toString()) ?? 'Error: ${snapshot.error}'));
             }
             final services = snapshot.data ?? [];
             if (services.isEmpty) {

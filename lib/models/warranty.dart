@@ -15,6 +15,7 @@ class WarrantyModel {
   DateTime? expiredOn;
   DateTime? preferredDateTime;
   bool? availability;
+  Map<String, dynamic>? assignedTechnician;
 
 
   WarrantyModel({
@@ -32,8 +33,8 @@ class WarrantyModel {
     this.expiredOn,
     this.preferredDateTime,
     this.availability,
+    this.assignedTechnician,
   });
-
 
   factory WarrantyModel.fromJson(Map<String, dynamic> json) {
     return WarrantyModel(
@@ -69,6 +70,7 @@ class WarrantyModel {
           ? (json['preferredDateTime'] as Timestamp).toDate()
           : json['preferredDateTime'] as DateTime?,
       availability: json['availability'] as bool?,
+      assignedTechnician: json['assignedTechnician'] as Map<String, dynamic>?,
 
       rejectedTechnicians: (json['rejectedTechnicians'] is List)
           ? (json['rejectedTechnicians'] as List)
@@ -97,6 +99,7 @@ class WarrantyModel {
       'expiredOn': expiredOn,
       'preferredDateTime': preferredDateTime,
       'availability': availability,
+      'assignedTechnician': assignedTechnician,
 
       'rejectedTechnicians': rejectedTechnicians
           ?.map((e) => e.toJson())
@@ -120,14 +123,18 @@ class WarrantyModel {
 class RejectedTechnicianModel {
   String? uid;
   String? name;
+  String? phone;
+  String? reason;
   DateTime? rejectedAt;
 
-  RejectedTechnicianModel({this.uid, this.name, this.rejectedAt});
+  RejectedTechnicianModel({this.uid, this.name, this.phone, this.reason, this.rejectedAt});
 
   factory RejectedTechnicianModel.fromJson(Map<String, dynamic> json) {
     return RejectedTechnicianModel(
       uid: json['uid'],
       name: json['name'],
+      phone: json['phone'],
+      reason: json['reason'],
       rejectedAt: (json['rejectedAt'] is Timestamp)
           ? (json['rejectedAt'] as Timestamp).toDate()
           : (json['rejectedAt'] as DateTime?),
@@ -135,6 +142,12 @@ class RejectedTechnicianModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {'uid': uid, 'name': name, 'rejectedAt': rejectedAt};
+    return {
+      'uid': uid, 
+      'name': name, 
+      'phone': phone,
+      'reason': reason,
+      'rejectedAt': rejectedAt
+    };
   }
 }

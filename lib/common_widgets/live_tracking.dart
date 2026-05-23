@@ -716,7 +716,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: _initializeTracking,
-            child: const Text("Retry"),
+            child: Text(AppLocalizations.of(context)?.retry ?? "Retry"),
           ),
         ],
       ),

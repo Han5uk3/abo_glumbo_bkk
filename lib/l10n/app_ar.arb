@@ -100,7 +100,7 @@
   "jobCategories": "فئات الوظائف",
   "failedToLoadDataPleaseTryAgainLater": "فشل في تحميل البيانات. يرجى المحاولة لاحقًا.",
   "noBookingsFound": "لم يتم العثور على حجوزات.",
-  "searchServices": "ابحث عن الخدمات",
+  "searchServices": "ابحث عن الخدمات...",
   "noServicesInYourWishlist": "لا توجد خدمات في قائمة المفضلات",
   "failedToSaveBooking": "فشل في حفظ الحجز",
   "morning": "صباحًا",
@@ -811,7 +811,6 @@
   "technicianTooFarMessage": "هذا الفني بعيد جداً عن موقع الخدمة ولا يمكن اختياره",
   "rebookTechnician": "إعادة حجز الفني",
   "selectService": "اختر الخدمة",
-  "searchServices": "ابحث عن الخدمات...",
   "rejectionProfessionalMessage": "هل أنت غير متاح حالياً لهذا الموعد؟ بدلاً من الرفض، يمكنك اقتراح وقت أكثر ملاءمة للعميل.",
   "proposeAlternativeTime": "اقتراح وقت بديل",
   "technicianSelected": "تم اختيار الفني",
@@ -824,7 +823,7 @@
   "inspectionCompleted": "اكتمل الفحص",
   "fullServiceCompleted": "اكتملت الخدمة بالكامل",
   "cancelledByAdmin": "تم الإلغاء من قبل المسؤول",
-  "reject":"رفض",
+  "reject": "رفض",
   "bookingCancelledByAdmin": "تم إلغاء الطلب من قبل المسؤول",
   "trustBarWarranty": "ضمان",
   "trustBarWarrantyDesc": "ضمان الخدمة لمدة ٧ أيام",
@@ -841,6 +840,130 @@
   "lookingForAvailableTechniciansNearby": "جاري البحث عن فنيين متاحين بالقرب منك...",
   "noTechniciansAvailableAtTheMoment": "لا يوجد فنيون متاحون لتلبية طلبك في الوقت الحالي.",
   "searchAgain": "البحث مجدداً",
-  "technicianAutoAssignedBeforeAppointment": "سيتم تعيين فني تلقائيًا قبل الموعد بناءً على التوفر."
+  "technicianAutoAssignedBeforeAppointment": "سيتم تعيين فني تلقائيًا قبل الموعد بناءً على التوفر.",
+  "searchCancelledBackgrounded": "تم إلغاء البحث. تم تشغيل التطبيق في الخلفية.",
+  "stayOnScreenWarning": "يرجى البقاء على هذه الشاشة. سيؤدي مغادرة الشاشة أو إغلاق التطبيق أو تشغيله في الخلفية إلى إلغاء البحث.",
+  "failedResendOtp": "فشل في إعادة إرسال رمز التحقق. يرجى المحاولة مرة أخرى.",
+  "verificationIdNotFound": "لم يتم العثور على معرف التحقق. يرجى المحاولة مرة أخرى.",
+  "failedToOpenChat": "فشل في فتح الدردشة: {error}",
+  "@failedToOpenChat": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSendMessage": "فشل في إرسال الرسالة: {error}",
+  "@failedToSendMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToCompleteBooking": "فشل في إكمال الحجز",
+  "errorUpdatingFavorite": "خطأ في تحديث المفضلة: {error}",
+  "@errorUpdatingFavorite": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGeneral": "خطأ: {error}",
+  "@errorGeneral": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceTitle": "فاتورة حجز الخدمة",
+  "invoiceWord": "فاتورة",
+  "invoiceNumber": "رقم الفاتورة: {number}",
+  "@invoiceNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "dateString": "التاريخ: {date}",
+  "@dateString": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "statusPaid": "الحالة: مدفوع",
+  "billTo": "فاتورة إلى:",
+  "bookingDetailsInvoice": "تفاصيل الحجز:",
+  "serviceLabel": "الخدمة: {service}",
+  "@serviceLabel": {
+    "placeholders": {
+      "service": {
+        "type": "String"
+      }
+    }
+  },
+  "technicianLabel": "الفني: {technician}",
+  "@technicianLabel": {
+    "placeholders": {
+      "technician": {
+        "type": "String"
+      }
+    }
+  },
+  "techPhoneLabel": "هاتف الفني: {phone}",
+  "@techPhoneLabel": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "completedAtLabel": "اكتمل في: {time}",
+  "@completedAtLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "warrantyLabel": "الضمان: {duration}",
+  "@warrantyLabel": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentModeLabel": "طريقة الدفع: {mode}",
+  "@paymentModeLabel": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionIdLabel": "معرف العملية: {id}",
+  "@transactionIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "subtotal": "المجموع الفرعي:",
+  "sarAmount": "{amount} ر.س",
+  "@sarAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "totalLabel": "الإجمالي:",
+  "thankYouInvoice": "شكرًا لاختيارك Abo Glumbo!"
 }
-

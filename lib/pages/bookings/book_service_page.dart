@@ -50,6 +50,7 @@ class _BookServicePageState extends State<BookServicePage> {
   bool isServiceNow = true;
 
   DateTime? selectedDate;
+  DateTime? _counterProposedTime;
   bool saving = false;
   bool _rebookFailed = false;
   String? broadcastRequestId;
@@ -752,10 +753,10 @@ class _BookServicePageState extends State<BookServicePage> {
           ),
           if (selectedTimeCategory != -1) _buildTimeSlots(),
         ],
-        if (isServiceNow ||
-            (selectedDate != null &&
-                selectedTimeCategory != -1 &&
-                selectedTimeSlot != -1))
+        if (!isServiceNow &&
+            selectedDate != null &&
+            selectedTimeCategory != -1 &&
+            selectedTimeSlot != -1)
           _buildInspectionFeeInfo(),
       ],
     );
@@ -1400,9 +1401,10 @@ class _BookServicePageState extends State<BookServicePage> {
         notes: notesController.text,
         issueImageFile: _selectedImage,
         issueVideoFile: _selectedVideo,
-        onAccepted: (worker) {
+        onAccepted: (worker, newTime) {
           setState(() {
             selectedWorker = worker;
+            _counterProposedTime = newTime;
             currentStep = 3;
           });
         },
@@ -2008,15 +2010,17 @@ class _BookServicePageState extends State<BookServicePage> {
 
     final bookingId = await BookingUtils.saveBooking(
       service: widget.service,
-      selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
+      selectedDate: _counterProposedTime ?? (isServiceNow ? _getMiddleEastNow() : selectedDate!),
       paymentMode: "Outside App",
       customerData: customerData!,
       notes: notesController.text,
       selectedImage: _selectedImage,
       selectedVideo: _selectedVideo,
-      timeSlot: isServiceNow
-          ? {"label": "Now", "time": TimeOfDay.now()}
-          : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+      timeSlot: _counterProposedTime != null 
+          ? {"label": "Counter Proposed", "time": TimeOfDay.fromDateTime(_counterProposedTime!)}
+          : (isServiceNow
+              ? {"label": "Now", "time": TimeOfDay.now()}
+              : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]),
       agent:
           _shouldShowTechnicianSelection() &&
               selectedWorker.uid != null &&
@@ -2051,7 +2055,7 @@ class _BookServicePageState extends State<BookServicePage> {
     } else if (mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Failed to complete booking')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.failedToCompleteBooking ?? 'Failed to complete booking')));
     }
   }
 

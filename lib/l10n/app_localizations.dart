@@ -4851,6 +4851,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A technician will be automatically assigned before the appointment based on availability.'**
   String get technicianAutoAssignedBeforeAppointment;
+
+  /// No description provided for @searchCancelledBackgrounded.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching Cancelled. The app was backgrounded.'**
+  String get searchCancelledBackgrounded;
+
+  /// No description provided for @stayOnScreenWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Please stay on this screen. Navigating away, closing the app, or backgrounding the app will cancel the search.'**
+  String get stayOnScreenWarning;
+
+  /// No description provided for @failedResendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to resend OTP. Please try again.'**
+  String get failedResendOtp;
+
+  /// No description provided for @verificationIdNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification ID not found. Please try again.'**
+  String get verificationIdNotFound;
+
+  /// No description provided for @failedToOpenChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open chat: {error}'**
+  String failedToOpenChat(String error);
+
+  /// No description provided for @failedToSendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send message: {error}'**
+  String failedToSendMessage(String error);
+
+  /// No description provided for @failedToCompleteBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to complete booking'**
+  String get failedToCompleteBooking;
+
+  /// No description provided for @errorUpdatingFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating favorite: {error}'**
+  String errorUpdatingFavorite(String error);
+
+  /// No description provided for @errorGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String errorGeneral(String error);
+
+  /// No description provided for @invoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Booking Invoice'**
+  String get invoiceTitle;
+
+  /// No description provided for @invoiceWord.
+  ///
+  /// In en, this message translates to:
+  /// **'INVOICE'**
+  String get invoiceWord;
+
+  /// No description provided for @invoiceNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice #: {number}'**
+  String invoiceNumber(String number);
+
+  /// No description provided for @dateString.
+  ///
+  /// In en, this message translates to:
+  /// **'Date: {date}'**
+  String dateString(String date);
+
+  /// No description provided for @statusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Status: PAID'**
+  String get statusPaid;
+
+  /// No description provided for @billTo.
+  ///
+  /// In en, this message translates to:
+  /// **'BILL TO:'**
+  String get billTo;
+
+  /// No description provided for @bookingDetailsInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'BOOKING DETAILS:'**
+  String get bookingDetailsInvoice;
+
+  /// No description provided for @serviceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Service: {service}'**
+  String serviceLabel(String service);
+
+  /// No description provided for @technicianLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician: {technician}'**
+  String technicianLabel(String technician);
+
+  /// No description provided for @techPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tech Phone: {phone}'**
+  String techPhoneLabel(String phone);
+
+  /// No description provided for @completedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed At: {time}'**
+  String completedAtLabel(String time);
+
+  /// No description provided for @warrantyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty: {duration}'**
+  String warrantyLabel(String duration);
+
+  /// No description provided for @paymentModeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Mode: {mode}'**
+  String paymentModeLabel(String mode);
+
+  /// No description provided for @transactionIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID: {id}'**
+  String transactionIdLabel(String id);
+
+  /// No description provided for @subtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal:'**
+  String get subtotal;
+
+  /// No description provided for @sarAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'SAR {amount}'**
+  String sarAmount(String amount);
+
+  /// No description provided for @totalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total:'**
+  String get totalLabel;
+
+  /// No description provided for @thankYouInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for choosing Abo Glumbo!'**
+  String get thankYouInvoice;
 }
 
 class _AppLocalizationsDelegate

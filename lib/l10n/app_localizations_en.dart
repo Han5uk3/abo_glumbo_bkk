@@ -2527,4 +2527,116 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get technicianAutoAssignedBeforeAppointment =>
       'A technician will be automatically assigned before the appointment based on availability.';
+
+  @override
+  String get searchCancelledBackgrounded =>
+      'Searching Cancelled. The app was backgrounded.';
+
+  @override
+  String get stayOnScreenWarning =>
+      'Please stay on this screen. Navigating away, closing the app, or backgrounding the app will cancel the search.';
+
+  @override
+  String get failedResendOtp => 'Failed to resend OTP. Please try again.';
+
+  @override
+  String get verificationIdNotFound =>
+      'Verification ID not found. Please try again.';
+
+  @override
+  String failedToOpenChat(String error) {
+    return 'Failed to open chat: $error';
+  }
+
+  @override
+  String failedToSendMessage(String error) {
+    return 'Failed to send message: $error';
+  }
+
+  @override
+  String get failedToCompleteBooking => 'Failed to complete booking';
+
+  @override
+  String errorUpdatingFavorite(String error) {
+    return 'Error updating favorite: $error';
+  }
+
+  @override
+  String errorGeneral(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get invoiceTitle => 'Service Booking Invoice';
+
+  @override
+  String get invoiceWord => 'INVOICE';
+
+  @override
+  String invoiceNumber(String number) {
+    return 'Invoice #: $number';
+  }
+
+  @override
+  String dateString(String date) {
+    return 'Date: $date';
+  }
+
+  @override
+  String get statusPaid => 'Status: PAID';
+
+  @override
+  String get billTo => 'BILL TO:';
+
+  @override
+  String get bookingDetailsInvoice => 'BOOKING DETAILS:';
+
+  @override
+  String serviceLabel(String service) {
+    return 'Service: $service';
+  }
+
+  @override
+  String technicianLabel(String technician) {
+    return 'Technician: $technician';
+  }
+
+  @override
+  String techPhoneLabel(String phone) {
+    return 'Tech Phone: $phone';
+  }
+
+  @override
+  String completedAtLabel(String time) {
+    return 'Completed At: $time';
+  }
+
+  @override
+  String warrantyLabel(String duration) {
+    return 'Warranty: $duration';
+  }
+
+  @override
+  String paymentModeLabel(String mode) {
+    return 'Payment Mode: $mode';
+  }
+
+  @override
+  String transactionIdLabel(String id) {
+    return 'Transaction ID: $id';
+  }
+
+  @override
+  String get subtotal => 'Subtotal:';
+
+  @override
+  String sarAmount(String amount) {
+    return 'SAR $amount';
+  }
+
+  @override
+  String get totalLabel => 'Total:';
+
+  @override
+  String get thankYouInvoice => 'Thank you for choosing Abo Glumbo!';
 }

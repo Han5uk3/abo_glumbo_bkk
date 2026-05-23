@@ -6,10 +6,17 @@ import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:intl/intl.dart';
 
+import 'package:flutter/widgets.dart' as material_widgets;
+import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+
 class InvoiceService {
-  static Future<pw.Document?> _buildInvoiceDocument(BookingModel booking) async {
+  static Future<pw.Document?> _buildInvoiceDocument(
+    material_widgets.BuildContext context,
+    BookingModel booking,
+  ) async {
+    final loc = AppLocalizations.of(context)!;
     final pdf = pw.Document();
-    
+
     // Load logo if exists
     pw.ImageProvider? logo;
     try {
@@ -23,14 +30,22 @@ class InvoiceService {
     if (data == null) return null;
 
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
-    final completedAtStr = booking.completedAt != null 
-        ? dateFormat.format(booking.completedAt!.toDate()) 
+    final completedAtStr = booking.completedAt != null
+        ? dateFormat.format(booking.completedAt!.toDate())
         : 'N/A';
+
+    final isArabic = loc.localeName == 'ar' || loc.localeName == 'ur';
+    final ttf = await PdfGoogleFonts.cairoRegular();
+    final ttfBold = await PdfGoogleFonts.cairoBold();
+
+    final theme = pw.ThemeData.withFont(base: ttf, bold: ttfBold);
 
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
+        theme: theme,
+        textDirection: isArabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
         build: (context) => [
           // Header
           pw.Row(
@@ -39,21 +54,42 @@ class InvoiceService {
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  if (logo != null) 
+                  if (logo != null)
                     pw.Container(width: 80, height: 80, child: pw.Image(logo)),
                   pw.SizedBox(height: 10),
-                  pw.Text("Abo Glumbo", style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
-                  pw.Text("Service Booking Invoice"),
+                  pw.Text(
+                    "Abo Glumbo",
+                    style: pw.TextStyle(
+                      fontSize: 20,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.Text(loc.invoiceTitle),
                 ],
               ),
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
-                  pw.Text("INVOICE", style: pw.TextStyle(fontSize: 30, fontWeight: pw.FontWeight.bold, color: PdfColors.blue)),
+                  pw.Text(
+                    loc.invoiceWord,
+                    style: pw.TextStyle(
+                      fontSize: 30,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.blue,
+                    ),
+                  ),
                   pw.SizedBox(height: 10),
-                  pw.Text("Invoice #: ${booking.id.substring(0, 8).toUpperCase()}"),
-                  pw.Text("Date: ${dateFormat.format(DateTime.now())}"),
-                  pw.Text("Status: PAID", style: pw.TextStyle(color: PdfColors.green, fontWeight: pw.FontWeight.bold)),
+                  pw.Text(
+                    loc.invoiceNumber(booking.id.substring(0, 8).toUpperCase()),
+                  ),
+                  pw.Text(loc.dateString(dateFormat.format(DateTime.now()))),
+                  pw.Text(
+                    loc.statusPaid,
+                    style: pw.TextStyle(
+                      color: PdfColors.green,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -61,21 +97,25 @@ class InvoiceService {
           pw.SizedBox(height: 40),
 
           pw.SizedBox(height: 40),
-          
+
           // Get the address used for this booking from the customer data inside the booking
           () {
             final address = booking.customer.addresses.firstWhere(
               (a) => a.isSelected == true,
-              orElse: () => booking.customer.addresses.isNotEmpty 
-                  ? booking.customer.addresses.first 
-                  : AddressModel(id: '', fullName: '', buildingNumber: '', phoneNumber: ''),
+              orElse: () => booking.customer.addresses.isNotEmpty
+                  ? booking.customer.addresses.first
+                  : AddressModel(
+                      id: '',
+                      fullName: '',
+                      buildingNumber: '',
+                      phoneNumber: '',
+                    ),
             );
-            
-            final isThroughApp = booking.paymentModeCode.toUpperCase() == 'C' || 
-                                booking.paymentModeCode.toLowerCase() == 'cards';
-            
-            final warrantyDuration = booking.warranty?.expiredOn != null && 
-                                   (booking.warranty?.createdAt != null || booking.completedAt != null)
+
+            final warrantyDuration =
+                booking.warranty?.expiredOn != null &&
+                    (booking.warranty?.createdAt != null ||
+                        booking.completedAt != null)
                 ? "${booking.warranty!.expiredOn!.difference(booking.warranty!.createdAt ?? booking.completedAt!.toDate()).inDays} Days"
                 : "7 Days";
 
@@ -86,17 +126,30 @@ class InvoiceService {
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text("BILL TO:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      pw.Text(
+                        loc.billTo,
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
                       pw.Text(booking.customer.name ?? "Valued Customer"),
                       pw.Text(booking.customer.phone ?? ""),
                       pw.Text(booking.customer.email ?? ""),
-                      pw.Text("${address.buildingNumber}${address.streetName != null ? ', ${address.streetName}' : ''}"),
-                      if (address.fullName.isNotEmpty && address.fullName != booking.customer.name)
+                      pw.Text(
+                        "${address.buildingNumber}${address.streetName != null ? ', ${address.streetName}' : ''}",
+                      ),
+                      if (address.fullName.isNotEmpty &&
+                          address.fullName != booking.customer.name)
                         pw.Text(address.fullName),
-                      if (booking.customer.districtName != null || booking.customer.cityName != null)
-                        pw.Text("${booking.customer.districtName ?? ''}${booking.customer.districtName != null && booking.customer.cityName != null ? ', ' : ''}${booking.customer.cityName ?? ''}"),
-                      if (booking.serviceLocation != null) 
-                        pw.Text(booking.serviceLocation!.nameEn),
+                      if (booking.customer.districtName != null ||
+                          booking.customer.cityName != null)
+                        pw.Text(
+                          "${booking.customer.districtName ?? ''}${booking.customer.districtName != null && booking.customer.cityName != null ? ', ' : ''}${booking.customer.cityName ?? ''}",
+                        ),
+                      if (booking.serviceLocation != null)
+                        pw.Text(
+                          (loc.localeName == 'ar' || loc.localeName == 'ur')
+                              ? booking.serviceLocation!.nameAr
+                              : booking.serviceLocation!.nameEn,
+                        ),
                     ],
                   ),
                 ),
@@ -104,15 +157,40 @@ class InvoiceService {
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text("BOOKING DETAILS:", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                      pw.Text("Service: ${booking.service.name}"),
-                      if (booking.agent?.name != null) pw.Text("Technician: ${booking.agent!.name}"),
-                      if (booking.agent?.phone != null) pw.Text("Tech Phone: ${booking.agent!.phone}"),
-                      pw.Text("Completed At: $completedAtStr"),
-                      pw.Text("Warranty: $warrantyDuration"),
-                      pw.Text("Payment Mode: ${booking.paymentModeCode.toUpperCase() == 'C' ? 'Inside App' : booking.paymentModeCode.toUpperCase() == 'A' ? 'Apple Pay' : 'Outside App'}"),
-                      if (booking.orderId != null || booking.transactionId != null) 
-                        pw.Text("Transaction ID: ${booking.orderId ?? booking.transactionId}"),
+                      pw.Text(
+                        loc.bookingDetailsInvoice,
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                      pw.Text(
+                        loc.serviceLabel(
+                          booking.service.nameLocalized(
+                                languageCode: loc.localeName,
+                              ) ??
+                              "",
+                        ),
+                      ),
+                      if (booking.agent?.name != null)
+                        pw.Text(loc.technicianLabel(booking.agent!.name!)),
+                      if (booking.agent?.phone != null)
+                        pw.Text(loc.techPhoneLabel(booking.agent!.phone!)),
+                      pw.Text(loc.completedAtLabel(completedAtStr)),
+                      pw.Text(loc.warrantyLabel(warrantyDuration)),
+                      pw.Text(
+                        loc.paymentModeLabel(
+                          booking.paymentModeCode.toUpperCase() == 'C'
+                              ? (loc.insideApp)
+                              : booking.paymentModeCode.toUpperCase() == 'A'
+                              ? (loc.applePay)
+                              : (loc.outsideApp),
+                        ),
+                      ),
+                      if (booking.orderId != null ||
+                          booking.transactionId != null)
+                        pw.Text(
+                          loc.transactionIdLabel(
+                            booking.orderId ?? booking.transactionId ?? '',
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -123,7 +201,10 @@ class InvoiceService {
 
           // Items Table
           pw.Table.fromTextArray(
-            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+            headerStyle: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              color: PdfColors.white,
+            ),
             headerDecoration: const pw.BoxDecoration(color: PdfColors.blue),
             cellHeight: 30,
             cellAlignments: {
@@ -134,14 +215,23 @@ class InvoiceService {
             },
             headers: ['Description', 'Quantity', 'Unit Price', 'Amount'],
             data: [
-              ...data.serviceItems.map((item) => [
-                item.name,
-                item.quantity.toStringAsFixed(0),
-                "SAR ${item.price.toStringAsFixed(2)}",
-                "SAR ${(item.quantity * item.price).toStringAsFixed(2)}",
-              ]),
-              if (data.inspectionFee > 0) 
-                ['Inspection Fee', '1', "SAR ${data.inspectionFee.toStringAsFixed(2)}", "SAR ${data.inspectionFee.toStringAsFixed(2)}"],
+              ...data.serviceItems.map(
+                (item) => [
+                  item.name,
+                  item.quantity.toStringAsFixed(0),
+                  loc.sarAmount(item.price.toStringAsFixed(2)),
+                  loc.sarAmount(
+                    (item.quantity * item.price).toStringAsFixed(2),
+                  ),
+                ],
+              ),
+              if (data.inspectionFee > 0)
+                [
+                  loc.inspectionFee,
+                  '1',
+                  loc.sarAmount(data.inspectionFee.toStringAsFixed(2)),
+                  loc.sarAmount(data.inspectionFee.toStringAsFixed(2)),
+                ],
             ],
           ),
           pw.SizedBox(height: 20),
@@ -157,24 +247,43 @@ class InvoiceService {
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Text("Subtotal:"),
-                        pw.Text("SAR ${data.serviceCost.toStringAsFixed(2)}"),
+                        pw.Text(loc.subtotal),
+                        pw.Text(
+                          loc.sarAmount(data.serviceCost.toStringAsFixed(2)),
+                        ),
                       ],
                     ),
                     if (data.inspectionFee > 0)
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text("Inspection Fee:"),
-                          pw.Text("SAR ${data.inspectionFee.toStringAsFixed(2)}"),
+                          pw.Text(loc.inspectionFee),
+                          pw.Text(
+                            loc.sarAmount(
+                              data.inspectionFee.toStringAsFixed(2),
+                            ),
+                          ),
                         ],
                       ),
                     pw.Divider(),
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Text("Total:", style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-                        pw.Text("SAR ${data.totalCost.toStringAsFixed(2)}", style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.blue)),
+                        pw.Text(
+                          loc.totalLabel,
+                          style: pw.TextStyle(
+                            fontSize: 16,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                        pw.Text(
+                          loc.sarAmount(data.totalCost.toStringAsFixed(2)),
+                          style: pw.TextStyle(
+                            fontSize: 16,
+                            fontWeight: pw.FontWeight.bold,
+                            color: PdfColors.blue,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -182,10 +291,16 @@ class InvoiceService {
               ),
             ],
           ),
-          
+
           pw.SizedBox(height: 60),
           pw.Center(
-            child: pw.Text("Thank you for choosing Abo Glumbo!", style: pw.TextStyle(fontStyle: pw.FontStyle.italic, color: PdfColors.grey)),
+            child: pw.Text(
+              loc.thankYouInvoice,
+              style: pw.TextStyle(
+                fontStyle: pw.FontStyle.italic,
+                color: PdfColors.grey,
+              ),
+            ),
           ),
         ],
       ),
@@ -194,8 +309,11 @@ class InvoiceService {
     return pdf;
   }
 
-  static Future<void> generateAndShowInvoice(BookingModel booking) async {
-    final pdf = await _buildInvoiceDocument(booking);
+  static Future<void> generateAndShowInvoice(
+    material_widgets.BuildContext context,
+    BookingModel booking,
+  ) async {
+    final pdf = await _buildInvoiceDocument(context, booking);
     if (pdf == null) return;
 
     await Printing.layoutPdf(
@@ -204,8 +322,11 @@ class InvoiceService {
     );
   }
 
-  static Future<void> generateAndShareInvoice(BookingModel booking) async {
-    final pdf = await _buildInvoiceDocument(booking);
+  static Future<void> generateAndShareInvoice(
+    material_widgets.BuildContext context,
+    BookingModel booking,
+  ) async {
+    final pdf = await _buildInvoiceDocument(context, booking);
     if (pdf == null) return;
 
     final bytes = await pdf.save();

@@ -1043,7 +1043,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to open chat: $e'),
+            content: Text(AppLocalizations.of(context)?.failedToOpenChat(e.toString()) ?? 'Failed to open chat: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -1182,7 +1182,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               children: [
                 IconButton(
                   onPressed: () =>
-                      InvoiceService.generateAndShareInvoice(booking),
+                      InvoiceService.generateAndShareInvoice(context, booking),
                   icon: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
@@ -1200,7 +1200,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ),
                 IconButton(
                   onPressed: () =>
-                      InvoiceService.generateAndShowInvoice(booking),
+                      InvoiceService.generateAndShowInvoice(context, booking),
                   icon: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
@@ -2400,7 +2400,15 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         isRebook: booking.rebookTechnicianId != null,
       );
       if (context.mounted) {
-        await _handleCounterOfferResponse(context, booking, response);
+        if (booking.activeCounterOffer != null) {
+          await _handleCounterOfferResponse(context, booking, response);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(AppLocalizations.of(context)!.completed)),
+          );
+          if (onRefresh != null) onRefresh!();
+          Navigator.pop(context);
+        }
       }
     }
   }

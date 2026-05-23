@@ -2487,4 +2487,117 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get technicianAutoAssignedBeforeAppointment =>
       'سيتم تعيين فني تلقائيًا قبل الموعد بناءً على التوفر.';
+
+  @override
+  String get searchCancelledBackgrounded =>
+      'تم إلغاء البحث. تم تشغيل التطبيق في الخلفية.';
+
+  @override
+  String get stayOnScreenWarning =>
+      'يرجى البقاء على هذه الشاشة. سيؤدي مغادرة الشاشة أو إغلاق التطبيق أو تشغيله في الخلفية إلى إلغاء البحث.';
+
+  @override
+  String get failedResendOtp =>
+      'فشل في إعادة إرسال رمز التحقق. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get verificationIdNotFound =>
+      'لم يتم العثور على معرف التحقق. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String failedToOpenChat(String error) {
+    return 'فشل في فتح الدردشة: $error';
+  }
+
+  @override
+  String failedToSendMessage(String error) {
+    return 'فشل في إرسال الرسالة: $error';
+  }
+
+  @override
+  String get failedToCompleteBooking => 'فشل في إكمال الحجز';
+
+  @override
+  String errorUpdatingFavorite(String error) {
+    return 'خطأ في تحديث المفضلة: $error';
+  }
+
+  @override
+  String errorGeneral(String error) {
+    return 'خطأ: $error';
+  }
+
+  @override
+  String get invoiceTitle => 'فاتورة حجز الخدمة';
+
+  @override
+  String get invoiceWord => 'فاتورة';
+
+  @override
+  String invoiceNumber(String number) {
+    return 'رقم الفاتورة: $number';
+  }
+
+  @override
+  String dateString(String date) {
+    return 'التاريخ: $date';
+  }
+
+  @override
+  String get statusPaid => 'الحالة: مدفوع';
+
+  @override
+  String get billTo => 'فاتورة إلى:';
+
+  @override
+  String get bookingDetailsInvoice => 'تفاصيل الحجز:';
+
+  @override
+  String serviceLabel(String service) {
+    return 'الخدمة: $service';
+  }
+
+  @override
+  String technicianLabel(String technician) {
+    return 'الفني: $technician';
+  }
+
+  @override
+  String techPhoneLabel(String phone) {
+    return 'هاتف الفني: $phone';
+  }
+
+  @override
+  String completedAtLabel(String time) {
+    return 'اكتمل في: $time';
+  }
+
+  @override
+  String warrantyLabel(String duration) {
+    return 'الضمان: $duration';
+  }
+
+  @override
+  String paymentModeLabel(String mode) {
+    return 'طريقة الدفع: $mode';
+  }
+
+  @override
+  String transactionIdLabel(String id) {
+    return 'معرف العملية: $id';
+  }
+
+  @override
+  String get subtotal => 'المجموع الفرعي:';
+
+  @override
+  String sarAmount(String amount) {
+    return '$amount ر.س';
+  }
+
+  @override
+  String get totalLabel => 'الإجمالي:';
+
+  @override
+  String get thankYouInvoice => 'شكرًا لاختيارك Abo Glumbo!';
 }
