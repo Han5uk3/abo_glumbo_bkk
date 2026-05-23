@@ -674,7 +674,7 @@ class AppServices {
       snapshot,
     ) {
       if (snapshot.exists) {
-        return UserModel.fromJson(snapshot.data() as Map<String, dynamic>);
+        return UserModel.fromDocumentSnapshot(snapshot);
       } else {
         throw Exception('Agent document does not exist');
       }
@@ -900,7 +900,7 @@ class AppServices {
         .map((snapshot) {
           return snapshot.docs
               .map(
-                (doc) => UserModel.fromJson(doc.data() as Map<String, dynamic>),
+                (doc) => UserModel.fromDocumentSnapshot(doc),
               )
               .toList();
         });
@@ -1028,7 +1028,7 @@ class AppServices {
         .map((snapshot) {
           return snapshot.docs
               .map(
-                (doc) => UserModel.fromJson(doc.data() as Map<String, dynamic>),
+                (doc) => UserModel.fromDocumentSnapshot(doc),
               )
               .where((user) {
                 // Filter logic for admin roles: Exclude customer service admins
