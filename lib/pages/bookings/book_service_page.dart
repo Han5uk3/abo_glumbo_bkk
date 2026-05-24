@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
 import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/services/location_service.dart';
@@ -293,14 +294,6 @@ class _BookServicePageState extends State<BookServicePage> {
 
   DateTime _getMiddleEastNow() {
     return DateTime.now();
-  }
-
-  void _onDaySelect(DateTime day, DateTime focusedDay) {
-    setState(() {
-      selectedDate = day;
-      selectedTimeCategory = -1;
-      selectedTimeSlot = -1;
-    });
   }
 
   bool _isTimeSlotPast(int categoryIndex, int slotIndex) {
@@ -647,116 +640,146 @@ class _BookServicePageState extends State<BookServicePage> {
           ),
         ),
         _buildBookingTypeSelector(),
+
         if (isServiceNow && _isCurrentTimeOffHour())
           _buildOffHoursWarningCard(),
 
         if (!isServiceNow) ...[
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-            child: Text(
-              AppLocalizations.of(context)?.date ?? 'Select Date',
-              style: DMSansFont.textStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
-                  blurRadius: 10,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)?.date ?? 'Select Date',
+                        style: DMSansFont.textStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      InkWell(
+                        onTap: _showDatePickerDialog,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_month_rounded,
+                                size: 20,
+                                color: AppColors.primary,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  selectedDate != null
+                                      ? DateFormat(
+                                          'dd MMM yyyy',
+                                        ).format(selectedDate!)
+                                      : 'Select Date',
+                                  style: DMSansFont.textStyle(
+                                    color: selectedDate != null
+                                        ? Colors.black87
+                                        : Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)?.time ?? 'Available Slots',
+                        style: DMSansFont.textStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      InkWell(
+                        onTap: selectedDate == null
+                            ? null
+                            : _showTimeSlotPickerDialog,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.access_time_rounded,
+                                size: 20,
+                                color: selectedDate == null
+                                    ? Colors.grey
+                                    : AppColors.primary,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  (selectedTimeCategory != -1 &&
+                                          selectedTimeSlot != -1)
+                                      ? (timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
+                                                as TimeOfDay)
+                                            .format(context)
+                                      : 'Select Time',
+                                  style: DMSansFont.textStyle(
+                                    color:
+                                        (selectedTimeCategory != -1 &&
+                                            selectedTimeSlot != -1)
+                                        ? Colors.black87
+                                        : Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            child: TableCalendar(
-              locale: AppLocalizations.of(context)?.localeName,
-              headerStyle: HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-                titleTextStyle: DMSansFont.textStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              daysOfWeekStyle: DaysOfWeekStyle(
-                weekdayStyle: DMSansFont.textStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-                weekendStyle: DMSansFont.textStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              calendarStyle: CalendarStyle(
-                selectedDecoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(8),
-                  shape: BoxShape.rectangle,
-                ),
-                todayDecoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.primary, width: 1.5),
-                  shape: BoxShape.rectangle,
-                ),
-                defaultDecoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                weekendDecoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                holidayDecoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                outsideDecoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                disabledDecoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                todayTextStyle: DMSansFont.textStyle(color: AppColors.primary),
-              ),
-              selectedDayPredicate: (day) => isSameDay(day, selectedDate),
-              focusedDay: selectedDate ?? DateTime.now(),
-              firstDay: DateTime.now(),
-              lastDay: DateTime.utc(2050, 01, 16),
-              onDaySelected: _onDaySelect,
-            ),
           ),
-
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-            child: Text(
-              AppLocalizations.of(context)?.time ?? 'Available Slots',
-              style: DMSansFont.textStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          _buildTimeCategories(),
-          SizedBox(height: 16),
-          Divider(
-            color: Colors.grey.shade300,
-            thickness: 1,
-            indent: 16,
-            endIndent: 16,
-          ),
-          if (selectedTimeCategory != -1) _buildTimeSlots(),
         ],
-        if (!isServiceNow &&
-            selectedDate != null &&
-            selectedTimeCategory != -1 &&
-            selectedTimeSlot != -1)
+        if ((!isServiceNow &&
+                selectedDate != null &&
+                selectedTimeCategory != -1 &&
+                selectedTimeSlot != -1) ||
+            (isServiceNow && !_isCurrentTimeOffHour()))
           _buildInspectionFeeInfo(),
       ],
     );
@@ -1219,7 +1242,7 @@ class _BookServicePageState extends State<BookServicePage> {
     );
   }
 
-  Widget _buildTimeCategories() {
+  Widget _buildTimeCategories({StateSetter? setStateDialog}) {
     return SizedBox(
       height: 35,
       child: ListView.builder(
@@ -1236,6 +1259,12 @@ class _BookServicePageState extends State<BookServicePage> {
               onTap: isDisabled
                   ? null
                   : () {
+                      if (setStateDialog != null) {
+                        setStateDialog(() {
+                          selectedTimeCategory = index;
+                          selectedTimeSlot = -1;
+                        });
+                      }
                       setState(() {
                         selectedTimeCategory = index;
                         selectedTimeSlot = -1;
@@ -1274,7 +1303,10 @@ class _BookServicePageState extends State<BookServicePage> {
     );
   }
 
-  Widget _buildTimeSlots() {
+  Widget _buildTimeSlots({
+    StateSetter? setStateDialog,
+    BuildContext? dialogContext,
+  }) {
     final currentSlots =
         (timeSlots[selectedTimeCategory]["values"] as List<Map>);
     return Padding(
@@ -1287,7 +1319,17 @@ class _BookServicePageState extends State<BookServicePage> {
           final isSelected = selectedTimeSlot == i;
 
           return InkWell(
-            onTap: isPast ? null : () => setState(() => selectedTimeSlot = i),
+            onTap: isPast
+                ? null
+                : () {
+                    if (setStateDialog != null) {
+                      setStateDialog(() => selectedTimeSlot = i);
+                    }
+                    setState(() => selectedTimeSlot = i);
+                    if (dialogContext != null) {
+                      Navigator.pop(dialogContext);
+                    }
+                  },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: (MediaQuery.of(context).size.width - 62) / 4,
@@ -1327,6 +1369,215 @@ class _BookServicePageState extends State<BookServicePage> {
     );
   }
 
+  void _showDatePickerDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: StatefulBuilder(
+            builder: (context, setStateDialog) {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)?.date ?? 'Select Date',
+                          style: DMSansFont.textStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.shade100,
+                            ),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 20,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    TableCalendar(
+                      locale: AppLocalizations.of(context)?.localeName,
+                      headerStyle: HeaderStyle(
+                        formatButtonVisible: false,
+                        titleCentered: true,
+                        titleTextStyle: DMSansFont.textStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      daysOfWeekStyle: DaysOfWeekStyle(
+                        weekdayStyle: DMSansFont.textStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        weekendStyle: DMSansFont.textStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      calendarStyle: CalendarStyle(
+                        selectedDecoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(8),
+                          shape: BoxShape.rectangle,
+                        ),
+                        todayDecoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppColors.primary,
+                            width: 1.5,
+                          ),
+                          shape: BoxShape.rectangle,
+                        ),
+                        defaultDecoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        weekendDecoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        holidayDecoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        outsideDecoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        disabledDecoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        todayTextStyle: DMSansFont.textStyle(
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      selectedDayPredicate: (day) =>
+                          isSameDay(day, selectedDate),
+                      focusedDay: selectedDate ?? DateTime.now(),
+                      firstDay: DateTime.now(),
+                      lastDay: DateTime.utc(2050, 01, 16),
+                      onDaySelected: (selectedDay, focusedDay) {
+                        if (!isSameDay(selectedDate, selectedDay)) {
+                          setStateDialog(() {
+                            selectedDate = selectedDay;
+                            selectedTimeCategory = -1;
+                            selectedTimeSlot = -1;
+                          });
+                          this.setState(() {
+                            selectedDate = selectedDay;
+                            selectedTimeCategory = -1;
+                            selectedTimeSlot = -1;
+                          });
+                          Navigator.pop(context);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void _showTimeSlotPickerDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          insetPadding: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: StatefulBuilder(
+            builder: (context, setStateDialog) {
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)?.time ??
+                                'Available Slots',
+                            style: DMSansFont.textStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey.shade100,
+                              ),
+                              child: Icon(
+                                Icons.close_rounded,
+                                size: 20,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildTimeCategories(setStateDialog: setStateDialog),
+                    const SizedBox(height: 16),
+                    Divider(color: Colors.grey.shade300, thickness: 1),
+                    if (selectedTimeCategory != -1)
+                      _buildTimeSlots(
+                        setStateDialog: setStateDialog,
+                        dialogContext: dialogContext,
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildSecondStepContent() {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -1342,12 +1593,20 @@ class _BookServicePageState extends State<BookServicePage> {
             ),
           ),
           const SizedBox(height: 12),
-          Text(
-            AppLocalizations.of(context)!.problemDescription,
-            style: DMSansFont.textStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.normal,
-              color: Colors.black,
+          RichText(
+            text: TextSpan(
+              text: AppLocalizations.of(context)!.problemDescription,
+              style: DMSansFont.textStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: Colors.black,
+              ),
+              children: const [
+                TextSpan(
+                  text: ' *',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 12),
@@ -1883,6 +2142,22 @@ class _BookServicePageState extends State<BookServicePage> {
         Expanded(
           child: ElevatedButton(
             onPressed: () {
+              if (notesController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)?.localeName == 'ar'
+                          ? 'يرجى إدخال وصف المشكلة'
+                          : AppLocalizations.of(context)?.localeName == 'ur'
+                          ? 'براہ کرم مسئلے کی تفصیل درج کریں'
+                          : 'Please enter the problem description',
+                      style: DMSansFont.textStyle(color: Colors.white),
+                    ),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
               setState(() => currentStep = 2);
             },
             style: ElevatedButton.styleFrom(
@@ -2010,17 +2285,22 @@ class _BookServicePageState extends State<BookServicePage> {
 
     final bookingId = await BookingUtils.saveBooking(
       service: widget.service,
-      selectedDate: _counterProposedTime ?? (isServiceNow ? _getMiddleEastNow() : selectedDate!),
+      selectedDate:
+          _counterProposedTime ??
+          (isServiceNow ? _getMiddleEastNow() : selectedDate!),
       paymentMode: "Outside App",
       customerData: customerData!,
       notes: notesController.text,
       selectedImage: _selectedImage,
       selectedVideo: _selectedVideo,
-      timeSlot: _counterProposedTime != null 
-          ? {"label": "Counter Proposed", "time": TimeOfDay.fromDateTime(_counterProposedTime!)}
+      timeSlot: _counterProposedTime != null
+          ? {
+              "label": "Counter Proposed",
+              "time": TimeOfDay.fromDateTime(_counterProposedTime!),
+            }
           : (isServiceNow
-              ? {"label": "Now", "time": TimeOfDay.now()}
-              : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]),
+                ? {"label": "Now", "time": TimeOfDay.now()}
+                : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]),
       agent:
           _shouldShowTechnicianSelection() &&
               selectedWorker.uid != null &&
@@ -2053,9 +2333,14 @@ class _BookServicePageState extends State<BookServicePage> {
         (route) => false,
       );
     } else if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.failedToCompleteBooking ?? 'Failed to complete booking')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)?.failedToCompleteBooking ??
+                'Failed to complete booking',
+          ),
+        ),
+      );
     }
   }
 

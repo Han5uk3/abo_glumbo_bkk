@@ -766,7 +766,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pricingAndPayment => 'Pricing & Payment';
 
   @override
-  String get additionalNotes => 'Additional Notes';
+  String get additionalNotes => 'Problem Description';
 
   @override
   String get paymentMethod => 'Payment Method';
@@ -2184,7 +2184,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get serviceUnavailableLongMessage =>
-      'service unavailable to the seleceted address, we hope to expand our services to this area in the future';
+      'Service unavailable to the seleceted address, we hope to expand our services to this area in the future';
 
   @override
   String get serviceNow => 'Service Now';

@@ -480,6 +480,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         currentLanguageCode: _getLanguageCode(_currentNotificationLanguage),
         onEnglishSelected: () => _handleNotificationLanguageChange('English'),
         onArabicSelected: () => _handleNotificationLanguageChange('العربية'),
+        onUrduSelected: () => _handleNotificationLanguageChange('اردو'),
       ),
     );
   }

@@ -11,7 +11,6 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -128,7 +127,9 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      log("[MAP_DEBUG] 📍 Centering camera on: ${_selectedLocation?.latitude}, ${_selectedLocation?.longitude}");
+      log(
+        "[MAP_DEBUG] 📍 Centering camera on: ${_selectedLocation?.latitude}, ${_selectedLocation?.longitude}",
+      );
       _moveCameraToLocation(_selectedLocation!, animate: false);
       _getAddressFromLatLng(_selectedLocation!, showLoader: true);
     });
@@ -568,7 +569,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     title: _locationTitle.isNotEmpty
                         ? _locationTitle
                         : AppLocalizations.of(context)?.selectedLocation ??
-                               'Selected Location',
+                              'Selected Location',
                     subtitle: _locationSubtitle,
                   ),
                   const SizedBox(height: 20),
@@ -628,19 +629,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                             )?.phoneNumberRequired ??
                             'Phone number is required';
                       }
-                      if (kDebugMode) {
-                        return null;
-                      } else {
-                        final saudiRegex = RegExp(
-                          r'^(?:\+966|00966|0)?5[0-9]{8}$',
-                        );
-                        if (!saudiRegex.hasMatch(value)) {
-                          return AppLocalizations.of(
-                            context,
-                          )!.phoneNumberInvalid;
-                        }
-                        return null;
-                      }
+                      return null;
                     },
                   ),
                   const SizedBox(height: 20),
@@ -759,9 +748,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
             ),
           ],
         ),
-        child: Center(
-          child: Loader(color: AppColors.primary, size: 20),
-        ),
+        child: Center(child: Loader(color: AppColors.primary, size: 20)),
       );
     }
 
@@ -791,10 +778,8 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
             padding: EdgeInsets.zero,
             shrinkWrap: true,
             itemCount: _predictions.length,
-            separatorBuilder: (context, index) => Divider(
-              height: 1,
-              color: Colors.grey.withOpacity(0.1),
-            ),
+            separatorBuilder: (context, index) =>
+                Divider(height: 1, color: Colors.grey.withOpacity(0.1)),
             itemBuilder: (context, index) {
               return ListTile(
                 dense: true,
@@ -847,8 +832,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
           Expanded(
             child: Stack(
               children: [
-                if (!_mapReady)
-                  Center(child: Loader(color: AppColors.primary)),
+                if (!_mapReady) Center(child: Loader(color: AppColors.primary)),
                 GoogleMap(
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
@@ -928,10 +912,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                                 ),
                                 suffixIcon: _searchController.text.isNotEmpty
                                     ? IconButton(
-                                        icon: const Icon(
-                                          Icons.clear,
-                                          size: 18,
-                                        ),
+                                        icon: const Icon(Icons.clear, size: 18),
                                         onPressed: () {
                                           _searchController.clear();
                                           setState(() {

@@ -28,6 +28,7 @@ import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+
 class BookingDetailsPage extends StatefulWidget {
   final BookingModel booking;
   final VoidCallback? onRefresh;
@@ -207,6 +208,26 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       ),
                     ],
                   ),
+                if (!isWarranty) ...[
+                  const SizedBox(height: 16),
+                  _buildSectionCard(
+                    context: context,
+                    hasChat: false,
+                    title: localization.pricingAndPayment,
+                    icon: Icons.payments_rounded,
+                    children: [
+                      if (booking.isOnHour != null)
+                        _buildInfoRow(
+                          booking.isOnHour == true ? localization.onHourBooking : localization.offHourBooking,
+                          "",
+                        ),
+                      _buildInfoRow(
+                        localization.inspectionFee,
+                        '${booking.service.getDiscountedPrice(booking.effectiveInspectionFee).toStringAsFixed(2)} ${localization.sar}',
+                      ),
+                    ],
+                  ),
+                ],
                 if ((booking.issueImage != null &&
                         booking.issueImage!.isNotEmpty) ||
                     (booking.issueVideo != null &&
@@ -399,15 +420,15 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                   booking.agent!.phone!,
                                 ),
                                 child: Container(
-                                  padding: const EdgeInsets.all(12),
+                                  padding: const EdgeInsets.all(5),
                                   decoration: BoxDecoration(
                                     color: AppColors.green.withOpacity(0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Image.asset(
                                     'assets/images/whatsapp.png',
-                                    width: 16,
-                                    height: 16,
+                                    width: 30,
+                                    height: 30,
                                   ),
                                 ),
                               ),
@@ -510,7 +531,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         if (booking.completionData?.totalCost != null)
                           _buildInfoRow(
                             localization.amount,
-                            '${localization.sar} ${((booking.completionData?.totalCost ?? 0.0) + (booking.service.price ?? 0.0)).toStringAsFixed(2)}',
+                            '${localization.sar} ${((booking.completionData?.totalCost ?? 0.0) + booking.service.getDiscountedPrice(booking.effectiveInspectionFee)).toStringAsFixed(2)}',
                             isHighlighted: true,
                           ),
                       ],
@@ -1043,7 +1064,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)?.failedToOpenChat(e.toString()) ?? 'Failed to open chat: $e'),
+            content: Text(
+              AppLocalizations.of(context)?.failedToOpenChat(e.toString()) ??
+                  'Failed to open chat: $e',
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -1175,7 +1199,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       hasChat: false,
       title: AppLocalizations.of(context)!.completionDetails,
       icon: Icons.check_circle,
-      trailing: (booking.bookingStatusCode.toLowerCase() == 'completed' ||
+      trailing:
+          (booking.bookingStatusCode.toLowerCase() == 'completed' ||
               booking.bookingStatusCode.toLowerCase() == 'c')
           ? Row(
               mainAxisSize: MainAxisSize.min,
@@ -1195,7 +1220,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       size: 20,
                     ),
                   ),
-                  tooltip: AppLocalizations.of(context)?.shareInvoice ??
+                  tooltip:
+                      AppLocalizations.of(context)?.shareInvoice ??
                       "Share Invoice",
                 ),
                 IconButton(
@@ -1213,7 +1239,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       size: 20,
                     ),
                   ),
-                  tooltip: AppLocalizations.of(context)?.downloadInvoice ??
+                  tooltip:
+                      AppLocalizations.of(context)?.downloadInvoice ??
                       "Download Invoice",
                 ),
               ],
@@ -1820,9 +1847,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                           isWarranty))) ...[
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: () => WhatsAppUtils.launchWhatsApp(
-                    booking.agent!.phone!,
-                  ),
+                  onTap: () =>
+                      WhatsAppUtils.launchWhatsApp(booking.agent!.phone!),
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -2318,7 +2344,6 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           });
     }
   }
-
 
   Future<void> _handleCounterReject(
     BuildContext context,

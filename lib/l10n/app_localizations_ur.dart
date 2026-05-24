@@ -776,7 +776,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get pricingAndPayment => 'قیمت اور ادائیگی';
 
   @override
-  String get additionalNotes => 'اضافی نوٹ';
+  String get additionalNotes => 'مسئلے کی تفصیل';
 
   @override
   String get paymentMethod => 'ادائیگی کا طریقہ';

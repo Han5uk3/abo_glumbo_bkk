@@ -49,7 +49,8 @@ class RebookWaitWidget extends StatefulWidget {
   State<RebookWaitWidget> createState() => _RebookWaitWidgetState();
 }
 
-class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBindingObserver {
+class _RebookWaitWidgetState extends State<RebookWaitWidget>
+    with WidgetsBindingObserver {
   String? _requestId;
   int _timerSeconds = 120;
   Timer? _timer;
@@ -75,7 +76,8 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.detached ||
+        state == AppLifecycleState.paused) {
       _cleanupRequest();
     }
   }
@@ -94,14 +96,16 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
       final uid = LocalStoreHelper.getUID();
 
       if (widget.issueImageFile != null) {
-        String fileName = 'users/$uid/${DateTime.now().millisecondsSinceEpoch}.jpg';
+        String fileName =
+            'users/$uid/${DateTime.now().millisecondsSinceEpoch}.jpg';
         final storageRef = FirebaseStorage.instance.ref().child(fileName);
         final uploadTask = storageRef.putFile(widget.issueImageFile!);
         final snapshot = await uploadTask;
         issueImageUrl = await snapshot.ref.getDownloadURL();
       }
       if (widget.issueVideoFile != null) {
-        String fileName = 'users/$uid/${DateTime.now().millisecondsSinceEpoch}.mp4';
+        String fileName =
+            'users/$uid/${DateTime.now().millisecondsSinceEpoch}.mp4';
         final storageRef = FirebaseStorage.instance.ref().child(fileName);
         final uploadTask = storageRef.putFile(
           widget.issueVideoFile!,
@@ -114,7 +118,9 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
       // 2. Create Job Request
       final requestId = AppFirestore.jobRequestsCollectionRef.doc().id;
       final now = Timestamp.now();
-      final expiresAt = Timestamp.fromDate(DateTime.now().add(const Duration(seconds: 120)));
+      final expiresAt = Timestamp.fromDate(
+        DateTime.now().add(const Duration(seconds: 120)),
+      );
 
       final request = JobRequestModel(
         id: requestId,
@@ -180,27 +186,26 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
   }
 
   void _listenToOffers() {
-    _offersSubscription = AppServices.listenToJobOffersForRequest(_requestId!).listen((offers) {
-      if (offers.isEmpty) return;
+    _offersSubscription = AppServices.listenToJobOffersForRequest(_requestId!)
+        .listen((offers) {
+          if (offers.isEmpty) return;
 
-      final offer = offers.first; // Should only be one
-      final status = offer['status'];
+          final offer = offers.first; // Should only be one
+          final status = offer['status'];
 
-      if (status == 'accepted_by_technician') {
-        _hasResponded = true;
-        widget.onAccepted(widget.technician, null);
-      } else if (status == 'declined' || status == 'expired') {
-        _hasResponded = true;
-        widget.onFailed();
-      }
-      // 'counter_offered' will be handled by UI
-    });
+          if (status == 'accepted_by_technician') {
+            _hasResponded = true;
+            widget.onAccepted(widget.technician, null);
+          } else if (status == 'declined' || status == 'expired') {
+            _hasResponded = true;
+            widget.onFailed();
+          }
+          // 'counter_offered' will be handled by UI
+        });
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    
     if (_isInitializing) {
       return const Center(child: Loader());
     }
@@ -231,17 +236,24 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
         children: [
           CircleAvatar(
             radius: 50,
-            backgroundImage: widget.technician.profileUrl != null && widget.technician.profileUrl!.isNotEmpty
+            backgroundImage:
+                widget.technician.profileUrl != null &&
+                    widget.technician.profileUrl!.isNotEmpty
                 ? CachedNetworkImageProvider(widget.technician.profileUrl!)
                 : null,
-            child: widget.technician.profileUrl == null || widget.technician.profileUrl!.isEmpty
+            child:
+                widget.technician.profileUrl == null ||
+                    widget.technician.profileUrl!.isEmpty
                 ? const Icon(Icons.person, size: 50)
                 : null,
           ),
           const SizedBox(height: 24),
           Text(
-            widget.technician.name??"",
-            style: DMSansFont.textStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            widget.technician.name ?? "",
+            style: DMSansFont.textStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
@@ -259,7 +271,11 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
           const SizedBox(height: 16),
           Text(
             "${_timerSeconds}s",
-            style: DMSansFont.textStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary),
+            style: DMSansFont.textStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primary,
+            ),
           ),
         ],
       ),
@@ -278,7 +294,9 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20)],
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20),
+          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -287,13 +305,19 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
             const SizedBox(height: 16),
             Text(
               l10n.counterOfferFromTechnician,
-              style: DMSansFont.textStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: DMSansFont.textStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 12),
             Text(
               l10n.technicianProposedNewTime,
               textAlign: TextAlign.center,
-              style: DMSansFont.textStyle(fontSize: 14, color: Colors.grey[600]),
+              style: DMSansFont.textStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
             ),
             const SizedBox(height: 24),
             Container(
@@ -303,8 +327,14 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                DateFormat.yMMMMd(locale).add_jm().format(proposedTime.toDate()),
-                style: DMSansFont.textStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue[900]),
+                DateFormat.yMMMMd(
+                  locale,
+                ).add_jm().format(proposedTime.toDate()),
+                style: DMSansFont.textStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[900],
+                ),
               ),
             ),
             const SizedBox(height: 32),
@@ -340,10 +370,13 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget> with WidgetsBinding
                         status: 'accepted_by_customer',
                       );
                       // Update request time
-                      AppFirestore.jobRequestsCollectionRef.doc(_requestId).update({
-                        'bookingDateTime': proposedTime,
-                      });
-                      widget.onAccepted(widget.technician, proposedTime.toDate());
+                      AppFirestore.jobRequestsCollectionRef
+                          .doc(_requestId)
+                          .update({'bookingDateTime': proposedTime});
+                      widget.onAccepted(
+                        widget.technician,
+                        proposedTime.toDate(),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,

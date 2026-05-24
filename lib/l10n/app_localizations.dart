@@ -1555,7 +1555,7 @@ abstract class AppLocalizations {
   /// No description provided for @additionalNotes.
   ///
   /// In en, this message translates to:
-  /// **'Additional Notes'**
+  /// **'Problem Description'**
   String get additionalNotes;
 
   /// No description provided for @paymentMethod.
@@ -4207,7 +4207,7 @@ abstract class AppLocalizations {
   /// No description provided for @serviceUnavailableLongMessage.
   ///
   /// In en, this message translates to:
-  /// **'service unavailable to the seleceted address, we hope to expand our services to this area in the future'**
+  /// **'Service unavailable to the seleceted address, we hope to expand our services to this area in the future'**
   String get serviceUnavailableLongMessage;
 
   /// No description provided for @serviceNow.

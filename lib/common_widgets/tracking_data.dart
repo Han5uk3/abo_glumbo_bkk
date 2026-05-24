@@ -362,7 +362,8 @@ class TrackingData extends StatelessWidget {
                       if (worker?.phone != null) ...[
                         const SizedBox(width: 8),
                         GestureDetector(
-                          onTap: () => WhatsAppUtils.launchWhatsApp(worker!.phone!),
+                          onTap: () =>
+                              WhatsAppUtils.launchWhatsApp(worker!.phone!),
                           child: Container(
                             width: 50,
                             height: 50,
@@ -380,8 +381,8 @@ class TrackingData extends StatelessWidget {
                             child: Center(
                               child: Image.asset(
                                 'assets/images/whatsapp.png',
-                                width: 24,
-                                height: 24,
+                                width: 30,
+                                height: 30,
                               ),
                             ),
                           ),

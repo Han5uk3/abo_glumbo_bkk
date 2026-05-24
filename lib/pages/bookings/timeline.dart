@@ -512,7 +512,7 @@ Widget buildBookingTimelineCard(
                 'status': 'current',
                 'date': DateTime.now(),
               });
-            } else if (booking.acceptedAt != null) {
+            } else if (booking.assignedAt != null || booking.acceptedAt != null) {
               timelineItems.add({
                 'title': AppLocalizations.of(
                   context,

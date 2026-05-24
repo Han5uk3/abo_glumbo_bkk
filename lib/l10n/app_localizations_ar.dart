@@ -754,7 +754,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pricingAndPayment => 'التسعيرة والدفع';
 
   @override
-  String get additionalNotes => 'ملاحظات إضافية';
+  String get additionalNotes => 'وصف المشكلة';
 
   @override
   String get paymentMethod => 'طريقة الدفع';

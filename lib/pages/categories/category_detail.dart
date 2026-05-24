@@ -251,7 +251,12 @@ class _CategoryDetailState extends State<CategoryDetail> {
                       children: [
                         SizedBox(height: 10),
                         Text(
-                          widget.category?.nameLocalized(
+                          service?.nameLocalized(
+                                languageCode:
+                                    AppLocalizations.of(context)?.localeName ??
+                                    '',
+                              ) ??
+                              widget.category?.nameLocalized(
                                 languageCode:
                                     AppLocalizations.of(context)?.localeName ??
                                     '',

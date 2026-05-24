@@ -118,10 +118,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     );
   }
 
-  List<ServiceModel> _filterServices(
-    List<ServiceModel> services, {
-    bool isArabic = false,
-  }) {
+  List<ServiceModel> _filterServices(List<ServiceModel> services) {
     var filtered = services;
 
     // Apply search query filter
@@ -132,8 +129,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         final serviceNameAr = service.name_ar?.toLowerCase() ?? '';
         final serviceNameUr = service.name_ur?.toLowerCase() ?? '';
         final serviceDescription = service.description?.toLowerCase() ?? '';
-        final serviceDescriptionAr = service.description_ar?.toLowerCase() ?? '';
-        final serviceDescriptionUr = service.description_ur?.toLowerCase() ?? '';
+        final serviceDescriptionAr =
+            service.description_ar?.toLowerCase() ?? '';
+        final serviceDescriptionUr =
+            service.description_ur?.toLowerCase() ?? '';
 
         return serviceName.contains(query) ||
             serviceNameAr.contains(query) ||

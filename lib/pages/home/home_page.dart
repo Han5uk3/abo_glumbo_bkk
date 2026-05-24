@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:abo_glumbo_bbk/common_widgets/category_card.dart';
 import 'package:abo_glumbo_bbk/common_widgets/highlighted_service.dart';
@@ -26,9 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:abo_glumbo_bbk/common_widgets/shimmer_loader.dart';
-import 'package:abo_glumbo_bbk/pages/bookings/book_service_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -50,10 +47,10 @@ class _HomePageState extends State<HomePage>
   bool _bannersLoaded = false;
   bool _servicesLoaded = false;
   bool _categoriesLoaded = false;
-  
+
   static const Duration _refreshThreshold = Duration(minutes: 5);
   static const Duration _sessionTimeout = Duration(minutes: 30);
-  
+
   StreamSubscription? _bannersSubscription;
   StreamSubscription? _servicesSubscription;
   StreamSubscription? _categoriesSubscription;
@@ -86,7 +83,9 @@ class _HomePageState extends State<HomePage>
       });
     });
 
-    _categoriesSubscription = AppServices.listenToCategories().listen((categories) {
+    _categoriesSubscription = AppServices.listenToCategories().listen((
+      categories,
+    ) {
       if (!mounted || _isDisposed) return;
       setState(() {
         _allCategories = categories;
@@ -97,15 +96,15 @@ class _HomePageState extends State<HomePage>
   }
 
   void _checkDataStates() {
-    if (!_isDataLoaded && _bannersLoaded && _servicesLoaded && _categoriesLoaded) {
+    if (!_isDataLoaded &&
+        _bannersLoaded &&
+        _servicesLoaded &&
+        _categoriesLoaded) {
       setState(() {
         _isDataLoaded = true;
       });
     }
   }
-
-
-
 
   void _initializeSync() {
     try {
@@ -149,7 +148,6 @@ class _HomePageState extends State<HomePage>
       debugPrint('❌ Error initializing authenticated user: $e');
     }
   }
-
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
@@ -227,28 +225,33 @@ class _HomePageState extends State<HomePage>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  InkWell(
-                    onTap: _openAddressSheet,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 0),
-                      child: Icon(
-                        Icons.location_on_outlined,
-                        color: Colors.orange,
-                        size: 32,
-                      ),
+                  Container(
+                    margin: EdgeInsets.only(top: 6),
+                    height: 45,
+                    width: 45,
+                    child: Image(
+                      fit: BoxFit.cover,
+                      image: AssetImage("assets/icons/app_icon.png"),
                     ),
                   ),
+
                   const SizedBox(width: 8),
                   Expanded(
                     child: _isGuest
-                        ? _buildAddressText(null)
+                        ? InkWell(
+                            onTap: _openAddressSheet,
+                            child: _buildAddressText(null),
+                          )
                         : StreamBuilder<CustomerModel>(
                             stream: AppServices.listenToCustomerData(
                               LocalStoreHelper.getUID() ?? '',
                             ),
                             builder: (context, snapshot) {
                               if (snapshot.hasError || !snapshot.hasData) {
-                                return _buildAddressText(null);
+                                return InkWell(
+                                  onTap: _openAddressSheet,
+                                  child: _buildAddressText(null),
+                                );
                               }
                               final addresses = snapshot.data!.addresses;
                               final selectedAddress = addresses.isEmpty
@@ -257,7 +260,10 @@ class _HomePageState extends State<HomePage>
                                       (a) => a.isSelected == true,
                                       orElse: () => addresses.first,
                                     );
-                              return _buildAddressText(selectedAddress);
+                              return InkWell(
+                                onTap: _openAddressSheet,
+                                child: _buildAddressText(selectedAddress),
+                              );
                             },
                           ),
                   ),
@@ -274,7 +280,6 @@ class _HomePageState extends State<HomePage>
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -313,11 +318,21 @@ class _HomePageState extends State<HomePage>
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
+          address.fullName,
+          style: DMSansFont.textStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+          ),
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
+        Text(
           address.streetName ?? "",
           style: DMSansFont.textStyle(
             color: Colors.white,
             fontSize: 10,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w500,
           ),
           maxLines: 3,
           overflow: TextOverflow.ellipsis,
@@ -325,10 +340,6 @@ class _HomePageState extends State<HomePage>
       ],
     );
   }
-
-
-
-
 
   Widget _buildCategoriesGrid() {
     return StreamBuilder<QuerySnapshot>(
@@ -368,7 +379,8 @@ class _HomePageState extends State<HomePage>
             // Find the service associated with this category to get its discount
             final associatedService = _allServices.firstWhere(
               (service) => service.category == categoryDoc.id,
-              orElse: () => _allServices.first, // Should not happen due to filter
+              orElse: () =>
+                  _allServices.first, // Should not happen due to filter
             );
 
             return Center(
@@ -473,9 +485,7 @@ class _HomePageState extends State<HomePage>
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: AppColors.primary.withOpacity(0.08),
-        ),
+        border: Border.all(color: AppColors.primary.withOpacity(0.08)),
       ),
       child: Row(
         children: List.generate(items.length * 2 - 1, (index) {
@@ -491,11 +501,7 @@ class _HomePageState extends State<HomePage>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  item.icon,
-                  size: 22,
-                  color: AppColors.primary,
-                ),
+                Icon(item.icon, size: 22, color: AppColors.primary),
                 const SizedBox(height: 4),
                 Text(
                   item.title,
