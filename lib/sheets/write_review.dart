@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/total_tip.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
@@ -11,23 +12,32 @@ import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import '../models/booking.dart';
 
-Future<bool?> showWriteReviewBottomSheet(
+Future<dynamic> showWriteReviewBottomSheet(
   BuildContext context, {
   required BookingModel booking,
+  bool showLaterOption = false,
 }) async {
-  return await showModalBottomSheet<bool>(
+  return await showModalBottomSheet<dynamic>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     isDismissible: true,
     enableDrag: true,
-    builder: (context) => WriteReviewBottomSheetWidget(booking: booking),
+    builder: (context) => WriteReviewBottomSheetWidget(
+      booking: booking,
+      showLaterOption: showLaterOption,
+    ),
   );
 }
 
 class WriteReviewBottomSheetWidget extends StatefulWidget {
-  const WriteReviewBottomSheetWidget({super.key, required this.booking});
+  const WriteReviewBottomSheetWidget({
+    super.key,
+    required this.booking,
+    this.showLaterOption = false,
+  });
   final BookingModel booking;
+  final bool showLaterOption;
 
   @override
   State<WriteReviewBottomSheetWidget> createState() =>
@@ -217,18 +227,30 @@ class _WriteReviewBottomSheetWidgetState
 
   void _onTipAmountSelected(double amount) {
     setState(() {
-      _selectedTip = amount;
-      _showCustomTip = false;
-      _customTipController.clear();
-      _tipPaymentMethod = '';
+      if (_selectedTip == amount && !_showCustomTip) {
+        _selectedTip = 0.0;
+        _tipPaymentMethod = '';
+      } else {
+        _selectedTip = amount;
+        _showCustomTip = false;
+        _customTipController.clear();
+        _tipPaymentMethod = '';
+      }
     });
   }
 
   void _onCustomTipSelected() {
     setState(() {
-      _showCustomTip = true;
-      _selectedTip = 0.0;
-      _tipPaymentMethod = '';
+      if (_showCustomTip) {
+        _showCustomTip = false;
+        _selectedTip = 0.0;
+        _customTipController.clear();
+        _tipPaymentMethod = '';
+      } else {
+        _showCustomTip = true;
+        _selectedTip = 0.0;
+        _tipPaymentMethod = '';
+      }
     });
   }
 
@@ -313,7 +335,7 @@ class _WriteReviewBottomSheetWidgetState
             ),
           ),
           IconButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(context, widget.showLaterOption ? 'later' : false),
             icon: const Icon(Icons.close, color: Colors.black, size: 24),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
@@ -498,7 +520,7 @@ class _WriteReviewBottomSheetWidgetState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n?.thankTheTechnician ?? 'Thank the Technician',
+                      '${l10n?.thankTheTechnician ?? 'Thank the Technician'} (${l10n?.optional ?? 'Optional'})',
                       style: DMSansFont.textStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -746,7 +768,9 @@ class _WriteReviewBottomSheetWidgetState
             child: SizedBox(
               height: 54,
               child: OutlinedButton(
-                onPressed: isBusy ? null : () => Navigator.pop(context, false),
+                onPressed: isBusy ? null : () {
+                  Navigator.pop(context, widget.showLaterOption ? 'later' : false);
+                },
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: Colors.grey.shade300),
                   shape: RoundedRectangleBorder(
@@ -754,7 +778,7 @@ class _WriteReviewBottomSheetWidgetState
                   ),
                 ),
                 child: Text(
-                  l10n?.cancel ?? 'Cancel',
+                  widget.showLaterOption ? _getLaterText(context) : (l10n?.cancel ?? 'Cancel'),
                   style: DMSansFont.textStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -796,6 +820,13 @@ class _WriteReviewBottomSheetWidgetState
         ],
       ),
     );
+  }
+
+  String _getLaterText(BuildContext context) {
+    final lang = LocalStoreHelper.getUserlanguage();
+    if (lang == 'ar') return 'لاحقاً';
+    if (lang == 'ur') return 'بعد میں';
+    return 'Later';
   }
 
   BoxDecoration _cardDecoration() {

@@ -4,6 +4,7 @@ class ServiceLocationModel {
   final String id;
   final String name;
   final String name_ar;
+  final String name_ur;
   final List<LatLng> polygon;
   final int priority;
 
@@ -11,6 +12,7 @@ class ServiceLocationModel {
     required this.id,
     required this.name,
     required this.name_ar,
+    required this.name_ur,
     this.polygon = const [],
     this.priority = 0,
   });
@@ -20,6 +22,7 @@ class ServiceLocationModel {
       id: json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
       name_ar: json['name_ar'] as String? ?? '',
+      name_ur: json['name_ur'] as String? ?? json['name_ar'] as String? ?? '',
       polygon: (json['polygon'] as List<dynamic>?)
               ?.map((point) {
                 final lat = (point['lat'] as num?)?.toDouble() ?? 0.0;
@@ -37,6 +40,7 @@ class ServiceLocationModel {
       'id': id,
       'name': name,
       'name_ar': name_ar,
+      'name_ur': name_ur,
       'polygon': polygon
           .map((point) => {
                 'lat': point.latitude,

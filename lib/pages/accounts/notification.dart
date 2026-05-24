@@ -62,21 +62,39 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
     }
   }
 
-  String _getRelativeTime(DateTime dateTime, bool isAr) {
+  String _getRelativeTime(DateTime dateTime, String lanCode) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
+    final isAr = lanCode == 'ar';
+    final isUr = lanCode == 'ur';
 
     if (difference.inSeconds < 60) {
-      return isAr ? 'الآن' : 'Just now';
+      return isAr
+          ? 'الآن'
+          : isUr
+              ? 'ابھی'
+              : 'Just now';
     } else if (difference.inMinutes < 60) {
       final minutes = difference.inMinutes;
-      return isAr ? 'منذ $minutes دقيقة' : '$minutes min ago';
+      return isAr
+          ? 'منذ $minutes دقيقة'
+          : isUr
+              ? '$minutes منٹ پہلے'
+              : '$minutes min ago';
     } else if (difference.inHours < 24) {
       final hours = difference.inHours;
-      return isAr ? 'منذ $hours ساعة' : '$hours hr ago';
+      return isAr
+          ? 'منذ $hours ساعة'
+          : isUr
+              ? '$hours گھنٹے پہلے'
+              : '$hours hr ago';
     } else if (difference.inDays < 7) {
       final days = difference.inDays;
-      return isAr ? 'منذ $days يوم' : '$days day${days > 1 ? 's' : ''} ago';
+      return isAr
+          ? 'منذ $days يوم'
+          : isUr
+              ? '$days دن پہلے'
+              : '$days day${days > 1 ? 's' : ''} ago';
     } else {
       return DateFormat('MMM d, h:mm a').format(dateTime);
     }
@@ -121,6 +139,7 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
   Widget build(BuildContext context) {
     final lanCode = LocalStoreHelper.getUserlanguage();
     final isAr = lanCode == 'ar';
+    final isUr = lanCode == 'ur';
 
     return StreamBuilder<List<NotificationModel>>(
       stream: AppServices.getNotificationsStream(),
@@ -154,7 +173,11 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                     Icons.delete_sweep_rounded,
                     color: Colors.black,
                   ),
-                  tooltip: isAr ? 'حذف الكل' : 'Delete All',
+                  tooltip: isAr
+                      ? 'حذف الكل'
+                      : isUr
+                          ? 'سب حذف کریں'
+                          : 'Delete All',
                   onPressed: () async {
                     // Show confirmation dialog
                     final confirm = await showDialog<bool>(
@@ -174,7 +197,11 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                             ),
                             const SizedBox(width: 12),
                             Text(
-                              isAr ? 'حذف الكل' : 'Delete All',
+                              isAr
+                                  ? 'حذف الكل'
+                                  : isUr
+                                      ? 'سب حذف کریں'
+                                      : 'Delete All',
                               style: const TextStyle(fontSize: 18),
                             ),
                           ],
@@ -182,7 +209,9 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                         content: Text(
                           isAr
                               ? 'هل أنت متأكد أنك تريد حذف جميع الإشعارات؟'
-                              : 'Are you sure you want to delete all notifications?',
+                              : isUr
+                                  ? 'کیا آپ واقعی تمام اطلاعات حذف کرنا چاہتے ہیں؟'
+                                  : 'Are you sure you want to delete all notifications?',
                           style: TextStyle(
                             color: Colors.grey[700],
                             fontSize: 15,
@@ -231,7 +260,9 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                                 Text(
                                   isAr
                                       ? 'تم حذف جميع الإشعارات'
-                                      : 'All notifications deleted',
+                                      : isUr
+                                          ? 'تمام اطلاعات حذف کر دی گئیں'
+                                          : 'All notifications deleted',
                                 ),
                               ],
                             ),
@@ -284,7 +315,11 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        isAr ? 'لا توجد إشعارات' : 'No notifications',
+                        isAr
+                            ? 'لا توجد إشعارات'
+                            : isUr
+                                ? 'کوئی اطلاع نہیں'
+                                : 'No notifications',
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.grey[600],
@@ -295,7 +330,9 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                       Text(
                         isAr
                             ? 'سيتم عرض إشعاراتك هنا'
-                            : 'Your notifications will appear here',
+                            : isUr
+                                ? 'آپ کی اطلاعات یہاں ظاہر ہوں گی'
+                                : 'Your notifications will appear here',
                         style: TextStyle(fontSize: 14, color: Colors.grey[400]),
                       ),
                     ],
@@ -331,9 +368,10 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                   }
 
                   final notification = displayedNotifications[index];
+                  final isArOrUr = isAr || isUr;
 
                   // Use fallback if specific language content is missing
-                  final title = isAr
+                  final title = isArOrUr
                       ? (notification.titleAr.isNotEmpty
                             ? notification.titleAr
                             : notification.titleEn)
@@ -341,7 +379,7 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                             ? notification.titleEn
                             : notification.titleAr);
 
-                  final body = isAr
+                  final body = isArOrUr
                       ? (notification.bodyAr.isNotEmpty
                             ? notification.bodyAr
                             : notification.bodyEn)
@@ -351,14 +389,14 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
 
                   final relativeTime = _getRelativeTime(
                     notification.createdAt,
-                    isAr,
+                    lanCode,
                   );
                   final icon = _getNotificationIcon(notification);
                   final iconColor = _getNotificationColor(notification);
 
                   return dismissibleWidget(
                     notification,
-                    isAr,
+                    lanCode,
                     context,
                     icon,
                     iconColor,
@@ -377,7 +415,7 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
 
   Widget dismissibleWidget(
     NotificationModel notification,
-    bool isAr,
+    String lanCode,
     BuildContext context,
     IconData icon,
     Color iconColor,
@@ -385,6 +423,10 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
     String title,
     String body,
   ) {
+    final isAr = lanCode == 'ar';
+    final isUr = lanCode == 'ur';
+    final isArOrUr = isAr || isUr;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: ClipRRect(
@@ -410,7 +452,11 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                 const Icon(Icons.done_all, color: Colors.white, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  isAr ? 'مقروء' : "Read",
+                  isAr
+                      ? 'مقروء'
+                      : isUr
+                          ? 'پڑھا ہوا'
+                          : "Read",
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -441,7 +487,11 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   content: Text(
-                    isAr ? 'تم حذف الإشعار' : 'Notification deleted',
+                    isAr
+                        ? 'تم حذف الإشعار'
+                        : isUr
+                            ? 'اطلاع حذف کر دی گئی'
+                            : 'Notification deleted',
                   ),
                   duration: const Duration(seconds: 2),
                 ),
@@ -506,8 +556,8 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                                     width: 6,
                                     height: 6,
                                     margin: EdgeInsets.only(
-                                      left: isAr ? 0 : 6,
-                                      right: isAr ? 6 : 0,
+                                      left: isArOrUr ? 0 : 6,
+                                      right: isArOrUr ? 6 : 0,
                                     ),
                                     decoration: BoxDecoration(
                                       color: iconColor,

@@ -9,18 +9,26 @@ class ServiceModel {
 
   String? name;
   String? name_ar;
+  String? name_ur;
   String? nameLocalized({required String languageCode}) {
     if (languageCode == 'ar') {
       return name_ar;
+    }
+    if (languageCode == 'ur') {
+      return name_ur ?? name_ar;
     }
     return name;
   }
 
   String? description;
   String? description_ar;
+  String? description_ur;
   String? descriptionLocalized({required String languageCode}) {
     if (languageCode == 'ar') {
       return description_ar;
+    }
+    if (languageCode == 'ur') {
+      return description_ur ?? description_ar;
     }
     return description;
   }
@@ -57,8 +65,10 @@ class ServiceModel {
     this.id,
     this.name,
     this.name_ar,
+    this.name_ur,
     this.description,
     this.description_ar,
+    this.description_ur,
     this.image,
     this.rating,
     this.ratingCount,
@@ -84,8 +94,10 @@ class ServiceModel {
     String? id,
     String? name,
     String? name_ar,
+    String? name_ur,
     String? description,
     String? description_ar,
+    String? description_ur,
     String? image,
     double? rating,
     int? ratingCount,
@@ -114,8 +126,10 @@ class ServiceModel {
       id: id ?? this.id,
       name: name ?? this.name,
       name_ar: name_ar ?? this.name_ar,
+      name_ur: name_ur ?? this.name_ur,
       description: description ?? this.description,
       description_ar: description_ar ?? this.description_ar,
+      description_ur: description_ur ?? this.description_ur,
       image: image ?? this.image,
       rating: rating ?? this.rating,
       ratingCount: ratingCount ?? this.ratingCount,
@@ -142,8 +156,10 @@ class ServiceModel {
       id: json['id'],
       name: json['name'],
       name_ar: json['name_ar'] ?? json['name'],
+      name_ur: json['name_ur'] ?? json['name_ar'] ?? json['name'],
       description: json['description'],
       description_ar: json['description_ar'] ?? json['description'],
+      description_ur: json['description_ur'] ?? json['description_ar'] ?? json['description'],
       image: json['image'],
       rating: json['rating']?.toDouble(),
       ratingCount: json['ratingCount'],
@@ -188,8 +204,10 @@ class ServiceModel {
       id: snapshot.id,
       name: data['name'],
       name_ar: data['name_ar'] ?? data['name'],
+      name_ur: data['name_ur'] ?? data['name_ar'] ?? data['name'],
       description: data['description'],
       description_ar: data['description_ar'] ?? data['description'],
+      description_ur: data['description_ur'] ?? data['description_ar'] ?? data['description'],
       image: data['image'],
       rating: data['rating']?.toDouble(),
       ratingCount: data['ratingCount'],
@@ -233,8 +251,10 @@ class ServiceModel {
       id: snapshot.id,
       name: data['name'],
       name_ar: data['name_ar'] ?? data['name'],
+      name_ur: data['name_ur'] ?? data['name_ar'] ?? data['name'],
       description: data['description'],
       description_ar: data['description_ar'] ?? data['description'],
+      description_ur: data['description_ur'] ?? data['description_ar'] ?? data['description'],
       image: data['image'],
       rating: data['rating']?.toDouble(),
       ratingCount: data['ratingCount'],
@@ -276,8 +296,10 @@ class ServiceModel {
     Map<String, dynamic> json = {
       'name': name,
       'name_ar': name_ar,
+      'name_ur': name_ur,
       'description': description,
       'description_ar': description_ar,
+      'description_ur': description_ur,
       'image': image,
       'rating': rating,
       'ratingCount': ratingCount,
@@ -311,11 +333,17 @@ class ServiceModel {
     if (name_ar != previous.name_ar && name_ar != null) {
       json['name_ar'] = name_ar;
     }
+    if (name_ur != previous.name_ur && name_ur != null) {
+      json['name_ur'] = name_ur;
+    }
     if (description != previous.description && description != null) {
       json['description'] = description;
     }
     if (description_ar != previous.description_ar && description_ar != null) {
       json['description_ar'] = description_ar;
+    }
+    if (description_ur != previous.description_ur && description_ur != null) {
+      json['description_ur'] = description_ur;
     }
     if (image != previous.image && image != null) {
       json['image'] = image;

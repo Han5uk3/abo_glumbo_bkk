@@ -32,7 +32,11 @@ class InvoiceService {
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
     final completedAtStr = booking.completedAt != null
         ? dateFormat.format(booking.completedAt!.toDate())
-        : 'N/A';
+        : ((loc.localeName == 'ar')
+            ? 'غير متوفر'
+            : (loc.localeName == 'ur')
+                ? 'دستیاب نہیں'
+                : 'N/A');
 
     final isArabic = loc.localeName == 'ar' || loc.localeName == 'ur';
     final ttf = await PdfGoogleFonts.cairoRegular();
@@ -112,12 +116,17 @@ class InvoiceService {
                     ),
             );
 
-            final warrantyDuration =
-                booking.warranty?.expiredOn != null &&
+            final daysDiff = booking.warranty?.expiredOn != null &&
                     (booking.warranty?.createdAt != null ||
                         booking.completedAt != null)
-                ? "${booking.warranty!.expiredOn!.difference(booking.warranty!.createdAt ?? booking.completedAt!.toDate()).inDays} Days"
-                : "7 Days";
+                ? booking.warranty!.expiredOn!.difference(booking.warranty!.createdAt ?? booking.completedAt!.toDate()).inDays
+                : 7;
+
+            final warrantyDuration = (loc.localeName == 'ar')
+                ? "$daysDiff أيام"
+                : (loc.localeName == 'ur')
+                    ? "$daysDiff دن"
+                    : "$daysDiff Days";
 
             return pw.Row(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -130,7 +139,14 @@ class InvoiceService {
                         loc.billTo,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                       ),
-                      pw.Text(booking.customer.name ?? "Valued Customer"),
+                      pw.Text(
+                        booking.customer.name ??
+                            ((loc.localeName == 'ar')
+                                ? 'عميلنا العزيز'
+                                : (loc.localeName == 'ur')
+                                    ? 'معزز صارف'
+                                    : 'Valued Customer'),
+                      ),
                       pw.Text(booking.customer.phone ?? ""),
                       pw.Text(booking.customer.email ?? ""),
                       pw.Text(
@@ -146,9 +162,9 @@ class InvoiceService {
                         ),
                       if (booking.serviceLocation != null)
                         pw.Text(
-                          (loc.localeName == 'ar' || loc.localeName == 'ur')
-                              ? booking.serviceLocation!.nameAr
-                              : booking.serviceLocation!.nameEn,
+                          booking.serviceLocation!.localizedName(
+                            loc.localeName,
+                          ),
                         ),
                     ],
                   ),
@@ -213,7 +229,11 @@ class InvoiceService {
               2: pw.Alignment.centerRight,
               3: pw.Alignment.centerRight,
             },
-            headers: ['Description', 'Quantity', 'Unit Price', 'Amount'],
+            headers: (loc.localeName == 'ar')
+                ? ['الوصف', 'الكمية', 'سعر الوحدة', 'المبلغ']
+                : (loc.localeName == 'ur')
+                    ? ['تفصیل', 'مقدار', 'فی اکائی قیمت', 'رقم']
+                    : ['Description', 'Quantity', 'Unit Price', 'Amount'],
             data: [
               ...data.serviceItems.map(
                 (item) => [

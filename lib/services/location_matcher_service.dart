@@ -10,12 +10,16 @@ class MatchedServiceZone {
   /// Arabic name of the zone (e.g. "شمال الرياض")
   final String nameAr;
 
+  /// Urdu name of the zone
+  final String nameUr;
+
   /// Priority of the zone (lower = higher priority)
   final int priority;
 
   const MatchedServiceZone({
     required this.nameEn,
     required this.nameAr,
+    required this.nameUr,
     required this.priority,
   });
 
@@ -23,6 +27,7 @@ class MatchedServiceZone {
     return MatchedServiceZone(
       nameEn: json['nameEn'] as String? ?? json['en_name'] as String? ?? '',
       nameAr: json['nameAr'] as String? ?? json['ar_name'] as String? ?? '',
+      nameUr: json['nameUr'] as String? ?? json['ur_name'] as String? ?? json['nameAr'] as String? ?? json['nameEn'] as String? ?? '',
       priority: (json['priority'] as num?)?.toInt() ?? 0,
     );
   }
@@ -30,10 +35,14 @@ class MatchedServiceZone {
   Map<String, dynamic> toJson() => {
     'nameEn': nameEn,
     'nameAr': nameAr,
+    'nameUr': nameUr,
     'priority': priority,
   };
 
   String get displayName => nameEn;
+
+  String localizedName(String? locale) =>
+      locale == 'ar' ? nameAr : locale == 'ur' ? nameUr : nameEn;
 }
 
 /// Service for matching customer addresses with technician service areas.
@@ -128,6 +137,7 @@ class LocationMatcherService {
         final candidate = MatchedServiceZone(
           nameEn: zone['en_name'] as String? ?? '',
           nameAr: zone['ar_name'] as String? ?? '',
+          nameUr: zone['ur_name'] as String? ?? zone['ar_name'] as String? ?? zone['en_name'] as String? ?? '',
           priority: priority,
         );
 

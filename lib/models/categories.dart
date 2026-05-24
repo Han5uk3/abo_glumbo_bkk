@@ -5,10 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CategoryModel {
   final String? name;
   final String? name_ar;
+  final String? name_ur;
 
   String? nameLocalized({required String languageCode}) {
     if (languageCode == 'ar') {
       return name_ar;
+    }
+    if (languageCode == 'ur') {
+      return name_ur ?? name_ar;
     }
     return name;
   }
@@ -27,6 +31,7 @@ class CategoryModel {
   CategoryModel({
     this.name,
     this.name_ar,
+    this.name_ur,
     this.icon,
     this.svg,
     this.id,
@@ -39,6 +44,7 @@ class CategoryModel {
   CategoryModel copyWith({
     String? name,
     String? name_ar,
+    String? name_ur,
     String? icon,
     String? svg,
     String? id,
@@ -50,6 +56,7 @@ class CategoryModel {
     return CategoryModel(
       name: name ?? this.name,
       name_ar: name_ar ?? this.name_ar,
+      name_ur: name_ur ?? this.name_ur,
       icon: icon ?? this.icon,
       svg: svg ?? this.svg,
       id: id ?? this.id,
@@ -65,6 +72,7 @@ class CategoryModel {
     return CategoryModel(
       name: data['name'],
       name_ar: data['name_ar'],
+      name_ur: data['name_ur'] ?? data['name_ar'] ?? data['name'],
       icon: data['icon'],
       svg: data['svg'],
       id: snapshot.id,
@@ -79,6 +87,7 @@ class CategoryModel {
     return CategoryModel(
       name: json['name'],
       name_ar: json['name_ar'] ?? json['name'],
+      name_ur: json['name_ur'] ?? json['name_ar'] ?? json['name'],
       icon: json['icon'],
       svg: json['svg'],
       id: json['id'],
@@ -93,6 +102,7 @@ class CategoryModel {
     Map<String, dynamic> json = {
       'name': name,
       'name_ar': name_ar,
+      'name_ur': name_ur,
       'icon': icon,
       'svg': svg,
       'id': id,
@@ -119,6 +129,9 @@ class CategoryModel {
     }
     if (name_ar != previous.name_ar && name_ar != null) {
       json['name_ar'] = name_ar;
+    }
+    if (name_ur != previous.name_ur && name_ur != null) {
+      json['name_ur'] = name_ur;
     }
     if (icon != previous.icon && icon != null) {
       json['icon'] = icon;

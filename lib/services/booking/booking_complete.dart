@@ -305,11 +305,14 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                                   label:
                                       AppLocalizations.of(context)?.service ??
                                       'Service',
-                                  value:
-                                      Directionality.of(context) ==
-                                          TextDirection.rtl
-                                      ? widget.service.name_ar ?? ''
-                                      : widget.service.name ?? '',
+                                  value: widget.service.nameLocalized(
+                                        languageCode:
+                                            AppLocalizations.of(context)
+                                                    ?.localeName ??
+                                                'en',
+                                      ) ??
+                                      widget.service.name ??
+                                      '',
                                 ),
                                 const Divider(height: 24),
                                 _buildDetailRow(

@@ -1112,6 +1112,7 @@ class _WorkerListViewState extends State<_WorkerListView>
           idToNamesMap[category.id!] = {
             'name': category.name ?? '',
             'name_ar': category.name_ar ?? category.name ?? '',
+            'name_ur': category.name_ur ?? category.name_ar ?? category.name ?? '',
           };
         }
       }
@@ -1136,7 +1137,7 @@ class _WorkerListViewState extends State<_WorkerListView>
   }
 
   List<String> _getLocalizedRoles(UserModel worker) {
-    bool isArabic = Directionality.of(context) == TextDirection.rtl;
+    final currentLanguage = AppLocalizations.of(context)?.localeName ?? 'en';
     List<String> localizedRoles = [];
 
     for (var role in worker.jobRoles ?? []) {
@@ -1150,9 +1151,11 @@ class _WorkerListViewState extends State<_WorkerListView>
         Map<String, String>? categoryNames = categoryIdToNames[categoryId];
 
         if (categoryNames != null) {
-          if (isArabic && categoryNames['name_ar']!.isNotEmpty) {
+          if (currentLanguage == 'ur' && categoryNames['name_ur'] != null && categoryNames['name_ur']!.isNotEmpty) {
+            localizedName = categoryNames['name_ur']!;
+          } else if (currentLanguage == 'ar' && categoryNames['name_ar'] != null && categoryNames['name_ar']!.isNotEmpty) {
             localizedName = categoryNames['name_ar']!;
-          } else if (categoryNames['name']!.isNotEmpty) {
+          } else if (categoryNames['name'] != null && categoryNames['name']!.isNotEmpty) {
             localizedName = categoryNames['name']!;
           }
         }
@@ -1195,13 +1198,17 @@ class _WorkerListViewState extends State<_WorkerListView>
 
         bool isBusy = statData.worker.uid != null && busyAgentIds.contains(statData.worker.uid);
 
+        final animation = index < _itemAnimations.length
+            ? _itemAnimations[index]
+            : const AlwaysStoppedAnimation<double>(1.0);
+
         return AnimatedBuilder(
-          animation: _itemAnimations[index],
+          animation: animation,
           builder: (context, child) {
             return Transform.translate(
-              offset: Offset(0, 20 * (1 - _itemAnimations[index].value)),
+              offset: Offset(0, 20 * (1 - animation.value)),
               child: Opacity(
-                opacity: _itemAnimations[index].value,
+                opacity: animation.value,
                 child: child,
               ),
             );

@@ -12,6 +12,7 @@ import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/account.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bookings_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/home_page.dart';
+import 'package:abo_glumbo_bbk/sheets/write_review.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/pages/login/widgets/language_selector.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
@@ -44,6 +45,10 @@ class _HomeState extends State<Home> {
   int currentIndex = 0;
   bool _hasShownWelcome = false;
   StreamSubscription<List<BookingModel>>? _bookingsSubscription;
+  StreamSubscription<List<BookingModel>>? _completedBookingsSubscription;
+  bool _isReviewSheetOpen = false;
+  final Set<String> _sessionLaterBookings = {};
+  List<BookingModel> _completedUnreviewedBookings = [];
 
   String whatsapp = "";
   String phone = "";
@@ -85,6 +90,7 @@ class _HomeState extends State<Home> {
       
       if (!(_isGuest ?? false) && uid != null && uid.isNotEmpty) {
         _subscribeToAcceptedBookings();
+        _subscribeToCompletedBookings(uid);
       }
     });
   }
@@ -149,9 +155,99 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void _subscribeToCompletedBookings(String uid) {
+    _completedBookingsSubscription?.cancel();
+    _completedBookingsSubscription = AppServices.listenToBookings(uid).listen((bookings) {
+      if (mounted) {
+        setState(() {
+          _completedUnreviewedBookings = bookings.where((b) {
+            return b.bookingStatusCode == 'C' && (b.review == null || b.review?.rating == null);
+          }).toList();
+        });
+        _checkAndShowPendingReviews();
+      }
+    });
+  }
+
+  void _checkAndShowPendingReviews() {
+    if (currentIndex != 0) return; // Must be on Home page
+    if (_isReviewSheetOpen) return; // Don't show if already open
+    if (_completedUnreviewedBookings.isEmpty) return; // Nothing to review
+
+    BookingModel? bookingToReview;
+    for (var b in _completedUnreviewedBookings) {
+      if (!_sessionLaterBookings.contains(b.id)) {
+        bookingToReview = b;
+        break;
+      }
+    }
+
+    if (bookingToReview == null) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _showReviewSheet(bookingToReview!);
+      }
+    });
+  }
+
+  Future<void> _showReviewSheet(BookingModel booking) async {
+    setState(() => _isReviewSheetOpen = true);
+    try {
+      final result = await showWriteReviewBottomSheet(
+        context,
+        booking: booking,
+        showLaterOption: true,
+      );
+
+      if (mounted) {
+        if (result == 'later' || result == null) {
+          setState(() {
+            _sessionLaterBookings.add(booking.id);
+          });
+          _showLaterSnackBar();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error showing review sheet: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isReviewSheetOpen = false);
+      }
+    }
+  }
+
+  void _showLaterSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          _getReviewLaterSnackbarText(context),
+          style: DMSansFont.textStyle(fontSize: 14, color: Colors.white),
+        ),
+        backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 80), // Elevated margin to avoid overlapping bottom bar
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+  String _getReviewLaterSnackbarText(BuildContext context) {
+    final lang = LocalStoreHelper.getUserlanguage();
+    if (lang == 'ar') {
+      return 'يمكنك تقييم هذا الحجز في أي وقت من صفحة حجوزاتي.';
+    }
+    if (lang == 'ur') {
+      return 'آپ اپنے بکنگ پیج سے کسی بھی وقت اس بکنگ کا ریویو کر سکتے ہیں۔';
+    }
+    return 'You can review this booking anytime from your Bookings page.';
+  }
+
   @override
   void dispose() {
     _bookingsSubscription?.cancel();
+    _completedBookingsSubscription?.cancel();
     super.dispose();
   }
 
@@ -289,6 +385,7 @@ class _HomeState extends State<Home> {
           setState(() {
             currentIndex = 0;
           });
+          _checkAndShowPendingReviews();
         }
       },
       child: Scaffold(
@@ -301,6 +398,9 @@ class _HomeState extends State<Home> {
             setState(() {
               currentIndex = index;
             });
+            if (index == 0) {
+              _checkAndShowPendingReviews();
+            }
           },
           isGuest: _isGuest ?? false,
           homeLabel: locale?.home ?? 'Home',

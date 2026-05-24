@@ -543,7 +543,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       case 1:
         final currentLanguage =
             AppLocalizations.of(context)?.localeName ?? 'en';
-        final isArabic = currentLanguage == 'ar';
+        final isArabic = currentLanguage == 'ar' || currentLanguage == 'ur';
 
         return Container(
           padding: const EdgeInsets.only(left: 10, right: 10),
@@ -797,10 +797,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       final category = categories[index];
                       final currentLanguage =
                           AppLocalizations.of(context)?.localeName ?? 'en';
-                      final isArabic = currentLanguage == 'ar';
-                      final displayName = isArabic
-                          ? (category.name_ar ?? category.name ?? '')
-                          : (category.name ?? '');
+                      final displayName = category.nameLocalized(
+                            languageCode: currentLanguage,
+                          ) ??
+                          category.name ??
+                          '';
                       final isSelected = selectedCategories.contains(
                         category.id!,
                       );

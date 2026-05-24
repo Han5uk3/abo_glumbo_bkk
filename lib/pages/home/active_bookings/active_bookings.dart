@@ -753,10 +753,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         bookingId = firstBooking.id;
 
         // Get service name based on app language
-        final isArabic = locale.localeName == 'ar';
-        serviceName = isArabic
-            ? firstBooking.service.name_ar
-            : firstBooking.service.name;
+        serviceName = firstBooking.service.nameLocalized(
+          languageCode: locale.localeName,
+        );
 
         // Get ETA and Distance
         final firstBookingEta = etaData[firstBooking.id];

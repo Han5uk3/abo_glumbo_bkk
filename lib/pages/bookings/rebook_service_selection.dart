@@ -56,7 +56,10 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
         _filteredServices = _allServices.where((service) {
           final nameEn = (service.name ?? '').toLowerCase();
           final nameAr = (service.name_ar ?? '').toLowerCase();
-          return nameEn.contains(_searchQuery) || nameAr.contains(_searchQuery);
+          final nameUr = (service.name_ur ?? '').toLowerCase();
+          return nameEn.contains(_searchQuery) ||
+              nameAr.contains(_searchQuery) ||
+              nameUr.contains(_searchQuery);
         }).toList();
       }
     });

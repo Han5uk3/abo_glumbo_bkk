@@ -66,9 +66,12 @@ class TrackingCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         // Service Name
                         Text(
-                          AppLocalizations.of(context)!.localeName == 'en'
-                              ? booking.service.name ?? ''
-                              : booking.service.name_ar ?? '',
+                          booking.service.nameLocalized(
+                                languageCode:
+                                    AppLocalizations.of(context)!.localeName,
+                              ) ??
+                              booking.service.name ??
+                              '',
                           style: DMSansFont.textStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,

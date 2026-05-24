@@ -186,6 +186,7 @@ class _SearchPageState extends State<SearchPage> {
                 .trim();
         final serviceNameEn = (service.name ?? '').toLowerCase().trim();
         final serviceNameAr = (service.name_ar ?? '').toLowerCase().trim();
+        final serviceNameUr = (service.name_ur ?? '').toLowerCase().trim();
 
         // Get description based on current language
         final serviceDescription =
@@ -198,14 +199,19 @@ class _SearchPageState extends State<SearchPage> {
         final serviceDescriptionAr = (service.description_ar ?? '')
             .toLowerCase()
             .trim();
+        final serviceDescriptionUr = (service.description_ur ?? '')
+            .toLowerCase()
+            .trim();
 
         // Search in both current language and fallback languages for better results
         return serviceName.contains(query) ||
             serviceDescription.contains(query) ||
             serviceNameEn.contains(query) ||
             serviceNameAr.contains(query) ||
+            serviceNameUr.contains(query) ||
             serviceDescriptionEn.contains(query) ||
-            serviceDescriptionAr.contains(query);
+            serviceDescriptionAr.contains(query) ||
+            serviceDescriptionUr.contains(query);
       }).toList();
     }
 

@@ -1691,6 +1691,7 @@ class AppServices {
           'serviceLocation': request.address.toJson(),
           'serviceName': request.service.name,
           'serviceNameAr': request.service.name_ar,
+          'serviceNameUr': request.service.name_ur,
           'notes': request.notes,
           'issueImage': request.issueImage,
           'issueVideo': request.issueVideo,

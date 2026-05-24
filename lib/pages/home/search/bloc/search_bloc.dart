@@ -128,15 +128,19 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     if (_currentQuery != null && _currentQuery!.isNotEmpty) {
       filtered = filtered.where((service) {
         final query = _currentQuery!.toLowerCase();
-        final serviceName = isArabic
-            ? (service.name_ar?.toLowerCase() ??
-                  service.name?.toLowerCase() ??
-                  '')
-            : (service.name?.toLowerCase() ?? '');
+        final serviceName = service.name?.toLowerCase() ?? '';
+        final serviceNameAr = service.name_ar?.toLowerCase() ?? '';
+        final serviceNameUr = service.name_ur?.toLowerCase() ?? '';
         final serviceDescription = service.description?.toLowerCase() ?? '';
+        final serviceDescriptionAr = service.description_ar?.toLowerCase() ?? '';
+        final serviceDescriptionUr = service.description_ur?.toLowerCase() ?? '';
 
         return serviceName.contains(query) ||
-            serviceDescription.contains(query);
+            serviceNameAr.contains(query) ||
+            serviceNameUr.contains(query) ||
+            serviceDescription.contains(query) ||
+            serviceDescriptionAr.contains(query) ||
+            serviceDescriptionUr.contains(query);
       }).toList();
     }
 
