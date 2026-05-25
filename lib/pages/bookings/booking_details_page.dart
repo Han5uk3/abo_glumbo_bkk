@@ -1265,10 +1265,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           if (booking.paymentCompleted || booking.paymentModeCode.isNotEmpty)
             _buildInfoRow(
               AppLocalizations.of(context)!.paymentMode,
-              booking.paymentModeCode.toLowerCase() == 'c'
+              (booking.paymentModeCode.toLowerCase() == 'c' || booking.paymentModeCode.toLowerCase() == 'a')
                   ? AppLocalizations.of(context)!.insideApp
-                  : booking.paymentModeCode.toLowerCase() == 'a'
-                  ? AppLocalizations.of(context)!.applePay
                   : AppLocalizations.of(context)!.outsideApp,
             ),
         ],

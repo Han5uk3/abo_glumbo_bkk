@@ -79,7 +79,8 @@ class UnifiedPayoutServices {
         'inAppEarnings': FieldValue.increment(amount),
         'totalCompletionAmount': FieldValue.increment(amount),
         'lifetimeTotal': FieldValue.increment(amount),
-        // NOTE: NOT incrementing totalAvailableBalance — earnings are not payoutable
+        // Increment totalAvailableBalance since in-app earnings are now payoutable!
+        'totalAvailableBalance': FieldValue.increment(amount),
         'lastUpdated': FieldValue.serverTimestamp(),
       });
 

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:abo_glumbo_bbk/apis/telr_apple_pay.dart';
@@ -586,15 +585,6 @@ class _PaymentWindowState extends State<PaymentWindow> {
               isSelected: selectedPayment == "Inside App",
               onTap: () => setState(() => selectedPayment = "Inside App"),
             ),
-            Platform.isIOS
-                ? paymentModeButtons(
-                    title: AppLocalizations.of(context)?.applePay ?? '',
-                    imageUrl:
-                        "https://firebasestorage.googleapis.com/v0/b/worker-app-tnext.appspot.com/o/categories%2Fapple-pay.png?alt=media&token=b1d799b1-3d10-42d0-b03a-810a69cba79f",
-                    isSelected: selectedPayment == "Apple Pay",
-                    onTap: () => setState(() => selectedPayment = "Apple Pay"),
-                  )
-                : Container(),
             paymentModeButtons(
               title: AppLocalizations.of(context)?.outsideApp ?? 'Outside App',
               imageUrl:

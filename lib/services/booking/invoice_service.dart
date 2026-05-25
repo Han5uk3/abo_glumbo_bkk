@@ -193,10 +193,8 @@ class InvoiceService {
                       pw.Text(loc.warrantyLabel(warrantyDuration)),
                       pw.Text(
                         loc.paymentModeLabel(
-                          booking.paymentModeCode.toUpperCase() == 'C'
+                          (booking.paymentModeCode.toUpperCase() == 'C' || booking.paymentModeCode.toUpperCase() == 'A')
                               ? (loc.insideApp)
-                              : booking.paymentModeCode.toUpperCase() == 'A'
-                              ? (loc.applePay)
                               : (loc.outsideApp),
                         ),
                       ),
