@@ -829,7 +829,7 @@
   "searchAgain": "Search Again",
   "technicianAutoAssignedBeforeAppointment": "A technician will be automatically assigned before the appointment based on availability.",
   "searchCancelledBackgrounded": "Searching Cancelled. The app was backgrounded.",
-  "stayOnScreenWarning": "Please stay on this screen. Navigating away, closing the app, or backgrounding the app will cancel the search.",
+  "stayOnScreenWarning": "Please stay on this screen. Navigating away or closing the app will cancel the search.",
   "failedResendOtp": "Failed to resend OTP. Please try again.",
   "verificationIdNotFound": "Verification ID not found. Please try again.",
   "failedToOpenChat": "Failed to open chat: {error}",

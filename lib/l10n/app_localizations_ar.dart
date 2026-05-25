@@ -2494,7 +2494,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get stayOnScreenWarning =>
-      'يرجى البقاء على هذه الشاشة. سيؤدي مغادرة الشاشة أو إغلاق التطبيق أو تشغيله في الخلفية إلى إلغاء البحث.';
+      'يرجى البقاء على هذه الشاشة. سيؤدي مغادرة الشاشة أو إغلاق التطبيق إلى إلغاء البحث.';
 
   @override
   String get failedResendOtp =>

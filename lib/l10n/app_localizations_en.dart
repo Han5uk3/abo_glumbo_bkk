@@ -2534,7 +2534,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stayOnScreenWarning =>
-      'Please stay on this screen. Navigating away, closing the app, or backgrounding the app will cancel the search.';
+      'Please stay on this screen. Navigating away or closing the app will cancel the search.';
 
   @override
   String get failedResendOtp => 'Failed to resend OTP. Please try again.';

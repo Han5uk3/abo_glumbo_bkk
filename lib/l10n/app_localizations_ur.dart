@@ -2551,7 +2551,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get stayOnScreenWarning =>
-      'براہ کرم اسی اسکرین پر رہیں۔ اس اسکرین سے نکلنے، ایپ بند کرنے، یا ایپ کو پس منظر میں بھیجنے سے تلاش منسوخ ہو جائے گی۔';
+      'براہ کرم اسی اسکرین پر رہیں۔ اس اسکرین سے نکلنے یا ایپ بند کرنے سے تلاش منسوخ ہو جائے گی۔';
 
   @override
   String get failedResendOtp =>

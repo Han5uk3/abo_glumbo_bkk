@@ -4861,7 +4861,7 @@ abstract class AppLocalizations {
   /// No description provided for @stayOnScreenWarning.
   ///
   /// In en, this message translates to:
-  /// **'Please stay on this screen. Navigating away, closing the app, or backgrounding the app will cancel the search.'**
+  /// **'Please stay on this screen. Navigating away or closing the app will cancel the search.'**
   String get stayOnScreenWarning;
 
   /// No description provided for @failedResendOtp.

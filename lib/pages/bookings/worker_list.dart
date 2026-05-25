@@ -286,13 +286,14 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
       _isBroadcasting = true;
       _acceptedWorkers.clear();
       _requestId = null;
+      _isCancelled = false;
     });
     _startSearchAndBroadcast();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.detached) {
       _cleanupRequest(markAsCancelled: true);
     }
   }
@@ -504,12 +505,17 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
             children: [
               Icon(Icons.timer_outlined, color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
-              Text(
-                "${locale.lookingForAvailableTechniciansNearby} ${_timerSeconds}s",
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              Expanded(
+                child: Text(
+                  "${locale.lookingForAvailableTechniciansNearby} ${_timerSeconds}s",
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ],

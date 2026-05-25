@@ -76,8 +76,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached ||
-        state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.detached) {
       _cleanupRequest();
     }
   }
