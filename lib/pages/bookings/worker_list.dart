@@ -246,13 +246,23 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
     }
   }
 
+  DateTime? _broadcastStartTime;
+
   void _startTimer() {
+    _broadcastStartTime = DateTime.now();
     _broadcastTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_timerSeconds > 0) {
+      if (_broadcastStartTime == null) return;
+      final elapsed = DateTime.now().difference(_broadcastStartTime!).inSeconds;
+      final remaining = 120 - elapsed;
+
+      if (remaining > 0) {
         setState(() {
-          _timerSeconds--;
+          _timerSeconds = remaining;
         });
       } else {
+        setState(() {
+          _timerSeconds = 0;
+        });
         _stopBroadcast();
       }
     });
