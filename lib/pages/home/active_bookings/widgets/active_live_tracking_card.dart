@@ -67,8 +67,9 @@ class TrackingCard extends StatelessWidget {
                         // Service Name
                         Text(
                           booking.service.nameLocalized(
-                                languageCode:
-                                    AppLocalizations.of(context)!.localeName,
+                                languageCode: AppLocalizations.of(
+                                  context,
+                                )!.localeName,
                               ) ??
                               booking.service.name ??
                               '',
@@ -77,10 +78,10 @@ class TrackingCard extends StatelessWidget {
                             fontWeight: FontWeight.w400,
                             color: Colors.grey[600],
                           ),
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
 
                         // Mini Map Visualization (Route Line)
                       ],

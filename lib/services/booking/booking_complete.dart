@@ -373,42 +373,48 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                                         tag: 'worker_${widget.worker.uid}',
                                         child: CircleAvatar(
                                           radius: 30,
-                                          backgroundImage:
-                                              widget.worker.profileUrl != null
-                                              ? NetworkImage(
-                                                  widget.worker.profileUrl!,
-                                                )
-                                              : const AssetImage(
-                                                      'assets/images/profile_placeholder.jpg',
-                                                    )
-                                                    as ImageProvider,
+                                          backgroundColor: Colors.grey.shade100,
+                                          backgroundImage: widget.worker.profileUrl != null && widget.worker.profileUrl!.isNotEmpty
+                                              ? NetworkImage(widget.worker.profileUrl!)
+                                              : null,
+                                          child: widget.worker.profileUrl == null || widget.worker.profileUrl!.isEmpty
+                                              ? const Icon(Icons.person, color: Colors.grey, size: 30)
+                                              : null,
                                         ),
                                       ),
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Text(
-                                              widget.worker.name ?? 'Unknown',
+                                              widget.worker.name ?? 'Technician',
                                               style: DMSansFont.textStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
+                                                color: Colors.black87,
                                               ),
                                             ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              _isLoadingRole
-                                                  ? AppLocalizations.of(
-                                                      context,
-                                                    )!.loading
-                                                  : (_localizedRole ?? ''),
-                                              style: DMSansFont.textStyle(
-                                                fontSize: 13,
-                                                color: Colors.grey[600],
+                                            if (_isLoadingRole) ...[
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                AppLocalizations.of(context)?.loading ?? 'Loading...',
+                                                style: DMSansFont.textStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[500],
+                                                ),
                                               ),
-                                            ),
+                                            ] else if (_localizedRole != null && _localizedRole!.isNotEmpty) ...[
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                _localizedRole!,
+                                                style: DMSansFont.textStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                            ],
                                           ],
                                         ),
                                       ),

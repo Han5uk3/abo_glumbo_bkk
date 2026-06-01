@@ -28,6 +28,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/widgets/rebook_wait_widget.dart';
 
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/searching_technicians_screen.dart';
 
 class BookServicePage extends StatefulWidget {
   final ServiceModel service;
@@ -1709,6 +1710,21 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildAutoAssignContent() {
+    final DateTime bookingDate = isServiceNow
+        ? _getMiddleEastNow()
+        : DateTime(
+            selectedDate!.year,
+            selectedDate!.month,
+            selectedDate!.day,
+            timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
+                .hour,
+            timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
+                .minute,
+          );
+
+    final bool isToday =
+        isServiceNow || isSameDay(bookingDate, _getMiddleEastNow());
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
@@ -1722,18 +1738,29 @@ class _BookServicePageState extends State<BookServicePage> {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.auto_awesome_rounded,
+                isToday ? Icons.sensors_rounded : Icons.auto_awesome_rounded,
                 size: 64,
                 color: AppColors.primary,
               ),
             ),
             const SizedBox(height: 24),
             Text(
-              AppLocalizations.of(
-                context,
-              )!.technicianAutoAssignedBeforeAppointment,
+              isToday
+                  ? (AppLocalizations.of(context)?.localeName == 'ar'
+                        ? 'البحث عن الفنيين المتاحين'
+                        : AppLocalizations.of(context)?.localeName == 'ur'
+                        ? 'دستیاب ٹیکنیشن کی تلاش'
+                        : 'Live Technician Broadcast')
+                  : (AppLocalizations.of(context)?.localeName == 'ar'
+                        ? 'تعيين تلقائي للفني'
+                        : AppLocalizations.of(context)?.localeName == 'ur'
+                        ? 'ٹیکنیشن کا خودکار تعین'
+                        : 'Auto-Assignment Schedule'),
               textAlign: TextAlign.center,
-              style: DMSansFont.textStyle(),
+              style: DMSansFont.textStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16),
             Container(
@@ -1753,8 +1780,19 @@ class _BookServicePageState extends State<BookServicePage> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      AppLocalizations.of(context)?.autoAssignMessage ??
-                          'Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.',
+                      isToday
+                          ? (AppLocalizations.of(context)?.localeName == 'ar'
+                                ? 'سنقوم بإرسال طلبك إلى الفنيين النشطين في منطقتك. ستتمكن من اختيار فنيك المفضل بمجرد قبولهم.'
+                                : AppLocalizations.of(context)?.localeName ==
+                                      'ur'
+                                ? 'ہم آپ کی درخواست آپ کے علاقے کے فعال ٹیکنیشنز کو بھیجیں گے۔ آپ ان کے قبول کرتے ہی اپنے پسندیدہ ٹیکنیشن کا انتخاب کر سکتے ہیں۔'
+                                : 'We will broadcast your request to active technicians in your area. You will be able to select your preferred technician from those who accept.')
+                          : (AppLocalizations.of(context)?.localeName == 'ar'
+                                ? 'سيقوم النظام بتعيين فني بناءً على التوفر قبل 3 ساعات على الأقل من الوقت المحدد.'
+                                : AppLocalizations.of(context)?.localeName ==
+                                      'ur'
+                                ? 'سسٹم شیڈول وقت سے کم از کم 3 گھنٹے پہلے دستیابی کی بنیاد پر ایک ٹیکنیشن کا تعین کرے گا۔'
+                                : 'The system will assign a technician based on availability at least 3 hours before the scheduled time.'),
                       style: DMSansFont.textStyle(
                         fontSize: 14,
                         color: Colors.blue.shade800,
@@ -1772,7 +1810,20 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildReviewStepContent() {
-    final isAssignmentOnHour = _shouldShowTechnicianSelection();
+    final DateTime bookingDate = isServiceNow
+        ? _getMiddleEastNow()
+        : DateTime(
+            selectedDate!.year,
+            selectedDate!.month,
+            selectedDate!.day,
+            timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
+                .hour,
+            timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
+                .minute,
+          );
+    final isAssignmentOnHour = widget.service.isOnWorkHour(
+      currentTime: bookingDate,
+    );
     final price = _getSelectedPrice();
     final hasDiscount = (widget.service.discountPercentage ?? 0) > 0;
     final discountedPrice = widget.service.getDiscountedPrice(price);
@@ -1860,24 +1911,30 @@ class _BookServicePageState extends State<BookServicePage> {
             ],
           ],
         ),
-        const SizedBox(height: 16),
-        _buildReviewCard(
-          children: [
-            _buildReviewRow(
-              icon: Icons.person_rounded,
-              label:
-                  AppLocalizations.of(context)?.technicianAssignment ??
-                  'Technician',
-              value: isAssignmentOnHour
-                  ? (selectedWorker.name ??
-                        (AppLocalizations.of(context)?.youSelectedTechnician ??
-                            'You selected a technician'))
-                  : (AppLocalizations.of(context)?.autoAssignMessage ??
-                        'Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.'),
-              valueColor: isAssignmentOnHour ? AppColors.primary : Colors.blue,
-            ),
-          ],
-        ),
+        if (selectedWorker.uid != null && selectedWorker.uid!.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _buildReviewCard(
+            children: [
+              _buildReviewRow(
+                icon: Icons.person_rounded,
+                label:
+                    AppLocalizations.of(context)?.technicianAssignment ??
+                    'Technician',
+                value: isAssignmentOnHour
+                    ? (selectedWorker.name ??
+                          (AppLocalizations.of(
+                                context,
+                              )?.youSelectedTechnician ??
+                              'You selected a technician'))
+                    : (AppLocalizations.of(context)?.autoAssignMessage ??
+                          'Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.'),
+                valueColor: isAssignmentOnHour
+                    ? AppColors.primary
+                    : Colors.blue,
+              ),
+            ],
+          ),
+        ],
         const SizedBox(height: 24),
       ],
     );
@@ -1983,35 +2040,6 @@ class _BookServicePageState extends State<BookServicePage> {
   /// - Service Later + Current On Hour + Today → technician selection
   /// - Service Later + Current On Hour + Future Date → auto-assign
   bool _shouldShowTechnicianSelection() {
-    final now = DateTime.now();
-    final isCurrentlyOnHour = widget.service.isOnWorkHour(currentTime: now);
-
-    if (isServiceNow) {
-      // Service Now: show technician selection only if on-hour
-      // (off-hour blocking is handled before reaching this step)
-      return isCurrentlyOnHour;
-    }
-
-    // Service Later
-    if (!isCurrentlyOnHour) {
-      // Current time is off-hours → always auto-assign
-      return false;
-    }
-
-    // Current time is on-hour — check if scheduled date is today
-    final todayOnly = DateTime(now.year, now.month, now.day);
-    final scheduledDateOnly = DateTime(
-      selectedDate!.year,
-      selectedDate!.month,
-      selectedDate!.day,
-    );
-
-    if (scheduledDateOnly.isAtSameMomentAs(todayOnly)) {
-      // Today → technician selection (regardless of scheduled time on/off hour)
-      return true;
-    }
-
-    // Future date → auto-assign
     return false;
   }
 
@@ -2141,25 +2169,7 @@ class _BookServicePageState extends State<BookServicePage> {
       children: [
         Expanded(
           child: ElevatedButton(
-            onPressed: () {
-              if (notesController.text.trim().isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)?.localeName == 'ar'
-                          ? 'يرجى إدخال وصف المشكلة'
-                          : AppLocalizations.of(context)?.localeName == 'ur'
-                          ? 'براہ کرم مسئلے کی تفصیل درج کریں'
-                          : 'Please enter the problem description',
-                      style: DMSansFont.textStyle(color: Colors.white),
-                    ),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-                return;
-              }
-              setState(() => currentStep = 2);
-            },
+            onPressed: _onContinueFromSecondStep,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               minimumSize: const Size(0, 54),
@@ -2178,6 +2188,34 @@ class _BookServicePageState extends State<BookServicePage> {
         ),
       ],
     );
+  }
+
+  void _onContinueFromSecondStep() {
+    if (notesController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)?.localeName == 'ar'
+                ? 'يرجى إدخال وصف المشكلة'
+                : AppLocalizations.of(context)?.localeName == 'ur'
+                ? 'براہ کرم مسئلے کی تفصیل درج کریں'
+                : 'Please enter the problem description',
+            style: DMSansFont.textStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (customerData == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Loading customer data, please wait...')),
+      );
+      return;
+    }
+
+    setState(() => currentStep = 2);
   }
 
   Widget _buildThirdStepBottom(BuildContext context) {
@@ -2250,7 +2288,7 @@ class _BookServicePageState extends State<BookServicePage> {
     return ElevatedButton(
       onPressed: saving ? null : () => _completeBooking(context),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.primary,
         minimumSize: const Size(double.infinity, 54),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -2283,64 +2321,90 @@ class _BookServicePageState extends State<BookServicePage> {
 
     setState(() => saving = true);
 
-    final bookingId = await BookingUtils.saveBooking(
-      service: widget.service,
-      selectedDate:
-          _counterProposedTime ??
-          (isServiceNow ? _getMiddleEastNow() : selectedDate!),
-      paymentMode: "Outside App",
-      customerData: customerData!,
-      notes: notesController.text,
-      selectedImage: _selectedImage,
-      selectedVideo: _selectedVideo,
-      timeSlot: _counterProposedTime != null
-          ? {
-              "label": "Counter Proposed",
-              "time": TimeOfDay.fromDateTime(_counterProposedTime!),
-            }
-          : (isServiceNow
-                ? {"label": "Now", "time": TimeOfDay.now()}
-                : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]),
-      agent:
-          _shouldShowTechnicianSelection() &&
-              selectedWorker.uid != null &&
-              selectedWorker.uid!.isNotEmpty
-          ? selectedWorker
-          : null,
-      selectedAddress: selectedAddress,
-      requestId: broadcastRequestId,
-      rebookTechnicianId: widget.rebookTechnician?.uid,
-    );
+    final DateTime bookingDate = isServiceNow
+        ? _getMiddleEastNow()
+        : DateTime(
+            selectedDate!.year,
+            selectedDate!.month,
+            selectedDate!.day,
+            timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
+                .hour,
+            timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
+                .minute,
+          );
 
-    setState(() => saving = false);
+    final bool isManual =
+        isServiceNow || isSameDay(bookingDate, _getMiddleEastNow());
 
-    if (bookingId != null && mounted) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BookingCompletedPage(
-            service: widget.service,
-            worker: _shouldShowTechnicianSelection()
-                ? selectedWorker
-                : UserModel(role: "agent", uid: ""),
-            selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
-            selectedTime: isServiceNow
-                ? {"label": "Now", "time": TimeOfDay.now()}
-                : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
-            address: selectedAddress,
-          ),
-        ),
-        (route) => false,
+    if (isManual) {
+      final requestId = await BookingUtils.saveBookingRequest(
+        service: widget.service,
+        selectedDate: selectedDate ?? _getMiddleEastNow(),
+        paymentMode: "Outside App",
+        customerData: customerData!,
+        notes: notesController.text,
+        selectedImage: _selectedImage,
+        selectedVideo: _selectedVideo,
+        timeSlot: isServiceNow
+            ? {"label": "Now", "time": TimeOfDay.now()}
+            : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+        selectedAddress: selectedAddress,
+        serviceLocation: _matchedServiceZone,
       );
-    } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)?.failedToCompleteBooking ??
-                'Failed to complete booking',
+
+      setState(() => saving = false);
+
+      if (requestId != null && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                SearchingTechniciansScreen(bookingRequestId: requestId),
           ),
-        ),
+        );
+      } else if (mounted) {
+        _showSnackBar(
+          AppLocalizations.of(context)?.failedToCompleteBooking ??
+              "Failed to create booking request",
+        );
+      }
+    } else {
+      final bookingId = await BookingUtils.saveAutoAssignmentRequest(
+        service: widget.service,
+        selectedDate: selectedDate!,
+        paymentMode: "Outside App",
+        customerData: customerData!,
+        notes: notesController.text,
+        selectedImage: _selectedImage,
+        selectedVideo: _selectedVideo,
+        timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+        selectedAddress: selectedAddress,
+        serviceLocation: _matchedServiceZone,
       );
+
+      setState(() => saving = false);
+
+      if (bookingId != null && mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BookingCompletedPage(
+              service: widget.service,
+              worker: UserModel(role: "agent", uid: ""),
+              selectedDate: selectedDate!,
+              selectedTime:
+                  timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+              address: selectedAddress,
+            ),
+          ),
+          (route) => false,
+        );
+      } else if (mounted) {
+        _showSnackBar(
+          AppLocalizations.of(context)?.failedToCompleteBooking ??
+              "Failed to complete auto-assignment booking",
+        );
+      }
     }
   }
 

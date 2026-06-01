@@ -68,9 +68,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       );
     }
 
-    if (booking.acceptedAt != null && booking.bookingStatusCode == "A") {
+    final dateToUse = booking.assignedAt ?? booking.acceptedAt;
+    if (dateToUse != null && booking.bookingStatusCode == "A") {
       return _timestampText(
-        "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(booking.acceptedAt!.toDate(), locale)}",
+        "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(dateToUse.toDate(), locale)}",
       );
     }
 

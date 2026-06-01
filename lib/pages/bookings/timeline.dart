@@ -225,15 +225,16 @@ Widget buildBookingTimelineCard(
         }
 
         // Confirmed / Assigned
-        if (booking.assignedAt != null) {
+        final dateToUse = booking.assignedAt ?? booking.acceptedAt;
+        if (dateToUse != null) {
           timelineItems.add({
             'title': AppLocalizations.of(context)!.acceptedAt,
-            'time': _formatDateLocalized(booking.assignedAt!.toDate(), context),
+            'time': _formatDateLocalized(dateToUse.toDate(), context),
             'description': AppLocalizations.of(
               context,
             )!.serviceProviderConfirmedAppointment,
             'status': 'completed',
-            'date': booking.assignedAt!.toDate(),
+            'date': dateToUse.toDate(),
           });
         }
 

@@ -411,4 +411,236 @@ class BookingUtils {
       return null;
     }
   }
+
+  static Future<String?> saveBookingRequest({
+    required ServiceModel service,
+    required DateTime selectedDate,
+    required String paymentMode,
+    required CustomerModel customerData,
+    required String notes,
+    File? selectedImage,
+    File? selectedVideo,
+    required Map timeSlot,
+    AddressModel? selectedAddress,
+    MatchedServiceZone? serviceLocation,
+  }) async {
+    try {
+      DateTime bookingDate = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        timeSlot["time"].hour,
+        timeSlot["time"].minute,
+      );
+
+      String? selectedImageDownloadUrl;
+      String? selectedVideoDownloadUrl;
+
+      try {
+        if (selectedImage != null) {
+          String fileName =
+              'users/${customerData.uid}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+          final storageRef = FirebaseStorage.instance.ref().child(fileName);
+          final uploadTask = storageRef.putFile(selectedImage);
+          final snapshot = await uploadTask;
+          selectedImageDownloadUrl = await snapshot.ref.getDownloadURL();
+        }
+        if (selectedVideo != null) {
+          String fileName =
+              'users/${customerData.uid}/${DateTime.now().millisecondsSinceEpoch}.mp4';
+          final storageRef = FirebaseStorage.instance.ref().child(fileName);
+          final uploadTask = storageRef.putFile(
+            selectedVideo,
+            SettableMetadata(contentType: 'video/mp4'),
+          );
+          final snapshot = await uploadTask;
+          selectedVideoDownloadUrl = await snapshot.ref.getDownloadURL();
+        }
+      } catch (e) {
+        debugPrint("Error uploading files: $e");
+      }
+
+      final bookingId = AppFirestore.bookingRequestsCollectionRef.doc().id;
+
+      final updatedCustomerData = CustomerModel(
+        role: "customer",
+        uid: customerData.uid,
+        name: customerData.name,
+        email: customerData.email,
+        phone: customerData.phone,
+        country: customerData.country,
+        fcmToken: customerData.fcmToken,
+        lanCode: customerData.lanCode,
+        favourites: customerData.favourites,
+        createdAt: customerData.createdAt,
+        updatedAt: customerData.updatedAt,
+        isAdmin: customerData.isAdmin,
+        addresses: customerData.addresses.map((address) {
+          return address.copyWith(
+            isSelected: selectedAddress != null
+                ? address.id == selectedAddress.id
+                : address.isSelected,
+          );
+        }).toList(),
+      );
+
+      bool isOnHour = service.isOnWorkHour(currentTime: bookingDate);
+      double bookingTimePrice = service.getCurrentPrice(currentTime: bookingDate);
+      ServiceModel updatedService = service.copyWith(price: bookingTimePrice);
+
+      final Map<String, dynamic> requestData = {
+        'id': bookingId,
+        'service': updatedService.toJson(),
+        'bookingDateTime': Timestamp.fromDate(bookingDate),
+        'notes': notes.trim(),
+        'issueImage': selectedImageDownloadUrl ?? "",
+        'issueVideo': selectedVideoDownloadUrl ?? "",
+        'customer': updatedCustomerData.toJson(),
+        'paymentModeCode': getPaymentModeCode(paymentMode),
+        'selectedAddressId': selectedAddress?.id,
+        'isOnHour': isOnHour,
+        'serviceLocation': serviceLocation?.toJson(),
+        'createdAt': Timestamp.now(),
+        'updatedAt': Timestamp.now(),
+        'status': 'searching',
+        'acceptedTechnicians': [],
+        'rejectedTechnicians': [],
+      };
+
+      await AppFirestore.bookingRequestsCollectionRef.doc(bookingId).set(requestData);
+      return bookingId;
+    } catch (e) {
+      debugPrint("Error saving booking request: $e");
+      return null;
+    }
+  }
+
+  static Future<String?> saveAutoAssignmentRequest({
+    required ServiceModel service,
+    required DateTime selectedDate,
+    required String paymentMode,
+    required CustomerModel customerData,
+    required String notes,
+    File? selectedImage,
+    File? selectedVideo,
+    required Map timeSlot,
+    AddressModel? selectedAddress,
+    MatchedServiceZone? serviceLocation,
+  }) async {
+    try {
+      DateTime bookingDate = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        timeSlot["time"].hour,
+        timeSlot["time"].minute,
+      );
+
+      String? selectedImageDownloadUrl;
+      String? selectedVideoDownloadUrl;
+
+      try {
+        if (selectedImage != null) {
+          String fileName =
+              'users/${customerData.uid}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+          final storageRef = FirebaseStorage.instance.ref().child(fileName);
+          final uploadTask = storageRef.putFile(selectedImage);
+          final snapshot = await uploadTask;
+          selectedImageDownloadUrl = await snapshot.ref.getDownloadURL();
+        }
+        if (selectedVideo != null) {
+          String fileName =
+              'users/${customerData.uid}/${DateTime.now().millisecondsSinceEpoch}.mp4';
+          final storageRef = FirebaseStorage.instance.ref().child(fileName);
+          final uploadTask = storageRef.putFile(
+            selectedVideo,
+            SettableMetadata(contentType: 'video/mp4'),
+          );
+          final snapshot = await uploadTask;
+          selectedVideoDownloadUrl = await snapshot.ref.getDownloadURL();
+        }
+      } catch (e) {
+        debugPrint("Error uploading files: $e");
+      }
+
+      final bookingId = AppFirestore.bookingsCollectionRef.doc().id;
+
+      final updatedCustomerData = CustomerModel(
+        role: "customer",
+        uid: customerData.uid,
+        name: customerData.name,
+        email: customerData.email,
+        phone: customerData.phone,
+        country: customerData.country,
+        fcmToken: customerData.fcmToken,
+        lanCode: customerData.lanCode,
+        favourites: customerData.favourites,
+        createdAt: customerData.createdAt,
+        updatedAt: customerData.updatedAt,
+        isAdmin: customerData.isAdmin,
+        addresses: customerData.addresses.map((address) {
+          return address.copyWith(
+            isSelected: selectedAddress != null
+                ? address.id == selectedAddress.id
+                : address.isSelected,
+          );
+        }).toList(),
+      );
+
+      bool isOnHour = service.isOnWorkHour(currentTime: bookingDate);
+      double bookingTimePrice = service.getCurrentPrice(currentTime: bookingDate);
+      ServiceModel updatedService = service.copyWith(price: bookingTimePrice);
+
+      // Create standard booking model with status 'P' and no technician
+      BookingModel booking = BookingModel(
+        id: bookingId,
+        service: updatedService,
+        bookingDateTime: Timestamp.fromDate(bookingDate),
+        bookingStatusCode: 'P',
+        notes: notes.trim(),
+        issueImage: selectedImageDownloadUrl ?? "",
+        issueVideo: selectedVideoDownloadUrl ?? "",
+        customer: updatedCustomerData,
+        agent: null,
+        selectedAddressId: selectedAddress?.id,
+        isOnHour: isOnHour,
+        paymentModeCode: getPaymentModeCode(paymentMode),
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+        serviceLocation: serviceLocation,
+        autoAssignmentStatus: 'ready_to_assign',
+      );
+
+      // Save to standard bookings
+      await AppFirestore.bookingsCollectionRef.doc(bookingId).set(booking.toJson());
+
+      // Save to auto-assignment_requests
+      final bool isInstant = bookingDate.difference(DateTime.now()).inMinutes <= 180;
+      final Map<String, dynamic> autoReqData = {
+        'id': bookingId,
+        'service': updatedService.toJson(),
+        'bookingDateTime': Timestamp.fromDate(bookingDate),
+        'notes': notes.trim(),
+        'issueImage': selectedImageDownloadUrl ?? "",
+        'issueVideo': selectedVideoDownloadUrl ?? "",
+        'customer': updatedCustomerData.toJson(),
+        'paymentModeCode': getPaymentModeCode(paymentMode),
+        'selectedAddressId': selectedAddress?.id,
+        'isOnHour': isOnHour,
+        'serviceLocation': serviceLocation?.toJson(),
+        'createdAt': Timestamp.now(),
+        'updatedAt': Timestamp.now(),
+        'status': 'P',
+        'type': isInstant ? 'instant' : 'late',
+        'notificationSent': false,
+        'agent': null,
+      };
+
+      await AppFirestore.autoAssignmentRequestsCollectionRef.doc(bookingId).set(autoReqData);
+      return bookingId;
+    } catch (e) {
+      debugPrint("Error saving auto assignment request: $e");
+      return null;
+    }
+  }
 }

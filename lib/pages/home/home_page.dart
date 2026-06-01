@@ -13,6 +13,7 @@ import 'package:abo_glumbo_bbk/models/highlighted_services.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/notification.dart';
 import 'package:abo_glumbo_bbk/pages/home/active_bookings/active_bookings.dart';
 import 'package:abo_glumbo_bbk/pages/home/bloc/home_bloc.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/searching_technicians_screen.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -548,6 +549,141 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  Widget _buildContinueBookingCard() {
+    if (_isGuest) return const SizedBox.shrink();
+    final cachedId = LocalStoreHelper.getBookingRequestId();
+    if (cachedId == null || cachedId.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: AppFirestore.bookingRequestsCollectionRef
+          .doc(cachedId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const SizedBox.shrink();
+        }
+
+        final data = snapshot.data!.data() as Map<String, dynamic>;
+        final createdAt = data['createdAt'] as Timestamp?;
+        if (createdAt == null) return const SizedBox.shrink();
+
+        final elapsedSeconds = DateTime.now()
+            .difference(createdAt.toDate())
+            .inSeconds;
+        // If more than 5 minutes (300 seconds) have passed, we don't show the card
+        if (elapsedSeconds >= 300) {
+          // Clear cached request ID
+          LocalStoreHelper.clearBookingRequestId();
+          return const SizedBox.shrink();
+        }
+
+        final isArabic = AppLocalizations.of(context)?.localeName == 'ar';
+        final isUrdu = AppLocalizations.of(context)?.localeName == 'ur';
+
+        return Container(
+          margin: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 12,
+            bottom: 4,
+          ),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.primary, AppColors.primary.withOpacity(0.85)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.2),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        SearchingTechniciansScreen(bookingRequestId: cachedId),
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(14),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.radar_rounded,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isArabic
+                                ? 'متابعة حجزك قيد البحث'
+                                : isUrdu
+                                ? 'اپنی بکنگ جاری رکھیں'
+                                : 'Continue your booking search',
+                            style: DMSansFont.textStyle(
+                              color: Colors.white,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            isArabic
+                                ? 'لديك طلب حجز فني نشط. انقر للمتابعة.'
+                                : isUrdu
+                                ? 'آپ کے پاس ایک فعال بکنگ تلاش کی جا رہی ہے۔ جاری رکھنے کے لیے کلک کریں۔'
+                                : 'You have an active technician search request. Tap to continue.',
+                            style: DMSansFont.textStyle(
+                              color: Colors.white.withOpacity(0.85),
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Colors.white.withOpacity(0.8),
+                      size: 14,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -566,7 +702,7 @@ class _HomePageState extends State<HomePage>
           ),
           SliverToBoxAdapter(child: SizedBox(height: 16)),
           SliverToBoxAdapter(child: _buildTrustBar()),
-          SliverToBoxAdapter(child: _buildHowCanWeHelp()),
+          SliverToBoxAdapter(child: _buildContinueBookingCard()),
 
           if (!_isGuest)
             BlocConsumer<HomeBloc, HomeState>(
@@ -604,6 +740,7 @@ class _HomePageState extends State<HomePage>
                 return const SliverToBoxAdapter(child: SizedBox.shrink());
               },
             ),
+          SliverToBoxAdapter(child: _buildHowCanWeHelp()),
 
           _buildCategoriesGrid(),
 

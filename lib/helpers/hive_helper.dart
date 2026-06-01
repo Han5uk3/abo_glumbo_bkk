@@ -144,4 +144,16 @@ class LocalStoreHelper {
   static Future<void> putBlockStatus(bool status) async {
     await MyApp.box.put('block_status', status);
   }
+
+  static Future<void> putBookingRequestId(String id) async {
+    await MyApp.box.put('booking_request_id', id);
+  }
+
+  static String? getBookingRequestId() {
+    return MyApp.box.get('booking_request_id');
+  }
+
+  static Future<void> clearBookingRequestId() async {
+    await MyApp.box.delete('booking_request_id');
+  }
 }

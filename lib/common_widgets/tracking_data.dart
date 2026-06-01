@@ -156,7 +156,6 @@ class TrackingData extends StatelessWidget {
           ),
           // ETA & Distance Row
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Time / ETA
               Expanded(
@@ -188,6 +187,7 @@ class TrackingData extends StatelessWidget {
               if (remainingKm != "" && remainingKm != null)
                 Flexible(
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text('📍', style: TextStyle(fontSize: 18)),
@@ -234,42 +234,48 @@ class TrackingData extends StatelessWidget {
           Row(
             children: [
               // Avatar / Icon
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.amber[50],
-                  shape: BoxShape.circle,
-                ),
-                child: ClipOval(
-                  child:
-                      worker?.profileUrl != null &&
-                          worker!.profileUrl!.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: worker!.profileUrl!,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Center(
+              Material(
+                elevation: 5,
+
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(100),
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.amber[50],
+                    shape: BoxShape.circle,
+                  ),
+                  child: ClipOval(
+                    child:
+                        worker?.profileUrl != null &&
+                            worker!.profileUrl!.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: worker!.profileUrl!,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Center(
+                              child: Icon(
+                                Icons.person,
+                                color: AppColors.primary,
+                                size: 28,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Center(
+                              child: Icon(
+                                Icons.person,
+                                color: AppColors.primary,
+                                size: 28,
+                              ),
+                            ),
+                          )
+                        : Center(
                             child: Icon(
                               Icons.person,
                               color: AppColors.primary,
-                              size: 28,
+                              size: 20,
                             ),
                           ),
-                          errorWidget: (context, url, error) => Center(
-                            child: Icon(
-                              Icons.person,
-                              color: AppColors.primary,
-                              size: 28,
-                            ),
-                          ),
-                        )
-                      : Center(
-                          child: Icon(
-                            Icons.person,
-                            color: AppColors.primary,
-                            size: 28,
-                          ),
-                        ),
+                  ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -282,18 +288,9 @@ class TrackingData extends StatelessWidget {
                     Text(
                       worker?.name ?? 'Technician',
                       style: DMSansFont.textStyle(
-                        fontSize: 18,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      worker?.role ?? 'Service Provider',
-                      style: DMSansFont.textStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey[600],
                       ),
                     ),
                   ],
@@ -311,30 +308,29 @@ class TrackingData extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
-                        width: 50,
-                        height: 60,
+                        width: 40,
+                        height: 40,
                         child: GestureDetector(
                           onTap: () => _openOrCreateChat(context),
                           child: Stack(
                             children: [
-                              Container(
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: AppColors.bgWhite,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26.withAlpha(40),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 5),
+                              Material(
+                                color: Colors.white,
+                                elevation: 3,
+                                borderRadius: BorderRadius.circular(100),
+                                child: Container(
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: Image.asset(
+                                      'assets/icons/chat2.png',
+                                      width: 20,
+                                      height: 20,
                                     ),
-                                  ],
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Image.asset(
-                                    'assets/icons/chat2.png',
-                                    width: 24,
-                                    height: 24,
                                   ),
                                 ),
                               ),
@@ -364,25 +360,24 @@ class TrackingData extends StatelessWidget {
                         GestureDetector(
                           onTap: () =>
                               WhatsAppUtils.launchWhatsApp(worker!.phone!),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: AppColors.bgWhite,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26.withAlpha(40),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 5),
+                          child: Material(
+                            elevation: 3,
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(100),
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Image.asset(
+                                  'assets/images/whatsapp.png',
+                                  width: 30,
+                                  height: 30,
                                 ),
-                              ],
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Image.asset(
-                                'assets/images/whatsapp.png',
-                                width: 30,
-                                height: 30,
                               ),
                             ),
                           ),
@@ -394,7 +389,8 @@ class TrackingData extends StatelessWidget {
               ),
 
               // Call Button
-              if (worker?.phone != null)
+              if (worker?.phone != null) ...[
+                const SizedBox(width: 8),
                 InkWell(
                   onTap: () {
                     launchUrl(
@@ -402,30 +398,30 @@ class TrackingData extends StatelessWidget {
                       mode: LaunchMode.externalApplication,
                     );
                   },
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.phone,
-                      color: Colors.white,
-                      size: 24,
+                  child: Material(
+                    elevation: 3,
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(100),
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.phone,
+                        color: Colors.black,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
+              ],
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 30),
         ],
       ),
     );
