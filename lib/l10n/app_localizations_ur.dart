@@ -2657,4 +2657,13 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get thankYouInvoice => 'Abo Glumbo منتخب کرنے کا شکریہ!';
+
+  @override
+  String get biometricError => '❌ بایومیٹرک غلطی';
+
+  @override
+  String get unknownError => 'نامعلوم غلطی';
+
+  @override
+  String get errorDuringLogin => 'لاگ ان کے دوران غلطی';
 }

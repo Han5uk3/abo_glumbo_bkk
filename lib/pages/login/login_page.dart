@@ -169,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                   'An internal error occurred. Please try again later.';
               break;
             default:
-              errorMessage = e.message ?? 'An error occurred';
+              errorMessage = e.message ?? (AppLocalizations.of(context)?.anErrorOccurred ?? 'An error occurred');
           }
 
           _showSnackBar(errorMessage, AppColors.red);
@@ -186,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) {
         setState(() => _isLoading = false);
         _showSnackBar(
-          '${AppLocalizations.of(context)?.unexpectedErrorOccurred ?? 'Error'}: ${e.toString()}',
+          '${AppLocalizations.of(context)?.unexpectedErrorOccurred ?? (AppLocalizations.of(context)?.error ?? 'Error')}: ${e.toString()}',
           AppColors.red,
         );
       }
@@ -263,8 +263,10 @@ class _LoginPageState extends State<LoginPage> {
           if (exception.message?.toLowerCase().contains('canceled') == true) {
             return;
           }
+          final errorPrefix = AppLocalizations.of(context)?.biometricError ?? '❌ Biometric error';
+          final unknownError = AppLocalizations.of(context)?.unknownError ?? 'Unknown error';
           message =
-              '❌ Biometric error: ${exception.message ?? 'Unknown error'}';
+              '$errorPrefix: ${exception.message ?? unknownError}';
       }
 
       if (message.isNotEmpty) {

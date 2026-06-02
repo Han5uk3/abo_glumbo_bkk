@@ -952,5 +952,8 @@
     }
   },
   "totalLabel": "کل:",
-  "thankYouInvoice": "Abo Glumbo منتخب کرنے کا شکریہ!"
+  "thankYouInvoice": "Abo Glumbo منتخب کرنے کا شکریہ!",
+  "biometricError": "❌ بایومیٹرک غلطی",
+  "unknownError": "نامعلوم غلطی",
+  "errorDuringLogin": "لاگ ان کے دوران غلطی"
 }

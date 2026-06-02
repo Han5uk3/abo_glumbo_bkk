@@ -110,6 +110,8 @@ class UserModel {
     double? paidoutTips,
     bool? isOnline,
     String? tier,
+    GeoPoint? lastKnownLocation,
+    String? geohash,
     String? residenceIdUrl,
     String? sponsorWorkPermitUrl,
     String? chamberOfCommerceApprovalUrl,

@@ -2639,4 +2639,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get thankYouInvoice => 'Thank you for choosing Abo Glumbo!';
+
+  @override
+  String get biometricError => '❌ Biometric error';
+
+  @override
+  String get unknownError => 'Unknown error';
+
+  @override
+  String get errorDuringLogin => 'Error during login';
 }

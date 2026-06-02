@@ -26,7 +26,11 @@ class LocationModel {
     dynamic placemark, // Placemark? — kept dynamic to avoid hard dep here
   }) {
     if (placemark == null) {
-      return LocationModel(lat: lat, lon: lon);
+      return LocationModel(
+        lat: lat,
+        lon: lon,
+        fullAddress: '${lat.toStringAsFixed(6)}, ${lon.toStringAsFixed(6)}',
+      );
     }
 
     final city = _nonEmpty(placemark.locality);

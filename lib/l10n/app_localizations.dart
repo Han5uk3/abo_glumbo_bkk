@@ -5013,6 +5013,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Thank you for choosing Abo Glumbo!'**
   String get thankYouInvoice;
+
+  /// No description provided for @biometricError.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Biometric error'**
+  String get biometricError;
+
+  /// No description provided for @unknownError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error'**
+  String get unknownError;
+
+  /// No description provided for @errorDuringLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Error during login'**
+  String get errorDuringLogin;
 }
 
 class _AppLocalizationsDelegate

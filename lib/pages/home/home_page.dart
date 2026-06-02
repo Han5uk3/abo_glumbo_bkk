@@ -18,10 +18,9 @@ import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:abo_glumbo_bbk/models/address.dart';
-import 'package:abo_glumbo_bbk/models/customer.dart';
-import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
-import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
+// import 'package:abo_glumbo_bbk/models/address.dart';
+// import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
+// import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
@@ -175,24 +174,24 @@ class _HomePageState extends State<HomePage>
     return _banners.where((banner) => banner.section == 2).toList();
   }
 
-  void _openAddressSheet() {
-    if (_isGuest) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-      return;
-    }
+  // void _openAddressSheet() {
+  //   if (_isGuest) {
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => const LoginPage()),
+  //     );
+  //     return;
+  //   }
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => AddressSaveSheet(
-        initialPosition: const {'latitude': 25.276987, 'longitude': 51.520008},
-      ),
-    );
-  }
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     backgroundColor: Colors.transparent,
+  //     builder: (context) => AddressSaveSheet(
+  //       initialPosition: const {'latitude': 25.276987, 'longitude': 51.520008},
+  //     ),
+  //   );
+  // }
 
   Widget _buildHeader(EdgeInsets safePadding) {
     return Container(
@@ -236,38 +235,38 @@ class _HomePageState extends State<HomePage>
                     ),
                   ),
 
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _isGuest
-                        ? InkWell(
-                            onTap: _openAddressSheet,
-                            child: _buildAddressText(null),
-                          )
-                        : StreamBuilder<CustomerModel>(
-                            stream: AppServices.listenToCustomerData(
-                              LocalStoreHelper.getUID() ?? '',
-                            ),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasError || !snapshot.hasData) {
-                                return InkWell(
-                                  onTap: _openAddressSheet,
-                                  child: _buildAddressText(null),
-                                );
-                              }
-                              final addresses = snapshot.data!.addresses;
-                              final selectedAddress = addresses.isEmpty
-                                  ? null
-                                  : addresses.firstWhere(
-                                      (a) => a.isSelected == true,
-                                      orElse: () => addresses.first,
-                                    );
-                              return InkWell(
-                                onTap: _openAddressSheet,
-                                child: _buildAddressText(selectedAddress),
-                              );
-                            },
-                          ),
-                  ),
+                  // const SizedBox(width: 8),
+                  // Expanded(
+                  //   child: _isGuest
+                  //       ? InkWell(
+                  //           onTap: _openAddressSheet,
+                  //           child: _buildAddressText(null),
+                  //         )
+                  //       : StreamBuilder<CustomerModel>(
+                  //           stream: AppServices.listenToCustomerData(
+                  //             LocalStoreHelper.getUID() ?? '',
+                  //           ),
+                  //           builder: (context, snapshot) {
+                  //             if (snapshot.hasError || !snapshot.hasData) {
+                  //               return InkWell(
+                  //                 onTap: _openAddressSheet,
+                  //                 child: _buildAddressText(null),
+                  //               );
+                  //             }
+                  //             final addresses = snapshot.data!.addresses;
+                  //             final selectedAddress = addresses.isEmpty
+                  //                 ? null
+                  //                 : addresses.firstWhere(
+                  //                     (a) => a.isSelected == true,
+                  //                     orElse: () => addresses.first,
+                  //                   );
+                  //             return InkWell(
+                  //               onTap: _openAddressSheet,
+                  //               child: _buildAddressText(selectedAddress),
+                  //             );
+                  //           },
+                  //         ),
+                  // ),
                   SizedBox(width: 20),
                   if (!_isGuest)
                     UnreadNotificationBadge(
@@ -286,61 +285,61 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _buildAddressText(AddressModel? address) {
-    if (address == null) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            AppLocalizations.of(context)?.addNew ?? "Add address",
-            style: DMSansFont.textStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Text(
-            AppLocalizations.of(context)?.noAddress ?? "No address saved",
-            style: DMSansFont.textStyle(
-              color: Colors.white,
-              fontSize: 8,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
-      );
-    }
+  // Widget _buildAddressText(AddressModel? address) {
+  //   if (address == null) {
+  //     return Column(
+  //       mainAxisAlignment: MainAxisAlignment.start,
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Text(
+  //           AppLocalizations.of(context)?.addNew ?? "Add address",
+  //           style: DMSansFont.textStyle(
+  //             color: Colors.white,
+  //             fontSize: 10,
+  //             fontWeight: FontWeight.w700,
+  //           ),
+  //         ),
+  //         Text(
+  //           AppLocalizations.of(context)?.noAddress ?? "No address saved",
+  //           style: DMSansFont.textStyle(
+  //             color: Colors.white,
+  //             fontSize: 8,
+  //             fontWeight: FontWeight.w400,
+  //           ),
+  //         ),
+  //       ],
+  //     );
+  //   }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          address.fullName,
-          style: DMSansFont.textStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-          ),
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
-        ),
-        Text(
-          address.streetName ?? "",
-          style: DMSansFont.textStyle(
-            color: Colors.white,
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
-          ),
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    );
-  }
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     mainAxisAlignment: MainAxisAlignment.start,
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: [
+  //       Text(
+  //         address.fullName,
+  //         style: DMSansFont.textStyle(
+  //           color: Colors.white,
+  //           fontSize: 12,
+  //           fontWeight: FontWeight.w700,
+  //         ),
+  //         maxLines: 3,
+  //         overflow: TextOverflow.ellipsis,
+  //       ),
+  //       Text(
+  //         address.streetName ?? "",
+  //         style: DMSansFont.textStyle(
+  //           color: Colors.white,
+  //           fontSize: 10,
+  //           fontWeight: FontWeight.w500,
+  //         ),
+  //         maxLines: 3,
+  //         overflow: TextOverflow.ellipsis,
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildCategoriesGrid() {
     return StreamBuilder<QuerySnapshot>(

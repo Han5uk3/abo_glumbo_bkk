@@ -295,7 +295,7 @@ class InvoiceService {
                           ),
                         ),
                         pw.Text(
-                          loc.sarAmount(data.totalCost.toStringAsFixed(2)),
+                          loc.sarAmount((data.totalCost + data.inspectionFee).toStringAsFixed(2)),
                           style: pw.TextStyle(
                             fontSize: 16,
                             fontWeight: pw.FontWeight.bold,

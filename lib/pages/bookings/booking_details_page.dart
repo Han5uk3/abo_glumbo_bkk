@@ -25,7 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/rebook_service_selection.dart';
 import 'package:flutter/services.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -353,7 +353,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     icon: Icons.person_outline,
                     children: [
                       Row(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.max,
                         children: [
                           CachedNetworkImage(
                             imageUrl: booking.agent!.profileUrl ?? "",
@@ -902,7 +902,9 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     delegate: _SliverAppBarDelegate(
                       TabBar(
                         isScrollable: true,
-                        tabAlignment: TabAlignment.start,
+                        tabAlignment: Directionality.of(context) == TextDirection.rtl
+                            ? TabAlignment.center
+                            : TabAlignment.start,
                         labelColor: AppColors.blue1,
                         unselectedLabelColor: Colors.grey,
                         indicatorColor: AppColors.blue1,

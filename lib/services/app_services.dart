@@ -662,6 +662,12 @@ class AppServices {
 
       debugPrint('🔒 Deleting account for user: $currentUid');
       await AppFirestore.customersCollectionRef.doc(currentUid).delete();
+
+      // Clear local biometric settings and UID credentials immediately
+      await LocalStoreHelper.clearBiometricAuthEnabled(currentUid);
+      await LocalStoreHelper.clearUID();
+      await LocalStoreHelper.clearLastValidUID();
+
       LocalStoreHelper.clearGuestUser();
       LocalStoreHelper.putlogoutStatus(true);
     } catch (e) {

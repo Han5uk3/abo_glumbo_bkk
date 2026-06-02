@@ -2600,4 +2600,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get thankYouInvoice => 'شكرًا لاختيارك Abo Glumbo!';
+
+  @override
+  String get biometricError => '❌ خطأ في المصادقة البيومترية';
+
+  @override
+  String get unknownError => 'خطأ غير معروف';
+
+  @override
+  String get errorDuringLogin => 'خطأ أثناء تسجيل الدخول';
 }

@@ -965,5 +965,8 @@
     }
   },
   "totalLabel": "الإجمالي:",
-  "thankYouInvoice": "شكرًا لاختيارك Abo Glumbo!"
+  "thankYouInvoice": "شكرًا لاختيارك Abo Glumbo!",
+  "biometricError": "❌ خطأ في المصادقة البيومترية",
+  "unknownError": "خطأ غير معروف",
+  "errorDuringLogin": "خطأ أثناء تسجيل الدخول"
 }
