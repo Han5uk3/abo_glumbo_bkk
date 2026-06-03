@@ -1225,6 +1225,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   bool _isSubmitting = false;
+  String? _errorMessage;
 
   DateTime get _warrantyExpiry {
     final warranty = widget.booking.warranty;
@@ -1245,7 +1246,12 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
       firstDate: tomorrow,
       lastDate: lastDate,
     );
-    if (picked != null) setState(() => _selectedDate = picked);
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+        _errorMessage = null;
+      });
+    }
   }
 
   Future<void> _pickTime() async {
@@ -1253,16 +1259,19 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
       context: context,
       initialTime: _selectedTime ?? const TimeOfDay(hour: 9, minute: 0),
     );
-    if (picked != null) setState(() => _selectedTime = picked);
+    if (picked != null) {
+      setState(() {
+        _selectedTime = picked;
+        _errorMessage = null;
+      });
+    }
   }
 
   Future<void> _submitClaim() async {
     if (_selectedDate == null || _selectedTime == null) {
-      showSnackBar(
-        AppLocalizations.of(context)!.selectDateTime,
-        context,
-        backgroundColor: Colors.orange,
-      );
+      setState(() {
+        _errorMessage = AppLocalizations.of(context)!.selectDateTime;
+      });
       return;
     }
 
@@ -1581,6 +1590,26 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
         ),
         const SizedBox(height: 24),
 
+        if (_errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.red, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _errorMessage!,
+                    style: DMSansFont.textStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         // Action Buttons
         Row(
           children: [
