@@ -170,7 +170,6 @@ class _HomeState extends State<Home> {
   }
 
   void _checkAndShowPendingReviews() {
-    if (currentIndex != 0) return; // Must be on Home page
     if (_isReviewSheetOpen) return; // Don't show if already open
     if (_completedUnreviewedBookings.isEmpty) return; // Nothing to review
 
@@ -398,9 +397,7 @@ class _HomeState extends State<Home> {
             setState(() {
               currentIndex = index;
             });
-            if (index == 0) {
-              _checkAndShowPendingReviews();
-            }
+            _checkAndShowPendingReviews();
           },
           isGuest: _isGuest ?? false,
           homeLabel: locale?.home ?? 'Home',
