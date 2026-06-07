@@ -223,7 +223,7 @@ class _HomePageState extends State<HomePage>
               width: MediaQuery.of(context).size.width,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     margin: EdgeInsets.only(top: 6),

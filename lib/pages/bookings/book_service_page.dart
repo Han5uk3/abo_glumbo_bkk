@@ -4,7 +4,8 @@ import 'dart:math' show sin, cos, sqrt, atan2, pi;
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/pages/bookings/worker_list.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/widgets/embedded_technician_search.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
@@ -28,7 +29,6 @@ import 'package:abo_glumbo_bbk/pages/bookings/widgets/rebook_wait_widget.dart';
 
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
-import 'package:abo_glumbo_bbk/pages/bookings/searching_technicians_screen.dart';
 
 class BookServicePage extends StatefulWidget {
   final ServiceModel service;
@@ -55,7 +55,7 @@ class _BookServicePageState extends State<BookServicePage> {
   DateTime? _counterProposedTime;
   bool saving = false;
   bool _rebookFailed = false;
-  String? broadcastRequestId;
+  String? _bookingRequestId;
   AddressModel? selectedAddress;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController notesController = TextEditingController();
@@ -413,6 +413,21 @@ class _BookServicePageState extends State<BookServicePage> {
               ),
               onPressed: () {
                 if (currentStep > 0) {
+                  if (currentStep == 2 && _bookingRequestId != null) {
+                    // Cancel search if backing out of step 2
+                    AppFirestore.bookingRequestsCollectionRef
+                        .doc(_bookingRequestId!)
+                        .delete();
+                    setState(() {
+                      _bookingRequestId = null;
+                      selectedWorker = UserModel(uid: "", role: "agent");
+                    });
+                  } else if (currentStep == 3 && _bookingRequestId != null) {
+                    // If going back to step 2 from step 3, keep the request so they can change worker
+                    setState(() {
+                      selectedWorker = UserModel(uid: "", role: "agent");
+                    });
+                  }
                   setState(() => currentStep--);
                 } else {
                   Navigator.pop(context);
@@ -1670,7 +1685,7 @@ class _BookServicePageState extends State<BookServicePage> {
         },
         onBroadcastIdCreated: (id) {
           setState(() {
-            broadcastRequestId = id;
+            _bookingRequestId = id;
           });
         },
         onFailed: () {
@@ -1683,29 +1698,18 @@ class _BookServicePageState extends State<BookServicePage> {
     if (!_shouldShowTechnicianSelection()) {
       return _buildAutoAssignContent();
     }
-    return WorkerList(
-      service: widget.service,
-      category: widget.service.category ?? "",
-      selectedAddress: selectedAddress,
-      selectedIndexNotifier: selectedIndexNotifier,
-      onWorkerSelected: (worker) {
+
+    if (_bookingRequestId == null) {
+      return const Center(child: Loader());
+    }
+
+    return EmbeddedTechnicianSearch(
+      bookingRequestId: _bookingRequestId!,
+      onTechnicianSelected: (worker) {
         setState(() {
           selectedWorker = worker;
         });
       },
-      onBroadcastIdCreated: (id) {
-        setState(() {
-          broadcastRequestId = id;
-        });
-      },
-      selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
-      timeSlot: isServiceNow
-          ? {"label": "Now", "time": TimeOfDay.now()}
-          : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
-      isOnHour: _shouldShowTechnicianSelection(),
-      notes: notesController.text,
-      issueImageFile: _selectedImage,
-      issueVideoFile: _selectedVideo,
     );
   }
 
@@ -2040,6 +2044,25 @@ class _BookServicePageState extends State<BookServicePage> {
   /// - Service Later + Current On Hour + Today → technician selection
   /// - Service Later + Current On Hour + Future Date → auto-assign
   bool _shouldShowTechnicianSelection() {
+    if (isServiceNow && !_isCurrentTimeOffHour()) {
+      return true;
+    }
+
+    if (!isServiceNow && selectedDate != null) {
+      final DateTime bookingDate = DateTime(
+        selectedDate!.year,
+        selectedDate!.month,
+        selectedDate!.day,
+        timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
+            .hour,
+        timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
+            .minute,
+      );
+      if (isSameDay(bookingDate, _getMiddleEastNow())) {
+        return true;
+      }
+    }
+
     return false;
   }
 
@@ -2169,7 +2192,7 @@ class _BookServicePageState extends State<BookServicePage> {
       children: [
         Expanded(
           child: ElevatedButton(
-            onPressed: _onContinueFromSecondStep,
+            onPressed: saving ? null : _onContinueFromSecondStep,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               minimumSize: const Size(0, 54),
@@ -2177,20 +2200,22 @@ class _BookServicePageState extends State<BookServicePage> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(
-              AppLocalizations.of(context)?.continueText ?? 'Continue',
-              style: DMSansFont.textStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            child: saving
+                ? const Loader(color: Colors.white)
+                : Text(
+                    AppLocalizations.of(context)?.continueText ?? 'Continue',
+                    style: DMSansFont.textStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
           ),
         ),
       ],
     );
   }
 
-  void _onContinueFromSecondStep() {
+  void _onContinueFromSecondStep() async {
     if (notesController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -2215,7 +2240,38 @@ class _BookServicePageState extends State<BookServicePage> {
       return;
     }
 
-    setState(() => currentStep = 2);
+    if (_shouldShowTechnicianSelection() && _bookingRequestId == null) {
+      setState(() => saving = true);
+      final requestId = await BookingUtils.saveBookingRequest(
+        service: widget.service,
+        selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
+        paymentMode: "Outside App", // Default for now
+        customerData: customerData!,
+        notes: notesController.text,
+        selectedImage: _selectedImage,
+        selectedVideo: _selectedVideo,
+        timeSlot: isServiceNow
+            ? {"label": "Now", "time": TimeOfDay.now()}
+            : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+        selectedAddress: selectedAddress,
+        serviceLocation: _matchedServiceZone,
+      );
+
+      if (requestId != null && mounted) {
+        setState(() {
+          _bookingRequestId = requestId;
+          saving = false;
+          currentStep = 2;
+        });
+      } else if (mounted) {
+        setState(() => saving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to create booking request")),
+        );
+      }
+    } else {
+      setState(() => currentStep = 2);
+    }
   }
 
   Widget _buildThirdStepBottom(BuildContext context) {
@@ -2227,34 +2283,31 @@ class _BookServicePageState extends State<BookServicePage> {
 
     if (_shouldShowTechnicianSelection()) {
       // On-hour broadcast: hide continue button until a technician is selected
-      return ValueListenableBuilder<int?>(
-        valueListenable: selectedIndexNotifier,
-        builder: (context, value, _) {
-          if (value == null) return const SizedBox.shrink();
-          return Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => setState(() => currentStep = 3),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    minimumSize: const Size(0, 54),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)?.continueText ?? 'Continue',
-                    style: DMSansFont.textStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+      if (selectedWorker.uid == null || selectedWorker.uid!.isEmpty) {
+        return const SizedBox.shrink();
+      }
+      return Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () => setState(() => currentStep = 3),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                minimumSize: const Size(0, 54),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-            ],
-          );
-        },
+              child: Text(
+                AppLocalizations.of(context)?.continueText ?? 'Continue',
+                style: DMSansFont.textStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
       );
     }
 
@@ -2337,7 +2390,74 @@ class _BookServicePageState extends State<BookServicePage> {
         isServiceNow || isSameDay(bookingDate, _getMiddleEastNow());
 
     if (isManual) {
-      final requestId = await BookingUtils.saveBookingRequest(
+      if (selectedWorker.uid?.isNotEmpty == true && _bookingRequestId != null) {
+        // We already have a selected technician and a request ID.
+        // Convert the request to a booking.
+        try {
+          final docSnap = await AppFirestore.bookingRequestsCollectionRef
+              .doc(_bookingRequestId!)
+              .get();
+
+          if (docSnap.exists) {
+            final requestData = docSnap.data() as Map<String, dynamic>;
+            final bookingJson = {
+              ...requestData,
+              'agent': selectedWorker.toJson(),
+              'bookingStatusCode': 'A',
+              'assignedAt': Timestamp.now(),
+              'technicianSelectedAt': Timestamp.now(),
+              'paymentCompleted': false,
+            };
+
+            await AppFirestore.bookingsCollectionRef
+                .doc(_bookingRequestId!)
+                .set(bookingJson);
+
+            await AppFirestore.bookingRequestsCollectionRef
+                .doc(_bookingRequestId!)
+                .delete();
+
+            LocalStoreHelper.clearBookingRequestId();
+
+            // Notify tech
+            await AppServices.recordTechnicianNotification(
+              technicianId: selectedWorker.uid!,
+              titleEn: 'Job Confirmed',
+              titleAr: 'تم تأكيد الطلب',
+              bodyEn: 'You have been assigned to a booking.',
+              bodyAr: 'لقد تم تعيينك في حجز جديد.',
+              type: 'booking_confirmed',
+              data: {'bookingId': _bookingRequestId},
+            );
+
+            setState(() => saving = false);
+
+            if (mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BookingCompletedPage(
+                    service: widget.service,
+                    worker: selectedWorker,
+                    selectedDate: bookingDate,
+                    selectedTime: isServiceNow
+                        ? {"label": "Now", "time": TimeOfDay.now()}
+                        : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+                    address: selectedAddress,
+                  ),
+                ),
+                (route) => false,
+              );
+            }
+            return;
+          }
+        } catch (e) {
+          debugPrint("Error confirming booking request: $e");
+        }
+      }
+
+      // Fallback if no worker was selected via the embedded widget (e.g. rebook flow)
+      final requestId = await BookingUtils.saveBooking(
         service: widget.service,
         selectedDate: selectedDate ?? _getMiddleEastNow(),
         paymentMode: "Outside App",
@@ -2350,17 +2470,26 @@ class _BookServicePageState extends State<BookServicePage> {
             : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
         selectedAddress: selectedAddress,
         serviceLocation: _matchedServiceZone,
+        agent: selectedWorker,
       );
 
       setState(() => saving = false);
 
       if (requestId != null && mounted) {
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                SearchingTechniciansScreen(bookingRequestId: requestId),
+            builder: (context) => BookingCompletedPage(
+              service: widget.service,
+              worker: selectedWorker,
+              selectedDate: bookingDate,
+              selectedTime: isServiceNow
+                  ? {"label": "Now", "time": TimeOfDay.now()}
+                  : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+              address: selectedAddress,
+            ),
           ),
+          (route) => false,
         );
       } else if (mounted) {
         _showSnackBar(
