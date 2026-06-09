@@ -3,9 +3,6 @@ import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/models/address.dart';
-import 'package:abo_glumbo_bbk/models/customer.dart';
-import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
@@ -175,7 +172,17 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
         newData['updatedAt'] = Timestamp.now();
         newData['status'] = 'searching';
         newData['acceptedTechnicians'] = [];
-        newData['rejectedTechnicians'] = [];
+
+        // Exclude the technician who rejected or ignored the rebook
+        List<dynamic> rejected = data['rejectedTechnicians'] ?? [];
+        if (data['isRebook'] == true && data['rebookTechnicianId'] != null) {
+          if (!rejected.contains(data['rebookTechnicianId'])) {
+            rejected.add(data['rebookTechnicianId']);
+          }
+        }
+        newData['rejectedTechnicians'] = rejected;
+        newData['isRebook'] = false;
+        newData['rebookTechnicianId'] = null;
 
         await AppFirestore.bookingRequestsCollectionRef.doc(newId).set(newData);
         LocalStoreHelper.putBookingRequestId(newId);

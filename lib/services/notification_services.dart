@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:abo_glumbo_bbk/pages/bookings/searching_technicians_screen.dart';
 import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -36,10 +37,10 @@ class NotificationServices {
       FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin
   _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  
+
   /// Track if the tracking notification has already alerted the user
   static bool _hasAlertedTracking = false;
-  
+
   /// Track the current active chat to suppress notifications when user is inside the chat
   static String? currentActiveChatId;
 
@@ -98,7 +99,7 @@ class NotificationServices {
           'abo_glumbo_tracking_silent', // Silent channel
           'Live Tracking updates',
           description: 'Background updates for live tracking',
-          importance: Importance.low, 
+          importance: Importance.low,
           playSound: false,
           enableVibration: false,
           showBadge: false,
@@ -164,13 +165,15 @@ class NotificationServices {
         // Setup message handlers
         FirebaseMessaging.onMessage.listen((RemoteMessage message) {
           debugPrint('📨 Foreground message received: ${message.messageId}');
-          
+
           final data = message.data;
           final String? incomingChatId = data['chatId']?.toString();
-          
+
           // Suppress notification if user is already in this chat
           if (incomingChatId != null && incomingChatId == currentActiveChatId) {
-            debugPrint('🤫 Suppressing foreground notification for active chat: $incomingChatId');
+            debugPrint(
+              '🤫 Suppressing foreground notification for active chat: $incomingChatId',
+            );
             return;
           }
 
@@ -446,18 +449,24 @@ class NotificationServices {
     }
 
     // Use Alert channel for first time, Silent channel thereafter
-    final String channelId = _hasAlertedTracking 
-        ? 'abo_glumbo_tracking_silent' 
+    final String channelId = _hasAlertedTracking
+        ? 'abo_glumbo_tracking_silent'
         : 'abo_glumbo_tracking_alert';
-    
+
     // Set importance based on channel
-    final Importance importance = _hasAlertedTracking ? Importance.low : Importance.high;
-    final Priority priority = _hasAlertedTracking ? Priority.low : Priority.high;
+    final Importance importance = _hasAlertedTracking
+        ? Importance.low
+        : Importance.high;
+    final Priority priority = _hasAlertedTracking
+        ? Priority.low
+        : Priority.high;
 
     AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       channelId,
       _hasAlertedTracking ? 'Live Tracking updates' : 'Live Tracking Alert',
-      channelDescription: _hasAlertedTracking ? 'Background updates' : 'Initial alert',
+      channelDescription: _hasAlertedTracking
+          ? 'Background updates'
+          : 'Initial alert',
       importance: importance,
       priority: priority,
       ongoing: true, // Non-dismissible
@@ -624,6 +633,31 @@ class NotificationServices {
         } else {
           debugPrint('⚠️ Chat ID is missing in notification payload');
         }
+      } else if (type == 'offer_accepted' && data['requestId'] != null) {
+        final reqId = data['requestId'] as String;
+        debugPrint(
+          '✅ Offer accepted! Navigating to SearchingTechniciansScreen for request: $reqId',
+        );
+        if (navigatorKey?.currentState != null) {
+          navigatorKey!.currentState!.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const Home()),
+            (route) => false,
+          );
+          navigatorKey!.currentState!.push(
+            MaterialPageRoute(
+              builder: (context) =>
+                  SearchingTechniciansScreen(bookingRequestId: reqId),
+            ),
+          );
+        }
+      } else if (type == 'booking_assigned') {
+        debugPrint('✅ Booking assigned! Navigating to Home');
+        if (navigatorKey?.currentState != null) {
+          navigatorKey!.currentState!.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const Home()),
+            (route) => false,
+          );
+        }
       } else {
         debugPrint('ℹ️ Not a recognized notification type, ignoring');
       }
@@ -746,7 +780,9 @@ class NotificationServices {
       _triggeredLocalNotifications[bookingId] = {};
     }
     _triggeredLocalNotifications[bookingId]![type] = true;
-    debugPrint('🔔 Marked tracking notification $type as triggered for $bookingId');
+    debugPrint(
+      '🔔 Marked tracking notification $type as triggered for $bookingId',
+    );
   }
 
   /// Clear the local notification triggers for a booking (e.g. when tracking stops/resets)
@@ -762,10 +798,10 @@ class NotificationServices {
     required String technicianName,
   }) async {
     final languageCode = LocalStoreHelper.getUserlanguage();
-    
+
     String title = '';
     String body = '';
-    
+
     if (languageCode == 'ar') {
       switch (type) {
         case 'on_the_way':
@@ -797,7 +833,8 @@ class NotificationServices {
           break;
         case 'nearby':
           title = 'ٹیکنیشن قریب ہی ہے';
-          body = 'آپ کا ٹیکنیشن $technicianName 5 منٹ سے भी कम وقت میں پہنچ رہا ہے۔';
+          body =
+              'آپ کا ٹیکنیشن $technicianName 5 منٹ سے भी कम وقت میں پہنچ رہا ہے۔';
           break;
         case 'arrived':
           title = 'ٹیکنیشن پہنچ گیا ہے';
@@ -809,7 +846,8 @@ class NotificationServices {
       switch (type) {
         case 'on_the_way':
           title = 'Technician is on the way';
-          body = 'Your technician $technicianName is on the way to your location.';
+          body =
+              'Your technician $technicianName is on the way to your location.';
           break;
         case '10_minutes':
           title = 'Technician is 10 minutes away';
@@ -821,7 +859,8 @@ class NotificationServices {
           break;
         case 'arrived':
           title = 'Technician Arrived';
-          body = 'Your technician $technicianName has arrived at your location.';
+          body =
+              'Your technician $technicianName has arrived at your location.';
           break;
       }
     }

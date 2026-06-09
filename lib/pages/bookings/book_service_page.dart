@@ -18,6 +18,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
+import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
@@ -50,11 +51,11 @@ class _BookServicePageState extends State<BookServicePage> {
       0; // 0: Schedule, 1: Details, 2: Expert/Auto-assign, 3: Review & Confirm
 
   bool isServiceNow = true;
-
   DateTime? selectedDate;
   DateTime? _counterProposedTime;
   bool saving = false;
   bool _rebookFailed = false;
+  bool _rebookFailedAcknowledged = false;
   String? _bookingRequestId;
   AddressModel? selectedAddress;
   final _formKey = GlobalKey<FormState>();
@@ -1652,6 +1653,8 @@ class _BookServicePageState extends State<BookServicePage> {
                   ..add(LoadAddresses()),
             child: AddIssueImageAndVideo(
               showAddressPicker: false,
+              initialImage: _selectedImage,
+              initialVideo: _selectedVideo,
               onImageSelected: (value) =>
                   setState(() => _selectedImage = value),
               onVideoSelected: (value) =>
@@ -1695,6 +1698,9 @@ class _BookServicePageState extends State<BookServicePage> {
         },
       );
     }
+    if (_rebookFailed && !_rebookFailedAcknowledged) {
+      return _buildRebookFailedContent();
+    }
     if (!_shouldShowTechnicianSelection()) {
       return _buildAutoAssignContent();
     }
@@ -1710,6 +1716,116 @@ class _BookServicePageState extends State<BookServicePage> {
           selectedWorker = worker;
         });
       },
+    );
+  }
+
+  Widget _buildRebookFailedContent() {
+    final bool shouldSearch = _shouldShowTechnicianSelection();
+    final String locale = AppLocalizations.of(context)?.localeName ?? 'en';
+
+    return Container(
+      margin: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.red.shade50,
+            ),
+            child: Icon(Icons.person_off_rounded, color: Colors.red.shade600, size: 40),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            locale == 'ar'
+                ? 'اعتذر الفني'
+                : locale == 'ur'
+                ? 'ٹیکنیشن نے معذرت کر لی'
+                : "Technician Cancelled",
+            style: PoppinsFont.textStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            locale == 'ar'
+                ? 'لقد اعتذر الفني المطلوب عن طلب إعادة الجدولة الخاص بك. يرجى اختيار خيار آخر.'
+                : locale == 'ur'
+                ? 'مطلوبہ ٹیکنیشن نے آپ کی دوبارہ شیڈولنگ کی درخواست سے معذرت کر لی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔'
+                : "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.",
+            textAlign: TextAlign.center,
+            style: DMSansFont.textStyle(fontSize: 13, color: Colors.grey.shade600, height: 1.4),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () async {
+              if (shouldSearch) {
+                setState(() => saving = true);
+                final requestId = await BookingUtils.saveBookingRequest(
+                  service: widget.service,
+                  selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
+                  paymentMode: "Outside App", // Default for now
+                  customerData: customerData!,
+                  notes: notesController.text,
+                  selectedImage: _selectedImage,
+                  selectedVideo: _selectedVideo,
+                  timeSlot: isServiceNow
+                      ? {"label": "Now", "time": TimeOfDay.now()}
+                      : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+                  selectedAddress: selectedAddress,
+                  serviceLocation: _matchedServiceZone,
+                );
+                
+                if (mounted) {
+                  setState(() {
+                    if (requestId != null) {
+                      _bookingRequestId = requestId;
+                    }
+                    saving = false;
+                    _rebookFailedAcknowledged = true;
+                  });
+                }
+              } else {
+                setState(() {
+                  _rebookFailedAcknowledged = true;
+                });
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              minimumSize: const Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 0,
+            ),
+            child: saving 
+              ? const Loader(color: Colors.white) 
+              : Text(
+              shouldSearch 
+                ? (locale == 'ar' ? 'البحث عن فنيين متاحين' : locale == 'ur' ? 'دستیاب ٹیکنیشنز تلاش کریں' : "Search Available Technicians")
+                : (locale == 'ar' ? 'المتابعة للتعيين التلقائي' : locale == 'ur' ? 'خودکار تفویض کے لیے آگے بڑھیں' : "Proceed to Auto-Assignment"),
+              style: DMSansFont.textStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -2240,7 +2356,7 @@ class _BookServicePageState extends State<BookServicePage> {
       return;
     }
 
-    if (_shouldShowTechnicianSelection() && _bookingRequestId == null) {
+    if (_shouldShowTechnicianSelection() && _bookingRequestId == null && widget.rebookTechnician == null) {
       setState(() => saving = true);
       final requestId = await BookingUtils.saveBookingRequest(
         service: widget.service,

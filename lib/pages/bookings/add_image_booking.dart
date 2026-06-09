@@ -20,6 +20,8 @@ class AddIssueImageAndVideo extends StatefulWidget {
   final ValueChanged<File?>? onVideoSelected;
   final ValueChanged<AddressModel?>? isAddressSelected;
   final bool showAddressPicker;
+  final File? initialImage;
+  final File? initialVideo;
 
   const AddIssueImageAndVideo({
     super.key,
@@ -27,6 +29,8 @@ class AddIssueImageAndVideo extends StatefulWidget {
     this.onVideoSelected,
     this.isAddressSelected,
     this.showAddressPicker = true,
+    this.initialImage,
+    this.initialVideo,
   });
 
   @override
@@ -36,6 +40,8 @@ class AddIssueImageAndVideo extends StatefulWidget {
 class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
   File? _selectedImage;
   File? _selectedVideo;
+
+
   final ImagePicker _picker = ImagePicker();
   bool isLoadingImage = false;
   bool isLoadingVideo = false;
@@ -265,6 +271,8 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
   @override
   void initState() {
     super.initState();
+    _selectedImage = widget.initialImage;
+    _selectedVideo = widget.initialVideo;
     context.read<AddressBloc>().add(LoadAddresses());
     _fetchCoordinatesAndGetCustomerAddress();
   }

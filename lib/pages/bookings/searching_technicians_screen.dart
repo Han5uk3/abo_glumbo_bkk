@@ -161,7 +161,17 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
         newData['updatedAt'] = Timestamp.now();
         newData['status'] = 'searching';
         newData['acceptedTechnicians'] = [];
-        newData['rejectedTechnicians'] = [];
+        
+        // Exclude the technician who rejected or ignored the rebook
+        List<dynamic> rejected = data['rejectedTechnicians'] ?? [];
+        if (data['isRebook'] == true && data['rebookTechnicianId'] != null) {
+          if (!rejected.contains(data['rebookTechnicianId'])) {
+            rejected.add(data['rebookTechnicianId']);
+          }
+        }
+        newData['rejectedTechnicians'] = rejected;
+        newData['isRebook'] = false;
+        newData['rebookTechnicianId'] = null;
 
         await AppFirestore.bookingRequestsCollectionRef.doc(newId).set(newData);
         LocalStoreHelper.putBookingRequestId(newId);
@@ -476,7 +486,9 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Column(
+        child: _bookingRequestData?['isRebook'] == true 
+          ? _buildRebookBody() 
+          : Column(
           children: [
             if (showSearchingHeader) ...[
               _buildPulsingSearchSection(primaryColor),
@@ -491,6 +503,212 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
               Expanded(
                 child: _buildTechniciansListSection(),
               ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRebookBody() {
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: AppFirestore.jobOffersCollectionRef
+          .where('requestId', isEqualTo: _currentRequestId)
+          .snapshots()
+          .map((snapshot) => snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList()),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Loader(),
+                const SizedBox(height: 16),
+                Text(
+                  AppLocalizations.of(context)?.localeName == 'ar'
+                      ? 'بانتظار الفني المطلوب...'
+                      : AppLocalizations.of(context)?.localeName == 'ur'
+                      ? 'مطلوبہ ٹیکنیشن کا انتظار ہے...'
+                      : 'Waiting for requested technician...',
+                  style: DMSansFont.textStyle(fontSize: 16, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 32),
+                CircularProgressIndicator(
+                  value: _secondsRemaining / 120,
+                  strokeWidth: 6,
+                  backgroundColor: Colors.grey[200],
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "$_secondsRemaining" "s",
+                  style: DMSansFont.textStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final offers = snapshot.data!;
+        final counterOffer = offers.firstWhere(
+          (o) => o['status'] == 'counter_offered',
+          orElse: () => <String, dynamic>{},
+        );
+
+        if (counterOffer.isNotEmpty) {
+          return _buildCounterOfferUI(counterOffer);
+        }
+
+        final status = offers.first['status'];
+        if (status == 'accepted_by_technician' || status == 'declined' || status == 'expired') {
+            if (status == 'declined' || status == 'expired' || _elapsedSeconds >= 120) {
+               return Column(children: [ _buildExpiredSection() ]);
+            }
+        }
+
+        return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Loader(),
+                const SizedBox(height: 16),
+                Text(
+                  AppLocalizations.of(context)?.localeName == 'ar'
+                      ? 'بانتظار الفني المطلوب...'
+                      : AppLocalizations.of(context)?.localeName == 'ur'
+                      ? 'مطلوبہ ٹیکنیشن کا انتظار ہے...'
+                      : 'Waiting for requested technician...',
+                  style: DMSansFont.textStyle(fontSize: 16, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 32),
+                CircularProgressIndicator(
+                  value: _secondsRemaining / 120,
+                  strokeWidth: 6,
+                  backgroundColor: Colors.grey[200],
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "$_secondsRemaining" "s",
+                  style: DMSansFont.textStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
+          );
+      },
+    );
+  }
+
+  Widget _buildCounterOfferUI(Map<String, dynamic> offer) {
+    final proposedTime = offer['proposedTime'] as Timestamp;
+    final l10n = AppLocalizations.of(context)!;
+    final locale = l10n.localeName;
+
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.event_repeat_rounded, size: 48, color: Colors.blue[700]),
+            const SizedBox(height: 16),
+            Text(
+              locale == 'ar' ? 'عرض بديل من الفني' : locale == 'ur' ? 'ٹیکنیشن کی طرف سے متبادل پیشکش' : 'Counter-Offer from Technician',
+              style: DMSansFont.textStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              locale == 'ar' ? 'لقد اقترح الفني وقتاً جديداً' : locale == 'ur' ? 'ٹیکنیشن نے نیا وقت تجویز کیا ہے' : 'The technician proposed a new time',
+              textAlign: TextAlign.center,
+              style: DMSansFont.textStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                "${proposedTime.toDate().day}/${proposedTime.toDate().month}/${proposedTime.toDate().year} ${TimeOfDay.fromDateTime(proposedTime.toDate()).format(context)}",
+                style: DMSansFont.textStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[900],
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      AppFirestore.jobOffersCollectionRef.doc(offer['id']).update({
+                        'status': 'declined',
+                        'updatedAt': FieldValue.serverTimestamp(),
+                      });
+                      setState(() {
+                         _secondsRemaining = 0;
+                         _elapsedSeconds = 120; // force expired screen
+                      });
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: Text(locale == 'ar' ? 'رفض العرض' : locale == 'ur' ? 'پیشکش مسترد کریں' : 'Reject Offer'),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await AppFirestore.jobOffersCollectionRef.doc(offer['id']).update({
+                        'status': 'accepted_by_customer',
+                        'updatedAt': FieldValue.serverTimestamp(),
+                      });
+                      await AppFirestore.bookingRequestsCollectionRef.doc(_currentRequestId).update({
+                         'bookingDateTime': proposedTime,
+                      });
+                      final techData = await AppFirestore.usersCollectionRef.doc(offer['technicianId']).get();
+                      if (techData.exists) {
+                         _selectTechnician(techData.data() as Map<String, dynamic>);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 0,
+                    ),
+                    child: Text(locale == 'ar' ? 'قبول العرض' : locale == 'ur' ? 'پیشکش قبول کریں' : 'Accept Offer', style: const TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

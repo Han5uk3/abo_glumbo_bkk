@@ -15,7 +15,6 @@ import 'package:abo_glumbo_bbk/pages/bookings/timeline.dart';
 import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/pages/bookings/widgets/counter_propose_sheet.dart';
 import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/utils/whatsapp_utils.dart';
@@ -2280,28 +2279,6 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (context) => CounterProposeSheet(booking: booking),
-                );
-              },
-              icon: const Icon(Icons.edit_calendar_rounded, size: 18),
-              label: Text(l10n.proposeNewTime),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
           ),
         ],
       ),

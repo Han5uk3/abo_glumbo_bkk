@@ -16,6 +16,8 @@ class JobRequestModel {
   final bool isOnHour;
   final Timestamp? bookingDateTime;
   final String status;
+  final bool isRebook;
+  final String? rebookTechnicianId;
 
   JobRequestModel({
     required this.id,
@@ -30,6 +32,8 @@ class JobRequestModel {
     required this.isOnHour,
     this.bookingDateTime,
     required this.status,
+    this.isRebook = false,
+    this.rebookTechnicianId,
   });
 
   factory JobRequestModel.fromJson(Map<String, dynamic> json) {
@@ -46,6 +50,8 @@ class JobRequestModel {
       isOnHour: json['isOnHour'] ?? true,
       bookingDateTime: json['bookingDateTime'] as Timestamp?,
       status: json['status'] ?? 'pending',
+      isRebook: json['isRebook'] ?? false,
+      rebookTechnicianId: json['rebookTechnicianId'],
     );
   }
 
@@ -63,6 +69,8 @@ class JobRequestModel {
       'isOnHour': isOnHour,
       'bookingDateTime': bookingDateTime,
       'status': status,
+      'isRebook': isRebook,
+      'rebookTechnicianId': rebookTechnicianId,
     };
   }
 }

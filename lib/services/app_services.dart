@@ -1492,6 +1492,7 @@ class AppServices {
     required String? agentUid,
   }) async {
     try {
+      debugPrint('📝 Creating counter offer for booking: $bookingId');
       final docRef = AppFirestore.counterOffersCollectionRef.doc();
       final counterOffer = CounterOfferModel(
         id: docRef.id,
@@ -1504,10 +1505,12 @@ class AppServices {
         createdAt: Timestamp.now(),
       );
 
+      // Fetch any existing counter_offered job offers for this booking
       final offers = await AppFirestore.jobOffersCollectionRef
           .where('bookingId', isEqualTo: bookingId)
           .where('status', isEqualTo: 'counter_offered')
           .get();
+      debugPrint('📝 Found ${offers.docs.length} counter_offered job offers');
 
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         final bookingRef = AppFirestore.bookingsCollectionRef.doc(bookingId);
@@ -1540,6 +1543,8 @@ class AppServices {
         }
       });
 
+      debugPrint('✅ Counter offer created successfully: ${docRef.id}');
+
       if (agentUid != null && agentUid.isNotEmpty) {
         await recordTechnicianNotification(
           technicianId: agentUid,
@@ -1553,11 +1558,13 @@ class AppServices {
       }
 
       return true;
-    } catch (e) {
-      debugPrint('Error creating counter offer: $e');
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error creating counter offer: $e');
+      debugPrint('Stack trace: $stackTrace');
       return false;
     }
   }
+
 
   static Future<bool> respondToCounterOffer({
     required BookingModel booking,
