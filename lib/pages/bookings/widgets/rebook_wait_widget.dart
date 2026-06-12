@@ -89,6 +89,15 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
 
   Future<void> _startFlow() async {
     try {
+      if (widget.technician.isOnline != true) {
+        if (mounted) {
+          setState(() {
+            _isInitializing = false;
+          });
+        }
+        return;
+      }
+
       // 1. Handle File Uploads
       String? issueImageUrl;
       String? issueVideoUrl;
@@ -207,6 +216,10 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
   Widget build(BuildContext context) {
     if (_isInitializing) {
       return const Center(child: Loader());
+    }
+
+    if (widget.technician.isOnline != true) {
+      return _buildOfflineUI();
     }
 
     return StreamBuilder<List<Map<String, dynamic>>>(
@@ -388,6 +401,75 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildOfflineUI() {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = l10n.localeName;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundImage:
+                widget.technician.profileUrl != null &&
+                    widget.technician.profileUrl!.isNotEmpty
+                ? CachedNetworkImageProvider(widget.technician.profileUrl!)
+                : null,
+            child:
+                widget.technician.profileUrl == null ||
+                    widget.technician.profileUrl!.isEmpty
+                ? const Icon(Icons.person, size: 50)
+                : null,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            widget.technician.name ?? "",
+            style: DMSansFont.textStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            locale == 'ar'
+                ? 'الفني غير متصل حالياً'
+                : locale == 'ur'
+                ? 'ٹیکنیشن اس وقت آف لائن ہے'
+                : "Technician is currently offline",
+            style: DMSansFont.textStyle(fontSize: 16, color: Colors.red[600]),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          ElevatedButton(
+            onPressed: () {
+              _hasResponded = true;
+              widget.onFailed();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              locale == 'ar'
+                  ? 'المتابعة للبحث العادي'
+                  : locale == 'ur'
+                  ? 'عام تلاش جاری رکھیں'
+                  : "Continue with normal search",
+              style: DMSansFont.textStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

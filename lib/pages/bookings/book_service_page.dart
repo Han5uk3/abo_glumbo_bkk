@@ -1930,17 +1930,20 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildReviewStepContent() {
-    final DateTime bookingDate = isServiceNow
-        ? _getMiddleEastNow()
-        : DateTime(
-            selectedDate!.year,
-            selectedDate!.month,
-            selectedDate!.day,
-            timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
-                .hour,
-            timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
-                .minute,
-          );
+    final DateTime bookingDate = _counterProposedTime ??
+        (isServiceNow
+            ? _getMiddleEastNow()
+            : DateTime(
+                selectedDate!.year,
+                selectedDate!.month,
+                selectedDate!.day,
+                timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]
+                        ["time"]
+                    .hour,
+                timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]
+                        ["time"]
+                    .minute,
+              ));
     final isAssignmentOnHour = widget.service.isOnWorkHour(
       currentTime: bookingDate,
     );
@@ -1950,12 +1953,17 @@ class _BookServicePageState extends State<BookServicePage> {
     final languageCode = AppLocalizations.of(context)?.localeName ?? 'en';
     final serviceName =
         widget.service.nameLocalized(languageCode: languageCode) ?? '';
-    final timeLabel = isServiceNow
-        ? (AppLocalizations.of(context)?.serviceNow ?? 'Service Now')
-        : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"];
-    final dateStr = isServiceNow
-        ? '${_getMiddleEastNow().day}/${_getMiddleEastNow().month}/${_getMiddleEastNow().year}'
-        : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}';
+    final timeLabel = _counterProposedTime != null
+        ? DateFormat.jm(languageCode).format(_counterProposedTime!)
+        : (isServiceNow
+            ? (AppLocalizations.of(context)?.serviceNow ?? 'Service Now')
+            : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]
+                ["label"]);
+    final dateStr = _counterProposedTime != null
+        ? '${_counterProposedTime!.day}/${_counterProposedTime!.month}/${_counterProposedTime!.year}'
+        : (isServiceNow
+            ? '${_getMiddleEastNow().day}/${_getMiddleEastNow().month}/${_getMiddleEastNow().year}'
+            : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}');
     final addressName = selectedAddress?.fullName ?? '';
 
     return ListView(
@@ -2575,18 +2583,27 @@ class _BookServicePageState extends State<BookServicePage> {
       // Fallback if no worker was selected via the embedded widget (e.g. rebook flow)
       final requestId = await BookingUtils.saveBooking(
         service: widget.service,
-        selectedDate: selectedDate ?? _getMiddleEastNow(),
+        selectedDate: bookingDate,
         paymentMode: "Outside App",
         customerData: customerData!,
         notes: notesController.text,
         selectedImage: _selectedImage,
         selectedVideo: _selectedVideo,
-        timeSlot: isServiceNow
-            ? {"label": "Now", "time": TimeOfDay.now()}
-            : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+        timeSlot: _counterProposedTime != null
+            ? {
+                "label": DateFormat.jm(
+                        AppLocalizations.of(context)?.localeName ?? 'en')
+                    .format(bookingDate),
+                "time": TimeOfDay.fromDateTime(bookingDate)
+              }
+            : (isServiceNow
+                ? {"label": "Now", "time": TimeOfDay.now()}
+                : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]),
         selectedAddress: selectedAddress,
         serviceLocation: _matchedServiceZone,
         agent: selectedWorker,
+        requestId: _bookingRequestId,
+        rebookTechnicianId: widget.rebookTechnician?.uid,
       );
 
       setState(() => saving = false);
@@ -2599,9 +2616,17 @@ class _BookServicePageState extends State<BookServicePage> {
               service: widget.service,
               worker: selectedWorker,
               selectedDate: bookingDate,
-              selectedTime: isServiceNow
-                  ? {"label": "Now", "time": TimeOfDay.now()}
-                  : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+              selectedTime: _counterProposedTime != null
+                  ? {
+                      "label": DateFormat.jm(
+                              AppLocalizations.of(context)?.localeName ?? 'en')
+                          .format(bookingDate),
+                      "time": TimeOfDay.fromDateTime(bookingDate)
+                    }
+                  : (isServiceNow
+                      ? {"label": "Now", "time": TimeOfDay.now()}
+                      : timeSlots[selectedTimeCategory]["values"]
+                          [selectedTimeSlot]),
               address: selectedAddress,
             ),
           ),
