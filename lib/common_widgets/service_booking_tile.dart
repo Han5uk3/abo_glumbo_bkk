@@ -382,7 +382,7 @@ class ServiceBookingTile extends StatelessWidget {
                   if (booking.bookingStatusCode == "C" ||
                       booking.bookingStatusCode == "VP")
                     const SizedBox.shrink()
-                  else if (booking.bookingStatusCode == "P")
+                  else if (booking.bookingStatusCode == "P" || booking.bookingStatusCode == "SR")
                     SizedBox(
                       height: 23,
                       child: OutlinedButton(
@@ -515,7 +515,7 @@ class ServiceBookingTile extends StatelessWidget {
   Widget _buildBookingTimestamp(BuildContext context) {
     final locale = AppLocalizations.of(context)?.localeName ?? 'en';
 
-    if (booking.bookingStatusCode == "P" && booking.createdAt != null) {
+    if ((booking.bookingStatusCode == "P" || booking.bookingStatusCode == "SR") && booking.createdAt != null) {
       return _timestampText(
         "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), locale)}",
       );

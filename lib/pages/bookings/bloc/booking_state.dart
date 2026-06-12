@@ -34,7 +34,7 @@ class BookingsLoaded extends BookingState {
     switch (selectedStatus) {
       case BookingStatusType.pending:
         final pending = allBookings
-            .where((e) => e.bookingStatusCode == 'P')
+            .where((e) => e.bookingStatusCode == 'P' || e.bookingStatusCode == 'SR')
             .toList();
         // Sort by createdAt in descending order (newest first)
         pending.sort((a, b) {

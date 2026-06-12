@@ -61,7 +61,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   Widget _buildBookingTimestamp(BuildContext context, BookingModel booking) {
     final locale = AppLocalizations.of(context)?.localeName ?? 'en';
 
-    if (booking.bookingStatusCode == "P" && booking.createdAt != null) {
+    if ((booking.bookingStatusCode == "P" || booking.bookingStatusCode == "SR") && booking.createdAt != null) {
       return _timestampText(
         "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), locale)}",
       );
