@@ -2289,7 +2289,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   void _checkRebookTimeout(BookingModel booking) {
     if (_isCheckingTimeout) return;
     if (booking.rebookTechnicianId != null &&
-        booking.bookingStatusCode == 'P') {
+        (booking.bookingStatusCode == 'P' || booking.bookingStatusCode == 'SR')) {
       _isCheckingTimeout = true;
       AppFirestore.jobOffersCollectionRef
           .where('bookingId', isEqualTo: booking.id)
