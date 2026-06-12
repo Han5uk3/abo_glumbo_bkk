@@ -1903,6 +1903,38 @@ class AppServices {
         'status': status,
         'updatedAt': FieldValue.serverTimestamp(),
       });
+
+      final offerDoc = await AppFirestore.jobOffersCollectionRef.doc(offerId).get();
+      if (offerDoc.exists) {
+        final offerData = offerDoc.data() as Map<String, dynamic>;
+        final technicianId = offerData['technicianId'];
+        final customerName = offerData['customerName'] ?? 'Customer';
+
+        if (technicianId != null) {
+          if (status == 'accepted_by_customer') {
+            await recordTechnicianNotification(
+              technicianId: technicianId,
+              titleEn: 'Counter Offer Accepted',
+              titleAr: 'تم قبول عرض الموعد البديل',
+              bodyEn: '$customerName has accepted your proposed time.',
+              bodyAr: 'لقد قبل $customerName الوقت المقترح.',
+              type: 'counter_offer_accepted',
+              data: {'requestId': requestId},
+            );
+          } else if (status == 'declined') {
+            await recordTechnicianNotification(
+              technicianId: technicianId,
+              titleEn: 'Counter Offer Declined',
+              titleAr: 'تم رفض عرض الموعد البديل',
+              bodyEn: '$customerName has declined your proposed time.',
+              bodyAr: 'لقد رفض $customerName الوقت المقترح.',
+              type: 'counter_offer_declined',
+              data: {'requestId': requestId},
+            );
+          }
+        }
+      }
+
       return true;
     } catch (e) {
       debugPrint('Error responding to job offer for request: $e');

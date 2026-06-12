@@ -764,6 +764,12 @@ class _HomeState extends State<Home> {
 
   Future<void> _performLogout() async {
     try {
+      final lastUid = LocalStoreHelper.getUID();
+      bool keepFirebaseAuth = false;
+      if (lastUid != null) {
+        keepFirebaseAuth = LocalStoreHelper.getBiometricAuthEnabled(lastUid);
+      }
+
       await LocalStoreHelper.putlogoutStatus(true);
       await LocalStoreHelper.putGuestUser(false);
       try {
@@ -771,13 +777,13 @@ class _HomeState extends State<Home> {
       } catch (e) {
         debugPrint('❌ Error deleting FCM token: $e');
       }
-      if (await BiometricService.isBiometricEnabled() == true) {
-        await BiometricService.setBiometricEnabled(false);
-        LocalStoreHelper.clearUID();
-      } else {
-        LocalStoreHelper.clearUID();
+      
+      LocalStoreHelper.clearUID();
+      
+      if (!keepFirebaseAuth) {
+        await FirebaseAuth.instance.signOut();
       }
-      await FirebaseAuth.instance.signOut();
+      
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,

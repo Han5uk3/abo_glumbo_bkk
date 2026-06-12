@@ -258,6 +258,8 @@ class _BookingsPageState extends State<BookingsPage> {
         return locn.verificationPending.toUpperCase();
       case "cancelled":
         return locn.cancelled.toUpperCase();
+      case "rejected":
+        return locn.rejected.toUpperCase();
       case "onWarranty":
         return locn.onWarranty.toUpperCase();
       default:

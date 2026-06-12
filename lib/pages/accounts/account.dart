@@ -910,6 +910,12 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
   Future<void> _performLogout() async {
     try {
+      final lastUid = LocalStoreHelper.getUID();
+      bool keepFirebaseAuth = false;
+      if (lastUid != null) {
+        keepFirebaseAuth = LocalStoreHelper.getBiometricAuthEnabled(lastUid);
+      }
+
       await LocalStoreHelper.putlogoutStatus(true);
       await LocalStoreHelper.putGuestUser(false);
       try {
@@ -917,10 +923,13 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       } catch (e) {
         debugPrint('❌ Error deleting FCM token: $e');
       }
-      if (!_isBiometricEnabled) {
-        LocalStoreHelper.clearUID();
+      
+      LocalStoreHelper.clearUID();
+      
+      if (!keepFirebaseAuth) {
+        await FirebaseAuth.instance.signOut();
       }
-      await FirebaseAuth.instance.signOut();
+      
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,

@@ -394,6 +394,7 @@ enum BookingStatusType {
   verificationPending,
   completed,
   cancelled,
+  rejected,
   onWarranty,
 }
 

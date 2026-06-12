@@ -94,8 +94,12 @@ class BookingsLoaded extends BookingState {
       case BookingStatusType.cancelled:
         return allBookings
             .where(
-              (e) => e.bookingStatusCode == 'R' || e.bookingStatusCode == 'XC',
+              (e) => e.bookingStatusCode == 'X' || e.bookingStatusCode == 'XC',
             )
+            .toList();
+      case BookingStatusType.rejected:
+        return allBookings
+            .where((e) => e.bookingStatusCode == 'R')
             .toList();
       case BookingStatusType.onWarranty:
         return allBookings.where((e) {
