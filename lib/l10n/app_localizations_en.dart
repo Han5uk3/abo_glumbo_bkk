@@ -2648,4 +2648,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorDuringLogin => 'Error during login';
+
+  @override
+  String get backToLogin => 'Back to Login';
+
+  @override
+  String get areYouSureYouWantToGoBackToLogin =>
+      'Are you sure you want to go back to the login screen?';
 }

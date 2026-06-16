@@ -2609,4 +2609,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get errorDuringLogin => 'خطأ أثناء تسجيل الدخول';
+
+  @override
+  String get backToLogin => 'العودة إلى تسجيل الدخول';
+
+  @override
+  String get areYouSureYouWantToGoBackToLogin =>
+      'هل أنت متأكد أنك تريد العودة إلى شاشة تسجيل الدخول؟';
 }

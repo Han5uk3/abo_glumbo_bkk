@@ -955,5 +955,7 @@
   "thankYouInvoice": "Thank you for choosing Abo Glumbo!",
   "biometricError": "❌ Biometric error",
   "unknownError": "Unknown error",
-  "errorDuringLogin": "Error during login"
+  "errorDuringLogin": "Error during login",
+  "backToLogin": "Back to Login",
+  "areYouSureYouWantToGoBackToLogin": "Are you sure you want to go back to the login screen?"
 }

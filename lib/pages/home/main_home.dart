@@ -352,34 +352,75 @@ class _HomeState extends State<Home> {
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         if (currentIndex == 0) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              backgroundColor: AppColors.bgBlueTint,
-              actionsAlignment: MainAxisAlignment.start,
-              title: Text(locale?.exitAppTitle ?? 'Exit App'),
-              content: Text(
-                locale?.exitAppMessage ??
-                    'Are you sure you want to exit the app?',
+          if (_isGuest == true) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: AppColors.bgBlueTint,
+                actionsAlignment: MainAxisAlignment.start,
+                title: Text(locale?.backToLogin ?? 'Back to Login'),
+                content: Text(
+                  locale?.areYouSureYouWantToGoBackToLogin ??
+                      'Are you sure you want to go back to the login screen?',
+                ),
+                actions: [
+                  eButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    context: context,
+                    backgroundColor: Colors.grey,
+                    textColor: Colors.white,
+                    text: locale?.cancel ?? 'Cancel',
+                  ),
+                  eButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                        (route) => false,
+                      );
+                    },
+                    context: context,
+                    backgroundColor: AppColors.primary,
+                    textColor: Colors.white,
+                    text: locale?.backToLogin ?? 'Back to Login',
+                  ),
+                ],
               ),
-              actions: [
-                eButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  context: context,
-                  backgroundColor: Colors.grey,
-                  textColor: Colors.white,
-                  text: locale?.cancel ?? 'Cancel',
+            );
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: AppColors.bgBlueTint,
+                actionsAlignment: MainAxisAlignment.start,
+                title: Text(locale?.exitAppTitle ?? 'Exit App'),
+                content: Text(
+                  locale?.exitAppMessage ??
+                      'Are you sure you want to exit the app?',
                 ),
-                eButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  context: context,
-                  backgroundColor: AppColors.red,
-                  textColor: Colors.white,
-                  text: locale?.exit ?? 'Exit',
-                ),
-              ],
-            ),
-          );
+                actions: [
+                  eButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    context: context,
+                    backgroundColor: Colors.grey,
+                    textColor: Colors.white,
+                    text: locale?.cancel ?? 'Cancel',
+                  ),
+                  eButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      exit(0);
+                    },
+                    context: context,
+                    backgroundColor: AppColors.red,
+                    textColor: Colors.white,
+                    text: locale?.exit ?? 'Exit',
+                  ),
+                ],
+              ),
+            );
+          }
         } else {
           setState(() {
             currentIndex = 0;

@@ -2666,4 +2666,11 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get errorDuringLogin => 'لاگ ان کے دوران غلطی';
+
+  @override
+  String get backToLogin => 'لاگ ان پر واپس جائیں';
+
+  @override
+  String get areYouSureYouWantToGoBackToLogin =>
+      'کیا آپ واقعی لاگ ان اسکرین پر واپس جانا چاہتے ہیں؟';
 }

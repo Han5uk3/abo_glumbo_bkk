@@ -968,5 +968,7 @@
   "thankYouInvoice": "شكرًا لاختيارك Abo Glumbo!",
   "biometricError": "❌ خطأ في المصادقة البيومترية",
   "unknownError": "خطأ غير معروف",
-  "errorDuringLogin": "خطأ أثناء تسجيل الدخول"
+  "errorDuringLogin": "خطأ أثناء تسجيل الدخول",
+  "backToLogin": "العودة إلى تسجيل الدخول",
+  "areYouSureYouWantToGoBackToLogin": "هل أنت متأكد أنك تريد العودة إلى شاشة تسجيل الدخول؟"
 }

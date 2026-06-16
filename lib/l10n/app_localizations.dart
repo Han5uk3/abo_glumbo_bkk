@@ -5031,6 +5031,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error during login'**
   String get errorDuringLogin;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get backToLogin;
+
+  /// No description provided for @areYouSureYouWantToGoBackToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to go back to the login screen?'**
+  String get areYouSureYouWantToGoBackToLogin;
 }
 
 class _AppLocalizationsDelegate
