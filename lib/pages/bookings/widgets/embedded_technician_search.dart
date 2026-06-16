@@ -489,7 +489,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                 ),
               ),
               Text(
-                "${_secondsRemaining}s",
+                "${_secondsRemaining}${AppLocalizations.of(context)!.seconds}",
                 style: PoppinsFont.textStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,

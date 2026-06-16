@@ -26,6 +26,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mobileNumber => 'Mobile Number';
 
   @override
+  String get seconds => 's';
+
+  @override
   String get continueText => 'Continue';
 
   @override

@@ -373,8 +373,6 @@ class _BookServicePageState extends State<BookServicePage> {
       ),
     );
 
-    await fetchCustomerAddresses();
-
     if (result != null) {
       if (result.needsAddressSelection) {
         setState(() {

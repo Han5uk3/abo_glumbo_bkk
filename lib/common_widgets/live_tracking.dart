@@ -326,28 +326,42 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       }
 
       if (newEta != null && newEta.isNotEmpty) {
-        final etaMinutes = NotificationServices.extractMinutesFromDuration(newEta);
+        final etaMinutes = NotificationServices.extractMinutesFromDuration(
+          newEta,
+        );
         final bookingId = widget.booking?.id;
         final technicianName = widget.booking?.agent?.name ?? 'Technician';
 
         if (bookingId != null) {
           if (etaMinutes == 10) {
-            if (!NotificationServices.hasTriggeredLocalNotification(bookingId, '10_minutes')) {
+            if (!NotificationServices.hasTriggeredLocalNotification(
+              bookingId,
+              '10_minutes',
+            )) {
               NotificationServices.showLocalLiveTrackingNotification(
                 type: '10_minutes',
                 bookingId: bookingId,
                 technicianName: technicianName,
               );
-              NotificationServices.markLocalNotificationTriggered(bookingId, '10_minutes');
+              NotificationServices.markLocalNotificationTriggered(
+                bookingId,
+                '10_minutes',
+              );
             }
           } else if (etaMinutes < 5 && etaMinutes >= 0) {
-            if (!NotificationServices.hasTriggeredLocalNotification(bookingId, 'nearby')) {
+            if (!NotificationServices.hasTriggeredLocalNotification(
+              bookingId,
+              'nearby',
+            )) {
               NotificationServices.showLocalLiveTrackingNotification(
                 type: 'nearby',
                 bookingId: bookingId,
                 technicianName: technicianName,
               );
-              NotificationServices.markLocalNotificationTriggered(bookingId, 'nearby');
+              NotificationServices.markLocalNotificationTriggered(
+                bookingId,
+                'nearby',
+              );
             }
           }
         }
@@ -355,15 +369,39 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
       if ((newDistance == null || newDistance.isEmpty)) {
         final d = _calculateStraightDistanceKm(_agentLatLng!, _customerLatLng!);
-        newDistance = _convertDistanceToArabic("${d.toStringAsFixed(1)} km");
+        newDistance = "${d.toStringAsFixed(1)} km";
         debugPrint('[LOG] Using fallback distance: $newDistance');
       }
 
+      final double straightDist = _calculateStraightDistanceKm(
+        _agentLatLng!,
+        _customerLatLng!,
+      );
+      final bool isPaused = widget.booking?.isTrackingPaused ?? false;
+
       setState(() {
-        eta = newEta != null ? _convertTimeToArabic(newEta) : eta;
-        distance = newDistance != null
-            ? _convertDistanceToArabic(newDistance)
-            : distance;
+        if (isPaused) {
+          eta = '⏸️';
+          distance = AppLocalizations.of(context)?.localeName == 'ar'
+              ? 'تم إيقاف التتبع مؤقتًا'
+              : 'Tracking Paused';
+        } else if (straightDist > 100.0) {
+          eta = '⚠️';
+          distance = AppLocalizations.of(context)?.tooFarAway ?? 'Too far away';
+        } else if (straightDist < 0.05) {
+          eta = '0 mins';
+          distance = AppLocalizations.of(context)?.localeName == 'ar'
+              ? _convertDistanceToArabic('0.0 km')
+              : '0.0 km away';
+        } else {
+          eta = newEta != null ? _convertTimeToArabic(newEta) : eta;
+          if (newDistance != null) {
+            distance = AppLocalizations.of(context)?.localeName == 'ar'
+                ? _convertDistanceToArabic(newDistance)
+                : '$newDistance away';
+          }
+        }
+
         if (newRoute.isNotEmpty) {
           routePoints = newRoute;
           debugPrint(
@@ -388,9 +426,28 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     } catch (e) {
       debugPrint("❌ ETA fetch error: $e");
       final d = _calculateStraightDistanceKm(_agentLatLng!, _customerLatLng!);
+      final bool isPaused = widget.booking?.isTrackingPaused ?? false;
+
       setState(() {
-        distance = _convertDistanceToArabic("${d.toStringAsFixed(1)} km");
-        eta ??= '—';
+        if (isPaused) {
+          eta = '⏸️';
+          distance = AppLocalizations.of(context)?.localeName == 'ar'
+              ? 'تم إيقاف التتبع مؤقتًا'
+              : 'Tracking Paused';
+        } else if (d > 100.0) {
+          eta = '⚠️';
+          distance = AppLocalizations.of(context)?.tooFarAway ?? 'Too far away';
+        } else if (d < 0.05) {
+          eta = '0 mins';
+          distance = AppLocalizations.of(context)?.localeName == 'ar'
+              ? _convertDistanceToArabic('0.0 km')
+              : '0.0 km away';
+        } else {
+          distance = AppLocalizations.of(context)?.localeName == 'ar'
+              ? _convertDistanceToArabic("${d.toStringAsFixed(1)} km")
+              : "${d.toStringAsFixed(1)} km away";
+          eta ??= '—';
+        }
 
         routePoints = [_agentLatLng!, _customerLatLng!];
         debugPrint(
@@ -752,11 +809,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
-            size: 18,
-          ),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 18),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -822,7 +875,8 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                             position: _agentLatLng!,
                             icon: _scooterIcon!,
                             infoWindow: InfoWindow(
-                              title: widget.booking?.agent?.name ??
+                              title:
+                                  widget.booking?.agent?.name ??
                                   'Delivery Agent',
                               snippet: 'Live location',
                             ),
@@ -832,9 +886,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                         if (routePoints.isNotEmpty)
                           Polyline(
                             polylineId: const PolylineId("route"),
-                            color: const Color(
-                              0xFF4A89F3,
-                            ), // Google Maps Blue
+                            color: const Color(0xFF4A89F3), // Google Maps Blue
                             width: 5,
                             startCap: Cap.roundCap,
                             endCap: Cap.roundCap,
@@ -847,11 +899,13 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                 ),
                 TrackingData(
                   booking: widget.booking!,
-                  timeTakenToArrive: eta ??
+                  timeTakenToArrive:
+                      eta ??
                       (_agentLatLng == null
                           ? AppLocalizations.of(context)!.fetching
                           : AppLocalizations.of(context)!.calculating),
-                  remainingKm: distance ??
+                  remainingKm:
+                      distance ??
                       (_agentLatLng == null
                           ? AppLocalizations.of(
                               context,

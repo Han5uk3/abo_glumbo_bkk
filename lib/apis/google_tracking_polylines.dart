@@ -15,7 +15,7 @@ Future<List<LatLng>> getPolylinePointsFromGoogle(
       'https://maps.googleapis.com/maps/api/directions/json?origin=${start.latitude},${start.longitude}&destination=${end.latitude},${end.longitude}&departure_time=now&mode=driving&key=$apiKey',
     ),
   );
-  
+
   final json = jsonDecode(response.body);
   if (json['routes'] == null || json['routes'].isEmpty) {
     return [];
@@ -57,20 +57,20 @@ Future<Map<String, dynamic>> getEtaAndDistance({
     final data = json.decode(response.body);
     if (data['routes'].isNotEmpty) {
       final leg = data['routes'][0]['legs'][0];
-      
+
       // Stitch all steps together for maximum accuracy polyline
       final List<Map<String, double>> highResSteps = [];
       final steps = leg['steps'] as List;
-      
+
       // We pass the steps' polylines or just return the stitched data
-      // For simplicity in this app, we can either return a list of LatLng 
+      // For simplicity in this app, we can either return a list of LatLng
       // or the first overview if 100% accuracy isn't visual enough.
       // But user wants 100% accuracy, so let's provide the points or all polylines.
-      
+
       return {
         'distance': leg['distance']['text'],
-        'duration': leg['duration_in_traffic'] != null 
-            ? leg['duration_in_traffic']['text'] 
+        'duration': leg['duration_in_traffic'] != null
+            ? leg['duration_in_traffic']['text']
             : leg['duration']['text'],
         'steps': steps, // Passing steps to decode later or handle here
         'overview_polyline': data['routes'][0]['overview_polyline']['points'],

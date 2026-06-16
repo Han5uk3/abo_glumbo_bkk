@@ -197,9 +197,7 @@ class TrackingData extends StatelessWidget {
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            Directionality.of(context) == TextDirection.rtl
-                                ? remainingKm!
-                                : "$remainingKm away",
+                            remainingKm!,
                             style: DMSansFont.textStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,

@@ -16,6 +16,7 @@ class BookingModel {
   bool? isOnHour; // ✅ Added
   Timestamp? assignmentScheduledTime; // Scheduled time for auto assignment
   String? autoAssignmentStatus; // ✅ Added for auto assignment tracking
+  bool? isTrackingPaused; // ✅ Added
 
   late String notes;
   late String? issueImage;
@@ -127,6 +128,7 @@ class BookingModel {
     this.counterProposalAcceptedAt,
     this.counterProposalStartedAt,
     this.rebookTechnicianId, // ✅ Added
+    this.isTrackingPaused, // ✅ Added
   });
 
   BookingModel.fromMap(Map<String, dynamic> data)
@@ -202,6 +204,7 @@ class BookingModel {
       reassignedAt = data['reassignedAt'], // ✅ Added
       technicianSelectedAt = data['technicianSelectedAt'], // ✅ Added
       cancelledBy = data['cancelledBy'], // ✅ Added
+      isTrackingPaused = data['isTrackingPaused'], // ✅ Added
       cancelledAt = data['cancelledAt'];
 
   factory BookingModel.fromJson(Map<String, dynamic> data) {
@@ -266,6 +269,7 @@ class BookingModel {
       'autoAssignmentStatus': autoAssignmentStatus, // ✅ Added
       'assignmentScheduledTime': assignmentScheduledTime,
       'rebookTechnicianId': rebookTechnicianId, // ✅ Added
+      'isTrackingPaused': isTrackingPaused, // ✅ Added
     };
 
     map['id'] = id;

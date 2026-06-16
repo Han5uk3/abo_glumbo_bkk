@@ -24,6 +24,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mobileNumber => 'رقم الهاتف';
 
   @override
+  String get seconds => 'ثانية';
+
+  @override
   String get continueText => 'متابعة';
 
   @override

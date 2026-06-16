@@ -26,6 +26,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get mobileNumber => 'موبائل نمبر';
 
   @override
+  String get seconds => 'سیکنڈ';
+
+  @override
   String get continueText => 'جاری رکھیں';
 
   @override

@@ -111,22 +111,22 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             ),
     );
 
-    double inspectionFee = widget.booking?.completionData?.inspectionFee ??
+    double inspectionFee =
+        widget.booking?.completionData?.inspectionFee ??
         widget.booking?.service.price ??
         widget.service?.price ??
         0.0;
     double totalServiceCost = widget.booking?.completionData?.totalCost ?? 0.0;
-    double finalAmount =
-        widget.booking?.completionData != null
-            ? (totalServiceCost + inspectionFee)
-            : widget.isFromBooking
-            ? (double.tryParse(
-                  widget.service?.price.toString() ??
-                      widget.booking?.service.price.toString() ??
-                      '0.00',
-                ) ??
-                0.0)
-            : widget.review?.tipAmount ?? 0.0;
+    double finalAmount = widget.booking?.completionData != null
+        ? (totalServiceCost + inspectionFee)
+        : widget.isFromBooking
+        ? (double.tryParse(
+                widget.service?.price.toString() ??
+                    widget.booking?.service.price.toString() ??
+                    '0.00',
+              ) ??
+              0.0)
+        : widget.review?.tipAmount ?? 0.0;
 
     orderId = generateOrderId(widget.customerData.uid ?? '', finalAmount);
 
@@ -240,7 +240,112 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     String url,
     bool isFromBooking,
   ) async {
-    if (url.contains('success') || url.contains('payment/success')) {
+    final lowerUrl = url.toLowerCase();
+
+    if (lowerUrl.contains('cancel') || lowerUrl.contains('payment/cancelled')) {
+      if (isPaymentProcessed) {
+        return NavigationDecision.prevent;
+      }
+      isPaymentProcessed = true;
+
+      if (widget.isFromBooking) {
+        if (!mounted) return NavigationDecision.prevent;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => PaymentFailedScreen(
+              message: AppLocalizations.of(context)!.paymentWasCancelledByUser,
+              orderId: orderId ?? 'NO ORDER ID',
+              onRetry: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => PaymentWebView(
+                      customerData: widget.customerData,
+                      isFromBooking: widget.isFromBooking,
+                      selectedImage: widget.selectedImage,
+                      selectedVideo: widget.selectedVideo,
+                      selectedDate: widget.selectedDate,
+                      timeSlot: widget.timeSlot,
+                      service: widget.service,
+                      review: widget.review,
+                      booking: widget.booking,
+                      agent: widget.agent,
+                      selectedAddress: widget.selectedAddress,
+                      serviceLocation: widget.serviceLocation,
+                      notesController: widget.notesController,
+                      selectedPayment: widget.selectedPayment,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      } else {
+        Navigator.pop(context);
+        Navigator.pop(context, true);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.paymentCancelled),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+
+      return NavigationDecision.prevent;
+    } else if (lowerUrl.contains('declined') ||
+        lowerUrl.contains('payment/declined')) {
+      if (isPaymentProcessed) {
+        return NavigationDecision.prevent;
+      }
+      isPaymentProcessed = true;
+
+      if (widget.isFromBooking) {
+        if (!mounted) return NavigationDecision.prevent;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => PaymentFailedScreen(
+              message: AppLocalizations.of(context)!.paymentWasDeclined,
+              orderId: orderId ?? 'NO ORDER ID',
+              onRetry: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => PaymentWebView(
+                      customerData: widget.customerData,
+                      isFromBooking: widget.isFromBooking,
+                      selectedImage: widget.selectedImage,
+                      selectedVideo: widget.selectedVideo,
+                      selectedDate: widget.selectedDate,
+                      timeSlot: widget.timeSlot,
+                      service: widget.service,
+                      review: widget.review,
+                      booking: widget.booking,
+                      agent: widget.agent,
+                      selectedAddress: widget.selectedAddress,
+                      serviceLocation: widget.serviceLocation,
+                      notesController: widget.notesController,
+                      selectedPayment: widget.selectedPayment,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      } else {
+        Navigator.pop(context);
+        Navigator.pop(context, true);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.paymentDeclined),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+
+      return NavigationDecision.prevent;
+    } else if ((lowerUrl.contains('success') &&
+            !lowerUrl.contains('unsuccessful')) ||
+        lowerUrl.contains('payment/success')) {
       if (isPaymentProcessed) {
         return NavigationDecision.prevent;
       }
@@ -294,52 +399,6 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       //     backgroundColor: Colors.green,
       //   ),
       // );
-
-      return NavigationDecision.prevent;
-    } else if (url.contains('cancel') || url.contains('payment/cancelled')) {
-      if (widget.isFromBooking) {
-        if (!mounted) return NavigationDecision.prevent;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => PaymentFailedScreen(
-              message: AppLocalizations.of(context)!.paymentWasCancelledByUser,
-              orderId: orderId ?? 'NO ORDER ID',
-            ),
-          ),
-        );
-      } else {
-        Navigator.pop(context);
-        Navigator.pop(context, true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.paymentCancelled),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-
-      return NavigationDecision.prevent;
-    } else if (url.contains('declined') || url.contains('payment/declined')) {
-      if (widget.isFromBooking) {
-        if (!mounted) return NavigationDecision.prevent;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => PaymentFailedScreen(
-              message: AppLocalizations.of(context)!.paymentWasDeclined,
-              orderId: orderId ?? 'NO ORDER ID',
-            ),
-          ),
-        );
-      } else {
-        Navigator.pop(context);
-        Navigator.pop(context, true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.paymentDeclined),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
 
       return NavigationDecision.prevent;
     }

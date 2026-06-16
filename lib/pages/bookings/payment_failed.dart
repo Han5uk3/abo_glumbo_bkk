@@ -2,15 +2,18 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 
 class PaymentFailedScreen extends StatefulWidget {
   final String message;
   final String orderId;
+  final VoidCallback? onRetry;
 
   const PaymentFailedScreen({
     super.key,
     required this.message,
     required this.orderId,
+    this.onRetry,
   });
 
   @override
@@ -288,7 +291,11 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen>
                     height: 52,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Home()),
+                          (Route<dynamic> route) => false,
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -311,6 +318,34 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen>
                     ),
                   ),
                 ),
+                if (widget.onRetry != null) ...[
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: SizedBox(
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: widget.onRetry,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.red,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)?.retry ?? 'Retry',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

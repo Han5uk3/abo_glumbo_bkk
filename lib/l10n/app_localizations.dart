@@ -130,6 +130,12 @@ abstract class AppLocalizations {
   /// **'Mobile Number'**
   String get mobileNumber;
 
+  /// No description provided for @seconds.
+  ///
+  /// In en, this message translates to:
+  /// **'s'**
+  String get seconds;
+
   /// No description provided for @continueText.
   ///
   /// In en, this message translates to:
