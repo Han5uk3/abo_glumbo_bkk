@@ -98,15 +98,6 @@ class AuthServices {
             appVerificationDisabledForTesting: true,
             userAccessGroup: null,
           );
-        } else {
-          debugPrint(
-            '🍎 [CUSTOMER AUTH] Production mode: appVerificationDisabledForTesting set to false',
-          );
-          await FirebaseAuth.instance.setSettings(
-            appVerificationDisabledForTesting: false,
-            // In production, we don't set userAccessGroup to null unless we know it should be.
-            // Leaving it as default is safer.
-          );
         }
       }
 
