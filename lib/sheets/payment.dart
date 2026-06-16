@@ -370,7 +370,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
             builder: (BuildContext dialogContext) {
               return AlertDialog(
                 title: Text(
-                  'Apple Pay Not Available',
+                  (AppLocalizations.of(context)?.applePayNotAvailable ?? 'Apple Pay Not Available'),
                   style: DMSansFont.textStyle(fontWeight: FontWeight.bold),
                 ),
                 content: Column(
@@ -380,7 +380,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                     Icon(Icons.error_outline, color: Colors.red, size: 50),
                     SizedBox(height: 16),
                     Text(
-                      'Apple Pay is not available on this device.',
+                      (AppLocalizations.of(context)?.applePayNotAvailableDevice ?? 'Apple Pay is not available on this device.'),
                       style: DMSansFont.textStyle(fontSize: 16),
                     ),
                     SizedBox(height: 8),
@@ -406,7 +406,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                       Navigator.of(dialogContext).pop();
                     },
                     child: Text(
-                      'Choose Another Payment Method',
+                      (AppLocalizations.of(context)?.chooseAnotherPaymentMethod ?? 'Choose Another Payment Method'),
                       style: DMSansFont.textStyle(
                         color: AppColors.secondary,
                         fontWeight: FontWeight.bold,
@@ -444,7 +444,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
           builder: (BuildContext dialogContext) {
             return AlertDialog(
               title: Text(
-                'Apple Pay Error',
+                (AppLocalizations.of(context)?.applePayError ?? 'Apple Pay Error'),
                 style: DMSansFont.textStyle(fontWeight: FontWeight.bold),
               ),
               content: Column(
@@ -454,7 +454,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                   Icon(Icons.error_outline, color: Colors.red, size: 50),
                   SizedBox(height: 16),
                   Text(
-                    'There was an error processing your Apple Pay payment.',
+                    (AppLocalizations.of(context)?.errorProcessingApplePay ?? 'There was an error processing your Apple Pay payment.'),
                     style: DMSansFont.textStyle(fontSize: 16),
                   ),
                   SizedBox(height: 8),
@@ -483,7 +483,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                     Navigator.of(dialogContext).pop();
                   },
                   child: Text(
-                    'Try Another Payment Method',
+                    (AppLocalizations.of(context)?.tryAnotherPaymentMethod ?? 'Try Another Payment Method'),
                     style: DMSansFont.textStyle(
                       color: AppColors.secondary,
                       fontWeight: FontWeight.bold,
@@ -536,7 +536,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                 Navigator.of(dialogContext).pop();
               },
               child: Text(
-                'Use Another Payment Method',
+                (AppLocalizations.of(context)?.useAnotherPaymentMethod ?? 'Use Another Payment Method'),
                 style: DMSansFont.textStyle(
                   color: AppColors.secondary,
                   fontWeight: FontWeight.bold,

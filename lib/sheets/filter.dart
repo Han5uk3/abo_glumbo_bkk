@@ -156,7 +156,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Failed to load locations. Location filters may not be available.',
+              (AppLocalizations.of(context)?.failedLoadLocations ?? 'Failed to load locations. Location filters may not be available.'),
             ),
             backgroundColor: Colors.orange,
           ),
@@ -218,7 +218,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Failed to load categories. Some filters may not be available.',
+              (AppLocalizations.of(context)?.failedLoadCategories ?? 'Failed to load categories. Some filters may not be available.'),
             ),
             backgroundColor: Colors.orange,
           ),

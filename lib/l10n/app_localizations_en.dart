@@ -2658,4 +2658,49 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get areYouSureYouWantToGoBackToLogin =>
       'Are you sure you want to go back to the login screen?';
+
+  @override
+  String get loadingCustomerData => 'Loading customer data, please wait...';
+
+  @override
+  String get failedToCreateBookingRequest => 'Failed to create booking request';
+
+  @override
+  String get pleaseWaitCustomerDataLoad =>
+      'Please wait for customer data to load or select a date';
+
+  @override
+  String get accountNotRegisteredCustomer =>
+      'This account is not registered as a customer.';
+
+  @override
+  String get applePayNotAvailable => 'Apple Pay Not Available';
+
+  @override
+  String get applePayNotAvailableDevice =>
+      'Apple Pay is not available on this device.';
+
+  @override
+  String get chooseAnotherPaymentMethod => 'Choose Another Payment Method';
+
+  @override
+  String get tryAnotherPaymentMethod => 'Try Another Payment Method';
+
+  @override
+  String get applePayError => 'Apple Pay Error';
+
+  @override
+  String get errorProcessingApplePay =>
+      'There was an error processing your Apple Pay payment.';
+
+  @override
+  String get useAnotherPaymentMethod => 'Use Another Payment Method';
+
+  @override
+  String get failedLoadLocations =>
+      'Failed to load locations. Location filters may not be available.';
+
+  @override
+  String get failedLoadCategories =>
+      'Failed to load categories. Some filters may not be available.';
 }

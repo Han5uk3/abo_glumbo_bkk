@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
+import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/signup_page.dart';
@@ -325,20 +326,24 @@ class AuthServices {
 
       if (userDoc.exists) {
         final userData = userDoc.data() as Map<String, dynamic>?;
-        final userRole = userData?['role']?.toString().toLowerCase() ?? 'customer';
+        final userRole =
+            userData?['role']?.toString().toLowerCase() ?? 'customer';
 
         debugPrint("🔍 User found with role: $userRole");
 
         // Only allow users with role "customer" to log in via customer app
         if (userRole != 'customer') {
-          debugPrint("❌ User role is '$userRole', not 'customer'. Access denied.");
+          debugPrint(
+            "❌ User role is '$userRole', not 'customer'. Access denied.",
+          );
           // Sign out the Firebase Auth session since this user isn't a customer
           await FirebaseAuth.instance.signOut();
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: const Text(
-                  'This account is not registered as a customer.',
+                content: Text(
+                  (AppLocalizations.of(context)?.accountNotRegisteredCustomer ??
+                      'This account is not registered as a customer.'),
                 ),
                 backgroundColor: Colors.red,
                 behavior: SnackBarBehavior.floating,
@@ -392,7 +397,9 @@ class AuthServices {
             final oldData = oldDoc.data() as Map<String, dynamic>;
             final oldDocId = oldDoc.id;
 
-            debugPrint("✅ Existing customer found by phone (old UID: $oldDocId), migrating to new UID: $uid");
+            debugPrint(
+              "✅ Existing customer found by phone (old UID: $oldDocId), migrating to new UID: $uid",
+            );
 
             // Update UID field and write to new doc
             oldData['uid'] = uid;
@@ -426,7 +433,9 @@ class AuthServices {
         }
 
         // Truly new user — redirect to signup
-        debugPrint("📝 No existing customer found by phone, navigating to signup...");
+        debugPrint(
+          "📝 No existing customer found by phone, navigating to signup...",
+        );
         if (context.mounted) {
           Navigator.pushAndRemoveUntil(
             context,

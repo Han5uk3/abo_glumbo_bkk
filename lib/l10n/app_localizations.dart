@@ -5049,6 +5049,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to go back to the login screen?'**
   String get areYouSureYouWantToGoBackToLogin;
+
+  /// No description provided for @loadingCustomerData.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading customer data, please wait...'**
+  String get loadingCustomerData;
+
+  /// No description provided for @failedToCreateBookingRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create booking request'**
+  String get failedToCreateBookingRequest;
+
+  /// No description provided for @pleaseWaitCustomerDataLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait for customer data to load or select a date'**
+  String get pleaseWaitCustomerDataLoad;
+
+  /// No description provided for @accountNotRegisteredCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is not registered as a customer.'**
+  String get accountNotRegisteredCustomer;
+
+  /// No description provided for @applePayNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple Pay Not Available'**
+  String get applePayNotAvailable;
+
+  /// No description provided for @applePayNotAvailableDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple Pay is not available on this device.'**
+  String get applePayNotAvailableDevice;
+
+  /// No description provided for @chooseAnotherPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Another Payment Method'**
+  String get chooseAnotherPaymentMethod;
+
+  /// No description provided for @tryAnotherPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Another Payment Method'**
+  String get tryAnotherPaymentMethod;
+
+  /// No description provided for @applePayError.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple Pay Error'**
+  String get applePayError;
+
+  /// No description provided for @errorProcessingApplePay.
+  ///
+  /// In en, this message translates to:
+  /// **'There was an error processing your Apple Pay payment.'**
+  String get errorProcessingApplePay;
+
+  /// No description provided for @useAnotherPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Another Payment Method'**
+  String get useAnotherPaymentMethod;
+
+  /// No description provided for @failedLoadLocations.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load locations. Location filters may not be available.'**
+  String get failedLoadLocations;
+
+  /// No description provided for @failedLoadCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load categories. Some filters may not be available.'**
+  String get failedLoadCategories;
 }
 
 class _AppLocalizationsDelegate

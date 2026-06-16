@@ -958,5 +958,18 @@
   "unknownError": "Unknown error",
   "errorDuringLogin": "Error during login",
   "backToLogin": "Back to Login",
-  "areYouSureYouWantToGoBackToLogin": "Are you sure you want to go back to the login screen?"
+  "areYouSureYouWantToGoBackToLogin": "Are you sure you want to go back to the login screen?",
+  "loadingCustomerData": "Loading customer data, please wait...",
+  "failedToCreateBookingRequest": "Failed to create booking request",
+  "pleaseWaitCustomerDataLoad": "Please wait for customer data to load or select a date",
+  "accountNotRegisteredCustomer": "This account is not registered as a customer.",
+  "applePayNotAvailable": "Apple Pay Not Available",
+  "applePayNotAvailableDevice": "Apple Pay is not available on this device.",
+  "chooseAnotherPaymentMethod": "Choose Another Payment Method",
+  "tryAnotherPaymentMethod": "Try Another Payment Method",
+  "applePayError": "Apple Pay Error",
+  "errorProcessingApplePay": "There was an error processing your Apple Pay payment.",
+  "useAnotherPaymentMethod": "Use Another Payment Method",
+  "failedLoadLocations": "Failed to load locations. Location filters may not be available.",
+  "failedLoadCategories": "Failed to load categories. Some filters may not be available."
 }

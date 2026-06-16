@@ -2676,4 +2676,50 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get areYouSureYouWantToGoBackToLogin =>
       'کیا آپ واقعی لاگ ان اسکرین پر واپس جانا چاہتے ہیں؟';
+
+  @override
+  String get loadingCustomerData =>
+      'کسٹمر کا ڈیٹا لوڈ ہو رہا ہے، براہ کرم انتظار کریں...';
+
+  @override
+  String get failedToCreateBookingRequest => 'بکنگ کی درخواست بنانے میں ناکام';
+
+  @override
+  String get pleaseWaitCustomerDataLoad =>
+      'براہ کرم کسٹمر کا ڈیٹا لوڈ ہونے کا انتظار کریں یا تاریخ منتخب کریں';
+
+  @override
+  String get accountNotRegisteredCustomer =>
+      'یہ اکاؤنٹ بطور کسٹمر رجسٹرڈ نہیں ہے۔';
+
+  @override
+  String get applePayNotAvailable => 'ایپل پے دستیاب نہیں ہے';
+
+  @override
+  String get applePayNotAvailableDevice =>
+      'ایپل پے اس ڈیوائس پر دستیاب نہیں ہے۔';
+
+  @override
+  String get chooseAnotherPaymentMethod => 'ادائیگی کا دوسرا طریقہ منتخب کریں';
+
+  @override
+  String get tryAnotherPaymentMethod => 'ادائیگی کا دوسرا طریقہ آزمائیں';
+
+  @override
+  String get applePayError => 'ایپل پے کی خرابی';
+
+  @override
+  String get errorProcessingApplePay =>
+      'آپ کے ایپل پے کی ادائیگی پر کارروائی کرنے میں ایک خرابی تھی۔';
+
+  @override
+  String get useAnotherPaymentMethod => 'ادائیگی کا دوسرا طریقہ استخدم';
+
+  @override
+  String get failedLoadLocations =>
+      'مقامات لوڈ کرنے میں ناکام۔ مقام کے فلٹرز دستیاب نہیں ہوسکتے ہیں۔';
+
+  @override
+  String get failedLoadCategories =>
+      'زمرے لوڈ کرنے میں ناکام۔ کچھ فلٹرز دستیاب نہیں ہوسکتے ہیں۔';
 }

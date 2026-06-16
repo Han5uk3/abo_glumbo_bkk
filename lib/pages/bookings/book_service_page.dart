@@ -1743,7 +1743,11 @@ class _BookServicePageState extends State<BookServicePage> {
               shape: BoxShape.circle,
               color: Colors.red.shade50,
             ),
-            child: Icon(Icons.person_off_rounded, color: Colors.red.shade600, size: 40),
+            child: Icon(
+              Icons.person_off_rounded,
+              color: Colors.red.shade600,
+              size: 40,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
@@ -1766,7 +1770,11 @@ class _BookServicePageState extends State<BookServicePage> {
                 ? 'مطلوبہ ٹیکنیشن نے آپ کی دوبارہ شیڈولنگ کی درخواست سے معذرت کر لی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔'
                 : "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.",
             textAlign: TextAlign.center,
-            style: DMSansFont.textStyle(fontSize: 13, color: Colors.grey.shade600, height: 1.4),
+            style: DMSansFont.textStyle(
+              fontSize: 13,
+              color: Colors.grey.shade600,
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
@@ -1775,7 +1783,9 @@ class _BookServicePageState extends State<BookServicePage> {
                 setState(() => saving = true);
                 final requestId = await BookingUtils.saveBookingRequest(
                   service: widget.service,
-                  selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
+                  selectedDate: isServiceNow
+                      ? _getMiddleEastNow()
+                      : selectedDate!,
                   paymentMode: "Outside App", // Default for now
                   customerData: customerData!,
                   notes: notesController.text,
@@ -1787,7 +1797,7 @@ class _BookServicePageState extends State<BookServicePage> {
                   selectedAddress: selectedAddress,
                   serviceLocation: _matchedServiceZone,
                 );
-                
+
                 if (mounted) {
                   setState(() {
                     if (requestId != null) {
@@ -1806,21 +1816,31 @@ class _BookServicePageState extends State<BookServicePage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               elevation: 0,
             ),
-            child: saving 
-              ? const Loader(color: Colors.white) 
-              : Text(
-              shouldSearch 
-                ? (locale == 'ar' ? 'البحث عن فنيين متاحين' : locale == 'ur' ? 'دستیاب ٹیکنیشنز تلاش کریں' : "Search Available Technicians")
-                : (locale == 'ar' ? 'المتابعة للتعيين التلقائي' : locale == 'ur' ? 'خودکار تفویض کے لیے آگے بڑھیں' : "Proceed to Auto-Assignment"),
-              style: DMSansFont.textStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+            child: saving
+                ? const Loader(color: Colors.white)
+                : Text(
+                    shouldSearch
+                        ? (locale == 'ar'
+                              ? 'البحث عن فنيين متاحين'
+                              : locale == 'ur'
+                              ? 'دستیاب ٹیکنیشنز تلاش کریں'
+                              : "Search Available Technicians")
+                        : (locale == 'ar'
+                              ? 'المتابعة للتعيين التلقائي'
+                              : locale == 'ur'
+                              ? 'خودکار تفویض کے لیے آگے بڑھیں'
+                              : "Proceed to Auto-Assignment"),
+                    style: DMSansFont.textStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
         ],
       ),
@@ -1928,18 +1948,17 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildReviewStepContent() {
-    final DateTime bookingDate = _counterProposedTime ??
+    final DateTime bookingDate =
+        _counterProposedTime ??
         (isServiceNow
             ? _getMiddleEastNow()
             : DateTime(
                 selectedDate!.year,
                 selectedDate!.month,
                 selectedDate!.day,
-                timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]
-                        ["time"]
+                timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
                     .hour,
-                timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]
-                        ["time"]
+                timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
                     .minute,
               ));
     final isAssignmentOnHour = widget.service.isOnWorkHour(
@@ -1954,14 +1973,13 @@ class _BookServicePageState extends State<BookServicePage> {
     final timeLabel = _counterProposedTime != null
         ? DateFormat.jm(languageCode).format(_counterProposedTime!)
         : (isServiceNow
-            ? (AppLocalizations.of(context)?.serviceNow ?? 'Service Now')
-            : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]
-                ["label"]);
+              ? (AppLocalizations.of(context)?.serviceNow ?? 'Service Now')
+              : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"]);
     final dateStr = _counterProposedTime != null
         ? '${_counterProposedTime!.day}/${_counterProposedTime!.month}/${_counterProposedTime!.year}'
         : (isServiceNow
-            ? '${_getMiddleEastNow().day}/${_getMiddleEastNow().month}/${_getMiddleEastNow().year}'
-            : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}');
+              ? '${_getMiddleEastNow().day}/${_getMiddleEastNow().month}/${_getMiddleEastNow().year}'
+              : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}');
     final addressName = selectedAddress?.fullName ?? '';
 
     return ListView(
@@ -2357,12 +2375,19 @@ class _BookServicePageState extends State<BookServicePage> {
 
     if (customerData == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Loading customer data, please wait...')),
+        SnackBar(
+          content: Text(
+            (AppLocalizations.of(context)?.loadingCustomerData ??
+                'Loading customer data, please wait...'),
+          ),
+        ),
       );
       return;
     }
 
-    if (_shouldShowTechnicianSelection() && _bookingRequestId == null && widget.rebookTechnician == null) {
+    if (_shouldShowTechnicianSelection() &&
+        _bookingRequestId == null &&
+        widget.rebookTechnician == null) {
       setState(() => saving = true);
       final requestId = await BookingUtils.saveBookingRequest(
         service: widget.service,
@@ -2388,7 +2413,12 @@ class _BookServicePageState extends State<BookServicePage> {
       } else if (mounted) {
         setState(() => saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to create booking request")),
+          SnackBar(
+            content: Text(
+              (AppLocalizations.of(context)?.failedToCreateBookingRequest ??
+                  "Failed to create booking request"),
+            ),
+          ),
         );
       }
     } else {
@@ -2485,7 +2515,8 @@ class _BookServicePageState extends State<BookServicePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Please wait for customer data to load or select a date',
+            (AppLocalizations.of(context)?.pleaseWaitCustomerDataLoad ??
+                'Please wait for customer data to load or select a date'),
           ),
           backgroundColor: Colors.orange,
         ),
@@ -2590,13 +2621,13 @@ class _BookServicePageState extends State<BookServicePage> {
         timeSlot: _counterProposedTime != null
             ? {
                 "label": DateFormat.jm(
-                        AppLocalizations.of(context)?.localeName ?? 'en')
-                    .format(bookingDate),
-                "time": TimeOfDay.fromDateTime(bookingDate)
+                  AppLocalizations.of(context)?.localeName ?? 'en',
+                ).format(bookingDate),
+                "time": TimeOfDay.fromDateTime(bookingDate),
               }
             : (isServiceNow
-                ? {"label": "Now", "time": TimeOfDay.now()}
-                : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]),
+                  ? {"label": "Now", "time": TimeOfDay.now()}
+                  : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]),
         selectedAddress: selectedAddress,
         serviceLocation: _matchedServiceZone,
         agent: selectedWorker,
@@ -2617,14 +2648,13 @@ class _BookServicePageState extends State<BookServicePage> {
               selectedTime: _counterProposedTime != null
                   ? {
                       "label": DateFormat.jm(
-                              AppLocalizations.of(context)?.localeName ?? 'en')
-                          .format(bookingDate),
-                      "time": TimeOfDay.fromDateTime(bookingDate)
+                        AppLocalizations.of(context)?.localeName ?? 'en',
+                      ).format(bookingDate),
+                      "time": TimeOfDay.fromDateTime(bookingDate),
                     }
                   : (isServiceNow
-                      ? {"label": "Now", "time": TimeOfDay.now()}
-                      : timeSlots[selectedTimeCategory]["values"]
-                          [selectedTimeSlot]),
+                        ? {"label": "Now", "time": TimeOfDay.now()}
+                        : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]),
               address: selectedAddress,
             ),
           ),

@@ -971,5 +971,18 @@
   "unknownError": "خطأ غير معروف",
   "errorDuringLogin": "خطأ أثناء تسجيل الدخول",
   "backToLogin": "العودة إلى تسجيل الدخول",
-  "areYouSureYouWantToGoBackToLogin": "هل أنت متأكد أنك تريد العودة إلى شاشة تسجيل الدخول؟"
+  "areYouSureYouWantToGoBackToLogin": "هل أنت متأكد أنك تريد العودة إلى شاشة تسجيل الدخول؟",
+  "loadingCustomerData": "جاري تحميل بيانات العميل، يرجى الانتظار...",
+  "failedToCreateBookingRequest": "فشل في إنشاء طلب الحجز",
+  "pleaseWaitCustomerDataLoad": "يرجى الانتظار لتحميل بيانات العميل أو تحديد تاريخ",
+  "accountNotRegisteredCustomer": "هذا الحساب غير مسجل كعميل.",
+  "applePayNotAvailable": "Apple Pay غير متوفر",
+  "applePayNotAvailableDevice": "Apple Pay غير متوفر على هذا الجهاز.",
+  "chooseAnotherPaymentMethod": "اختر طريقة دفع أخرى",
+  "tryAnotherPaymentMethod": "جرب طريقة دفع أخرى",
+  "applePayError": "خطأ في Apple Pay",
+  "errorProcessingApplePay": "حدث خطأ أثناء معالجة دفع Apple Pay.",
+  "useAnotherPaymentMethod": "استخدم طريقة دفع أخرى",
+  "failedLoadLocations": "فشل تحميل المواقع. قد لا تكون فلاتر الموقع متوفرة.",
+  "failedLoadCategories": "فشل تحميل الفئات. قد لا تكون بعض الفلاتر متوفرة."
 }

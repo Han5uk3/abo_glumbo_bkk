@@ -2619,4 +2619,48 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get areYouSureYouWantToGoBackToLogin =>
       'هل أنت متأكد أنك تريد العودة إلى شاشة تسجيل الدخول؟';
+
+  @override
+  String get loadingCustomerData =>
+      'جاري تحميل بيانات العميل، يرجى الانتظار...';
+
+  @override
+  String get failedToCreateBookingRequest => 'فشل في إنشاء طلب الحجز';
+
+  @override
+  String get pleaseWaitCustomerDataLoad =>
+      'يرجى الانتظار لتحميل بيانات العميل أو تحديد تاريخ';
+
+  @override
+  String get accountNotRegisteredCustomer => 'هذا الحساب غير مسجل كعميل.';
+
+  @override
+  String get applePayNotAvailable => 'Apple Pay غير متوفر';
+
+  @override
+  String get applePayNotAvailableDevice =>
+      'Apple Pay غير متوفر على هذا الجهاز.';
+
+  @override
+  String get chooseAnotherPaymentMethod => 'اختر طريقة دفع أخرى';
+
+  @override
+  String get tryAnotherPaymentMethod => 'جرب طريقة دفع أخرى';
+
+  @override
+  String get applePayError => 'خطأ في Apple Pay';
+
+  @override
+  String get errorProcessingApplePay => 'حدث خطأ أثناء معالجة دفع Apple Pay.';
+
+  @override
+  String get useAnotherPaymentMethod => 'استخدم طريقة دفع أخرى';
+
+  @override
+  String get failedLoadLocations =>
+      'فشل تحميل المواقع. قد لا تكون فلاتر الموقع متوفرة.';
+
+  @override
+  String get failedLoadCategories =>
+      'فشل تحميل الفئات. قد لا تكون بعض الفلاتر متوفرة.';
 }

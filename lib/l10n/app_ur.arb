@@ -958,5 +958,18 @@
   "unknownError": "نامعلوم غلطی",
   "errorDuringLogin": "لاگ ان کے دوران غلطی",
   "backToLogin": "لاگ ان پر واپس جائیں",
-  "areYouSureYouWantToGoBackToLogin": "کیا آپ واقعی لاگ ان اسکرین پر واپس جانا چاہتے ہیں؟"
+  "areYouSureYouWantToGoBackToLogin": "کیا آپ واقعی لاگ ان اسکرین پر واپس جانا چاہتے ہیں؟",
+  "loadingCustomerData": "کسٹمر کا ڈیٹا لوڈ ہو رہا ہے، براہ کرم انتظار کریں...",
+  "failedToCreateBookingRequest": "بکنگ کی درخواست بنانے میں ناکام",
+  "pleaseWaitCustomerDataLoad": "براہ کرم کسٹمر کا ڈیٹا لوڈ ہونے کا انتظار کریں یا تاریخ منتخب کریں",
+  "accountNotRegisteredCustomer": "یہ اکاؤنٹ بطور کسٹمر رجسٹرڈ نہیں ہے۔",
+  "applePayNotAvailable": "ایپل پے دستیاب نہیں ہے",
+  "applePayNotAvailableDevice": "ایپل پے اس ڈیوائس پر دستیاب نہیں ہے۔",
+  "chooseAnotherPaymentMethod": "ادائیگی کا دوسرا طریقہ منتخب کریں",
+  "tryAnotherPaymentMethod": "ادائیگی کا دوسرا طریقہ آزمائیں",
+  "applePayError": "ایپل پے کی خرابی",
+  "errorProcessingApplePay": "آپ کے ایپل پے کی ادائیگی پر کارروائی کرنے میں ایک خرابی تھی۔",
+  "useAnotherPaymentMethod": "ادائیگی کا دوسرا طریقہ استخدم",
+  "failedLoadLocations": "مقامات لوڈ کرنے میں ناکام۔ مقام کے فلٹرز دستیاب نہیں ہوسکتے ہیں۔",
+  "failedLoadCategories": "زمرے لوڈ کرنے میں ناکام۔ کچھ فلٹرز دستیاب نہیں ہوسکتے ہیں۔"
 }
