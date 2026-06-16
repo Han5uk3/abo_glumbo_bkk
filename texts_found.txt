@@ -1,0 +1,38 @@
+c:\Hansuke\Work\abo_glumbo_bkk\lib\common_widgets\tracking_data.dart: ⏱️
+c:\Hansuke\Work\abo_glumbo_bkk\lib\common_widgets\tracking_data.dart: 📍
+c:\Hansuke\Work\abo_glumbo_bkk\lib\main.dart: App Initialization Failed
+c:\Hansuke\Work\abo_glumbo_bkk\lib\main.dart: Please reinstall the app or contact support.
+c:\Hansuke\Work\abo_glumbo_bkk\lib\pages\bookings\booking_details_page.dart: Are you sure you want to accept this new appointment time? The booking schedule will be updated immediately.
+c:\Hansuke\Work\abo_glumbo_bkk\lib\pages\bookings\book_service_page.dart: Loading customer data, please wait...
+c:\Hansuke\Work\abo_glumbo_bkk\lib\pages\bookings\book_service_page.dart: Failed to create booking request
+c:\Hansuke\Work\abo_glumbo_bkk\lib\pages\bookings\book_service_page.dart: Please wait for customer data to load or select a date
+c:\Hansuke\Work\abo_glumbo_bkk\lib\pages\bookings\worker_card.dart: 🧑‍🔧
+c:\Hansuke\Work\abo_glumbo_bkk\lib\pages\bookings\worker_card.dart: 🪪 
+c:\Hansuke\Work\abo_glumbo_bkk\lib\pages\login\login_page.dart: 🇸🇦
+c:\Hansuke\Work\abo_glumbo_bkk\lib\pages\login\login_page.dart: +966
+c:\Hansuke\Work\abo_glumbo_bkk\lib\services\auth_services.dart: This account is not registered as a customer.
+c:\Hansuke\Work\abo_glumbo_bkk\lib\services\booking\invoice_service.dart: Abo Glumbo
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\filter.dart: Failed to load locations. Location filters may not be available.
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\filter.dart: Failed to load categories. Some filters may not be available.
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: Apple Pay Not Available
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: Apple Pay is not available on this device.
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: Please make sure:
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: • You have set up Apple Pay in your Wallet app\n
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: Choose Another Payment Method
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: Apple Pay Error
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: There was an error processing your Apple Pay payment.
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: Error details:
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: Try Another Payment Method
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: Apple Pay
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\payment.dart: Use Another Payment Method
+c:\Hansuke\Work\abo_glumbo_bkk\lib\sheets\write_review.dart: *
+c:\Hansuke\Work\abo_glumbo_technician_bbk\lib\common_widget\removable_image.dart: Failed to load
+c:\Hansuke\Work\abo_glumbo_technician_bbk\lib\pages\bookings\widgets\counter_propose_sheet.dart: Select a new date and time for the appointment
+c:\Hansuke\Work\abo_glumbo_technician_bbk\lib\pages\home\admin\manage\notification_alerts\notification_alert_sending_page.dart: 9:41
+c:\Hansuke\Work\abo_glumbo_technician_bbk\lib\pages\home\admin\manage\notification_alerts\notification_alert_sending_page.dart: 9:41
+c:\Hansuke\Work\abo_glumbo_technician_bbk\lib\pages\home\admin\manage\services\edit_services_screen.dart: Name (Urdu)
+c:\Hansuke\Work\abo_glumbo_technician_bbk\lib\pages\home\admin\manage\services\edit_services_screen.dart: Description (Urdu)
+c:\Hansuke\Work\abo_glumbo_technician_bbk\lib\pages\login\login.dart: 🇸🇦
+c:\Hansuke\Work\abo_glumbo_technician_bbk\lib\pages\login\login.dart: +966
+c:\Hansuke\Work\abo_glumbo_technician_bbk\lib\pages\login\signup.dart: Upload File or Image
+c:\Hansuke\Work\abo_glumbo_technician_bbk\lib\services\invoice_service.dart: Abo Glumbo

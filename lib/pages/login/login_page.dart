@@ -71,6 +71,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _sendOTP() async {
+    if (_isLoading) return;
     final phoneNumber = _phoneController.text.trim();
 
     if (phoneNumber.length < 9) {
