@@ -91,15 +91,11 @@ class AuthServices {
 
     try {
       if (Platform.isIOS) {
-        if (kDebugMode) {
-          debugPrint(
-            '🍎 [CUSTOMER AUTH] Debug mode: appVerificationDisabledForTesting set to true',
-          );
-          await FirebaseAuth.instance.setSettings(
-            appVerificationDisabledForTesting: true,
-            userAccessGroup: null,
-          );
-        }
+        debugPrint('🍎 [CUSTOMER AUTH] Explicitly setting appVerificationDisabledForTesting to false to clear cache');
+        await FirebaseAuth.instance.setSettings(
+          appVerificationDisabledForTesting: false,
+          userAccessGroup: null,
+        );
       }
 
       debugPrint(
