@@ -20,6 +20,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:local_auth/error_codes.dart' as local_auth_error;
 import 'package:local_auth/local_auth.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -37,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
   bool isCheckUserEnableTwoStepVerification = false;
   String? customerLastUid;
   bool isUserLogout = false;
+  bool _isFaceId = false;
   // String? _detectedCountryCode;
   // String? _displayCountryCode;
   // String? _detectedFlag;
@@ -62,6 +64,24 @@ class _LoginPageState extends State<LoginPage> {
       NotificationServices.setupFCMListeners();
       await NotificationServices.checkForInitialMessage();
     });
+
+    _checkBiometrics();
+  }
+
+  Future<void> _checkBiometrics() async {
+    try {
+      final auth = LocalAuthentication();
+      final available = await auth.getAvailableBiometrics();
+      if (available.contains(BiometricType.face)) {
+        if (mounted) {
+          setState(() {
+            _isFaceId = true;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error checking biometrics: $e");
+    }
   }
 
   @override
@@ -102,7 +122,9 @@ class _LoginPageState extends State<LoginPage> {
       LocalStoreHelper.clearPhoneNumber();
     }
 
-    debugPrint('🚀 [LOGIN PAGE] Initiating OTP send for: $formattedPhoneNumber');
+    debugPrint(
+      '🚀 [LOGIN PAGE] Initiating OTP send for: $formattedPhoneNumber',
+    );
     await AuthServices().sendOTP(
       context,
       forceResendingToken: _resendToken,
@@ -111,7 +133,9 @@ class _LoginPageState extends State<LoginPage> {
         debugPrint('🎯 [LOGIN PAGE] onCodeSent callback triggered');
         debugPrint('🆔 [LOGIN PAGE] Verification ID: $verificationId');
         if (mounted) {
-          debugPrint('📱 [LOGIN PAGE] Widget mounted, updating UI and navigating to OTP page');
+          debugPrint(
+            '📱 [LOGIN PAGE] Widget mounted, updating UI and navigating to OTP page',
+          );
           setState(() {
             _resendToken = resendToken;
             _isLoading = false;
@@ -128,9 +152,14 @@ class _LoginPageState extends State<LoginPage> {
                 verificationId: verificationId,
               ),
             ),
-          ).then((value) => debugPrint('✅ [LOGIN PAGE] Navigation to OtpPage complete'));
+          ).then(
+            (value) =>
+                debugPrint('✅ [LOGIN PAGE] Navigation to OtpPage complete'),
+          );
         } else {
-          debugPrint('⚠️ [LOGIN PAGE] onCodeSent received but widget is unmounted');
+          debugPrint(
+            '⚠️ [LOGIN PAGE] onCodeSent received but widget is unmounted',
+          );
           // Still set loading false globally if possible or shared state
         }
       },
@@ -170,7 +199,10 @@ class _LoginPageState extends State<LoginPage> {
                   'An internal error occurred. Please try again later.';
               break;
             default:
-              errorMessage = e.message ?? (AppLocalizations.of(context)?.anErrorOccurred ?? 'An error occurred');
+              errorMessage =
+                  e.message ??
+                  (AppLocalizations.of(context)?.anErrorOccurred ??
+                      'An error occurred');
           }
 
           _showSnackBar(errorMessage, AppColors.red);
@@ -227,6 +259,14 @@ class _LoginPageState extends State<LoginPage> {
           await FirebaseAuth.instance.signInAnonymously();
         }
         await LocalStoreHelper.putGuestUser(false);
+        if (customerLastUid != null) {
+          await LocalStoreHelper.putUID(customerLastUid!);
+          await LocalStoreHelper.setBiometricAuthEnabled(
+            true,
+            customerLastUid!,
+          );
+        }
+        await LocalStoreHelper.putlogoutStatus(false);
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -264,10 +304,12 @@ class _LoginPageState extends State<LoginPage> {
           if (exception.message?.toLowerCase().contains('canceled') == true) {
             return;
           }
-          final errorPrefix = AppLocalizations.of(context)?.biometricError ?? '❌ Biometric error';
-          final unknownError = AppLocalizations.of(context)?.unknownError ?? 'Unknown error';
-          message =
-              '$errorPrefix: ${exception.message ?? unknownError}';
+          final errorPrefix =
+              AppLocalizations.of(context)?.biometricError ??
+              '❌ Biometric error';
+          final unknownError =
+              AppLocalizations.of(context)?.unknownError ?? 'Unknown error';
+          message = '$errorPrefix: ${exception.message ?? unknownError}';
       }
 
       if (message.isNotEmpty) {
@@ -427,12 +469,19 @@ class _LoginPageState extends State<LoginPage> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(
-                'assets/images/fingerPrint.png',
-                height: 60,
-                width: 60,
-                color: Colors.white,
-              ),
+              _isFaceId
+                  ? Icon(
+                      Symbols
+                          .familiar_face_and_zone, // Using familiar face and zone icon for FaceID
+                      size: 60,
+                      color: AppColors.primary,
+                    )
+                  : Image.asset(
+                      'assets/images/fingerPrint.png',
+                      height: 60,
+                      width: 60,
+                      color: AppColors.primary,
+                    ),
             ],
           ),
         ),
@@ -558,6 +607,7 @@ class _LoginPageState extends State<LoginPage> {
           body: Form(
             key: _formKey,
             child: SingleChildScrollView(
+              physics: ClampingScrollPhysics(),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

@@ -105,7 +105,12 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   }
 
   Future<void> _loadBiometricSettings() async {
-    _isBiometricEnabled = await BiometricService.isBiometricEnabled();
+    bool isEnabled = await BiometricService.isBiometricEnabled();
+    if (mounted) {
+      setState(() {
+        _isBiometricEnabled = isEnabled;
+      });
+    }
   }
 
   @override
