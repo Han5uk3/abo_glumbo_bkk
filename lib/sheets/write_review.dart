@@ -608,7 +608,7 @@ class _WriteReviewBottomSheetWidgetState
           ),
         ),
         child: Text(
-          '${l10n?.sar ?? 'SAR '} ${amount.toInt()}',
+          '${amount.toInt()} ${l10n?.sar ?? 'SAR '}',
           style: DMSansFont.textStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -682,8 +682,8 @@ class _WriteReviewBottomSheetWidgetState
               fontSize: 15,
               color: Colors.grey.shade400,
             ),
-            prefixText: '${l10n?.sar ?? 'SAR '} ',
-            prefixStyle: DMSansFont.textStyle(
+            suffixText: ' ${l10n?.sar ?? 'SAR '}',
+            suffixStyle: DMSansFont.textStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               color: AppColors.black1,

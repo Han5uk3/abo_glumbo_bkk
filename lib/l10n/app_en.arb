@@ -944,7 +944,7 @@
     }
   },
   "subtotal": "Subtotal:",
-  "sarAmount": "SAR {amount}",
+  "sarAmount": "{amount} SAR",
   "@sarAmount": {
     "placeholders": {
       "amount": {
@@ -972,4 +972,21 @@
   "useAnotherPaymentMethod": "Use Another Payment Method",
   "failedLoadLocations": "Failed to load locations. Location filters may not be available.",
   "failedLoadCategories": "Failed to load categories. Some filters may not be available."
+  ,"pleaseSelectTechnician": "Please select one of the accepted technicians below to continue.",
+  "requestExpiresIn": "Request expires in:",
+  "lookingForNearbyTechnicians": "Looking for nearby technicians...",
+  "pleaseWaitTechniciansHave120s": "Please wait, eligible technicians have 120s to accept.",
+  "noTechniciansAccepted": "No Technicians Accepted",
+  "allTechniciansBusy": "All technicians are currently busy or didn't accept in time.",
+  "waitingForTechniciansToAccept": "Waiting for technicians to accept...",
+  "acceptedTechniciansCount": "Accepted Technicians ({count})",
+  "@acceptedTechniciansCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jobsCount": "jobs"
+  ,"chooseYourTechnician": "Choose your technician"
 }

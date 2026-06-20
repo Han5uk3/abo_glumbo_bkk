@@ -1339,7 +1339,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               Expanded(
                                 flex: 5,
                                 child: Text(
-                                  '${AppLocalizations.of(context)!.sar} ${entry.value.price.toStringAsFixed(2)}',
+                                  '${entry.value.price.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                                   style: DMSansFont.textStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -1401,7 +1401,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ),
               ),
               Text(
-                '${AppLocalizations.of(context)!.sar} ${((completionData.totalCost) + (booking.effectiveInspectionFee)).toStringAsFixed(2)}',
+                '${((completionData.totalCost) + (booking.effectiveInspectionFee)).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                 style: DMSansFont.textStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -1432,7 +1432,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           ),
         ),
         Text(
-          '${AppLocalizations.of(context)!.sar} ${amount.toStringAsFixed(2)}',
+          '${amount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
           style: DMSansFont.textStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
@@ -2015,7 +2015,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                   style: const TextStyle(fontSize: 12),
                 ),
                 Text(
-                  '${AppLocalizations.of(context)!.sar} ${booking.service.price}',
+                  '${booking.service.price} ${AppLocalizations.of(context)!.sar}',
                   style: const TextStyle(fontSize: 12, color: Colors.green),
                 ),
               ],

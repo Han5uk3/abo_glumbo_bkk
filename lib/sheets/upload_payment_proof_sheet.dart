@@ -289,7 +289,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                   ],
                   decoration: InputDecoration(
                     hintText: '0.00',
-                    prefixText: " ${AppLocalizations.of(context)!.sar} ",
+                    suffixText: " ${AppLocalizations.of(context)!.sar} ",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

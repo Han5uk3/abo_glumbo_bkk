@@ -2652,7 +2652,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String sarAmount(String amount) {
-    return 'SAR $amount';
+    return '$amount SAR';
   }
 
   @override
@@ -2722,4 +2722,38 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get failedLoadCategories =>
       'زمرے لوڈ کرنے میں ناکام۔ کچھ فلٹرز دستیاب نہیں ہوسکتے ہیں۔';
+
+  @override
+  String get pleaseSelectTechnician =>
+      'براہ کرم جاری رکھنے کے لیے نیچے قبول شدہ ٹیکنیشنز میں سے ایک کا انتخاب کریں۔';
+
+  @override
+  String get requestExpiresIn => 'درخواست کی میعاد ختم ہو جائے گی:';
+
+  @override
+  String get lookingForNearbyTechnicians =>
+      'قریبی ٹیکنیشنز تلاش کیے جا رہے ہیں...';
+
+  @override
+  String get pleaseWaitTechniciansHave120s =>
+      'براہ کرم انتظار کریں، اہل ٹیکنیشنز کے پاس قبول کرنے کے لیے 120 سیکنڈز ہیں۔';
+
+  @override
+  String get noTechniciansAccepted => 'کسی ٹیکنیشن نے قبول نہیں کیا';
+
+  @override
+  String get allTechniciansBusy =>
+      'تمام ٹیکنیشنز اس وقت مصروف ہیں یا انہوں نے وقت پر قبول نہیں کیا۔';
+
+  @override
+  String get waitingForTechniciansToAccept =>
+      'ٹیکنیشنز کے قبول کرنے کا انتظار ہے...';
+
+  @override
+  String acceptedTechniciansCount(int count) {
+    return 'قبول شدہ ٹیکنیشنز ($count)';
+  }
+
+  @override
+  String get jobsCount => 'کام';
 }

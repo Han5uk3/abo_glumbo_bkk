@@ -1861,7 +1861,7 @@ class _BookServicePageState extends State<BookServicePage> {
           );
 
     final bool isToday =
-        isServiceNow || isSameDay(bookingDate, _getMiddleEastNow());
+        isServiceNow || (isSameDay(bookingDate, _getMiddleEastNow()) && _shouldShowTechnicianSelection());
 
     return Center(
       child: Padding(
@@ -2189,18 +2189,7 @@ class _BookServicePageState extends State<BookServicePage> {
     }
 
     if (!isServiceNow && selectedDate != null) {
-      final DateTime bookingDate = DateTime(
-        selectedDate!.year,
-        selectedDate!.month,
-        selectedDate!.day,
-        timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
-            .hour,
-        timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
-            .minute,
-      );
-      if (isSameDay(bookingDate, _getMiddleEastNow())) {
-        return true;
-      }
+      return !_isCurrentTimeOffHour();
     }
 
     return false;
@@ -2540,7 +2529,9 @@ class _BookServicePageState extends State<BookServicePage> {
           );
 
     final bool isManual =
-        isServiceNow || isSameDay(bookingDate, _getMiddleEastNow());
+        isServiceNow ||
+        widget.rebookTechnician != null ||
+        _shouldShowTechnicianSelection();
 
     if (isManual) {
       if (selectedWorker.uid?.isNotEmpty == true && _bookingRequestId != null) {

@@ -944,7 +944,7 @@
     }
   },
   "subtotal": "ذیلی مجموعہ:",
-  "sarAmount": "SAR {amount}",
+  "sarAmount": "{amount} SAR",
   "@sarAmount": {
     "placeholders": {
       "amount": {
@@ -971,5 +971,15 @@
   "errorProcessingApplePay": "آپ کے ایپل پے کی ادائیگی پر کارروائی کرنے میں ایک خرابی تھی۔",
   "useAnotherPaymentMethod": "ادائیگی کا دوسرا طریقہ استخدم",
   "failedLoadLocations": "مقامات لوڈ کرنے میں ناکام۔ مقام کے فلٹرز دستیاب نہیں ہوسکتے ہیں۔",
-  "failedLoadCategories": "زمرے لوڈ کرنے میں ناکام۔ کچھ فلٹرز دستیاب نہیں ہوسکتے ہیں۔"
+  "failedLoadCategories": "زمرے لوڈ کرنے میں ناکام۔ کچھ فلٹرز دستیاب نہیں ہوسکتے ہیں۔",
+  "pleaseSelectTechnician": "براہ کرم جاری رکھنے کے لیے نیچے قبول شدہ ٹیکنیشنز میں سے ایک کا انتخاب کریں۔",
+  "requestExpiresIn": "درخواست کی میعاد ختم ہو جائے گی:",
+  "lookingForNearbyTechnicians": "قریبی ٹیکنیشنز تلاش کیے جا رہے ہیں...",
+  "pleaseWaitTechniciansHave120s": "براہ کرم انتظار کریں، اہل ٹیکنیشنز کے پاس قبول کرنے کے لیے 120 سیکنڈز ہیں۔",
+  "noTechniciansAccepted": "کسی ٹیکنیشن نے قبول نہیں کیا",
+  "allTechniciansBusy": "تمام ٹیکنیشنز اس وقت مصروف ہیں یا انہوں نے وقت پر قبول نہیں کیا۔",
+  "waitingForTechniciansToAccept": "ٹیکنیشنز کے قبول کرنے کا انتظار ہے...",
+  "acceptedTechniciansCount": "قبول شدہ ٹیکنیشنز ({count})",
+  "jobsCount": "کام",
+  "chooseYourTechnician": "اپنے ٹیکنیشن کا انتخاب کریں"
 }

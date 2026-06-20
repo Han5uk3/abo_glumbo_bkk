@@ -2634,7 +2634,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String sarAmount(String amount) {
-    return 'SAR $amount';
+    return '$amount SAR';
   }
 
   @override
@@ -2703,4 +2703,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get failedLoadCategories =>
       'Failed to load categories. Some filters may not be available.';
+
+  @override
+  String get pleaseSelectTechnician =>
+      'Please select one of the accepted technicians below to continue.';
+
+  @override
+  String get requestExpiresIn => 'Request expires in:';
+
+  @override
+  String get lookingForNearbyTechnicians => 'Looking for nearby technicians...';
+
+  @override
+  String get pleaseWaitTechniciansHave120s =>
+      'Please wait, eligible technicians have 120s to accept.';
+
+  @override
+  String get noTechniciansAccepted => 'No Technicians Accepted';
+
+  @override
+  String get allTechniciansBusy =>
+      'All technicians are currently busy or didn\'t accept in time.';
+
+  @override
+  String get waitingForTechniciansToAccept =>
+      'Waiting for technicians to accept...';
+
+  @override
+  String acceptedTechniciansCount(int count) {
+    return 'Accepted Technicians ($count)';
+  }
+
+  @override
+  String get jobsCount => 'jobs';
 }

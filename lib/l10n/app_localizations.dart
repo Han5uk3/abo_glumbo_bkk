@@ -5005,7 +5005,7 @@ abstract class AppLocalizations {
   /// No description provided for @sarAmount.
   ///
   /// In en, this message translates to:
-  /// **'SAR {amount}'**
+  /// **'{amount} SAR'**
   String sarAmount(String amount);
 
   /// No description provided for @totalLabel.
@@ -5127,6 +5127,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to load categories. Some filters may not be available.'**
   String get failedLoadCategories;
+
+  /// No description provided for @pleaseSelectTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select one of the accepted technicians below to continue.'**
+  String get pleaseSelectTechnician;
+
+  /// No description provided for @requestExpiresIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Request expires in:'**
+  String get requestExpiresIn;
+
+  /// No description provided for @lookingForNearbyTechnicians.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for nearby technicians...'**
+  String get lookingForNearbyTechnicians;
+
+  /// No description provided for @pleaseWaitTechniciansHave120s.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait, eligible technicians have 120s to accept.'**
+  String get pleaseWaitTechniciansHave120s;
+
+  /// No description provided for @noTechniciansAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'No Technicians Accepted'**
+  String get noTechniciansAccepted;
+
+  /// No description provided for @allTechniciansBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'All technicians are currently busy or didn\'t accept in time.'**
+  String get allTechniciansBusy;
+
+  /// No description provided for @waitingForTechniciansToAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for technicians to accept...'**
+  String get waitingForTechniciansToAccept;
+
+  /// No description provided for @acceptedTechniciansCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted Technicians ({count})'**
+  String acceptedTechniciansCount(int count);
+
+  /// No description provided for @jobsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'jobs'**
+  String get jobsCount;
 }
 
 class _AppLocalizationsDelegate

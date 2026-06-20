@@ -299,11 +299,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context)?.localeName == 'ar'
-                          ? 'اختر الفني الخاص بك'
-                          : AppLocalizations.of(context)?.localeName == 'ur'
-                          ? 'اپنے ٹیکنیشن کا انتخاب کریں'
-                          : "Choose your technician",
+                      AppLocalizations.of(context)?.chooseYourTechnician ?? "Choose your technician",
                       style: PoppinsFont.textStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -312,11 +308,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      AppLocalizations.of(context)?.localeName == 'ar'
-                          ? 'الرجاء اختيار أحد الفنيين المقبولين أدناه للمتابعة.'
-                          : AppLocalizations.of(context)?.localeName == 'ur'
-                          ? 'براہ کرم جاری رکھنے کے لیے نیچے قبول شدہ ٹیکنیشنز میں سے ایک کا انتخاب کریں۔'
-                          : "Please select one of the accepted technicians below to continue.",
+                      AppLocalizations.of(context)?.pleaseSelectTechnician ?? "Please select one of the accepted technicians below to continue.",
                       style: DMSansFont.textStyle(
                         fontSize: 11,
                         color: Colors.grey.shade600,
@@ -334,18 +326,14 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                AppLocalizations.of(context)?.localeName == 'ar'
-                    ? 'ينتهي الطلب خلال:'
-                    : AppLocalizations.of(context)?.localeName == 'ur'
-                    ? 'درخواست کی میعاد ختم ہو جائے گی:'
-                    : "Request expires in:",
+                AppLocalizations.of(context)?.requestExpiresIn ?? "Request expires in:",
                 style: DMSansFont.textStyle(
                   fontSize: 12,
                   color: Colors.grey.shade600,
                 ),
               ),
               Text(
-                "${remainingSelectionTime}s",
+                "${remainingSelectionTime}${AppLocalizations.of(context)!.sText}",
                 style: PoppinsFont.textStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -443,11 +431,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      locale == 'ar'
-                          ? 'جاري البحث عن فنيين بالقرب منك...'
-                          : locale == 'ur'
-                          ? 'قریبی ٹیکنیشنز تلاش کیے جا رہے ہیں...'
-                          : "Looking for nearby technicians...",
+                      AppLocalizations.of(context)?.lookingForNearbyTechnicians ?? "Looking for nearby technicians...",
                       style: PoppinsFont.textStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -456,11 +440,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      locale == 'ar'
-                          ? 'الرجاء الانتظار، لدى الفنيين المؤهلين 120 ثانية للقبول.'
-                          : locale == 'ur'
-                          ? 'براہ کرم انتظار کریں، اہل ٹیکنیشنز کے پاس قبول کرنے کے لیے 120 سیکنڈز ہیں۔'
-                          : "Please wait, eligible technicians have 120s to accept.",
+                      AppLocalizations.of(context)?.pleaseWaitTechniciansHave120s ?? "Please wait, eligible technicians have 120s to accept.",
                       style: DMSansFont.textStyle(
                         fontSize: 11,
                         color: Colors.grey.shade600,
@@ -478,11 +458,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                locale == 'ar'
-                    ? 'ينتهي الطلب خلال:'
-                    : locale == 'ur'
-                    ? 'درخواست کی میعاد ختم ہو جائے گی:'
-                    : "Request expires in:",
+                AppLocalizations.of(context)?.requestExpiresIn ?? "Request expires in:",
                 style: DMSansFont.textStyle(
                   fontSize: 12,
                   color: Colors.grey.shade600,
@@ -537,11 +513,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
           ),
           const SizedBox(height: 16),
           Text(
-            locale == 'ar'
-                ? 'لم يقبل أي فني'
-                : locale == 'ur'
-                ? 'کسی ٹیکنیشن نے قبول نہیں کیا'
-                : "No Technicians Accepted",
+            AppLocalizations.of(context)?.noTechniciansAccepted ?? "No Technicians Accepted",
             style: PoppinsFont.textStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -550,11 +522,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
           ),
           const SizedBox(height: 8),
           Text(
-            locale == 'ar'
-                ? 'جميع الفنيين مشغولون حالياً أو لم يقبلوا في الوقت المحدد.'
-                : locale == 'ur'
-                ? 'تمام ٹیکنیشنز اس وقت مصروف ہیں یا انہوں نے وقت پر قبول نہیں کیا۔'
-                : "All technicians are currently busy or didn't accept in time.",
+            AppLocalizations.of(context)?.allTechniciansBusy ?? "All technicians are currently busy or didn't accept in time.",
             textAlign: TextAlign.center,
             style: DMSansFont.textStyle(
               fontSize: 13,
@@ -576,11 +544,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
             child: _isSearchingAgain
                 ? const Loader(color: Colors.white)
                 : Text(
-                    locale == 'ar'
-                        ? 'البحث مرة أخرى'
-                        : locale == 'ur'
-                        ? 'دوبارہ تلاش کریں'
-                        : "Search Again",
+                    AppLocalizations.of(context)?.searchAgain ?? "Search Again",
                     style: DMSansFont.textStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -601,11 +565,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
         child: Row(
           children: [
             _buildFilterChip(
-              label: localeName == 'ar'
-                  ? 'الأعلى تقييماً'
-                  : localeName == 'ur'
-                  ? 'سب سے زیادہ ریٹنگ'
-                  : 'Highest Rating',
+              label: AppLocalizations.of(context)?.highestRating ?? 'Highest Rating',
               icon: Icons.star_rounded,
               isActive: _filterByRating,
               activeColor: Colors.amber,
@@ -618,11 +578,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
             ),
             const SizedBox(width: 8),
             _buildFilterChip(
-              label: localeName == 'ar'
-                  ? 'الأكثر طلبات'
-                  : localeName == 'ur'
-                  ? 'سب سے زیادہ آرڈرز'
-                  : 'Most Orders',
+              label: AppLocalizations.of(context)?.mostOrders ?? 'Most Orders',
               icon: Icons.workspace_premium_rounded,
               isActive: _filterByCompletedJobs,
               activeColor: AppColors.green2,
@@ -635,11 +591,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
             ),
             const SizedBox(width: 8),
             _buildFilterChip(
-              label: localeName == 'ar'
-                  ? 'الأقرب'
-                  : localeName == 'ur'
-                  ? 'قریب ترین'
-                  : 'Nearest',
+              label: AppLocalizations.of(context)?.nearest ?? 'Nearest',
               icon: Icons.near_me_rounded,
               isActive: _filterByDistance,
               activeColor: AppColors.secondary,
@@ -749,11 +701,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
               Icon(Icons.close_rounded, size: 14, color: Colors.red.shade400),
               const SizedBox(width: 4),
               Text(
-                localeName == 'ar'
-                    ? 'مسح'
-                    : localeName == 'ur'
-                    ? 'صاف کریں'
-                    : 'Clear',
+                AppLocalizations.of(context)?.clear ?? 'Clear',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -782,11 +730,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
               ),
               const SizedBox(height: 16),
               Text(
-                locale == 'ar'
-                    ? 'بانتظار قبول الفنيين...'
-                    : locale == 'ur'
-                    ? 'ٹیکنیشنز کے قبول کرنے کا انتظار ہے...'
-                    : "Waiting for technicians to accept...",
+                AppLocalizations.of(context)?.waitingForTechniciansToAccept ?? "Waiting for technicians to accept...",
                 style: DMSansFont.textStyle(
                   fontSize: 13,
                   color: Colors.grey.shade600,
@@ -807,11 +751,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Text(
-            locale == 'ar'
-                ? 'لا يوجد فنيين يطابقون الفلاتر المحددة.'
-                : locale == 'ur'
-                ? 'منتخب کردہ فلٹرز سے کوئی ٹیکنیشن میل نہیں کھاتا۔'
-                : "No technicians match the selected filters.",
+            AppLocalizations.of(context)?.noTechniciansMatchFilters ?? "No technicians match the selected filters.",
             textAlign: TextAlign.center,
             style: DMSansFont.textStyle(
               fontSize: 13,
@@ -828,11 +768,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
           child: Text(
-            locale == 'ar'
-                ? 'الفنيون المقبولون (${displayedTechnicians.length})'
-                : locale == 'ur'
-                ? 'قبول شدہ ٹیکنیشنز (${displayedTechnicians.length})'
-                : "Accepted Technicians (${displayedTechnicians.length})",
+            AppLocalizations.of(context)?.acceptedTechniciansCount(displayedTechnicians.length) ?? "Accepted Technicians (${displayedTechnicians.length})",
             style: PoppinsFont.textStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -947,11 +883,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "$completedJobs ${locale == 'ar'
-                                ? 'مهمة'
-                                : locale == 'ur'
-                                ? 'کام'
-                                : 'jobs'}",
+                            "$completedJobs ${AppLocalizations.of(context)?.jobsCount ?? 'jobs'}",
                             style: DMSansFont.textStyle(
                               fontSize: 12,
                               color: Colors.grey.shade600,
@@ -983,11 +915,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          "${distance.toStringAsFixed(1)} ${locale == 'ar'
-                              ? 'كم'
-                              : locale == 'ur'
-                              ? 'کلومیٹر'
-                              : 'km'}",
+                          "${distance.toStringAsFixed(1)} ${AppLocalizations.of(context)?.km ?? 'km'}",
                           style: DMSansFont.textStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,

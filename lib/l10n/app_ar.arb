@@ -984,5 +984,15 @@
   "errorProcessingApplePay": "حدث خطأ أثناء معالجة دفع Apple Pay.",
   "useAnotherPaymentMethod": "استخدم طريقة دفع أخرى",
   "failedLoadLocations": "فشل تحميل المواقع. قد لا تكون فلاتر الموقع متوفرة.",
-  "failedLoadCategories": "فشل تحميل الفئات. قد لا تكون بعض الفلاتر متوفرة."
+  "failedLoadCategories": "فشل تحميل الفئات. قد لا تكون بعض الفلاتر متوفرة.",
+  "pleaseSelectTechnician": "الرجاء اختيار أحد الفنيين المقبولين أدناه للمتابعة.",
+  "requestExpiresIn": "ينتهي الطلب خلال:",
+  "lookingForNearbyTechnicians": "جاري البحث عن فنيين بالقرب منك...",
+  "pleaseWaitTechniciansHave120s": "الرجاء الانتظار، لدى الفنيين المؤهلين 120 ثانية للقبول.",
+  "noTechniciansAccepted": "لم يقبل أي فني",
+  "allTechniciansBusy": "جميع الفنيين مشغولون حالياً أو لم يقبلوا في الوقت المحدد.",
+  "waitingForTechniciansToAccept": "بانتظار قبول الفنيين...",
+  "acceptedTechniciansCount": "الفنيون المقبولون ({count})",
+  "jobsCount": "مهمة",
+  "chooseYourTechnician": "اختر الفني الخاص بك"
 }

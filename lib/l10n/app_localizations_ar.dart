@@ -533,7 +533,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reviewNow => 'قيم الآن';
 
   @override
-  String get chooseYourTechnician => 'اختر الفني';
+  String get chooseYourTechnician => 'اختر الفني الخاص بك';
 
   @override
   String get chooseSource => 'اختر المصدر';
@@ -2663,4 +2663,36 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get failedLoadCategories =>
       'فشل تحميل الفئات. قد لا تكون بعض الفلاتر متوفرة.';
+
+  @override
+  String get pleaseSelectTechnician =>
+      'الرجاء اختيار أحد الفنيين المقبولين أدناه للمتابعة.';
+
+  @override
+  String get requestExpiresIn => 'ينتهي الطلب خلال:';
+
+  @override
+  String get lookingForNearbyTechnicians => 'جاري البحث عن فنيين بالقرب منك...';
+
+  @override
+  String get pleaseWaitTechniciansHave120s =>
+      'الرجاء الانتظار، لدى الفنيين المؤهلين 120 ثانية للقبول.';
+
+  @override
+  String get noTechniciansAccepted => 'لم يقبل أي فني';
+
+  @override
+  String get allTechniciansBusy =>
+      'جميع الفنيين مشغولون حالياً أو لم يقبلوا في الوقت المحدد.';
+
+  @override
+  String get waitingForTechniciansToAccept => 'بانتظار قبول الفنيين...';
+
+  @override
+  String acceptedTechniciansCount(int count) {
+    return 'الفنيون المقبولون ($count)';
+  }
+
+  @override
+  String get jobsCount => 'مهمة';
 }
