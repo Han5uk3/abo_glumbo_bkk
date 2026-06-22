@@ -2270,10 +2270,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'سروس ایریا کی تصدیق کی جا رہی ہے، براہ کرم انتظار کریں...';
 
   @override
-  String get onHour => 'آن آور';
+  String get onHour => 'اوقاتِ کار';
 
   @override
-  String get offHour => 'آف آور';
+  String get offHour => 'بعد اوقاتِ کار';
 
   @override
   String get currentTiming => 'موجودہ وقت:';
@@ -2399,10 +2399,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bookingType => 'بکنگ کی قسم';
 
   @override
-  String get onHourBooking => 'آن آور بکنگ';
+  String get onHourBooking => 'بکنگ اوقاتِ کار';
 
   @override
-  String get offHourBooking => 'آف آور بکنگ';
+  String get offHourBooking => 'بکنگ بعد اوقاتِ کار';
 
   @override
   String get discountApplied => 'ڈسکاؤنٹ لاگو ہو گیا';

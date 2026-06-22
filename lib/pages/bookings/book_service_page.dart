@@ -766,7 +766,9 @@ class _BookServicePageState extends State<BookServicePage> {
                                       ? (timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["time"]
                                                 as TimeOfDay)
                                             .format(context)
-                                      : 'Select Time',
+                                      : AppLocalizations.of(
+                                          context,
+                                        )!.selectTime,
                                   style: DMSansFont.textStyle(
                                     color:
                                         (selectedTimeCategory != -1 &&
@@ -1411,7 +1413,7 @@ class _BookServicePageState extends State<BookServicePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          AppLocalizations.of(context)?.date ?? 'Select Date',
+                          AppLocalizations.of(context)!.date,
                           style: DMSansFont.textStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -1861,7 +1863,9 @@ class _BookServicePageState extends State<BookServicePage> {
           );
 
     final bool isToday =
-        isServiceNow || (isSameDay(bookingDate, _getMiddleEastNow()) && _shouldShowTechnicianSelection());
+        isServiceNow ||
+        (isSameDay(bookingDate, _getMiddleEastNow()) &&
+            _shouldShowTechnicianSelection());
 
     return Center(
       child: Padding(

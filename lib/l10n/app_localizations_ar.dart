@@ -2215,10 +2215,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'جاري التحقق من منطقة الخدمة، يرجى الانتظار...';
 
   @override
-  String get onHour => 'ساعات العمل الرسمية';
+  String get onHour => 'دوام';
 
   @override
-  String get offHour => 'خارج ساعات العمل';
+  String get offHour => 'بعد الدوام';
 
   @override
   String get currentTiming => 'التوقيت الحالي:';
@@ -2342,10 +2342,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingType => 'نوع الحجز';
 
   @override
-  String get onHourBooking => 'حجز أثناء ساعات العمل';
+  String get onHourBooking => 'حجز دوام';
 
   @override
-  String get offHourBooking => 'حجز خارج ساعات العمل';
+  String get offHourBooking => 'حجز بعد الدوام';
 
   @override
   String get discountApplied => 'تم تطبيق الخصم';

@@ -432,13 +432,6 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   }
 
   void _handleFAQPage() {
-    if (widget.customerData == null) {
-      showSnackBar(
-        AppLocalizations.of(context)?.errorFillingProfile ?? '',
-        context,
-      );
-      return;
-    }
     Navigator.push(context, MaterialPageRoute(builder: (context) => FAQPage()));
   }
 

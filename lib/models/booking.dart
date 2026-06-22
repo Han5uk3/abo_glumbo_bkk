@@ -45,6 +45,7 @@ class BookingModel {
   Timestamp? technicianSelectedAt; // ✅ Added
   String? cancelledBy; // ✅ Added (Customer, Technician, Admin)
   String? cancellationReason;
+  String? rejectedBy;
   bool paymentCompleted = false;
   String? orderId;
   String? transactionId; // Added transactionId
@@ -110,6 +111,7 @@ class BookingModel {
     this.technicianSelectedAt, // ✅ Added
     this.cancelledBy, // ✅ Added
     this.cancellationReason,
+    this.rejectedBy,
     this.orderId,
     this.transactionId, // Added transactionId
     this.selectedAddressId, // Added selectedAddressId
@@ -171,6 +173,7 @@ class BookingModel {
       acceptedAt = data['acceptedAt'],
       rejectedAt = data['rejectedAt'],
       cancellationReason = data['cancellationReason'],
+      rejectedBy = data['rejectedBy'],
       completedAt = data['completedAt'],
       paymentCompleted = data['paymentCompleted'] ?? false,
       orderId = data['orderId'],
@@ -259,6 +262,7 @@ class BookingModel {
       'selectedAddressId': selectedAddressId, // Added selectedAddressId
       'serviceLocation': serviceLocation?.toJson(),
       'cancellationReason': cancellationReason,
+      'rejectedBy': rejectedBy,
       'paymentCompleted': paymentCompleted,
       'paymentProof': paymentProof,
       'technicianPaymentProof': technicianPaymentProof,

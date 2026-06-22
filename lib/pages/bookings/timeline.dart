@@ -352,7 +352,7 @@ Widget buildBookingTimelineCard(
         }
 
         // Rejected by Admin
-        if (booking.bookingStatusCode.toLowerCase() == 'r') {
+        if (booking.bookingStatusCode.toLowerCase() == 'r' && (booking.rejectedBy == 'Admin' || booking.rejectedBy == null)) {
           timelineItems.add({
             'title': AppLocalizations.of(context)!.cancelledByAdmin,
             'time': _formatDateLocalized(booking.rejectedAt?.toDate() ?? booking.updatedAt?.toDate() ?? DateTime.now(), context),
@@ -360,6 +360,14 @@ Widget buildBookingTimelineCard(
               context,
             )!.bookingCancelledByAdmin,
             'status': 'rejected',
+            'date': booking.rejectedAt?.toDate() ?? booking.updatedAt?.toDate() ?? DateTime.now(),
+          });
+        } else if (booking.bookingStatusCode.toLowerCase() == 'r' && booking.rejectedBy != 'Admin' && booking.rejectedBy != null) {
+          timelineItems.add({
+            'title': AppLocalizations.of(context)!.technicianCancelled,
+            'time': _formatDateLocalized(booking.rejectedAt?.toDate() ?? booking.updatedAt?.toDate() ?? DateTime.now(), context),
+            'description': AppLocalizations.of(context)!.cancelledByTechnician,
+            'status': 'cancelled',
             'date': booking.rejectedAt?.toDate() ?? booking.updatedAt?.toDate() ?? DateTime.now(),
           });
         }
@@ -430,11 +438,10 @@ Widget buildBookingTimelineCard(
         (a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime),
       );
 
-      // Check if the last entry is a rejection (admin rejected or customer cancelled)
+      // Check if there is any rejection (admin rejected or customer cancelled)
       // If so, don't add any more entries
       bool hasRejectionOrCancellation =
-          timelineItems.isNotEmpty &&
-          timelineItems.last['status'] == 'rejected';
+          timelineItems.any((item) => item['status'] == 'rejected');
 
       // Add current/pending status only if there's no rejection/cancellation
       if (!hasRejectionOrCancellation) {
@@ -499,10 +506,13 @@ Widget buildBookingTimelineCard(
             }
           }
         } else {
+          bool isAdminRejection = booking.bookingStatusCode.toLowerCase() == 'r' &&
+              (booking.rejectedBy == 'Admin' || booking.rejectedBy == null);
+
           if (booking.completedAt == null &&
               booking.rejectedAt == null &&
               booking.bookingStatusCode.toLowerCase() != 'xc' &&
-              booking.bookingStatusCode.toLowerCase() != 'r') {
+              !isAdminRejection) {
             if (isInProgress) {
               timelineItems.add({
                 'title': AppLocalizations.of(context)!.serviceInProgress,
