@@ -126,7 +126,7 @@ class ServiceBookingTile extends StatelessWidget {
                             Wrap(
                               children: [
                                 Text(
-                                  "#${booking.id}",
+                                  "#${booking.newBookingId ?? booking.id}",
                                   style: TextStyle(fontSize: 9),
                                 ),
                                 Text(

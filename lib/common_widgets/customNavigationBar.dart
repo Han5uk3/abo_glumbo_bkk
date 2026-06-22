@@ -30,7 +30,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
-          height: 90,
+          height: 60,
           padding: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.8),

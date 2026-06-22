@@ -822,7 +822,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                                 ),
                                               ),
                                               Text(
-                                                "#${booking.id}",
+                                                "#${booking.newBookingId ?? booking.id}",
                                                 style: const TextStyle(
                                                   fontSize: 10,
                                                 ),
@@ -834,7 +834,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                         IconButton(
                                           onPressed: () {
                                             Clipboard.setData(
-                                              ClipboardData(text: booking.id),
+                                              ClipboardData(text: booking.newBookingId ?? booking.id),
                                             );
                                             ScaffoldMessenger.of(
                                               context,

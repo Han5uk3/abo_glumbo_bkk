@@ -51,8 +51,9 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
       // Initialize notification language from customer data
       if (widget.customerData?.lanCode != null) {
-        _currentNotificationLanguage =
-            _getDisplayLanguage(widget.customerData!.lanCode!);
+        _currentNotificationLanguage = _getDisplayLanguage(
+          widget.customerData!.lanCode!,
+        );
       }
 
       debugPrint(
@@ -332,8 +333,9 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         children: [
           BlocBuilder<AccountBloc, AccountState>(
             builder: (context, state) {
-              final displayLanguage =
-                  _getDisplayLanguage(state.locale.languageCode);
+              final displayLanguage = _getDisplayLanguage(
+                state.locale.languageCode,
+              );
               return AccountListTile.withText(
                 leading: Icon(Icons.translate),
                 title: AppLocalizations.of(context)?.language ?? '',
@@ -388,16 +390,8 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   }
 
   Widget _buildDangerZone() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: AccountListTile(
-        leading: Icon(Icons.delete, color: Colors.red),
-        textcolor: Colors.red,
-        title: AppLocalizations.of(context)?.deleteAccount ?? '',
-        onTap: () => _showDeleteAccountConfirmation(),
-        dense: true,
-      ),
-    );
+    // Hidden per user request
+    return const SizedBox.shrink();
   }
 
   Widget _buildAuthSection() {
@@ -495,9 +489,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
   void _handleNotificationLanguageChange(String language) async {
     try {
-      await AppServices.updateNotificationLanguage(
-        _getLanguageCode(language),
-      );
+      await AppServices.updateNotificationLanguage(_getLanguageCode(language));
       // Update local state
       setState(() {
         _currentNotificationLanguage = language;
@@ -811,7 +803,8 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   Future<void> _performDeleteAccount() async {
     try {
       await AppServices.deleteAccount();
-      final uid = LocalStoreHelper.getUID() ?? LocalStoreHelper.getLastValidUID();
+      final uid =
+          LocalStoreHelper.getUID() ?? LocalStoreHelper.getLastValidUID();
       if (uid != null) {
         await LocalStoreHelper.clearBiometricAuthEnabled(uid);
       }
@@ -921,13 +914,13 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       } catch (e) {
         debugPrint('❌ Error deleting FCM token: $e');
       }
-      
+
       LocalStoreHelper.clearUID();
-      
+
       if (!keepFirebaseAuth) {
         await FirebaseAuth.instance.signOut();
       }
-      
+
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,

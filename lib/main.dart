@@ -97,7 +97,9 @@ Future<void> main() async {
       try {
         await Hive.openBox(hiveBoxName);
       } catch (e) {
-        debugPrint('⚠️ Hive box corrupted or failed to open: $e. Deleting and reopening...');
+        debugPrint(
+          '⚠️ Hive box corrupted or failed to open: $e. Deleting and reopening...',
+        );
         await Hive.deleteBoxFromDisk(hiveBoxName);
         await Hive.openBox(hiveBoxName);
       }
@@ -186,130 +188,143 @@ class MyApp extends StatelessWidget {
         listener: (context, state) {},
         child: BlocBuilder<AccountBloc, AccountState>(
           builder: (context, state) {
-            return MaterialApp(
-              key: ValueKey(state.locale.languageCode),
-              navigatorKey: navigatorKey,
-              title: 'Abo Glumbo - Customer',
-              locale: state.locale,
-              localizationsDelegates: [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: const [Locale('en'), Locale('ar'), Locale('ur')],
-              localeResolutionCallback: (locale, supportedLocales) {
-                if (supportedLocales.any(
-                  (supported) =>
-                      supported.languageCode == state.locale.languageCode,
-                )) {
-                  return state.locale;
-                }
-                return supportedLocales.first;
-              },
+            return SafeArea(
+              top: false,
+              child: MaterialApp(
+                key: ValueKey(state.locale.languageCode),
+                navigatorKey: navigatorKey,
+                title: 'Abo Glumbo - Customer',
+                locale: state.locale,
+                localizationsDelegates: [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [
+                  Locale('en'),
+                  Locale('ar'),
+                  Locale('ur'),
+                ],
+                localeResolutionCallback: (locale, supportedLocales) {
+                  if (supportedLocales.any(
+                    (supported) =>
+                        supported.languageCode == state.locale.languageCode,
+                  )) {
+                    return state.locale;
+                  }
+                  return supportedLocales.first;
+                },
 
-              builder: (context, child) {
-                final mq = MediaQuery.of(context);
-                final bottom = mq.padding.bottom;
+                builder: (context, child) {
+                  final mq = MediaQuery.of(context);
+                  final bottom = mq.padding.bottom;
 
-                // Samsung OneUI gesture nav bug → returns 0 bottom inset
-                final fixedBottom = bottom == 0 ? 16.0 : bottom;
+                  // Samsung OneUI gesture nav bug → returns 0 bottom inset
+                  final fixedBottom = bottom == 0 ? 16.0 : bottom;
 
-                return MediaQuery(
-                  data: mq.copyWith(
-                    padding: mq.padding.copyWith(bottom: fixedBottom),
+                  return MediaQuery(
+                    data: mq.copyWith(
+                      padding: mq.padding.copyWith(bottom: fixedBottom),
+                    ),
+                    child: Directionality(
+                      textDirection:
+                          (state.locale.languageCode == 'ar' ||
+                              state.locale.languageCode == 'ur')
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
+                      child: child!,
+                    ),
+                  );
+                },
+
+                theme: ThemeData(
+                  colorScheme: ColorScheme.fromSeed(
+                    seedColor: AppColors.primary,
                   ),
-                  child: Directionality(
-                    textDirection: (state.locale.languageCode == 'ar' || state.locale.languageCode == 'ur')
-                        ? TextDirection.rtl
-                        : TextDirection.ltr,
-                    child: child!,
-                  ),
-                );
-              },
-
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-                scaffoldBackgroundColor: AppColors.bgBlueTint,
-                navigationBarTheme: NavigationBarThemeData(
-                  backgroundColor: AppColors.bgBlueTint,
-                  indicatorColor: Colors.transparent,
-                  labelTextStyle: WidgetStateTextStyle.resolveWith((states) {
-                    if (states.contains(WidgetState.selected)) {
+                  scaffoldBackgroundColor: AppColors.bgBlueTint,
+                  navigationBarTheme: NavigationBarThemeData(
+                    backgroundColor: AppColors.bgBlueTint,
+                    indicatorColor: Colors.transparent,
+                    labelTextStyle: WidgetStateTextStyle.resolveWith((states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return DMSansFont.textStyle(
+                          color: AppColors.darkGrey,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        );
+                      }
                       return DMSansFont.textStyle(
-                        color: AppColors.darkGrey,
+                        color: AppColors.grey,
                         fontSize: 8,
-                        fontWeight: FontWeight.bold,
                       );
-                    }
-                    return DMSansFont.textStyle(
-                      color: AppColors.grey,
-                      fontSize: 8,
-                    );
-                  }),
-                ),
-                dialogTheme: DialogThemeData(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(13),
+                    }),
                   ),
-                ),
-                filledButtonTheme: FilledButtonThemeData(
-                  style: FilledButton.styleFrom(
+                  dialogTheme: DialogThemeData(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(13),
                     ),
                   ),
-                ),
-                textButtonTheme: TextButtonThemeData(
-                  style: TextButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  filledButtonTheme: FilledButtonThemeData(
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
-                ),
-                appBarTheme: AppBarTheme(
-                  backgroundColor: AppColors.primary,
-                  elevation: 0,
-                  iconTheme: const IconThemeData(color: Colors.white),
-                  titleSpacing: 0,
-                  titleTextStyle: DMSansFont.textStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                searchBarTheme: SearchBarThemeData(
-                  elevation: const WidgetStatePropertyAll(0),
-                  backgroundColor: WidgetStatePropertyAll(AppColors.bgBlueTint),
-                  textStyle: WidgetStatePropertyAll(
-                    DMSansFont.textStyle(color: Colors.black45, fontSize: 12),
-                  ),
-                  constraints: const BoxConstraints(
-                    minHeight: 50,
-                    maxHeight: 50,
-                  ),
-                  shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  textButtonTheme: TextButtonThemeData(
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
-                  side: const WidgetStatePropertyAll(
-                    BorderSide(color: Colors.black12, width: 1),
-                  ),
-                ),
-                bottomSheetTheme: BottomSheetThemeData(
-                  backgroundColor: AppColors.bgBlueTint,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
+                  appBarTheme: AppBarTheme(
+                    backgroundColor: AppColors.primary,
+                    elevation: 0,
+                    iconTheme: const IconThemeData(color: Colors.white),
+                    titleSpacing: 0,
+                    titleTextStyle: DMSansFont.textStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  searchBarTheme: SearchBarThemeData(
+                    elevation: const WidgetStatePropertyAll(0),
+                    backgroundColor: WidgetStatePropertyAll(
+                      AppColors.bgBlueTint,
+                    ),
+                    textStyle: WidgetStatePropertyAll(
+                      DMSansFont.textStyle(color: Colors.black45, fontSize: 12),
+                    ),
+                    constraints: const BoxConstraints(
+                      minHeight: 50,
+                      maxHeight: 50,
+                    ),
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    side: const WidgetStatePropertyAll(
+                      BorderSide(color: Colors.black12, width: 1),
+                    ),
+                  ),
+                  bottomSheetTheme: BottomSheetThemeData(
+                    backgroundColor: AppColors.bgBlueTint,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
+                    ),
+                  ),
+                  useMaterial3: true,
                 ),
-                useMaterial3: true,
+                debugShowCheckedModeBanner: false,
+                home: const SplashScreen(),
               ),
-              debugShowCheckedModeBanner: false,
-              home: const SplashScreen(),
             );
           },
         ),

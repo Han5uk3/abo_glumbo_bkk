@@ -312,7 +312,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       child: Scaffold(
         backgroundColor: AppColors.bgBlueTint,
         appBar: AppBar(
-          backgroundColor: AppColors.bgBlueTint,
+          backgroundColor: Colors.white,
           title: Text(
             locale.profile,
             style: TextStyle(color: Colors.black, fontSize: 14),

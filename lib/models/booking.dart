@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BookingModel {
   String id;
+  String? newBookingId;
   late ServiceModel service;
   late Timestamp bookingDateTime;
   late String bookingStatusCode;
@@ -79,6 +80,7 @@ class BookingModel {
 
   BookingModel({
     required this.id,
+    this.newBookingId,
     required this.service,
     required this.bookingDateTime,
     required this.bookingStatusCode,
@@ -152,6 +154,7 @@ class BookingModel {
       isStartTracking = data['isStarted'] ?? false,
       notes = data['notes'] ?? '',
       id = data['id'] ?? '',
+      newBookingId = data['newBookingId'],
       issueImage = data['issueImage'],
       issueVideo = data['issueVideo'],
       customer = CustomerModel.fromJson(data['customer']),
@@ -277,6 +280,9 @@ class BookingModel {
     };
 
     map['id'] = id;
+    if (newBookingId != null) {
+      map['newBookingId'] = newBookingId;
+    }
     if (warranty != null) {
       map['warranty'] = warranty!.toJson();
     }

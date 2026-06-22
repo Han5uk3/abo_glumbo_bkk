@@ -5,6 +5,7 @@ import 'package:abo_glumbo_bbk/models/address.dart';
 
 class JobRequestModel {
   final String id;
+  final String? newBookingId;
   final ServiceModel service;
   final CustomerModel customer;
   final AddressModel address;
@@ -21,6 +22,7 @@ class JobRequestModel {
 
   JobRequestModel({
     required this.id,
+    this.newBookingId,
     required this.service,
     required this.customer,
     required this.address,
@@ -39,6 +41,7 @@ class JobRequestModel {
   factory JobRequestModel.fromJson(Map<String, dynamic> json) {
     return JobRequestModel(
       id: json['id'] ?? '',
+      newBookingId: json['newBookingId'],
       service: ServiceModel.fromJson(json['service']),
       customer: CustomerModel.fromJson(json['customer']),
       address: AddressModel.fromJson(json['address']),
@@ -58,6 +61,7 @@ class JobRequestModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'newBookingId': newBookingId,
       'service': service.toJson(),
       'customer': customer.toJson(),
       'address': address.toJson(),
