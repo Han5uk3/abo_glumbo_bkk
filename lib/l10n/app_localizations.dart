@@ -4615,7 +4615,7 @@ abstract class AppLocalizations {
   /// No description provided for @autoAssignMessage.
   ///
   /// In en, this message translates to:
-  /// **'Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.'**
+  /// **'Your selected time is outside our working hours. We will assign an available technician before your service time and notify you once confirmed.'**
   String get autoAssignMessage;
 
   /// No description provided for @youSelectedTechnician.

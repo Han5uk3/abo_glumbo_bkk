@@ -4,7 +4,6 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/book_service_page.dart';
@@ -74,7 +73,7 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
       appBar: AppBar(
         title: Text(
           l10n.selectService,
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.black,
@@ -127,7 +126,7 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
       return Center(
         child: Text(
           AppLocalizations.of(context)?.noServicesFound ?? 'No services found',
-          style: DMSansFont.textStyle(color: Colors.grey),
+          style: TextStyle(color: Colors.grey),
         ),
       );
     }
@@ -184,7 +183,7 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
                           AppLocalizations.of(context)?.localeName ?? 'en',
                     ) ??
                     '',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
@@ -246,7 +245,7 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
                 children: [
                   Text(
                     service.nameLocalized(languageCode: locale) ?? '',
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -254,7 +253,7 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
                   const SizedBox(height: 4),
                   Text(
                     service.descriptionLocalized(languageCode: locale) ?? '',
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[600],
                     ),

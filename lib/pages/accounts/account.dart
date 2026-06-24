@@ -22,7 +22,6 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class AccountPage extends StatefulWidget {
   final CustomerModel? customerData;
@@ -129,7 +128,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
             backgroundColor: AppColors.primary,
             title: Text(
               AppLocalizations.of(context)!.account,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -255,7 +254,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
               backgroundColor: AppColors.yellow,
               child: Text(
                 widget.customerData?.name?.substring(0, 1) ?? 'G',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: AccountPageConstants.avatarFontSize,
                   color: Colors.black,
@@ -275,7 +274,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         children: [
           Text(
             widget.customerData?.name ?? 'Guest User',
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -283,12 +282,12 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           if (!_isGuest && widget.customerData?.email != null) ...[
             Text(
               widget.customerData!.email!,
-              style: DMSansFont.textStyle(fontSize: 10, color: Colors.black),
+              style: TextStyle(fontSize: 10, color: Colors.black),
             ),
           ],
           // Text(
           //   "Version : ${AccountPageConstants.appVersion}",
-          //   style: DMSansFont.textStyle(
+          //   style: TextStyle(
           //     fontSize: 8,
           //     color: const Color(0xff757575),
           //   ),
@@ -541,7 +540,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                   child: Text(
                     AppLocalizations.of(dialogContext)?.disableBiometric ??
                         'Disable Biometric?',
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -556,7 +555,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                 Text(
                   AppLocalizations.of(dialogContext)?.disableBiometricWarning ??
                       'Disabling biometric authentication will prevent you from logging in using fingerprint or face recognition.',
-                  style: DMSansFont.textStyle(fontSize: 12),
+                  style: TextStyle(fontSize: 12),
                 ),
                 const SizedBox(height: 12),
                 Container(
@@ -576,7 +575,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                                 dialogContext,
                               )?.youWillNeedPhoneOtp ??
                               'You will need to use your phone number and OTP to login.',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 11,
                             color: Colors.blue.shade700,
                           ),
@@ -660,7 +659,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                 child: Text(
                   AppLocalizations.of(dialogContext)?.deleteAccount ??
                       'Delete Account?',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.red,
@@ -676,7 +675,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
               Text(
                 AppLocalizations.of(dialogContext)?.deleteAccountWarning ??
                     'This action cannot be undone. All your data will be permanently deleted.',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
@@ -706,7 +705,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                                   dialogContext,
                                 )?.whatWillBeDeleted ??
                                 'What will be deleted:',
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: Colors.red.shade700,
@@ -789,7 +788,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           Expanded(
             child: Text(
               text,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 10,
                 color: Colors.red.shade700,
               ),
@@ -854,7 +853,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           actionsAlignment: MainAxisAlignment.start,
           title: Text(
             AppLocalizations.of(context)?.logout ?? 'Logout',
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
@@ -862,7 +861,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           content: Text(
             AppLocalizations.of(context)?.areYouSureYouWantToLogout ??
                 'Are you sure you want to logout?',
-            style: DMSansFont.textStyle(fontSize: 14),
+            style: TextStyle(fontSize: 14),
           ),
           actions: [
             Row(

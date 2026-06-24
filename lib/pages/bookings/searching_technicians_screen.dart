@@ -9,8 +9,6 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
-import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -203,7 +201,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
               : locale == 'ur'
               ? 'بکنگ کی درخواست منسوخ کریں؟'
               : 'Cancel Booking Request?',
-          style: DMSansFont.textStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         content: Text(
           locale == 'ar'
@@ -211,7 +209,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
               : locale == 'ur'
               ? 'کیا آپ واقعی منسوخ کرنا چاہتے ہیں؟ اس سے ٹیکنیشنز کی تلاش رک جائے گی۔'
               : 'Are you sure you want to cancel? This will stop searching for technicians.',
-          style: DMSansFont.textStyle(fontSize: 14),
+          style: TextStyle(fontSize: 14),
         ),
         actions: [
           TextButton(
@@ -393,7 +391,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                           : AppLocalizations.of(context)?.localeName == 'ur'
                           ? 'اپنے ٹیکنیشن کا انتخاب کریں'
                           : "Choose your technician",
-                      style: PoppinsFont.textStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -406,7 +404,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                           : AppLocalizations.of(context)?.localeName == 'ur'
                           ? 'براہ کرم جاری رکھنے کے لیے نیچے قبول شدہ ٹیکنیشنز میں سے ایک کا انتخاب کریں۔'
                           : "Please select one of the accepted technicians below to continue.",
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: Colors.grey.shade600,
                       ),
@@ -428,11 +426,11 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                     : AppLocalizations.of(context)?.localeName == 'ur'
                     ? 'درخواست کی میعاد ختم ہو جائے گی:'
                     : "Request expires in:",
-                style: DMSansFont.textStyle(fontSize: 12, color: Colors.grey.shade600),
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
               Text(
-                "${remainingSelectionTime}s",
-                style: PoppinsFont.textStyle(
+                "${remainingSelectionTime}${AppLocalizations.of(context)!.sText}",
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: remainingSelectionTime <= 30 ? Colors.red : AppColors.primary,
@@ -477,7 +475,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
               : locale == 'ur'
               ? 'ٹیکنیشنز کی تلاش'
               : "Searching for Technicians",
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -529,7 +527,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                       : AppLocalizations.of(context)?.localeName == 'ur'
                       ? 'مطلوبہ ٹیکنیشن کا انتظار ہے...'
                       : 'Waiting for requested technician...',
-                  style: DMSansFont.textStyle(fontSize: 16, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 32),
                 CircularProgressIndicator(
@@ -540,8 +538,8 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "$_secondsRemaining" "s",
-                  style: DMSansFont.textStyle(
+                  "$_secondsRemaining${AppLocalizations.of(context)!.sText}",
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary,
@@ -581,7 +579,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                       : AppLocalizations.of(context)?.localeName == 'ur'
                       ? 'مطلوبہ ٹیکنیشن کا انتظار ہے...'
                       : 'Waiting for requested technician...',
-                  style: DMSansFont.textStyle(fontSize: 16, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 32),
                 CircularProgressIndicator(
@@ -592,8 +590,8 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "$_secondsRemaining" "s",
-                  style: DMSansFont.textStyle(
+                  "$_secondsRemaining${AppLocalizations.of(context)!.sText}",
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary,
@@ -629,7 +627,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             const SizedBox(height: 16),
             Text(
               locale == 'ar' ? 'عرض بديل من الفني' : locale == 'ur' ? 'ٹیکنیشن کی طرف سے متبادل پیشکش' : 'Counter-Offer from Technician',
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -639,7 +637,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             Text(
               locale == 'ar' ? 'لقد اقترح الفني وقتاً جديداً' : locale == 'ur' ? 'ٹیکنیشن نے نیا وقت تجویز کیا ہے' : 'The technician proposed a new time',
               textAlign: TextAlign.center,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[600],
               ),
@@ -653,7 +651,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
               ),
               child: Text(
                 "${proposedTime.toDate().day}/${proposedTime.toDate().month}/${proposedTime.toDate().year} ${TimeOfDay.fromDateTime(proposedTime.toDate()).format(context)}",
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.blue[900],
@@ -757,7 +755,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                       : locale == 'ur'
                       ? 'قریبی ٹیکنیشنز تلاش کیے جا رہے ہیں...'
                       : "Looking for nearby technicians...",
-                  style: PoppinsFont.textStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -770,7 +768,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                       : locale == 'ur'
                       ? 'براہ کرم انتظار کریں، اہل ٹیکنیشنز کے پاس قبول کرنے کے لیے 120 سیکنڈز ہیں۔'
                       : "Please wait, eligible technicians have 120s to accept.",
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     color: Colors.grey.shade600,
                   ),
@@ -808,7 +806,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             children: [
               Text(
                 "${_secondsRemaining}s",
-                style: PoppinsFont.textStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: _secondsRemaining <= 20 ? Colors.red : Colors.black,
@@ -816,7 +814,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
               ),
               Text(
                 locale == 'ar' ? 'متبقي' : locale == 'ur' ? 'باقی' : "Remaining",
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 9,
                   color: Colors.grey.shade500,
                 ),
@@ -861,7 +859,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 : locale == 'ur'
                 ? 'کسی ٹیکنیشن نے قبول نہیں کیا'
                 : "No Technicians Accepted",
-            style: PoppinsFont.textStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -875,7 +873,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 ? 'تمام ٹیکنیشنز اس وقت مصروف ہیں یا انہوں نے وقت پر قبول نہیں کیا۔'
                 : "All technicians are currently busy or didn't accept in time.",
             textAlign: TextAlign.center,
-            style: DMSansFont.textStyle(fontSize: 13, color: Colors.grey.shade600, height: 1.4),
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade600, height: 1.4),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
@@ -894,7 +892,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                         : locale == 'ur'
                         ? 'دوبارہ تلاش کریں'
                         : "Search Again",
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -926,7 +924,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                     : locale == 'ur'
                     ? 'ٹیکنیشنز کے قبول کرنے کا انتظار ہے...'
                     : "Waiting for technicians to accept...",
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 13,
                   color: Colors.grey.shade600,
                 ),
@@ -950,7 +948,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 : locale == 'ur'
                 ? 'قبول شدہ ٹیکنیشنز (${_acceptedTechnicians.length})'
                 : "Accepted Technicians (${_acceptedTechnicians.length})",
-            style: PoppinsFont.textStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -1013,7 +1011,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 children: [
                   Text(
                     tech['name'] ?? "Technician",
-                    style: PoppinsFont.textStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -1026,7 +1024,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                       const SizedBox(width: 4),
                       Text(
                         rating.toStringAsFixed(1),
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
@@ -1039,7 +1037,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                             : locale == 'ur'
                             ? '•   $completedJobs کام'
                             : "•   $completedJobs jobs",
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           color: Colors.grey.shade600,
                         ),
@@ -1052,7 +1050,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                               : locale == 'ur'
                               ? '•   ${distance.toStringAsFixed(1)} کلومیٹر دور'
                               : "•   ${distance.toStringAsFixed(1)} km away",
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 11,
                             color: Colors.grey.shade600,
                           ),
@@ -1076,7 +1074,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                   ? const Loader(color: Colors.white, size: 16)
                   : Text(
                       locale == 'ar' ? 'اختيار' : locale == 'ur' ? 'منتخب کریں' : "Choose",
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,

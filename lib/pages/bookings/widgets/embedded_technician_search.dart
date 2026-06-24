@@ -5,8 +5,6 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
-import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -300,7 +298,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                   children: [
                     Text(
                       AppLocalizations.of(context)?.chooseYourTechnician ?? "Choose your technician",
-                      style: PoppinsFont.textStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -309,7 +307,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                     const SizedBox(height: 4),
                     Text(
                       AppLocalizations.of(context)?.pleaseSelectTechnician ?? "Please select one of the accepted technicians below to continue.",
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: Colors.grey.shade600,
                       ),
@@ -327,14 +325,14 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
             children: [
               Text(
                 AppLocalizations.of(context)?.requestExpiresIn ?? "Request expires in:",
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey.shade600,
                 ),
               ),
               Text(
                 "${remainingSelectionTime}${AppLocalizations.of(context)!.sText}",
-                style: PoppinsFont.textStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: remainingSelectionTime <= 30
@@ -432,7 +430,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                   children: [
                     Text(
                       AppLocalizations.of(context)?.lookingForNearbyTechnicians ?? "Looking for nearby technicians...",
-                      style: PoppinsFont.textStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -441,7 +439,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                     const SizedBox(height: 4),
                     Text(
                       AppLocalizations.of(context)?.pleaseWaitTechniciansHave120s ?? "Please wait, eligible technicians have 120s to accept.",
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: Colors.grey.shade600,
                       ),
@@ -459,14 +457,14 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
             children: [
               Text(
                 AppLocalizations.of(context)?.requestExpiresIn ?? "Request expires in:",
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey.shade600,
                 ),
               ),
               Text(
-                "${_secondsRemaining}${AppLocalizations.of(context)!.seconds}",
-                style: PoppinsFont.textStyle(
+                "${_secondsRemaining}${AppLocalizations.of(context)!.sText}",
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: _secondsRemaining <= 20
@@ -514,7 +512,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
           const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context)?.noTechniciansAccepted ?? "No Technicians Accepted",
-            style: PoppinsFont.textStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -524,7 +522,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
           Text(
             AppLocalizations.of(context)?.allTechniciansBusy ?? "All technicians are currently busy or didn't accept in time.",
             textAlign: TextAlign.center,
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 13,
               color: Colors.grey.shade600,
               height: 1.4,
@@ -545,7 +543,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                 ? const Loader(color: Colors.white)
                 : Text(
                     AppLocalizations.of(context)?.searchAgain ?? "Search Again",
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -731,7 +729,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
               const SizedBox(height: 16),
               Text(
                 AppLocalizations.of(context)?.waitingForTechniciansToAccept ?? "Waiting for technicians to accept...",
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 13,
                   color: Colors.grey.shade600,
                 ),
@@ -753,7 +751,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
           child: Text(
             AppLocalizations.of(context)?.noTechniciansMatchFilters ?? "No technicians match the selected filters.",
             textAlign: TextAlign.center,
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 13,
               color: Colors.grey.shade600,
             ),
@@ -769,7 +767,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
           child: Text(
             AppLocalizations.of(context)?.acceptedTechniciansCount(displayedTechnicians.length) ?? "Accepted Technicians (${displayedTechnicians.length})",
-            style: PoppinsFont.textStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -850,7 +848,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                     children: [
                       Text(
                         tech['name'] ?? "Technician",
-                        style: PoppinsFont.textStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
@@ -869,7 +867,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                           const SizedBox(width: 4),
                           Text(
                             rating.toStringAsFixed(1),
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: Colors.grey.shade800,
@@ -884,7 +882,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                           const SizedBox(width: 4),
                           Text(
                             "$completedJobs ${AppLocalizations.of(context)?.jobsCount ?? 'jobs'}",
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey.shade600,
                             ),
@@ -916,7 +914,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                         const SizedBox(width: 4),
                         Text(
                           "${distance.toStringAsFixed(1)} ${AppLocalizations.of(context)?.km ?? 'km'}",
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: Colors.blue.shade700,

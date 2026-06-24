@@ -10,7 +10,6 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:pinput/pinput.dart';
 
 class OtpPage extends StatefulWidget {
@@ -527,7 +526,7 @@ class _OtpPageState extends State<OtpPage> {
         ),
         title: Text(
           locn.enterOtp,
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: Colors.black,
@@ -553,7 +552,7 @@ class _OtpPageState extends State<OtpPage> {
                           RichText(
                             text: TextSpan(
                               text: locn.otphasbeensentto,
-                              style: DMSansFont.textStyle(
+                              style: TextStyle(
                                 color: Colors.black45,
                                 fontSize: 14,
                               ),
@@ -563,7 +562,7 @@ class _OtpPageState extends State<OtpPage> {
                                     textDirection: TextDirection.ltr,
                                     child: Text(
                                       " ${widget.phoneNumber ?? ''} ",
-                                      style: DMSansFont.textStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
                                         color: Colors.black,
@@ -592,7 +591,7 @@ class _OtpPageState extends State<OtpPage> {
                                 defaultPinTheme: PinTheme(
                                   width: 45,
                                   height: 60,
-                                  textStyle: DMSansFont.textStyle(
+                                  textStyle: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
@@ -609,7 +608,7 @@ class _OtpPageState extends State<OtpPage> {
                                 focusedPinTheme: PinTheme(
                                   width: 45,
                                   height: 60,
-                                  textStyle: DMSansFont.textStyle(
+                                  textStyle: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
@@ -646,7 +645,7 @@ class _OtpPageState extends State<OtpPage> {
                                     const SizedBox(width: 8),
                                     Text(
                                       locn.listeningForSms,
-                                      style: DMSansFont.textStyle(
+                                      style: TextStyle(
                                         fontSize: 12,
                                         color: AppColors.green,
                                         fontWeight: FontWeight.w500,
@@ -675,7 +674,7 @@ class _OtpPageState extends State<OtpPage> {
                                 remainingTime > 0
                                     ? '${locn.resendOTPin} $formattedTime ${locn.sText}'
                                     : locn.didntreciveCode,
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   color: Colors.black54,
                                   fontSize: 14,
                                 ),
@@ -696,7 +695,7 @@ class _OtpPageState extends State<OtpPage> {
                                       ? Loader(color: AppColors.green, size: 16)
                                           : Text(
                                               locn.resend,
-                                              style: DMSansFont.textStyle(
+                                              style: TextStyle(
                                                 color: AppColors.primary,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 14,
@@ -731,7 +730,7 @@ class _OtpPageState extends State<OtpPage> {
                               ? Loader(color: Colors.white, size: 24)
                               : Text(
                                   locn.verifyOtp,
-                                  style: DMSansFont.textStyle(
+                                  style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -799,7 +798,7 @@ class _OtpPageState extends State<OtpPage> {
             const SizedBox(height: 28),
             Text(
               AppLocalizations.of(context)!.migratingData,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -810,7 +809,7 @@ class _OtpPageState extends State<OtpPage> {
             Text(
               AppLocalizations.of(context)!.weAreMigratingYourData,
               textAlign: TextAlign.center,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
                 color: Colors.black54,
@@ -855,7 +854,7 @@ class _OtpPageState extends State<OtpPage> {
                   Expanded(
                     child: Text(
                       AppLocalizations.of(context)!.pleaseDontCloseTheApp,
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: Colors.orange.shade700,
@@ -869,7 +868,7 @@ class _OtpPageState extends State<OtpPage> {
             const SizedBox(height: 24),
             Text(
               AppLocalizations.of(context)!.transferringData,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: Colors.grey.shade600,

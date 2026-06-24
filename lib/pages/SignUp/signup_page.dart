@@ -13,7 +13,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class SignupPage extends StatefulWidget {
   final String uid;
@@ -61,7 +60,7 @@ class _SignupPageState extends State<SignupPage> {
                 Text(
                   AppLocalizations.of(dialogContext)?.creatingAccount ??
                       'Creating your account...',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -173,7 +172,7 @@ class _SignupPageState extends State<SignupPage> {
           ),
           title: Text(
             locale!.termsAndConditions,
-            style: DMSansFont.textStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -181,7 +180,7 @@ class _SignupPageState extends State<SignupPage> {
               children: [
                 Text(
                   locale.byCreatingAnAccountYouAgreeToOur,
-                  style: DMSansFont.textStyle(),
+                  style: TextStyle(),
                 ),
                 const SizedBox(height: 16),
                 GestureDetector(
@@ -195,7 +194,7 @@ class _SignupPageState extends State<SignupPage> {
                   },
                   child: Text(
                     locale.termsAndConditions,
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       color: AppColors.secondary,
                       decoration: TextDecoration.underline,
                     ),
@@ -204,7 +203,7 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(height: 16),
                 Text(
                   locale.doYouAccept,
-                  style: DMSansFont.textStyle(fontWeight: FontWeight.w500),
+                  style: TextStyle(fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -267,7 +266,7 @@ class _SignupPageState extends State<SignupPage> {
             const SizedBox(height: 25),
             Text(
               locale?.createAccount ?? 'Create Account',
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
               fontSize: 22,
               color: Colors.black,
@@ -277,7 +276,7 @@ class _SignupPageState extends State<SignupPage> {
             Text(
               locale?.pleaseFillTheInputBelowHereToContinue ??
                   'Please fill the input below here to continue',
-              style: DMSansFont.textStyle(color: Colors.black45, fontSize: 12),
+              style: TextStyle(color: Colors.black45, fontSize: 12),
             ),
             const SizedBox(height: 34),
 
@@ -338,7 +337,7 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 child: Text(
                   locale?.createAccount ?? 'Create Account',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,

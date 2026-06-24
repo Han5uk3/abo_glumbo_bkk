@@ -17,8 +17,6 @@ import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
-import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
@@ -75,6 +73,12 @@ class _BookServicePageState extends State<BookServicePage> {
     {
       "label": "Morning",
       "values": [
+        {"label": "06:00 AM", "time": const TimeOfDay(hour: 6, minute: 0)},
+        {"label": "06:30 AM", "time": const TimeOfDay(hour: 6, minute: 30)},
+        {"label": "07:00 AM", "time": const TimeOfDay(hour: 7, minute: 0)},
+        {"label": "07:30 AM", "time": const TimeOfDay(hour: 7, minute: 30)},
+        {"label": "08:00 AM", "time": const TimeOfDay(hour: 8, minute: 0)},
+        {"label": "08:30 AM", "time": const TimeOfDay(hour: 8, minute: 30)},
         {"label": "09:00 AM", "time": const TimeOfDay(hour: 9, minute: 0)},
         {"label": "09:30 AM", "time": const TimeOfDay(hour: 9, minute: 30)},
         {"label": "10:00 AM", "time": const TimeOfDay(hour: 10, minute: 0)},
@@ -92,36 +96,31 @@ class _BookServicePageState extends State<BookServicePage> {
         {"label": "01:30 PM", "time": const TimeOfDay(hour: 13, minute: 30)},
         {"label": "02:00 PM", "time": const TimeOfDay(hour: 14, minute: 0)},
         {"label": "02:30 PM", "time": const TimeOfDay(hour: 14, minute: 30)},
+        {"label": "03:00 PM", "time": const TimeOfDay(hour: 15, minute: 0)},
+        {"label": "03:30 PM", "time": const TimeOfDay(hour: 15, minute: 30)},
       ],
     },
     {
       "label": "Evening",
       "values": [
-        {"label": "03:00 PM", "time": const TimeOfDay(hour: 15, minute: 0)},
-        {"label": "03:30 PM", "time": const TimeOfDay(hour: 15, minute: 30)},
         {"label": "04:00 PM", "time": const TimeOfDay(hour: 16, minute: 0)},
         {"label": "04:30 PM", "time": const TimeOfDay(hour: 16, minute: 30)},
         {"label": "05:00 PM", "time": const TimeOfDay(hour: 17, minute: 0)},
         {"label": "05:30 PM", "time": const TimeOfDay(hour: 17, minute: 30)},
+        {"label": "06:00 PM", "time": const TimeOfDay(hour: 18, minute: 0)},
+        {"label": "06:30 PM", "time": const TimeOfDay(hour: 18, minute: 30)},
+        {"label": "07:00 PM", "time": const TimeOfDay(hour: 19, minute: 0)},
+        {"label": "07:30 PM", "time": const TimeOfDay(hour: 19, minute: 30)},
       ],
     },
     {
       "label": "Night",
       "values": [
-        {"label": "06:00 PM", "time": const TimeOfDay(hour: 18, minute: 0)},
-        {"label": "06:30 PM", "time": const TimeOfDay(hour: 18, minute: 30)},
-        {"label": "07:00 PM", "time": const TimeOfDay(hour: 19, minute: 0)},
-        {"label": "07:30 PM", "time": const TimeOfDay(hour: 19, minute: 30)},
         {"label": "08:00 PM", "time": const TimeOfDay(hour: 20, minute: 0)},
         {"label": "08:30 PM", "time": const TimeOfDay(hour: 20, minute: 30)},
         {"label": "09:00 PM", "time": const TimeOfDay(hour: 21, minute: 0)},
         {"label": "09:30 PM", "time": const TimeOfDay(hour: 21, minute: 30)},
         {"label": "10:00 PM", "time": const TimeOfDay(hour: 22, minute: 0)},
-        {"label": "10:30 PM", "time": const TimeOfDay(hour: 22, minute: 30)},
-        {"label": "11:00 PM", "time": const TimeOfDay(hour: 23, minute: 0)},
-        {"label": "11:30 PM", "time": const TimeOfDay(hour: 23, minute: 30)},
-        {"label": "12:00 AM", "time": const TimeOfDay(hour: 0, minute: 0)},
-        {"label": "12:30 AM", "time": const TimeOfDay(hour: 0, minute: 30)},
       ],
     },
   ];
@@ -435,7 +434,7 @@ class _BookServicePageState extends State<BookServicePage> {
             ),
             title: Text(
               _getTitle(context),
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 color: Colors.black,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -605,7 +604,7 @@ class _BookServicePageState extends State<BookServicePage> {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 10,
                 fontWeight: isCurrent ? FontWeight.bold : FontWeight.w500,
                 color: isCurrent
@@ -629,7 +628,7 @@ class _BookServicePageState extends State<BookServicePage> {
           padding: const EdgeInsets.all(16),
           child: Text(
             AppLocalizations.of(context)?.selectLocation ?? 'Select Location',
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -648,7 +647,7 @@ class _BookServicePageState extends State<BookServicePage> {
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
           child: Text(
             AppLocalizations.of(context)?.bookingType ?? 'Booking Type',
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -670,7 +669,7 @@ class _BookServicePageState extends State<BookServicePage> {
                     children: [
                       Text(
                         AppLocalizations.of(context)?.selectDate ?? 'Select Date',
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey.shade700,
@@ -704,7 +703,7 @@ class _BookServicePageState extends State<BookServicePage> {
                                           'dd MMM yyyy',
                                         ).format(selectedDate!)
                                       : AppLocalizations.of(context)?.selectDate ?? 'Select Date',
-                                  style: DMSansFont.textStyle(
+                                  style: TextStyle(
                                     color: selectedDate != null
                                         ? Colors.black87
                                         : Colors.grey.shade500,
@@ -728,7 +727,7 @@ class _BookServicePageState extends State<BookServicePage> {
                     children: [
                       Text(
                         AppLocalizations.of(context)?.selectTime ?? 'Available Slots',
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey.shade700,
@@ -769,7 +768,7 @@ class _BookServicePageState extends State<BookServicePage> {
                                       : AppLocalizations.of(
                                           context,
                                         )!.selectTime,
-                                  style: DMSansFont.textStyle(
+                                  style: TextStyle(
                                     color:
                                         (selectedTimeCategory != -1 &&
                                             selectedTimeSlot != -1)
@@ -832,7 +831,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 child: Center(
                   child: Text(
                     AppLocalizations.of(context)?.serviceNow ?? 'Service Now',
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       color: isServiceNow ? Colors.white : Colors.black87,
                       fontWeight: isServiceNow
                           ? FontWeight.bold
@@ -864,7 +863,7 @@ class _BookServicePageState extends State<BookServicePage> {
                   child: Text(
                     AppLocalizations.of(context)?.serviceForLater ??
                         'Service for Later',
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       color: !isServiceNow ? Colors.white : Colors.black87,
                       fontWeight: !isServiceNow
                           ? FontWeight.bold
@@ -952,7 +951,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 Text(
                   _getOffHoursTitle(),
                   textAlign: TextAlign.center,
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
@@ -962,7 +961,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 Text(
                   _getOffHoursMessage(),
                   textAlign: TextAlign.center,
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     height: 1.5,
                     color: Colors.grey.shade600,
@@ -983,7 +982,7 @@ class _BookServicePageState extends State<BookServicePage> {
                         ),
                         child: Text(
                           _getCancelText(),
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade700,
@@ -1011,7 +1010,7 @@ class _BookServicePageState extends State<BookServicePage> {
                         ),
                         child: Text(
                           _getBookForLaterText(),
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -1061,7 +1060,7 @@ class _BookServicePageState extends State<BookServicePage> {
               children: [
                 Text(
                   _getOffHoursTitle(),
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                     color: Colors.amber.shade900,
@@ -1070,7 +1069,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 const SizedBox(height: 4),
                 Text(
                   _getOffHoursMessage(),
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     height: 1.4,
                     color: Colors.amber.shade900.withOpacity(0.85),
@@ -1154,7 +1153,7 @@ class _BookServicePageState extends State<BookServicePage> {
                                   'On-Hour')
                             : (AppLocalizations.of(context)?.offHourBooking ??
                                   'Off-Hour'),
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: isOnHour
@@ -1186,7 +1185,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 Text(
                   AppLocalizations.of(context)?.inspectionFee ??
                       'Inspection Fee',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey.shade700,
                   ),
@@ -1198,7 +1197,7 @@ class _BookServicePageState extends State<BookServicePage> {
                     if (hasDiscount)
                       Text(
                         '${price.toStringAsFixed(2)} ${AppLocalizations.of(context)?.sar ?? "SAR"}',
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           color: Colors.grey.shade400,
                           decoration: TextDecoration.lineThrough,
@@ -1206,7 +1205,7 @@ class _BookServicePageState extends State<BookServicePage> {
                       ),
                     Text(
                       '${(hasDiscount ? discountedPrice : price).toStringAsFixed(2)} ${AppLocalizations.of(context)?.sar ?? "SAR"}',
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: AppColors.green1,
@@ -1243,7 +1242,7 @@ class _BookServicePageState extends State<BookServicePage> {
                                 .toStringAsFixed(2),
                           ) ??
                           'Inspection fee: ${(hasDiscount ? discountedPrice : price).toStringAsFixed(2)} SAR — paid only after the technician arrives and inspects the issue.',
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: AppColors.secondary,
                         height: 1.4,
@@ -1300,7 +1299,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 child: Center(
                   child: Text(
                     _getLocalizedTimeCategory(timeSlots[index]["label"]),
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       color: isSelected
                           ? Colors.white
                           : isDisabled
@@ -1366,7 +1365,7 @@ class _BookServicePageState extends State<BookServicePage> {
               child: Center(
                 child: Text(
                   "${currentSlots[i]["label"].toString().substring(0, 5)} ${_getLocalizedTimeSlots(currentSlots[i]["label"])}",
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     color: isSelected
                         ? AppColors.primary
                         : isPast
@@ -1414,7 +1413,7 @@ class _BookServicePageState extends State<BookServicePage> {
                       children: [
                         Text(
                           AppLocalizations.of(context)!.date,
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -1442,16 +1441,16 @@ class _BookServicePageState extends State<BookServicePage> {
                       headerStyle: HeaderStyle(
                         formatButtonVisible: false,
                         titleCentered: true,
-                        titleTextStyle: DMSansFont.textStyle(
+                        titleTextStyle: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       daysOfWeekStyle: DaysOfWeekStyle(
-                        weekdayStyle: DMSansFont.textStyle(
+                        weekdayStyle: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
-                        weekendStyle: DMSansFont.textStyle(
+                        weekendStyle: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1490,7 +1489,7 @@ class _BookServicePageState extends State<BookServicePage> {
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        todayTextStyle: DMSansFont.textStyle(
+                        todayTextStyle: TextStyle(
                           color: AppColors.primary,
                         ),
                       ),
@@ -1553,7 +1552,7 @@ class _BookServicePageState extends State<BookServicePage> {
                           Text(
                             AppLocalizations.of(context)?.time ??
                                 'Available Slots',
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1604,7 +1603,7 @@ class _BookServicePageState extends State<BookServicePage> {
         children: [
           Text(
             AppLocalizations.of(context)!.details,
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -1613,7 +1612,7 @@ class _BookServicePageState extends State<BookServicePage> {
           RichText(
             text: TextSpan(
               text: AppLocalizations.of(context)!.problemDescription,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
                 color: Colors.black,
@@ -1758,7 +1757,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 : locale == 'ur'
                 ? 'ٹیکنیشن نے معذرت کر لی'
                 : "Technician Cancelled",
-            style: PoppinsFont.textStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -1772,7 +1771,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 ? 'مطلوبہ ٹیکنیشن نے آپ کی دوبارہ شیڈولنگ کی درخواست سے معذرت کر لی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔'
                 : "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.",
             textAlign: TextAlign.center,
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 13,
               color: Colors.grey.shade600,
               height: 1.4,
@@ -1837,7 +1836,7 @@ class _BookServicePageState extends State<BookServicePage> {
                               : locale == 'ur'
                               ? 'خودکار تفویض کے لیے آگے بڑھیں'
                               : "Proceed to Auto-Assignment"),
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -1899,7 +1898,7 @@ class _BookServicePageState extends State<BookServicePage> {
                         ? 'ٹیکنیشن کا خودکار تعین'
                         : 'Auto-Assignment Schedule'),
               textAlign: TextAlign.center,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -1935,7 +1934,7 @@ class _BookServicePageState extends State<BookServicePage> {
                                       'ur'
                                 ? 'سسٹم شیڈول وقت سے کم از کم 3 گھنٹے پہلے دستیابی کی بنیاد پر ایک ٹیکنیشن کا تعین کرے گا۔'
                                 : 'The system will assign a technician based on availability at least 3 hours before the scheduled time.'),
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: Colors.blue.shade800,
                         height: 1.5,
@@ -1991,7 +1990,7 @@ class _BookServicePageState extends State<BookServicePage> {
       children: [
         Text(
           AppLocalizations.of(context)?.bookingSummary ?? 'Booking Summary',
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -2075,7 +2074,7 @@ class _BookServicePageState extends State<BookServicePage> {
                               )?.youSelectedTechnician ??
                               'You selected a technician'))
                     : (AppLocalizations.of(context)?.autoAssignMessage ??
-                          'Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.'),
+                          'Your selected time is outside our working hours. We will assign an available technician before your service time and notify you once confirmed.'),
                 valueColor: isAssignmentOnHour
                     ? AppColors.primary
                     : Colors.blue,
@@ -2124,7 +2123,7 @@ class _BookServicePageState extends State<BookServicePage> {
             children: [
               Text(
                 label,
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[500],
                 ),
@@ -2132,7 +2131,7 @@ class _BookServicePageState extends State<BookServicePage> {
               const SizedBox(height: 4),
               Text(
                 value,
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
                   color: valueColor ?? Colors.black87,
@@ -2251,7 +2250,7 @@ class _BookServicePageState extends State<BookServicePage> {
       ),
       child: Text(
         AppLocalizations.of(context)?.continueText ?? 'Continue',
-        style: DMSansFont.textStyle(
+        style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
           color: isBlocked ? Colors.grey.shade500 : Colors.white,
@@ -2337,7 +2336,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 ? const Loader(color: Colors.white)
                 : Text(
                     AppLocalizations.of(context)?.continueText ?? 'Continue',
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -2358,7 +2357,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 : AppLocalizations.of(context)?.localeName == 'ur'
                 ? 'براہ کرم مسئلے کی تفصیل درج کریں'
                 : 'Please enter the problem description',
-            style: DMSansFont.textStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.red,
         ),
@@ -2445,7 +2444,7 @@ class _BookServicePageState extends State<BookServicePage> {
               ),
               child: Text(
                 AppLocalizations.of(context)?.continueText ?? 'Continue',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -2471,7 +2470,7 @@ class _BookServicePageState extends State<BookServicePage> {
             ),
             child: Text(
               AppLocalizations.of(context)?.continueText ?? 'Continue',
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
@@ -2494,7 +2493,7 @@ class _BookServicePageState extends State<BookServicePage> {
           ? const Loader(color: Colors.white)
           : Text(
               AppLocalizations.of(context)?.confirmBooking ?? 'Confirm Booking',
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 16,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -2753,7 +2752,7 @@ class _BookServicePageState extends State<BookServicePage> {
                       children: [
                         Text(
                           selectedAddress!.fullName,
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
                           ),
@@ -2767,7 +2766,7 @@ class _BookServicePageState extends State<BookServicePage> {
                                       true)
                               ? "${selectedAddress!.buildingNumber.isNotEmpty ? '${selectedAddress!.buildingNumber}, ' : ''}${selectedAddress!.streetName ?? ''}"
                               : "Saved Location",
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             color: Colors.black,
                             fontSize: 10,
                           ),
@@ -2778,7 +2777,7 @@ class _BookServicePageState extends State<BookServicePage> {
                   : Text(
                       AppLocalizations.of(context)?.selectServiceAddress ??
                           'Select Address',
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,
                       ),
@@ -2794,7 +2793,7 @@ class _BookServicePageState extends State<BookServicePage> {
               ),
               child: Text(
                 AppLocalizations.of(context)?.change ?? 'Change',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   color: AppColors.primary,
                   fontWeight: FontWeight.bold,
                   fontSize: 10,
@@ -2817,7 +2816,7 @@ class _BookServicePageState extends State<BookServicePage> {
           Expanded(
             child: Text(
               message,
-              style: DMSansFont.textStyle(color: Colors.red, fontSize: 12),
+              style: TextStyle(color: Colors.red, fontSize: 12),
             ),
           ),
         ],
@@ -2834,7 +2833,7 @@ class _BookServicePageState extends State<BookServicePage> {
           const SizedBox(width: 8),
           Text(
             message,
-            style: DMSansFont.textStyle(color: Colors.grey, fontSize: 12),
+            style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
         ],
       ),

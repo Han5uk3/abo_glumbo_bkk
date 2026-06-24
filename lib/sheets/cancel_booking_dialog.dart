@@ -4,7 +4,6 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/styles/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import '../models/booking.dart';
 
 /// returns true if refresh is needed
@@ -81,7 +80,7 @@ class _CancelBookingDialogWidgetState extends State<CancelBookingDialogWidget> {
                                 )?.areYouSureToWanttoCancelthisBooking ??
                                 '',
                             textAlign: TextAlign.center,
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               color: Colors.black87,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -113,7 +112,7 @@ class _CancelBookingDialogWidgetState extends State<CancelBookingDialogWidget> {
                                           context,
                                         )?.cancellationOnlyAvailableUntilTechnicianAccepts ??
                                         'Cancellation is only available until technician accepts',
-                                    style: DMSansFont.textStyle(
+                                    style: TextStyle(
                                       color: Colors.amber.shade900,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
@@ -146,7 +145,7 @@ class _CancelBookingDialogWidgetState extends State<CancelBookingDialogWidget> {
                                     context,
                                   )?.reasonForCancellation ??
                                   'Reason for cancellation',
-                              labelStyle: DMSansFont.textStyle(fontSize: 14),
+                              labelStyle: TextStyle(fontSize: 14),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(6),
                               ),
@@ -187,7 +186,7 @@ class _CancelBookingDialogWidgetState extends State<CancelBookingDialogWidget> {
                                   },
                                   child: Text(
                                     AppLocalizations.of(context)?.no ?? '',
-                                    style: DMSansFont.textStyle(
+                                    style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
@@ -223,7 +222,7 @@ class _CancelBookingDialogWidgetState extends State<CancelBookingDialogWidget> {
                                               context,
                                             )?.yesCancel ??
                                             '',
-                                        style: DMSansFont.textStyle(
+                                        style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,

@@ -1,6 +1,5 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:abo_glumbo_bbk/utils/search_utils.dart';
 
 class SearchableDropdown<T extends Object> extends StatefulWidget {
@@ -116,7 +115,7 @@ class _SearchableDropdownState<T extends Object>
       children: [
         Text(
           widget.label,
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -233,7 +232,7 @@ class _SearchableDropdownState<T extends Object>
                             Expanded(
                               child: Text(
                                 '${AppLocalizations.of(context)?.showingResults(_maxItemsToShow)}.',
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.orange.shade700,
                                 ),
@@ -268,7 +267,7 @@ class _SearchableDropdownState<T extends Object>
                                   Expanded(
                                     child: Text(
                                       widget.itemLabel(item),
-                                      style: DMSansFont.textStyle(
+                                      style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: isSelected
                                             ? FontWeight.bold

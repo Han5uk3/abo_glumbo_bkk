@@ -11,7 +11,6 @@ import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/book_service_page.dart';
 import 'package:abo_glumbo_bbk/sheets/sign_up_alert.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -227,7 +226,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                               ),
                               child: Text(
                                 "${service.discountPercentage!.toInt()}% ${AppLocalizations.of(context)?.off ?? "OFF"}",
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -263,7 +262,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                               ) ??
                               '',
                           textAlign: TextAlign.start,
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                             fontSize: 20,
@@ -286,7 +285,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                                       context,
                                     )!.aboutThisService,
                                     textAlign: TextAlign.start,
-                                    style: DMSansFont.textStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                       fontSize: 18,
@@ -304,7 +303,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                                         ) ??
                                         '',
                                     textAlign: TextAlign.start,
-                                    style: DMSansFont.textStyle(
+                                    style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 12,
                                     ),
@@ -317,7 +316,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                           Text(
                             AppLocalizations.of(context)?.noServicesFound ??
                                 'No Service Available',
-                            style: DMSansFont.textStyle(color: Colors.black54),
+                            style: TextStyle(color: Colors.black54),
                           ),
                         ],
                       ],
@@ -401,7 +400,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                               widget: Text(
                                 AppLocalizations.of(context)?.requestService ??
                                     'Request Service',
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

@@ -8,7 +8,6 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import '../models/booking.dart';
 
@@ -103,7 +102,7 @@ class _WriteReviewBottomSheetWidgetState
       SnackBar(
         content: Text(
           message,
-          style: DMSansFont.textStyle(fontSize: 14, color: Colors.white),
+          style: TextStyle(fontSize: 14, color: Colors.white),
         ),
         backgroundColor: isError ? AppColors.red : Colors.green.shade600,
         behavior: SnackBarBehavior.floating,
@@ -328,7 +327,7 @@ class _WriteReviewBottomSheetWidgetState
         children: [
           Text(
             l10n?.submitAReview ?? 'Submit Review',
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: AppColors.black1,
@@ -353,7 +352,7 @@ class _WriteReviewBottomSheetWidgetState
         children: [
           Text(
             l10n?.overallRating ?? 'Overall Rating',
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: AppColors.black1,
@@ -374,7 +373,7 @@ class _WriteReviewBottomSheetWidgetState
             const SizedBox(height: 12),
             Text(
               _getRatingDescription(_rating, l10n),
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: _getRatingColor(_rating),
@@ -439,7 +438,7 @@ class _WriteReviewBottomSheetWidgetState
             children: [
               Text(
                 l10n?.writeYourReview ?? 'Write Your Review',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.black1,
@@ -457,15 +456,15 @@ class _WriteReviewBottomSheetWidgetState
             controller: _reviewController,
             maxLines: 4,
             maxLength: 500,
-            style: DMSansFont.textStyle(fontSize: 14, color: AppColors.black1),
+            style: TextStyle(fontSize: 14, color: AppColors.black1),
             decoration: InputDecoration(
               hintText:
                   l10n?.writeYourReviewHere ?? 'Share your experience with us...',
-              hintStyle: DMSansFont.textStyle(
+              hintStyle: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade400,
               ),
-              counterStyle: DMSansFont.textStyle(
+              counterStyle: TextStyle(
                 fontSize: 12,
                 color: Colors.grey.shade500,
               ),
@@ -521,7 +520,7 @@ class _WriteReviewBottomSheetWidgetState
                   children: [
                     Text(
                       '${l10n?.thankTheTechnician ?? 'Thank the Technician'} (${l10n?.optional ?? 'Optional'})',
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColors.black1,
@@ -530,7 +529,7 @@ class _WriteReviewBottomSheetWidgetState
                     Text(
                       l10n?.showAppreciationWithTip ??
                           'Show appreciation with a tip',
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,
                       ),
@@ -560,7 +559,7 @@ class _WriteReviewBottomSheetWidgetState
             const SizedBox(height: 20),
             Text(
               l10n?.selectPaymentMethod ?? 'Select Payment Method',
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: AppColors.black1,
@@ -609,7 +608,7 @@ class _WriteReviewBottomSheetWidgetState
         ),
         child: Text(
           '${amount.toInt()} ${l10n?.sar ?? 'SAR '}',
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: isSelected ? Colors.white : AppColors.black1,
@@ -643,7 +642,7 @@ class _WriteReviewBottomSheetWidgetState
             const SizedBox(width: 6),
             Text(
               l10n?.custom ?? 'Custom',
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: _showCustomTip ? Colors.white : AppColors.black1,
@@ -671,19 +670,19 @@ class _WriteReviewBottomSheetWidgetState
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
           ],
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
             color: AppColors.black1,
           ),
           decoration: InputDecoration(
             hintText: '0.00',
-            hintStyle: DMSansFont.textStyle(
+            hintStyle: TextStyle(
               fontSize: 15,
               color: Colors.grey.shade400,
             ),
             suffixText: ' ${l10n?.sar ?? 'SAR '}',
-            suffixStyle: DMSansFont.textStyle(
+            suffixStyle: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               color: AppColors.black1,
@@ -729,7 +728,7 @@ class _WriteReviewBottomSheetWidgetState
             const SizedBox(width: 8),
             Text(
               label,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: isSelected ? Colors.white : AppColors.black1,
@@ -779,7 +778,7 @@ class _WriteReviewBottomSheetWidgetState
                 ),
                 child: Text(
                   widget.showLaterOption ? _getLaterText(context) : (l10n?.cancel ?? 'Cancel'),
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: AppColors.black1,
@@ -809,7 +808,7 @@ class _WriteReviewBottomSheetWidgetState
                         _selectedTip > 0
                             ? l10n?.submitReviewAndTip ?? 'Submit Review & Tip'
                             : l10n?.submitReview ?? 'Submit Review',
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),

@@ -2,7 +2,6 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class TrackingCard extends StatelessWidget {
   final int etaMinutes;
@@ -57,7 +56,7 @@ class TrackingCard extends StatelessWidget {
                         // Technician Name
                         Text(
                           booking.agent?.name ?? 'Unknown Technician',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
@@ -75,7 +74,7 @@ class TrackingCard extends StatelessWidget {
                               ) ??
                               booking.service.name ??
                               '',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             color: Colors.grey[600],
@@ -106,7 +105,7 @@ class TrackingCard extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             AppLocalizations.of(context)!.locationError,
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                               color: Colors.orange,
@@ -118,7 +117,7 @@ class TrackingCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: Text(
                               AppLocalizations.of(context)!.calculating,
-                              style: DMSansFont.textStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
@@ -132,7 +131,7 @@ class TrackingCard extends StatelessWidget {
                                       .toStringAsFixed(1)
                                       .replaceAll(RegExp(r'\.0$'), '')
                                 : '$etaMinutes',
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
@@ -147,7 +146,7 @@ class TrackingCard extends StatelessWidget {
                                 : etaMinutes.toString().length == 1
                                 ? AppLocalizations.of(context)!.min
                                 : AppLocalizations.of(context)!.mins,
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
@@ -177,7 +176,7 @@ class TrackingCard extends StatelessWidget {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.tapForLiveLocationTracking,
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: AppColors.primary,

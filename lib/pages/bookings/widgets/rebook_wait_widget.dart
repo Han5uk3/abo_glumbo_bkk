@@ -10,7 +10,6 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -262,7 +261,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
           const SizedBox(height: 24),
           Text(
             widget.technician.name ?? "",
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -270,7 +269,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
           const SizedBox(height: 12),
           Text(
             l10n.waitingForRequestedTechnician,
-            style: DMSansFont.textStyle(fontSize: 16, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -283,7 +282,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
           const SizedBox(height: 16),
           Text(
             "${_timerSeconds}s",
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
@@ -317,7 +316,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
             const SizedBox(height: 16),
             Text(
               l10n.counterOfferFromTechnician,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -326,7 +325,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
             Text(
               l10n.technicianProposedNewTime,
               textAlign: TextAlign.center,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[600],
               ),
@@ -342,7 +341,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
                 DateFormat.yMMMMd(
                   locale,
                 ).add_jm().format(proposedTime.toDate()),
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.blue[900],
@@ -428,7 +427,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
           const SizedBox(height: 24),
           Text(
             widget.technician.name ?? "",
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -440,7 +439,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
                 : locale == 'ur'
                 ? 'ٹیکنیشن اس وقت آف لائن ہے'
                 : "Technician is currently offline",
-            style: DMSansFont.textStyle(fontSize: 16, color: Colors.red[600]),
+            style: TextStyle(fontSize: 16, color: Colors.red[600]),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -462,7 +461,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
                   : locale == 'ur'
                   ? 'عام تلاش جاری رکھیں'
                   : "Continue with normal search",
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,

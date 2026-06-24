@@ -2215,10 +2215,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'جاري التحقق من منطقة الخدمة، يرجى الانتظار...';
 
   @override
-  String get onHour => 'دوام';
+  String get onHour => 'الحجز بالساعة';
 
   @override
-  String get offHour => 'بعد الدوام';
+  String get offHour => 'الحجز خارج الساعة';
 
   @override
   String get currentTiming => 'التوقيت الحالي:';
@@ -2361,7 +2361,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get autoAssignMessage =>
-      'بما أن هذا الحجز خارج ساعات العمل، سنقوم بتعيين فني لحجزك قبل 3 ساعات على الأقل من موعد الحجز.';
+      'الوقت المحدد للخدمة خارج أوقات العمل. سيتم تعيين فني متاح قبل موعد الخدمة حسب التوفر، وسيتم إشعارك عند تأكيد الطلب.';
 
   @override
   String get youSelectedTechnician => 'لقد اخترت فنياً';

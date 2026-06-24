@@ -788,7 +788,7 @@
   "noDiscount": "No Discount",
   "finalPrice": "Final Price",
   "technicianAssignment": "Technician Assignment",
-  "autoAssignMessage": "Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.",
+  "autoAssignMessage": "Your selected time is outside our working hours. We will assign an available technician before your service time and notify you once confirmed.",
   "youSelectedTechnician": "You selected a technician",
   "confirmBooking": "Confirm Booking",
   "listeningForSms": "Listening for SMS...",

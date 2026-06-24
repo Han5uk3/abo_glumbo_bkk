@@ -1,12 +1,15 @@
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
+
 /// Utility class for using the local DM Sans font
-/// This replaces the usage of GoogleFonts.dmSans to avoid network issues
+/// This replaces the usage of TextStyle to avoid network issues
 class DMSansFont {
-  static const String _fontFamily = 'DMSans';
+  static const String _defaultFontFamily = 'DMSans';
 
   /// Returns a TextStyle with DM Sans font
-  /// Usage: DMSansFont.textStyle(fontSize: 16, fontWeight: FontWeight.bold)
+  /// Usage: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
   static TextStyle textStyle({
     Color? color,
     double? fontSize,
@@ -26,8 +29,10 @@ class DMSansFont {
     TextDecorationStyle? decorationStyle,
     double? decorationThickness,
   }) {
+    final String language = LocalStoreHelper.getUserlanguage();
+    final String? fontFamily = language == 'ar' ? TextStyle().fontFamily : _defaultFontFamily;
+
     return TextStyle(
-      fontFamily: _fontFamily,
       color: color,
       fontSize: fontSize,
       fontWeight: fontWeight,
@@ -48,7 +53,7 @@ class DMSansFont {
     );
   }
 
-  /// Shorthand method that matches DMSansFont.textStyle() signature
+  /// Shorthand method that matches TextStyle() signature
   static TextStyle call({
     Color? color,
     double? fontSize,

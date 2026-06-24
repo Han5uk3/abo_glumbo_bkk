@@ -1,7 +1,6 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 /// Welcome modal for new customers
 class WelcomeModal extends StatelessWidget {
@@ -75,7 +74,7 @@ class WelcomeModal extends StatelessWidget {
                   const SizedBox(height: 20),
                   Text(
                     AppLocalizations.of(context)!.welcomeToAboGlumbo,
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Colors.white.withOpacity(0.9),
@@ -93,7 +92,7 @@ class WelcomeModal extends StatelessWidget {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.welcomeDescription,
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       color: Colors.grey[600],
@@ -123,7 +122,7 @@ class WelcomeModal extends StatelessWidget {
                       ),
                       child: Text(
                         AppLocalizations.of(context)!.newServiceRequest,
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white.withOpacity(0.9),

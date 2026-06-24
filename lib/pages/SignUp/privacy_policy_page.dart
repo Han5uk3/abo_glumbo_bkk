@@ -1,5 +1,4 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:flutter/material.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
@@ -58,7 +57,7 @@ class PrivacyPolicyPage extends StatelessWidget {
       children: [
         Text(
           "$index. $title",
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             color: Colors.black,
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -67,7 +66,7 @@ class PrivacyPolicyPage extends StatelessWidget {
         SizedBox(height: 3),
         Text(
           text,
-          style: DMSansFont.textStyle(color: Colors.black, fontSize: 14),
+          style: TextStyle(color: Colors.black, fontSize: 14),
         ),
       ],
     );

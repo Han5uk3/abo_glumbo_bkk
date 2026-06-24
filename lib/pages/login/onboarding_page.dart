@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -110,7 +109,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.getStarted,
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -213,7 +212,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                 AppLocalizations.of(
                                   context,
                                 )!.verifiedAndProfessionalTechnicians,
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -236,7 +235,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: Text(
               title,
               textAlign: TextAlign.center,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -250,7 +249,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: Text(
               description,
               textAlign: TextAlign.center,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 14,
                 color: Colors.white.withOpacity(0.9),
                 height: 1.5,

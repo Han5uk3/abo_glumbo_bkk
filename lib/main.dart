@@ -1,3 +1,4 @@
+import 'package:google_fonts/google_fonts.dart';
 import 'package:abo_glumbo_bbk/firebase_options.dart';
 import 'package:abo_glumbo_bbk/pages/splash%20screen/splash_screen.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -239,6 +239,7 @@ class MyApp extends StatelessWidget {
                 },
 
                 theme: ThemeData(
+                  fontFamily: state.locale.languageCode == 'ar' ? GoogleFonts.notoKufiArabic().fontFamily : 'DMSans',
                   colorScheme: ColorScheme.fromSeed(
                     seedColor: AppColors.primary,
                   ),
@@ -248,13 +249,13 @@ class MyApp extends StatelessWidget {
                     indicatorColor: Colors.transparent,
                     labelTextStyle: WidgetStateTextStyle.resolveWith((states) {
                       if (states.contains(WidgetState.selected)) {
-                        return DMSansFont.textStyle(
+                        return TextStyle(
                           color: AppColors.darkGrey,
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
                         );
                       }
-                      return DMSansFont.textStyle(
+                      return TextStyle(
                         color: AppColors.grey,
                         fontSize: 8,
                       );
@@ -284,7 +285,7 @@ class MyApp extends StatelessWidget {
                     elevation: 0,
                     iconTheme: const IconThemeData(color: Colors.white),
                     titleSpacing: 0,
-                    titleTextStyle: DMSansFont.textStyle(
+                    titleTextStyle: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -296,7 +297,7 @@ class MyApp extends StatelessWidget {
                       AppColors.bgBlueTint,
                     ),
                     textStyle: WidgetStatePropertyAll(
-                      DMSansFont.textStyle(color: Colors.black45, fontSize: 12),
+                      TextStyle(color: Colors.black45, fontSize: 12),
                     ),
                     constraints: const BoxConstraints(
                       minHeight: 50,

@@ -23,7 +23,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:abo_glumbo_bbk/sheets/save_address_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/common_widgets/shimmer_loader.dart';
 
@@ -294,7 +293,7 @@ class _HomePageState extends State<HomePage>
   //       children: [
   //         Text(
   //           AppLocalizations.of(context)?.addNew ?? "Add address",
-  //           style: DMSansFont.textStyle(
+  //           style: TextStyle(
   //             color: Colors.white,
   //             fontSize: 10,
   //             fontWeight: FontWeight.w700,
@@ -302,7 +301,7 @@ class _HomePageState extends State<HomePage>
   //         ),
   //         Text(
   //           AppLocalizations.of(context)?.noAddress ?? "No address saved",
-  //           style: DMSansFont.textStyle(
+  //           style: TextStyle(
   //             color: Colors.white,
   //             fontSize: 8,
   //             fontWeight: FontWeight.w400,
@@ -319,7 +318,7 @@ class _HomePageState extends State<HomePage>
   //     children: [
   //       Text(
   //         address.fullName,
-  //         style: DMSansFont.textStyle(
+  //         style: TextStyle(
   //           color: Colors.white,
   //           fontSize: 12,
   //           fontWeight: FontWeight.w700,
@@ -329,7 +328,7 @@ class _HomePageState extends State<HomePage>
   //       ),
   //       Text(
   //         address.streetName ?? "",
-  //         style: DMSansFont.textStyle(
+  //         style: TextStyle(
   //           color: Colors.white,
   //           fontSize: 10,
   //           fontWeight: FontWeight.w500,
@@ -439,7 +438,7 @@ class _HomePageState extends State<HomePage>
         padding: const EdgeInsets.all(16.0),
         child: Text(
           message,
-          style: DMSansFont.textStyle(color: Colors.red),
+          style: TextStyle(color: Colors.red),
           textAlign: TextAlign.center,
         ),
       ),
@@ -505,7 +504,7 @@ class _HomePageState extends State<HomePage>
                 const SizedBox(height: 4),
                 Text(
                   item.title,
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     color: AppColors.primary,
@@ -515,7 +514,7 @@ class _HomePageState extends State<HomePage>
                 const SizedBox(height: 1),
                 Text(
                   item.subtitle,
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 8.5,
                     fontWeight: FontWeight.w400,
                     color: AppColors.grey2,
@@ -538,7 +537,7 @@ class _HomePageState extends State<HomePage>
       padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 4),
       child: Text(
         locale?.howCanWeHelp ?? 'How can we help you today?',
-        style: DMSansFont.textStyle(
+        style: TextStyle(
           fontSize: 17,
           fontWeight: FontWeight.w700,
           color: AppColors.black1,
@@ -646,7 +645,7 @@ class _HomePageState extends State<HomePage>
                                 : isUrdu
                                 ? 'اپنی بکنگ جاری رکھیں'
                                 : 'Continue your booking search',
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               color: Colors.white,
                               fontSize: 13.5,
                               fontWeight: FontWeight.bold,
@@ -659,7 +658,7 @@ class _HomePageState extends State<HomePage>
                                 : isUrdu
                                 ? 'آپ کے پاس ایک فعال بکنگ تلاش کی جا رہی ہے۔ جاری رکھنے کے لیے کلک کریں۔'
                                 : 'You have an active technician search request. Tap to continue.',
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               color: Colors.white.withOpacity(0.85),
                               fontSize: 10,
                             ),
@@ -730,7 +729,7 @@ class _HomePageState extends State<HomePage>
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         'Error loading active bookings: ${state.error}',
-                        style: DMSansFont.textStyle(color: Colors.red),
+                        style: TextStyle(color: Colors.red),
                         textAlign: TextAlign.center,
                       ),
                     ),

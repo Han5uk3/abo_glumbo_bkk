@@ -2270,10 +2270,10 @@ class AppLocalizationsUr extends AppLocalizations {
       'سروس ایریا کی تصدیق کی جا رہی ہے، براہ کرم انتظار کریں...';
 
   @override
-  String get onHour => 'اوقاتِ کار';
+  String get onHour => 'فی گھنٹہ بکنگ';
 
   @override
-  String get offHour => 'بعد اوقاتِ کار';
+  String get offHour => 'آف آور بکنگ';
 
   @override
   String get currentTiming => 'موجودہ وقت:';
@@ -2418,7 +2418,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get autoAssignMessage =>
-      'چونکہ یہ بکنگ آف آورز (غیر دفتری اوقات) میں ہے، اس لیے ہم آپ کی بکنگ کے وقت سے کم از کم 3 گھنٹے پہلے آپ کے لیے ایک ٹیکنیشن متعین کریں گے۔';
+      'آپ کا منتخب کردہ وقت ہمارے کام کے اوقات سے باہر ہے۔ ہم آپ کی سروس کے وقت سے پہلے ایک دستیاب ٹیکنیشن مقرر کریں گے اور تصدیق ہونے پر آپ کو مطلع کریں گے۔';
 
   @override
   String get youSelectedTechnician => 'آپ نے ایک ٹیکنیشن منتخب کیا ہے';

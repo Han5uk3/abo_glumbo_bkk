@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class UnreadNotificationBadge extends StatelessWidget {
   final VoidCallback onTap;
@@ -59,7 +58,7 @@ class UnreadNotificationBadge extends StatelessWidget {
                   child: Center(
                     child: Text(
                       countText,
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 8,
                         fontWeight: FontWeight.bold,

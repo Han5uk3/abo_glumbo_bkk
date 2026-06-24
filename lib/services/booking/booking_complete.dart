@@ -8,7 +8,6 @@ import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 class BookingCompletedPage extends StatefulWidget {
@@ -252,7 +251,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                         Text(
                           AppLocalizations.of(context)?.bookingConfirmed ??
                               'Booking Confirmed!',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -263,7 +262,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                         Text(
                           AppLocalizations.of(context)?.bookingSuccessMessage ??
                               'Your booking has been successfully placed',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             color: Colors.white.withOpacity(0.9),
                           ),
@@ -390,7 +389,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                                           children: [
                                             Text(
                                               widget.worker.name ?? 'Technician',
-                                              style: DMSansFont.textStyle(
+                                              style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black87,
@@ -400,7 +399,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                                               const SizedBox(height: 4),
                                               Text(
                                                 AppLocalizations.of(context)?.loading ?? 'Loading...',
-                                                style: DMSansFont.textStyle(
+                                                style: TextStyle(
                                                   fontSize: 12,
                                                   color: Colors.grey[500],
                                                 ),
@@ -409,7 +408,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                                               const SizedBox(height: 4),
                                               Text(
                                                 _localizedRole!,
-                                                style: DMSansFont.textStyle(
+                                                style: TextStyle(
                                                   fontSize: 12,
                                                   color: Colors.grey[600],
                                                 ),
@@ -471,7 +470,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                                         children: [
                                           Text(
                                             widget.address?.fullName ?? '',
-                                            style: DMSansFont.textStyle(
+                                            style: TextStyle(
                                               fontSize: 14,
                                               color: Colors.grey[800],
                                               height: 1.5,
@@ -480,7 +479,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                                           Flexible(
                                             child: Text(
                                               widget.address?.streetName ?? '',
-                                              style: DMSansFont.textStyle(
+                                              style: TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.grey[800],
                                                 height: 1.5,
@@ -535,7 +534,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
                         child: Text(
                           AppLocalizations.of(context)?.backToHome ??
                               'Back to Home',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             color: AppColors.primary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -584,7 +583,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Text(
       title,
-      style: DMSansFont.textStyle(
+      style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
         color: Colors.black87,
@@ -640,7 +639,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
             children: [
               Text(
                 label,
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[600],
                 ),
@@ -648,7 +647,7 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
               const SizedBox(height: 2),
               Text(
                 value,
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,

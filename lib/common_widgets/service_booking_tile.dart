@@ -19,7 +19,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 class ServiceBookingTile extends StatelessWidget {
@@ -140,7 +139,7 @@ class ServiceBookingTile extends StatelessWidget {
                                       '',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: DMSansFont.textStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 11,
                                     color: Colors.black,
@@ -156,7 +155,7 @@ class ServiceBookingTile extends StatelessWidget {
                             //             'en',
                             //       ) ??
                             //       '',
-                            //   style: DMSansFont.textStyle(
+                            //   style: TextStyle(
                             //     color: Colors.black45,
                             //     fontSize: 12,
                             //   ),
@@ -173,7 +172,7 @@ class ServiceBookingTile extends StatelessWidget {
                           if (booking.bookingStatusCode == "C" || booking.bookingStatusCode == "VP")
                             Text(
                               "${((booking.completionData?.totalCost ?? 0) + booking.service.getDiscountedPrice(booking.effectiveInspectionFee)).toStringAsFixed(1)} ${AppLocalizations.of(context)!.sar}",
-                              style: DMSansFont.textStyle(
+                              style: TextStyle(
                                 color: AppColors.green1,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
@@ -190,7 +189,7 @@ class ServiceBookingTile extends StatelessWidget {
                                 ),
                                 child: Text(
                                   booking.isOnHour == true ? AppLocalizations.of(context)!.onHour : AppLocalizations.of(context)!.offHour,
-                                  style: DMSansFont.textStyle(
+                                  style: TextStyle(
                                     fontSize: 10,
                                     color: booking.isOnHour == true ? Colors.blue : Colors.orange,
                                     fontWeight: FontWeight.bold,
@@ -236,7 +235,7 @@ class ServiceBookingTile extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   AppLocalizations.of(context)!.submitComplaint,
-                                  style: DMSansFont.textStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
@@ -248,7 +247,7 @@ class ServiceBookingTile extends StatelessWidget {
                             AppLocalizations.of(
                               context,
                             )!.escalateWarrantyConfirmation,
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               height: 1.5,
                             ),
@@ -273,7 +272,7 @@ class ServiceBookingTile extends StatelessWidget {
 
                               widget: Text(
                                 AppLocalizations.of(context)!.yes,
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -335,7 +334,7 @@ class ServiceBookingTile extends StatelessWidget {
                     child: Center(
                       child: Text(
                         AppLocalizations.of(context)!.submitComplaint,
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
                           color: AppColors.bgWhite,
@@ -427,7 +426,7 @@ class ServiceBookingTile extends StatelessWidget {
                         },
                         child: Text(
                           AppLocalizations.of(context)?.cancel ?? '',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 8,
                             color: AppColors.bgWhite,
@@ -448,7 +447,7 @@ class ServiceBookingTile extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         AppLocalizations.of(context)?.completed ?? '',
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 8,
                           color: AppColors.green2,
@@ -467,7 +466,7 @@ class ServiceBookingTile extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         AppLocalizations.of(context)?.canceled ?? '',
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 8,
                           color: AppColors.red,
@@ -486,7 +485,7 @@ class ServiceBookingTile extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         AppLocalizations.of(context)?.rejected ?? '',
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 8,
                           color: AppColors.darkGrey,
@@ -634,7 +633,7 @@ class ServiceBookingTile extends StatelessWidget {
       child: Text(
         AppLocalizations.of(context)?.verificationPending.toUpperCase() ??
             'VERIFICATION PENDING',
-        style: DMSansFont.textStyle(
+        style: TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 8,
           color: Colors.blue.shade700,
@@ -687,7 +686,7 @@ class ServiceBookingTile extends StatelessWidget {
                     : AppLocalizations.of(context)?.paymentPending ??
                         'Payment Pending')
                 .toUpperCase(),
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 8,
               color: Colors.orange,
@@ -712,7 +711,7 @@ class ServiceBookingTile extends StatelessWidget {
           booking.review == null
               ? AppLocalizations.of(context)?.writeAReview ?? ''
               : AppLocalizations.of(context)?.reviewSubmitted ?? '',
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             color: Colors.black,
             fontSize: 8,
             fontWeight: FontWeight.w500,
@@ -802,7 +801,7 @@ class ServiceBookingTile extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             label,
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 8,
               color: textColor,
@@ -890,7 +889,7 @@ class ServiceBookingTile extends StatelessWidget {
                                       context,
                                     )?.requestRepairUnderWarranty ??
                                     '',
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -906,7 +905,7 @@ class ServiceBookingTile extends StatelessWidget {
                                           'en',
                                     ) ??
                                     '',
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.white.withOpacity(0.9),
                                 ),
@@ -951,7 +950,7 @@ class ServiceBookingTile extends StatelessWidget {
 
                           Text(
                             '$daysLeft ${daysLeft == 1 ? AppLocalizations.of(context)?.dayLeft ?? '' : AppLocalizations.of(context)?.daysLeft ?? ''}',
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -1051,7 +1050,7 @@ class ServiceBookingTile extends StatelessWidget {
           //   width: 100,
           //   child: Text(
           //     label,
-          //     style: DMSansFont.textStyle(
+          //     style: TextStyle(
           //       fontSize: 14,
           //       fontWeight: FontWeight.w500,
           //       color: Colors.grey[600],
@@ -1064,7 +1063,7 @@ class ServiceBookingTile extends StatelessWidget {
             flex: 9,
             child: Text(
               value,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 10,
                 fontWeight: isHighlighted ? FontWeight.w600 : FontWeight.w400,
                 color: Color(0xff3C3C43),
@@ -1137,7 +1136,7 @@ Widget _buildSectionCardWidget({
             Expanded(
               child: Text(
                 title,
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
                   color: titleColor,
@@ -1166,7 +1165,7 @@ Widget _buildSectionCardWidget({
                 Expanded(
                   child: Text(
                     item,
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       color: const Color(0xFF424242),
                       height: 1.5,
@@ -1254,17 +1253,362 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
     }
   }
 
-  Future<void> _pickTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime ?? const TimeOfDay(hour: 9, minute: 0),
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedTime = picked;
-        _errorMessage = null;
-      });
+  int selectedTimeCategory = -1;
+  int selectedTimeSlot = -1;
+
+  List<Map> timeSlots = [
+    {
+      "label": "Morning",
+      "values": [
+        {"label": "06:00 AM", "time": const TimeOfDay(hour: 6, minute: 0)},
+        {"label": "06:30 AM", "time": const TimeOfDay(hour: 6, minute: 30)},
+        {"label": "07:00 AM", "time": const TimeOfDay(hour: 7, minute: 0)},
+        {"label": "07:30 AM", "time": const TimeOfDay(hour: 7, minute: 30)},
+        {"label": "08:00 AM", "time": const TimeOfDay(hour: 8, minute: 0)},
+        {"label": "08:30 AM", "time": const TimeOfDay(hour: 8, minute: 30)},
+        {"label": "09:00 AM", "time": const TimeOfDay(hour: 9, minute: 0)},
+        {"label": "09:30 AM", "time": const TimeOfDay(hour: 9, minute: 30)},
+        {"label": "10:00 AM", "time": const TimeOfDay(hour: 10, minute: 0)},
+        {"label": "10:30 AM", "time": const TimeOfDay(hour: 10, minute: 30)},
+        {"label": "11:00 AM", "time": const TimeOfDay(hour: 11, minute: 0)},
+        {"label": "11:30 AM", "time": const TimeOfDay(hour: 11, minute: 30)},
+      ],
+    },
+    {
+      "label": "After noon",
+      "values": [
+        {"label": "12:00 PM", "time": const TimeOfDay(hour: 12, minute: 0)},
+        {"label": "12:30 PM", "time": const TimeOfDay(hour: 12, minute: 30)},
+        {"label": "01:00 PM", "time": const TimeOfDay(hour: 13, minute: 0)},
+        {"label": "01:30 PM", "time": const TimeOfDay(hour: 13, minute: 30)},
+        {"label": "02:00 PM", "time": const TimeOfDay(hour: 14, minute: 0)},
+        {"label": "02:30 PM", "time": const TimeOfDay(hour: 14, minute: 30)},
+        {"label": "03:00 PM", "time": const TimeOfDay(hour: 15, minute: 0)},
+        {"label": "03:30 PM", "time": const TimeOfDay(hour: 15, minute: 30)},
+      ],
+    },
+    {
+      "label": "Evening",
+      "values": [
+        {"label": "04:00 PM", "time": const TimeOfDay(hour: 16, minute: 0)},
+        {"label": "04:30 PM", "time": const TimeOfDay(hour: 16, minute: 30)},
+        {"label": "05:00 PM", "time": const TimeOfDay(hour: 17, minute: 0)},
+        {"label": "05:30 PM", "time": const TimeOfDay(hour: 17, minute: 30)},
+        {"label": "06:00 PM", "time": const TimeOfDay(hour: 18, minute: 0)},
+        {"label": "06:30 PM", "time": const TimeOfDay(hour: 18, minute: 30)},
+        {"label": "07:00 PM", "time": const TimeOfDay(hour: 19, minute: 0)},
+        {"label": "07:30 PM", "time": const TimeOfDay(hour: 19, minute: 30)},
+      ],
+    },
+    {
+      "label": "Night",
+      "values": [
+        {"label": "08:00 PM", "time": const TimeOfDay(hour: 20, minute: 0)},
+        {"label": "08:30 PM", "time": const TimeOfDay(hour: 20, minute: 30)},
+        {"label": "09:00 PM", "time": const TimeOfDay(hour: 21, minute: 0)},
+        {"label": "09:30 PM", "time": const TimeOfDay(hour: 21, minute: 30)},
+        {"label": "10:00 PM", "time": const TimeOfDay(hour: 22, minute: 0)},
+      ],
+    },
+  ];
+
+  String _getLocalizedTimeCategory(String label) {
+    if (AppLocalizations.of(context)?.localeName == 'ar') {
+      switch (label) {
+        case "Morning":
+          return "الصباح";
+        case "After noon":
+          return "بعد الظهر";
+        case "Evening":
+          return "المساء";
+        case "Night":
+          return "الليل";
+        default:
+          return label;
+      }
+    } else if (AppLocalizations.of(context)?.localeName == 'ur') {
+      switch (label) {
+        case "Morning":
+          return "صبح";
+        case "After noon":
+          return "دوپہر";
+        case "Evening":
+          return "شام";
+        case "Night":
+          return "رات";
+        default:
+          return label;
+      }
     }
+    return label;
+  }
+
+  String _getLocalizedTimeSlots(String label) {
+    final languageCode = AppLocalizations.of(context)?.localeName ?? 'en';
+    if (languageCode == 'en') return label.substring(6);
+
+    final isAM = label.contains("AM");
+    if (languageCode == 'ar') {
+      return isAM ? "ص" : "م";
+    } else if (languageCode == 'ur') {
+      return isAM ? "صبح" : "شام";
+    }
+    return label.substring(6);
+  }
+
+  bool _isTimeCategoryDisabled(int index) {
+    if (_selectedDate == null) return false;
+    final now = DateTime.now();
+    if (_selectedDate!.day != now.day ||
+        _selectedDate!.month != now.month ||
+        _selectedDate!.year != now.year) {
+      return false;
+    }
+
+    final currentHour = now.hour;
+    final currentMinute = now.minute;
+
+    switch (index) {
+      case 0:
+        return currentHour > 11 || (currentHour == 11 && currentMinute > 30);
+      case 1:
+        return currentHour > 15 || (currentHour == 15 && currentMinute > 30);
+      case 2:
+        return currentHour > 19 || (currentHour == 19 && currentMinute > 30);
+      case 3:
+        return currentHour > 22 || (currentHour == 22 && currentMinute > 0);
+      default:
+        return false;
+    }
+  }
+
+  bool _isTimeSlotPast(int categoryIndex, int slotIndex) {
+    if (_selectedDate == null) return false;
+    final now = DateTime.now();
+    if (_selectedDate!.day != now.day ||
+        _selectedDate!.month != now.month ||
+        _selectedDate!.year != now.year) {
+      return false;
+    }
+
+    final slot = timeSlots[categoryIndex]["values"][slotIndex];
+    final time = slot["time"] as TimeOfDay;
+
+    final bufferTime = now.add(const Duration(hours: 1));
+    return time.hour < bufferTime.hour ||
+        (time.hour == bufferTime.hour && time.minute <= bufferTime.minute);
+  }
+
+  Widget _buildTimeCategories({StateSetter? setStateDialog}) {
+    return SizedBox(
+      height: 35,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        scrollDirection: Axis.horizontal,
+        itemCount: timeSlots.length,
+        itemBuilder: (context, index) {
+          final isDisabled = _isTimeCategoryDisabled(index);
+          final isSelected = selectedTimeCategory == index;
+
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: InkWell(
+              onTap: isDisabled
+                  ? null
+                  : () {
+                      if (setStateDialog != null) {
+                        setStateDialog(() {
+                          selectedTimeCategory = index;
+                          selectedTimeSlot = -1;
+                        });
+                      }
+                      setState(() {
+                        selectedTimeCategory = index;
+                        selectedTimeSlot = -1;
+                      });
+                    },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.primary : Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isSelected ? AppColors.primary : Colors.grey[300]!,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    _getLocalizedTimeCategory(timeSlots[index]["label"]),
+                    style: TextStyle(
+                      color: isSelected
+                          ? Colors.white
+                          : isDisabled
+                          ? Colors.grey
+                          : Colors.black87,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTimeSlots({
+    StateSetter? setStateDialog,
+    BuildContext? dialogContext,
+  }) {
+    final currentSlots =
+        (timeSlots[selectedTimeCategory]["values"] as List<Map>);
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Wrap(
+        spacing: 10,
+        runSpacing: 10,
+        children: List.generate(currentSlots.length, (i) {
+          final isPast = _isTimeSlotPast(selectedTimeCategory, i);
+          final isSelected = selectedTimeSlot == i;
+
+          return InkWell(
+            onTap: isPast
+                ? null
+                : () {
+                    if (setStateDialog != null) {
+                      setStateDialog(() => selectedTimeSlot = i);
+                    }
+                    setState(() {
+                      selectedTimeSlot = i;
+                      _selectedTime = currentSlots[i]["time"] as TimeOfDay;
+                      _errorMessage = null;
+                    });
+                    if (dialogContext != null) {
+                      Navigator.pop(dialogContext);
+                    }
+                  },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: (MediaQuery.of(context).size.width - 62) / 4,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? Colors.white
+                    : isPast
+                    ? Colors.grey[100]
+                    : AppColors.bgWhite,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: isSelected ? AppColors.primary : Colors.grey.shade300,
+                  width: 1.5,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  "${currentSlots[i]["label"].toString().substring(0, 5)} ${_getLocalizedTimeSlots(currentSlots[i]["label"])}",
+                  style: TextStyle(
+                    color: isSelected
+                        ? AppColors.primary
+                        : isPast
+                        ? Colors.grey
+                        : Colors.black87,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    fontSize: 10,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  void _showTimeSlotPickerDialog() {
+    if (_selectedDate == null) {
+      setState(() {
+        _errorMessage = AppLocalizations.of(context)!.selectDateTime; // Fallback error message
+      });
+      return;
+    }
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          insetPadding: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: StatefulBuilder(
+            builder: (context, setStateDialog) {
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)?.time ??
+                                'Available Slots',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey.shade100,
+                              ),
+                              child: Icon(
+                                Icons.close_rounded,
+                                size: 20,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildTimeCategories(setStateDialog: setStateDialog),
+                    const SizedBox(height: 16),
+                    Divider(color: Colors.grey.shade300, thickness: 1),
+                    if (selectedTimeCategory != -1)
+                      _buildTimeSlots(
+                        setStateDialog: setStateDialog,
+                        dialogContext: dialogContext,
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickTime() async {
+    _showTimeSlotPickerDialog();
   }
 
   Future<void> _submitClaim() async {
@@ -1406,7 +1750,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
                   const SizedBox(width: 12),
                   Text(
                     localization.selectDateTime,
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF1565C0),
@@ -1453,7 +1797,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
                                     ? DateFormat('MMM d, y')
                                         .format(_selectedDate!)
                                     : localization.selectDate,
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: _selectedDate != null
                                       ? FontWeight.w600
@@ -1506,7 +1850,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
                                 _selectedTime != null
                                     ? _selectedTime!.format(context)
                                     : localization.selectTime,
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: _selectedTime != null
                                       ? FontWeight.w600
@@ -1567,7 +1911,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
                   children: [
                     Text(
                       localization.importantInformation,
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF1565C0),
@@ -1576,7 +1920,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
                     const SizedBox(height: 6),
                     Text(
                       localization.claimText,
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         color: const Color(0xFF424242),
                         height: 1.4,
@@ -1600,7 +1944,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
                 Expanded(
                   child: Text(
                     _errorMessage!,
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: Colors.red,
@@ -1658,7 +2002,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
                             const SizedBox(width: 8),
                             Text(
                               localization.requestRepair,
-                              style: DMSansFont.textStyle(
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),

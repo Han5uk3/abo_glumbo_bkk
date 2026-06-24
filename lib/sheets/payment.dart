@@ -17,7 +17,6 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:pay/pay.dart';
 
 void showPaymentBottomSheet(
@@ -371,7 +370,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
               return AlertDialog(
                 title: Text(
                   (AppLocalizations.of(context)?.applePayNotAvailable ?? 'Apple Pay Not Available'),
-                  style: DMSansFont.textStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -381,12 +380,12 @@ class _PaymentWindowState extends State<PaymentWindow> {
                     SizedBox(height: 16),
                     Text(
                       (AppLocalizations.of(context)?.applePayNotAvailableDevice ?? 'Apple Pay is not available on this device.'),
-                      style: DMSansFont.textStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 16),
                     ),
                     SizedBox(height: 8),
                     Text(
                       'Please make sure:',
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
@@ -396,7 +395,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                       '• You have set up Apple Pay in your Wallet app\n'
                       '• Your device supports Apple Pay\n'
                       '• You have added a valid payment card',
-                      style: DMSansFont.textStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 14),
                     ),
                   ],
                 ),
@@ -407,7 +406,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                     },
                     child: Text(
                       (AppLocalizations.of(context)?.chooseAnotherPaymentMethod ?? 'Choose Another Payment Method'),
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         color: AppColors.secondary,
                         fontWeight: FontWeight.bold,
                       ),
@@ -445,7 +444,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
             return AlertDialog(
               title: Text(
                 (AppLocalizations.of(context)?.applePayError ?? 'Apple Pay Error'),
-                style: DMSansFont.textStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -455,12 +454,12 @@ class _PaymentWindowState extends State<PaymentWindow> {
                   SizedBox(height: 16),
                   Text(
                     (AppLocalizations.of(context)?.errorProcessingApplePay ?? 'There was an error processing your Apple Pay payment.'),
-                    style: DMSansFont.textStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Error details:',
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -468,7 +467,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                   SizedBox(height: 4),
                   Text(
                     e.toString(),
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       color: Colors.red[700],
                     ),
@@ -484,7 +483,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                   },
                   child: Text(
                     (AppLocalizations.of(context)?.tryAnotherPaymentMethod ?? 'Try Another Payment Method'),
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       color: AppColors.secondary,
                       fontWeight: FontWeight.bold,
                     ),
@@ -511,7 +510,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
               SizedBox(width: 8),
               Text(
                 'Apple Pay',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
@@ -526,7 +525,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
               SizedBox(height: 16),
               Text(
                 message,
-                style: DMSansFont.textStyle(fontSize: 16, height: 1.4),
+                style: TextStyle(fontSize: 16, height: 1.4),
               ),
             ],
           ),
@@ -537,7 +536,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
               },
               child: Text(
                 (AppLocalizations.of(context)?.useAnotherPaymentMethod ?? 'Use Another Payment Method'),
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   color: AppColors.secondary,
                   fontWeight: FontWeight.bold,
                 ),
@@ -564,7 +563,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                 children: [
                   Text(
                     AppLocalizations.of(context)?.paymentMode ?? '',
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: Colors.black87,
@@ -627,7 +626,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
                       ? Loader(size: 24, color: Colors.white)
                       : Text(
                           AppLocalizations.of(context)?.continueText ?? '',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -795,7 +794,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                 const SizedBox(width: 12),
                 Text(
                   AppLocalizations.of(context)!.confirmPayment,
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -808,7 +807,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
               children: [
                 Text(
                   '${AppLocalizations.of(context)!.orderId}: ${widget.orderId}',
-                  style: DMSansFont.textStyle(fontSize: 14),
+                  style: TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 12),
                 Container(
@@ -824,13 +823,13 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.amountToBePaid,
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Text(
                             '${totalAmount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -843,13 +842,13 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.amountPaid,
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Text(
                             '${paidAmount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                               color: Colors.green.shade700,
@@ -865,7 +864,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                   AppLocalizations.of(
                     context,
                   )!.areYouSureYouWantToConfirmThisPayment,
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),

@@ -9,7 +9,6 @@ import 'package:abo_glumbo_bbk/sheets/write_review.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BookingsPage extends StatefulWidget {
@@ -142,7 +141,7 @@ class _BookingsPageState extends State<BookingsPage> {
                   ),
                   child: Text(
                     _getLocalizedStatusNames(status.name, context),
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: selectedStatus == status
@@ -192,7 +191,7 @@ class _BookingsPageState extends State<BookingsPage> {
               child: Text(
                 AppLocalizations.of(context)!.noBookings,
                 textAlign: TextAlign.center,
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   color: Colors.grey.shade600,
                   fontSize: 18,
                 ),

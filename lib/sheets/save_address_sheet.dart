@@ -5,7 +5,6 @@ import 'package:abo_glumbo_bbk/models/address_result.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
-import 'package:abo_glumbo_bbk/utils/poppins_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -157,7 +156,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                     child: Text(
                       AppLocalizations.of(context)?.savedAddresses ??
                           'Pick the address where you need the service.',
-                      style: PoppinsFont.textStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                       ),
@@ -232,7 +231,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                           )
                         : Text(
                             AppLocalizations.of(context)?.addNew ?? 'Add New',
-                            style: PoppinsFont.textStyle(
+                            style: TextStyle(
                               color: AppColors.primary,
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
@@ -337,7 +336,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                           children: [
                                             Text(
                                               address.fullName,
-                                              style: PoppinsFont.textStyle(
+                                              style: TextStyle(
                                                 fontWeight: isSelected
                                                     ? FontWeight.w600
                                                     : FontWeight.w500,
@@ -350,7 +349,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                             const SizedBox(height: 2),
                                             Text(
                                               "${address.buildingNumber.isNotEmpty ? '${address.buildingNumber}, ' : ''}${address.streetName ?? ''}",
-                                              style: PoppinsFont.textStyle(
+                                              style: TextStyle(
                                                 color: isSelected
                                                     ? AppColors.primary
                                                     : Colors.grey[500],
@@ -399,7 +398,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                                           )?.edit ??
                                                           "",
                                                       style:
-                                                          PoppinsFont.textStyle(
+                                                          TextStyle(
                                                             fontSize: 14,
                                                             color: AppColors
                                                                 .primary,
@@ -427,7 +426,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                                                           )?.removeAddress ??
                                                           "",
                                                       style:
-                                                          PoppinsFont.textStyle(
+                                                          TextStyle(
                                                             fontSize: 14,
                                                             color:
                                                                 Colors.red[400],
@@ -487,7 +486,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                   child: Text(
                     AppLocalizations.of(context)?.pleaseAddANewAddress ??
                         'Please add a new address.',
-                    style: PoppinsFont.textStyle(
+                    style: TextStyle(
                       color: const Color.fromARGB(255, 79, 79, 79),
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -532,7 +531,7 @@ class _AddressSaveSheetState extends State<AddressSaveSheet> {
                 Expanded(
                   child: Text(
                     AppLocalizations.of(context)?.selectServiceAddress ?? '',
-                    style: PoppinsFont.textStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),

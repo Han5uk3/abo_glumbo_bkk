@@ -21,7 +21,6 @@ import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -221,7 +220,7 @@ class _HomeState extends State<Home> {
       SnackBar(
         content: Text(
           _getReviewLaterSnackbarText(context),
-          style: DMSansFont.textStyle(fontSize: 14, color: Colors.white),
+          style: TextStyle(fontSize: 14, color: Colors.white),
         ),
         backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
@@ -767,7 +766,7 @@ class _HomeState extends State<Home> {
           actionsAlignment: MainAxisAlignment.start,
           title: Text(
             AppLocalizations.of(context)?.logout ?? 'Logout',
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
@@ -775,7 +774,7 @@ class _HomeState extends State<Home> {
           content: Text(
             AppLocalizations.of(context)?.areYouSureYouWantToLogout ??
                 'Are you sure you want to logout?',
-            style: DMSansFont.textStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16),
           ),
           actions: [
             eButton(

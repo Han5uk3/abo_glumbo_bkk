@@ -13,7 +13,6 @@ import 'package:abo_glumbo_bbk/pages/home/active_bookings/widgets/active_live_tr
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:flutter/material.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 class ActiveBookingsSection extends StatefulWidget {
   final List<BookingModel> activeBookings;
@@ -809,7 +808,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               AppLocalizations.of(context)!.liveTracking,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,

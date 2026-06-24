@@ -5,7 +5,6 @@ import 'package:abo_glumbo_bbk/sheets/service_info.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import '../models/highlighted_services.dart';
 import '../models/service.dart';
 
@@ -30,7 +29,7 @@ class HighlightedServiceWidget extends StatelessWidget {
           padding: const EdgeInsets.only(left: 16, top: 10, right: 16),
           child: Text(
             data.titleLocalized(languageCode: currentLanguage) ?? '',
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 16,
               color: Colors.black,
@@ -142,7 +141,7 @@ class HighlightedServiceWidget extends StatelessWidget {
                                     languageCode: currentLanguage,
                                   ) ??
                                   "",
-                              style: DMSansFont.textStyle(
+                              style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,

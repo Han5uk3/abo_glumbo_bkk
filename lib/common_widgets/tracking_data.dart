@@ -9,7 +9,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -168,7 +167,7 @@ class TrackingData extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           timeTakenToArrive ?? '--',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 28, // Moderated for better fit
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
@@ -197,7 +196,7 @@ class TrackingData extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             remainingKm!,
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               color: Colors.grey[700],
@@ -216,7 +215,7 @@ class TrackingData extends StatelessWidget {
           // Status Message
           Text(
             AppLocalizations.of(context)!.yourTechnicianIsMovingToYourLocation,
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: Colors.black87,
@@ -284,7 +283,7 @@ class TrackingData extends StatelessWidget {
                   children: [
                     Text(
                       worker?.name ?? 'Technician',
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,

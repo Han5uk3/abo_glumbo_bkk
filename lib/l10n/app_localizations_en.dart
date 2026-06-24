@@ -2402,7 +2402,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get autoAssignMessage =>
-      'Since this is an off-hour booking, we will assign a technician to your booking atleast 3 hours before your booking time.';
+      'Your selected time is outside our working hours. We will assign an available technician before your service time and notify you once confirmed.';
 
   @override
   String get youSelectedTechnician => 'You selected a technician';

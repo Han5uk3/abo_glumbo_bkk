@@ -9,7 +9,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import '../models/service.dart';
 
 class ServiceTile extends StatelessWidget {
@@ -93,7 +92,7 @@ class ServiceTile extends StatelessWidget {
                     ),
                     child: Text(
                       "${service.discountPercentage!.toInt()}%",
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 9,
                         fontWeight: FontWeight.bold,
@@ -123,7 +122,7 @@ class ServiceTile extends StatelessWidget {
                             '',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 11,
                           color: Colors.black,
@@ -197,7 +196,7 @@ class ServiceTile extends StatelessWidget {
                             AppLocalizations.of(context)?.localeName ?? '',
                       ) ??
                       '',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     color: Colors.black45,
                     fontSize: 10,
                   ),
@@ -226,7 +225,7 @@ class ServiceTile extends StatelessWidget {
                         child: Text(
                           AppLocalizations.of(context)?.inspectionDisclaimer ??
                               '',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             color: AppColors.secondary,
                             fontSize: 10,
                           ),
@@ -244,7 +243,7 @@ class ServiceTile extends StatelessWidget {
                         if ((service.discountPercentage ?? 0) > 0)
                           Text(
                             "${service.price} ${AppLocalizations.of(context)!.sar}",
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               color: Colors.black26,
                               fontWeight: FontWeight.w500,
                               fontSize: 9,
@@ -253,7 +252,7 @@ class ServiceTile extends StatelessWidget {
                           ),
                         Text(
                           "${service.getDiscountedPrice(service.price ?? 0)} ${AppLocalizations.of(context)!.sar}",
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             color: AppColors.green1,
                             fontWeight: FontWeight.bold,
                             fontSize: 11,
@@ -290,7 +289,7 @@ class ServiceTile extends StatelessWidget {
                         },
                         child: Text(
                           AppLocalizations.of(context)?.requestService ?? '',
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 8,

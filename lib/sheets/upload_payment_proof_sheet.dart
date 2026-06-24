@@ -5,7 +5,6 @@ import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -247,7 +246,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                 Text(
                   AppLocalizations.of(context)?.completePayment ??
                       'Complete Payment',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -272,7 +271,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                 // Amount Input
                 Text(
                   AppLocalizations.of(context)?.amountPaid ?? 'Amount Paid',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -313,7 +312,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                 Text(
                   AppLocalizations.of(context)?.transactionId ??
                       'Transaction ID',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -349,7 +348,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                 Text(
                   AppLocalizations.of(context)?.paymentProofFiles ??
                       'Payment Proof Files',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -376,7 +375,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                             ),
                             title: Text(
                               fileName,
-                              style: DMSansFont.textStyle(fontSize: 12),
+                              style: TextStyle(fontSize: 12),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -434,7 +433,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                         : Text(
                             AppLocalizations.of(context)?.uploadProof ??
                                 'Upload Proof',
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),

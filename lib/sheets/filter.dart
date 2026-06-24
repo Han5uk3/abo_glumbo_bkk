@@ -10,7 +10,6 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 
 // Singleton class to manage locations cache
 class LocationsCache {
@@ -282,7 +281,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 const SizedBox(width: 12),
                 Text(
                   AppLocalizations.of(context)?.filter ?? 'Filter',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -417,7 +416,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                               ),
                               child: Text(
                                 AppLocalizations.of(context)?.clear ?? 'Clear',
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   color: Colors.grey[700],
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -467,7 +466,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                               child: Text(
                                 AppLocalizations.of(context)?.filter ??
                                     'Apply Filter',
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -522,7 +521,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               Expanded(
                 child: Text(
                   title,
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: isSelected ? AppColors.secondary : Colors.grey[700],
@@ -598,7 +597,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 if (selectedCity != null) ...[
                   Text(
                     AppLocalizations.of(context)?.neighbourhood ?? 'District',
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -636,7 +635,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                           },
                           title: Text(
                             displayName,
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                               color: isSelected
@@ -663,7 +662,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       child: Text(
                         AppLocalizations.of(context)?.pleaseSelectCity ??
                             'Please select a city to see districts',
-                        style: DMSansFont.textStyle(color: Colors.grey),
+                        style: TextStyle(color: Colors.grey),
                       ),
                     ),
                   ),
@@ -757,7 +756,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     const SizedBox(width: 12),
                     Text(
                       priceItems[index]['label']!,
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: isSelected ? Colors.green[800] : Colors.black87,
@@ -825,7 +824,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                         },
                         title: Text(
                           displayName,
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: isSelected
@@ -861,7 +860,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               Text(
                 AppLocalizations.of(context)?.selectFilter ??
                     'Select a filter to start',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
                 ),

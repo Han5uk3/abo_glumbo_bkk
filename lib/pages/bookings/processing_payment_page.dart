@@ -13,7 +13,6 @@ import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
 import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -204,7 +203,7 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
             Text(
               AppLocalizations.of(context)?.processingPayment ??
                   "Processing payment...",
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -214,7 +213,7 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
             Text(
               AppLocalizations.of(context)?.finalizingBookingInfo ??
                   "Please wait while we finalize your booking...",
-              style: DMSansFont.textStyle(fontSize: 14, color: Colors.grey),
+              style: TextStyle(fontSize: 14, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
           ],

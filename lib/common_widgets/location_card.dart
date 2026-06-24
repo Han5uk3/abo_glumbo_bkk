@@ -1,6 +1,5 @@
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/styles/app_images.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:flutter/material.dart';
 
 class LocationCard extends StatelessWidget {
@@ -35,7 +34,7 @@ class LocationCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title ?? 'Location Title',
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: AppColors.black1,
@@ -49,7 +48,7 @@ class LocationCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             subtitle ?? 'Location Subtitle',
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
               color: Colors.grey[600],

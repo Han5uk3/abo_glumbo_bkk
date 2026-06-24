@@ -23,7 +23,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/rebook_service_selection.dart';
 import 'package:flutter/services.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -253,7 +252,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         ),
                         child: Text(
                           booking.notes,
-                          style: DMSansFont.textStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             color: Colors.black87,
                             height: 1.4,
@@ -366,7 +365,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               backgroundColor: AppColors.blue1.withOpacity(0.1),
                               child: Text(
                                 _getInitials(booking.agent!.name ?? ""),
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primary,
@@ -378,7 +377,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               backgroundColor: AppColors.blue1.withOpacity(0.1),
                               child: Text(
                                 _getInitials(booking.agent!.name ?? ""),
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primary,
@@ -389,7 +388,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                           const SizedBox(width: 8),
                           Text(
                             booking.agent!.name ?? "",
-                            style: DMSansFont.textStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -486,7 +485,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               ),
                               child: Text(
                                 localization.rebookTechnician,
-                                style: DMSansFont.textStyle(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
@@ -638,7 +637,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                             SizedBox(width: 8),
                             Text(
                               AppLocalizations.of(context)!.review,
-                              style: DMSansFont.textStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -660,7 +659,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                         booking.review!.rating!.toStringAsFixed(
                                           1,
                                         ),
-                                        style: DMSansFont.textStyle(
+                                        style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,
@@ -693,7 +692,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                         _formatTimeAgo(
                                           booking.review!.createdAt!.toDate(),
                                         ),
-                                        style: DMSansFont.textStyle(
+                                        style: TextStyle(
                                           fontSize: 12,
                                           color: Colors.black,
                                         ),
@@ -706,7 +705,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                   ),
                                   Text(
                                     booking.review!.review,
-                                    style: DMSansFont.textStyle(
+                                    style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey.shade700,
                                     ),
@@ -771,7 +770,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     ),
                     title: Text(
                       localization.bookingDetails,
-                      style: DMSansFont.textStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.black),
                     ),
                   ),
                   SliverToBoxAdapter(
@@ -907,11 +906,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         labelColor: AppColors.blue1,
                         unselectedLabelColor: Colors.grey,
                         indicatorColor: AppColors.blue1,
-                        labelStyle: DMSansFont.textStyle(
+                        labelStyle: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
                         ),
-                        unselectedLabelStyle: DMSansFont.textStyle(
+                        unselectedLabelStyle: TextStyle(
                           fontWeight: FontWeight.normal,
                           fontSize: 13,
                         ),
@@ -974,7 +973,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               SizedBox(width: 8),
               Text(
                 localization.location,
-                style: DMSansFont.textStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16),
               ),
             ],
           ),
@@ -983,7 +982,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
             customerSelectedAddress == null
                 ? ""
                 : "${customerSelectedAddress.buildingNumber.isNotEmpty ? '${customerSelectedAddress.buildingNumber}, ' : ''}${customerSelectedAddress.streetName ?? ""}",
-            style: DMSansFont.textStyle(fontSize: 12, color: Colors.black),
+            style: TextStyle(fontSize: 12, color: Colors.black),
           ),
         ],
       ),
@@ -1275,7 +1274,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         if (completionData.fileUrls.isNotEmpty) ...[
           Text(
             AppLocalizations.of(context)!.uploadFilesTitle,
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -1288,7 +1287,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context)!.serviceItems,
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -1318,7 +1317,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                 flex: 12,
                                 child: Text(
                                   entry.value.name,
-                                  style: DMSansFont.textStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -1328,7 +1327,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                 flex: 2,
                                 child: Text(
                                   'x${entry.value.quantity.toInt()}',
-                                  style: DMSansFont.textStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -1339,7 +1338,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                 flex: 5,
                                 child: Text(
                                   '${entry.value.price.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-                                  style: DMSansFont.textStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.green,
@@ -1394,14 +1393,14 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 booking.paymentCompleted
                     ? AppLocalizations.of(context)!.amountPaid
                     : AppLocalizations.of(context)!.amountToBePaid,
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 '${((completionData.totalCost) + (booking.effectiveInspectionFee)).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: Colors.green,
@@ -1425,14 +1424,14 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       children: [
         Text(
           label,
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
         ),
         Text(
           '${amount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
@@ -1465,7 +1464,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     Expanded(
                       child: Text(
                         _getFileName(entry.value),
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -1553,7 +1552,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 const SizedBox(width: 8),
                 Text(
                   AppLocalizations.of(context)!.issueMedia,
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
@@ -1581,7 +1580,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       const SizedBox(width: 6),
                       Text(
                         AppLocalizations.of(context)!.image,
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey[600]!,
@@ -1615,7 +1614,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       const SizedBox(width: 8),
                       Text(
                         AppLocalizations.of(context)!.video,
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey[600]!,
@@ -1724,7 +1723,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   //         const SizedBox(width: 6),
   //         Text(
   //           statusText,
-  //           style: DMSansFont.textStyle(
+  //           style: TextStyle(
   //             fontSize: 14,
   //             fontWeight: FontWeight.w600,
   //             color: statusColor,
@@ -1781,7 +1780,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -1919,7 +1918,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               const SizedBox(width: 8),
               Text(
                 AppLocalizations.of(context)?.service ?? '',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1978,7 +1977,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 12,
 
                         color: Colors.black,
@@ -1991,7 +1990,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         description,
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: DMSansFont.textStyle(
+                        style: TextStyle(
                           fontSize: 10,
                           color: Colors.grey[600],
                         ),
@@ -2038,7 +2037,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
             width: 100,
             child: Text(
               label,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: Colors.grey[600],
@@ -2049,7 +2048,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           Expanded(
             child: Text(
               value,
-              style: DMSansFont.textStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: isHighlighted ? FontWeight.w600 : FontWeight.w400,
                 color: isHighlighted ? AppColors.blue1 : Colors.black,
@@ -2186,7 +2185,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               Expanded(
                 child: Text(
                   l10n.counterOfferFromTechnician,
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                     color: Colors.blue.shade900,
@@ -2198,7 +2197,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           const SizedBox(height: 12),
           Text(
             l10n.technicianProposedNewTime,
-            style: DMSansFont.textStyle(fontSize: 14, color: Colors.black87),
+            style: TextStyle(fontSize: 14, color: Colors.black87),
           ),
           const SizedBox(height: 16),
           Container(
@@ -2219,7 +2218,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 Expanded(
                   child: Text(
                     formatDateTimeDay(proposedTime.toDate(), locale),
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.blue.shade900,
@@ -2458,7 +2457,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         ),
         child: Text(
           AppLocalizations.of(context)!.completePayment,
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
             color: Colors.white,

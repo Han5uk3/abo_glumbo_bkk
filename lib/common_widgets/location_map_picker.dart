@@ -10,7 +10,6 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:abo_glumbo_bbk/utils/dm_sans_font.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -556,7 +555,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                   ),
                   Text(
                     AppLocalizations.of(context)?.serviceto ?? 'Service to',
-                    style: DMSansFont.textStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -580,7 +579,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     keyboardType: TextInputType.text,
                     hint: Text(
                       "${AppLocalizations.of(context)?.buildingName ?? 'Building Name'} (${AppLocalizations.of(context)!.optional})",
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -602,7 +601,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     },
                     hint: Text(
                       AppLocalizations.of(context)!.namehomeworketc,
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -617,7 +616,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     hint: Text(
                       AppLocalizations.of(context)?.phoneNumber ??
                           'Phone Number',
-                      style: DMSansFont.textStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -657,7 +656,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                           : Text(
                               AppLocalizations.of(context)?.saveAddress ??
                                   'Save Address',
-                              style: DMSansFont.textStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
@@ -786,7 +785,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 title: Text(
                   _predictions[index],
-                  style: DMSansFont.textStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -813,7 +812,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)?.chooseLocation ?? 'Choose Location',
-          style: DMSansFont.textStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: Colors.white,
@@ -894,14 +893,14 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                               controller: _searchController,
                               onChanged: _searchPlaces,
                               focusNode: _searchFocusNode,
-                              style: DMSansFont.textStyle(fontSize: 14),
+                              style: TextStyle(fontSize: 14),
                               decoration: InputDecoration(
                                 hintText:
                                     AppLocalizations.of(
                                       context,
                                     )?.pickServiceAddress ??
                                     'Pick service address',
-                                hintStyle: DMSansFont.textStyle(
+                                hintStyle: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey,
                                 ),
@@ -983,7 +982,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
         children: [
           Text(
             AppLocalizations.of(context)!.serviceto,
-            style: DMSansFont.textStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
               color: AppColors.black1,
@@ -1015,7 +1014,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
               child: Text(
                 AppLocalizations.of(context)?.addAddressDetails ??
                     'Add Address Details',
-                style: DMSansFont.textStyle(
+                style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
