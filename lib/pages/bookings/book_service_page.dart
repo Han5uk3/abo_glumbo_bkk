@@ -669,7 +669,7 @@ class _BookServicePageState extends State<BookServicePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppLocalizations.of(context)?.date ?? 'Select Date',
+                        AppLocalizations.of(context)?.selectDate ?? 'Select Date',
                         style: DMSansFont.textStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -703,7 +703,7 @@ class _BookServicePageState extends State<BookServicePage> {
                                       ? DateFormat(
                                           'dd MMM yyyy',
                                         ).format(selectedDate!)
-                                      : 'Select Date',
+                                      : AppLocalizations.of(context)?.selectDate ?? 'Select Date',
                                   style: DMSansFont.textStyle(
                                     color: selectedDate != null
                                         ? Colors.black87
@@ -727,7 +727,7 @@ class _BookServicePageState extends State<BookServicePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppLocalizations.of(context)?.time ?? 'Available Slots',
+                        AppLocalizations.of(context)?.selectTime ?? 'Available Slots',
                         style: DMSansFont.textStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,

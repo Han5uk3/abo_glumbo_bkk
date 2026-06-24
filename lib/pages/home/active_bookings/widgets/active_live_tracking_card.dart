@@ -10,6 +10,7 @@ class TrackingCard extends StatelessWidget {
   final String toLocation;
   final VoidCallback onTrack;
   final BookingModel booking;
+  final bool isCalculating;
 
   const TrackingCard({
     super.key,
@@ -18,6 +19,7 @@ class TrackingCard extends StatelessWidget {
     required this.toLocation,
     required this.onTrack,
     required this.booking,
+    this.isCalculating = false,
   });
 
   @override
@@ -110,6 +112,18 @@ class TrackingCard extends StatelessWidget {
                               color: Colors.orange,
                             ),
                             textAlign: TextAlign.center,
+                          ),
+                        ] else if (isCalculating) ...[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text(
+                              AppLocalizations.of(context)!.calculating,
+                              style: DMSansFont.textStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
                           ),
                         ] else ...[
                           Text(

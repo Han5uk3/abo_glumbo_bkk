@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 
 class ChatService {
   static FirebaseDatabase? _databaseInstance;
@@ -19,7 +20,7 @@ class ChatService {
     _rtdb = _database.ref();
   }
 
-  String get currentUserId => _auth.currentUser!.uid;
+  String get currentUserId => _auth.currentUser?.uid ?? LocalStoreHelper.getUID() ?? '';
 
   String generateChatId(String bookingId, String userId1, String userId2) {
     List<String> ids = [userId1, userId2]..sort();
@@ -380,7 +381,7 @@ class ChatService {
   }
 
   Future<void> setActiveChat(String chatId) async {
-    final String uid = _auth.currentUser?.uid ?? '';
+    final String uid = currentUserId;
     if (uid.isEmpty || chatId.isEmpty) return;
 
     // Use the 'chats' root which we know is working for markAsRead
@@ -403,7 +404,7 @@ class ChatService {
   }
 
   Future<void> clearActiveChat(String chatId) async {
-    final String uid = _auth.currentUser?.uid ?? '';
+    final String uid = currentUserId;
     if (uid.isEmpty || chatId.isEmpty) return;
 
     try {

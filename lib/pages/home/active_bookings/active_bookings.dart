@@ -869,6 +869,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                     fromLocation: fromLocationText,
                     booking: booking,
                     toLocation: toLocationText,
+                    isCalculating: isCalculating,
                     onTrack:
                         customerSelectedAddress != null && booking.agent != null
                         ? () {

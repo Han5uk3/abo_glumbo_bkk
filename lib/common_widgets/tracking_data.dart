@@ -60,8 +60,7 @@ class TrackingData extends StatelessWidget {
         chatId = booking.chatroomId;
       } else {
         // Create new chatroom
-        final currentUser = FirebaseAuth.instance.currentUser;
-        if (currentUser == null) {
+        if (chatService.currentUserId.isEmpty) {
           throw Exception('User not authenticated');
         }
 
@@ -391,8 +390,9 @@ class TrackingData extends StatelessWidget {
                 const SizedBox(width: 8),
                 InkWell(
                   onTap: () {
+                    final cleanPhone = worker!.phone!.replaceAll(RegExp(r'\s+'), '');
                     launchUrl(
-                      Uri.parse('tel:${worker!.phone}'),
+                      Uri.parse('tel:$cleanPhone'),
                       mode: LaunchMode.externalApplication,
                     );
                   },

@@ -1018,8 +1018,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       if (booking.chatroomId.isNotEmpty) {
         chatId = booking.chatroomId;
       } else {
-        final currentUser = FirebaseAuth.instance.currentUser;
-        if (currentUser == null) {
+        if (chatService.currentUserId.isEmpty) {
           throw Exception('User not authenticated');
         }
 
