@@ -971,8 +971,8 @@
   "errorProcessingApplePay": "There was an error processing your Apple Pay payment.",
   "useAnotherPaymentMethod": "Use Another Payment Method",
   "failedLoadLocations": "Failed to load locations. Location filters may not be available.",
-  "failedLoadCategories": "Failed to load categories. Some filters may not be available."
-  ,"pleaseSelectTechnician": "Please select one of the accepted technicians below to continue.",
+  "failedLoadCategories": "Failed to load categories. Some filters may not be available.",
+  "pleaseSelectTechnician": "Please select one of the accepted technicians below to continue.",
   "requestExpiresIn": "Request expires in:",
   "lookingForNearbyTechnicians": "Looking for nearby technicians...",
   "pleaseWaitTechniciansHave120s": "Please wait, eligible technicians have 120s to accept.",
@@ -987,6 +987,6 @@
       }
     }
   },
-  "jobsCount": "jobs"
-  ,"chooseYourTechnician": "Choose your technician"
+  "jobsCount": "jobs",
+  "chooseYourTechnician": "Choose your technician"
 }
