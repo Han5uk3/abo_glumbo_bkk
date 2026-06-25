@@ -358,6 +358,7 @@ class AuthServices {
 
         // Setup authenticated state within the code
         await LocalStoreHelper.putUID(uid);
+        await LocalStoreHelper.putUserName(userData?['name'] ?? '');
         await LocalStoreHelper.putlogoutStatus(false);
         await LocalStoreHelper.putBlockStatus(false);
 
@@ -410,6 +411,7 @@ class AuthServices {
 
             // Login with migrated account
             await LocalStoreHelper.putUID(uid);
+            await LocalStoreHelper.putUserName(oldData['name'] ?? '');
             await LocalStoreHelper.putlogoutStatus(false);
             await LocalStoreHelper.putBlockStatus(false);
 

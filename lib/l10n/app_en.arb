@@ -987,6 +987,15 @@
       }
     }
   },
+  "welcome": "Welcome",
   "jobsCount": "jobs",
-  "chooseYourTechnician": "Choose your technician"
+  "chooseYourTechnician": "Choose your technician",
+  "welcomeUser": "Welcome, {username}",
+  "@welcomeUser": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  }
 }

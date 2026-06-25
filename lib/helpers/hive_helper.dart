@@ -21,6 +21,14 @@ class LocalStoreHelper {
     return MyApp.box.delete('uid');
   }
 
+  static Future<void> putUserName(String name) {
+    return MyApp.box.put('user_name', name);
+  }
+
+  static String getUserName() {
+    return MyApp.box.get('user_name') ?? '';
+  }
+
   static Future<void> putGuestUser(bool isGuest) {
     return MyApp.box.put('is_guest', isGuest);
   }

@@ -154,16 +154,16 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
           appBar: AppBar(
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
-              iconSize: 16,
-              icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
+              iconSize: 18,
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             ),
             elevation: 0,
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
             centerTitle: true,
             title: Text(
               AppLocalizations.of(context)?.notifications ?? 'Notifications',
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.white),
             ),
             shape: Border.all(style: BorderStyle.none),
             actions: [

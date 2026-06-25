@@ -15,17 +15,17 @@ class FAQPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
+        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
         leading: IconButton(
-          iconSize: 16,
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          iconSize: 18,
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         shape: Border.all(style: BorderStyle.none),
         title: Text(
           AppLocalizations.of(context)?.faq ?? 'FAQ',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
 
         centerTitle: true,

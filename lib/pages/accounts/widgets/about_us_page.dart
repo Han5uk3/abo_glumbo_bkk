@@ -1,4 +1,5 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 
 class CustomerAboutUsPage extends StatelessWidget {
@@ -14,17 +15,17 @@ class CustomerAboutUsPage extends StatelessWidget {
           SliverAppBar(
             pinned: true,
             centerTitle: true,
-            foregroundColor: Colors.black,
-            backgroundColor: Colors.white,
+            foregroundColor: Colors.white,
+            backgroundColor: AppColors.primary,
             leading: IconButton(
-              iconSize: 16,
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              iconSize: 18,
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
             shape: Border.all(style: BorderStyle.none),
             title: Text(
               locale.customerAboutUsTitle,
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.white),
             ),
           ),
 

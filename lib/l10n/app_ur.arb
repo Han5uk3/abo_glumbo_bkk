@@ -981,5 +981,13 @@
   "waitingForTechniciansToAccept": "ٹیکنیشنز کے قبول کرنے کا انتظار ہے...",
   "acceptedTechniciansCount": "قبول شدہ ٹیکنیشنز ({count})",
   "jobsCount": "کام",
-  "chooseYourTechnician": "اپنے ٹیکنیشن کا انتخاب کریں"
+  "welcome": "خوش آمدید",
+  "welcomeUser": "خوش آمدید، {username}",
+  "@welcomeUser": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  }
 }

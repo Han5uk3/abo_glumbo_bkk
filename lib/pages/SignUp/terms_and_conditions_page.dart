@@ -1,4 +1,5 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -12,18 +13,18 @@ class TermsAndConditionsPage extends StatelessWidget {
     final locale = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
+        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
         leading: IconButton(
-          iconSize: 16,
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          iconSize: 18,
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         shape: Border.all(style: BorderStyle.none),
         centerTitle: true,
         title: Text(
           isFromLogin ? locale.termsOfUse : locale.termsAndConditions,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
       ),
       body: SingleChildScrollView(
@@ -92,10 +93,7 @@ class TermsAndConditionsPage extends StatelessWidget {
           ),
         ),
         SizedBox(height: 3),
-        Text(
-          text,
-          style: TextStyle(color: Colors.black, fontSize: 14),
-        ),
+        Text(text, style: TextStyle(color: Colors.black, fontSize: 14)),
       ],
     );
   }

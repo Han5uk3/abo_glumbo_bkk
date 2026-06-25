@@ -311,10 +311,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
       child: Scaffold(
         backgroundColor: AppColors.bgBlueTint,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.primary,
           title: Text(
             locale.profile,
-            style: TextStyle(color: Colors.black, fontSize: 14),
+            style: TextStyle(color: Colors.white, fontSize: 14),
           ),
           centerTitle: true,
           leading: IconButton(
@@ -324,9 +324,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             },
             icon: Icon(
               Icons.arrow_back_ios,
-
-              color: Colors.black, // Explicitly set back arrow color
-            ),
+              color: Colors.white,
+            ), // Explicitly set back arrow color
           ),
         ),
         body: isPageLoading
@@ -382,6 +381,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      AppLocalizations.of(context)?.phoneNumberUpdateInfo ??
+                          'To update phone number, please click the "Update" button.',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: AppColors.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
                     // Email Field
                     TextFormWidget(
                       controller: emailController,
@@ -399,16 +409,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         }
                         return null;
                       },
-                    ),
-                    const SizedBox(height: 16),
-
-                    Text(
-                      AppLocalizations.of(context)?.phoneNumberUpdateInfo ??
-                          'To update phone number, please click the "Update" button.',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: AppColors.secondary,
-                      ),
                     ),
                   ],
                 ),

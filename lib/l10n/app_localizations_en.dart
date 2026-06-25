@@ -2735,5 +2735,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get welcome => 'Welcome';
+
+  @override
   String get jobsCount => 'jobs';
+
+  @override
+  String welcomeUser(String username) {
+    return 'Welcome, $username';
+  }
 }

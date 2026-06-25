@@ -2755,5 +2755,13 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String get welcome => 'خوش آمدید';
+
+  @override
   String get jobsCount => 'کام';
+
+  @override
+  String welcomeUser(String username) {
+    return 'خوش آمدید، $username';
+  }
 }

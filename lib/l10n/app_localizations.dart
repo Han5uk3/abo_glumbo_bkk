@@ -5176,11 +5176,23 @@ abstract class AppLocalizations {
   /// **'Accepted Technicians ({count})'**
   String acceptedTechniciansCount(int count);
 
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get welcome;
+
   /// No description provided for @jobsCount.
   ///
   /// In en, this message translates to:
   /// **'jobs'**
   String get jobsCount;
+
+  /// No description provided for @welcomeUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, {username}'**
+  String welcomeUser(String username);
 }
 
 class _AppLocalizationsDelegate

@@ -533,7 +533,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reviewNow => 'قيم الآن';
 
   @override
-  String get chooseYourTechnician => 'اختر الفني الخاص بك';
+  String get chooseYourTechnician => 'اختر الفني';
 
   @override
   String get chooseSource => 'اختر المصدر';
@@ -2694,5 +2694,13 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get welcome => 'مرحبًا';
+
+  @override
   String get jobsCount => 'مهمة';
+
+  @override
+  String welcomeUser(String username) {
+    return 'أهلاً بك، $username';
+  }
 }

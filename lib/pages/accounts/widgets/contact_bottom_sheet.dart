@@ -17,7 +17,10 @@ class ContactService {
     final cleanPhone = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
     final whatsappUrl = 'https://wa.me/$cleanPhone';
     try {
-      final success = await launchUrlString(whatsappUrl, mode: LaunchMode.externalApplication);
+      final success = await launchUrlString(
+        whatsappUrl,
+        mode: LaunchMode.externalApplication,
+      );
       if (!success) {
         await launchUrlString(whatsappUrl);
       }
@@ -76,10 +79,7 @@ class ContactBottomSheet extends StatelessWidget {
             children: [
               Text(
                 AppLocalizations.of(context)?.contactSupportOptions ?? "",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               Expanded(

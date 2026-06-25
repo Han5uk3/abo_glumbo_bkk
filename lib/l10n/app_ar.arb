@@ -994,5 +994,13 @@
   "waitingForTechniciansToAccept": "بانتظار قبول الفنيين...",
   "acceptedTechniciansCount": "الفنيون المقبولون ({count})",
   "jobsCount": "مهمة",
-  "chooseYourTechnician": "اختر الفني الخاص بك"
+  "welcome": "مرحبًا",
+  "welcomeUser": "أهلاً بك، {username}",
+  "@welcomeUser": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  }
 }

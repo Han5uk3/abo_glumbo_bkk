@@ -222,17 +222,39 @@ class _HomePageState extends State<HomePage>
               width: MediaQuery.of(context).size.width,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     margin: EdgeInsets.only(top: 6),
-                    height: 45,
-                    width: 45,
+                    height: 50,
+                    width: 50,
                     child: Image(
                       fit: BoxFit.cover,
                       image: AssetImage("assets/icons/app_icon.png"),
                     ),
                   ),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${AppLocalizations.of(context)!.welcome},",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        LocalStoreHelper.getUserName(),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
 
                   // const SizedBox(width: 8),
                   // Expanded(

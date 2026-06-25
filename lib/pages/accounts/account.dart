@@ -274,10 +274,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         children: [
           Text(
             widget.customerData?.name ?? 'Guest User',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           if (!_isGuest && widget.customerData?.email != null) ...[
             Text(
@@ -540,10 +537,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                   child: Text(
                     AppLocalizations.of(dialogContext)?.disableBiometric ??
                         'Disable Biometric?',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -628,8 +622,9 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
   void _showContactOptions() {
     showModalBottomSheet(
+      showDragHandle: true,
       context: context,
-      useSafeArea: true,
+
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -675,10 +670,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
               Text(
                 AppLocalizations.of(dialogContext)?.deleteAccountWarning ??
                     'This action cannot be undone. All your data will be permanently deleted.',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 16),
               Container(
@@ -788,10 +780,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.red.shade700,
-              ),
+              style: TextStyle(fontSize: 10, color: Colors.red.shade700),
             ),
           ),
         ],
@@ -853,10 +842,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
           actionsAlignment: MainAxisAlignment.start,
           title: Text(
             AppLocalizations.of(context)?.logout ?? 'Logout',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           content: Text(
             AppLocalizations.of(context)?.areYouSureYouWantToLogout ??
