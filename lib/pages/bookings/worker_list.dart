@@ -552,7 +552,9 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Row(
+        physics: const ClampingScrollPhysics(),
+        child: Wrap(
+          spacing: 8.0,
           children: [
             _buildFilterChip(
               label: locale.highestRating,
@@ -566,7 +568,6 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
                 });
               },
             ),
-            const SizedBox(width: 8),
             _buildFilterChip(
               label: locale.mostOrders,
               icon: Icons.workspace_premium_rounded,
@@ -579,7 +580,6 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
                 });
               },
             ),
-            const SizedBox(width: 8),
             _buildFilterChip(
               label: locale.nearest,
               icon: Icons.near_me_rounded,
@@ -592,10 +592,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
                 });
               },
             ),
-            if (!_allFiltersOff) ...[
-              const SizedBox(width: 8),
-              _buildClearAllChip(locale),
-            ],
+            if (!_allFiltersOff) _buildClearAllChip(locale),
           ],
         ),
       ),
@@ -747,6 +744,7 @@ class _FilteringAnimationState extends State<_FilteringAnimation>
       animation: _shimmerController,
       builder: (context, child) {
         return ListView.builder(
+          physics: const ClampingScrollPhysics(),
           padding: const EdgeInsets.only(top: 8, bottom: 16),
           itemCount: 5,
           itemBuilder: (context, index) {
@@ -1193,6 +1191,7 @@ class _WorkerListViewState extends State<_WorkerListView>
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.only(top: 8, bottom: 16),
       itemCount: widget.workers.length,
       itemBuilder: (context, index) {
