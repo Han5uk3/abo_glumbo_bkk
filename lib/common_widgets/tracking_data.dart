@@ -389,7 +389,7 @@ class TrackingData extends StatelessWidget {
                 const SizedBox(width: 8),
                 InkWell(
                   onTap: () {
-                    final cleanPhone = worker!.phone!.replaceAll(RegExp(r'\s+'), '');
+                    final cleanPhone = worker!.phone!.replaceAll(RegExp(r'[^\d+]'), '');
                     launchUrl(
                       Uri.parse('tel:$cleanPhone'),
                       mode: LaunchMode.externalApplication,

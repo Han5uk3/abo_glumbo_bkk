@@ -438,7 +438,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               child: GestureDetector(
                                 onTap: () {
                                   final phone = (booking.agent!.phone ?? "")
-                                      .replaceAll(RegExp(r'\s+'), '');
+                                      .replaceAll(RegExp(r'[^\d+]'), '');
                                   _launchUrl('tel:$phone');
                                 },
                                 child: Container(
