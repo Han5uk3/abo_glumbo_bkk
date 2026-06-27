@@ -66,6 +66,24 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
     log("populating Controllers");
 
     _populateControllers();
+
+    if (widget.existingAddress == null) {
+      _checkLocationPermissionsOnOpen();
+    }
+  }
+
+  Future<void> _checkLocationPermissionsOnOpen() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        await Geolocator.requestPermission();
+      }
+    } catch (e) {
+      log("Error checking location permissions: $e");
+    }
   }
 
   Future<void> _populateControllers() async {
@@ -555,10 +573,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                   ),
                   Text(
                     AppLocalizations.of(context)?.serviceto ?? 'Service to',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     textDirection: isRTL
                         ? TextDirection.rtl
                         : TextDirection.ltr,
@@ -579,10 +594,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     keyboardType: TextInputType.text,
                     hint: Text(
                       "${AppLocalizations.of(context)?.buildingName ?? 'Building Name'} (${AppLocalizations.of(context)!.optional})",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -601,10 +613,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     },
                     hint: Text(
                       AppLocalizations.of(context)!.namehomeworketc,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -616,10 +625,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                     hint: Text(
                       AppLocalizations.of(context)?.phoneNumber ??
                           'Phone Number',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -785,10 +791,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 title: Text(
                   _predictions[index],
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
                 ),
                 leading: Icon(
                   Icons.location_on_outlined,

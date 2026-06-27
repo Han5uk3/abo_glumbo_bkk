@@ -567,19 +567,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         '[ETA] Straight-line distance: ${straightLineDistance.toStringAsFixed(2)} km',
       );
 
-      // Validate that coordinates are not identical or suspiciously close
-      if (straightLineDistance < 0.01) {
-        // Less than 10 meters - likely same location (error)
-        _log(
-          '[ETA] ⚠️ Agent and customer coordinates are identical or too close for booking ${booking.id}',
-        );
-        _setFallbackETA(booking.id, isLocationError: true, agentUid: agentUid);
-        return;
-      }
-
       // Validate that distance is reasonable (not too far)
-      if (straightLineDistance > 500) {
-        // More than 500km - likely incorrect coordinates
+      if (straightLineDistance > 1000) {
+        // More than 1000km - likely incorrect coordinates
         _log(
           '[ETA] ⚠️ Distance too large (${straightLineDistance.toStringAsFixed(1)} km) - possible location error for booking ${booking.id}',
         );
@@ -854,7 +844,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                   final hasLiveLocation =
                       agentUid != null &&
                       _agentLiveLocations.containsKey(agentUid);
-                  final isCalculating = calculatingETAs.contains(booking.id);
+                  final isCalculating =
+                      calculatingETAs.contains(booking.id) ||
+                      bookingEtaData == null;
 
                   // Log status for debugging (only in debug mode)
                   if (kDebugMode && !hasLiveLocation && !isCalculating) {
