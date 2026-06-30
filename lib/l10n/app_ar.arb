@@ -1045,5 +1045,7 @@
     }
   },
   "minuteAgo": "منذ دقيقة واحدة",
-  "justNow": "الآن"
+  "justNow": "الآن",
+  "costBreakdown": "تفاصيل التكلفة",
+  "paymentProof": "إثبات الدفع"
 }

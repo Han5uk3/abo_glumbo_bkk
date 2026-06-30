@@ -543,76 +543,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                   if (booking.bookingStatusCode.toLowerCase() == 'completed' ||
                       booking.bookingStatusCode.toLowerCase() == 'c') ...[
                     _buildCompletionDataCard(context),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 50,
-                            child: ElevatedButton.icon(
-                              onPressed: () =>
-                                  InvoiceService.generateAndShowInvoice(
-                                    context,
-                                    booking,
-                                  ),
-                              icon: const Icon(
-                                Icons.download_rounded,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              label: const Text(
-                                "Download",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: SizedBox(
-                            height: 50,
-                            child: ElevatedButton.icon(
-                              onPressed: () =>
-                                  InvoiceService.generateAndShareInvoice(
-                                    context,
-                                    booking,
-                                  ),
-                              icon: const Icon(
-                                Icons.share_rounded,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              label: const Text(
-                                "Share",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
-                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -1233,6 +1164,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       title: AppLocalizations.of(context)!.completionDetails,
       icon: Icons.check_circle,
       children: [
+        Text(
+          AppLocalizations.of(context)!.invoiceWord,
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 12),
         if (booking.paymentCompleted ||
             booking.bookingStatusCode == 'VP' ||
             (booking.bookingStatusCode == 'C' &&
@@ -1242,6 +1178,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               AppLocalizations.of(context)!.transactionId,
               booking.orderId ?? "",
             ),
+
           _buildInfoRow(
             AppLocalizations.of(context)!.invoiceType,
             completionData.mode == 0
@@ -1258,6 +1195,44 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
             ),
         ],
 
+        GestureDetector(
+          onTap: () => InvoiceService.generateAndShowInvoice(context, booking),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.picture_as_pdf_rounded,
+                  size: 20,
+                  color: Colors.red.shade400,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    widget.booking.newBookingId ?? "",
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () =>
+                      InvoiceService.generateAndShareInvoice(context, booking),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Icon(Icons.share_rounded, size: 18),
+                  ),
+                ),
+                const Icon(Icons.open_in_new, size: 16),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
         if (completionData.fileUrls.isNotEmpty) ...[
           Text(
             AppLocalizations.of(context)!.uploadFilesTitle,
@@ -1343,39 +1318,36 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           ),
           const SizedBox(height: 16),
         ],
+        const SizedBox(height: 16),
+        Text(
+          AppLocalizations.of(context)!.costBreakdown,
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
 
         if (completionData.serviceCost > 0) ...[
-          const SizedBox(height: 12),
           _buildInfoRow(
             AppLocalizations.of(context)!.serviceCost,
             '${completionData.serviceCost.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
           ),
-          if (booking.service.discountPercentage != null &&
-              booking.service.discountPercentage! > 0) ...[
-            const SizedBox(height: 12),
-            _buildInfoRow(
-              AppLocalizations.of(context)!.discountPercentage,
-              '${booking.service.discountPercentage!.toStringAsFixed(0)}%',
-            ),
-            const SizedBox(height: 12),
-            _buildInfoRow(
-              AppLocalizations.of(context)!.discountAmount,
-              '${(completionData.serviceCost * (booking.service.discountPercentage! / 100)).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-            ),
-          ],
         ],
-
-        const SizedBox(height: 12),
         _buildInfoRow(
           AppLocalizations.of(context)!.inspectionFee,
           '${booking.effectiveInspectionFee.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
         ),
 
+        if (booking.service.discountPercentage != null &&
+            booking.service.discountPercentage! > 0) ...[
+          _buildInfoRow(
+            AppLocalizations.of(context)!.discountAmount,
+            '${(booking.effectiveInspectionFee - booking.service.getDiscountedPrice(booking.effectiveInspectionFee)).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+          ),
+        ],
+
         if (booking.paymentProof != null &&
             booking.paymentProof!.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text(
-            "Payment Proof",
+            AppLocalizations.of(context)!.paymentProof,
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 12),
@@ -1400,7 +1372,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
               Text(
-                '${((completionData.totalCost) + (booking.effectiveInspectionFee)).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                '${((completionData.totalCost) + booking.service.getDiscountedPrice(booking.effectiveInspectionFee)).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -1974,7 +1946,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${AppLocalizations.of(context)!.price}\t\t  ',
+                  '${AppLocalizations.of(context)!.inspectionFee}\t\t  ',
                   style: const TextStyle(fontSize: 12),
                 ),
                 Text(

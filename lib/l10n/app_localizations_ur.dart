@@ -2815,4 +2815,10 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get justNow => 'ابھی ابھی';
+
+  @override
+  String get costBreakdown => 'لاگت کی تفصیل';
+
+  @override
+  String get paymentProof => 'ادائیگی کا ثبوت';
 }

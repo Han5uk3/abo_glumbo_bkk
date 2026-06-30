@@ -2795,4 +2795,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get justNow => 'just now';
+
+  @override
+  String get costBreakdown => 'Cost Breakdown';
+
+  @override
+  String get paymentProof => 'Payment Proof';
 }

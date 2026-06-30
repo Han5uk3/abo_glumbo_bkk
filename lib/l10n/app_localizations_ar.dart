@@ -2754,4 +2754,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get justNow => 'الآن';
+
+  @override
+  String get costBreakdown => 'تفاصيل التكلفة';
+
+  @override
+  String get paymentProof => 'إثبات الدفع';
 }

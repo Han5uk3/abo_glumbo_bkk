@@ -1032,5 +1032,7 @@
     }
   },
   "minuteAgo": "1 منٹ پہلے",
-  "justNow": "ابھی ابھی"
+  "justNow": "ابھی ابھی",
+  "costBreakdown": "لاگت کی تفصیل",
+  "paymentProof": "ادائیگی کا ثبوت"
 }

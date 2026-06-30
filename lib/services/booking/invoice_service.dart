@@ -241,6 +241,17 @@ class InvoiceService {
                   "${(item.quantity * item.price).toStringAsFixed(2)} ${loc.sar}",
                 ],
               ),
+              if (data.serviceItems.isEmpty && data.serviceCost > 0)
+                [
+                  (loc.localeName == 'ar')
+                      ? 'تكلفة الخدمة'
+                      : (loc.localeName == 'ur')
+                          ? 'سروس کی قیمت'
+                          : 'Service Cost',
+                  '1',
+                  "${data.serviceCost.toStringAsFixed(2)} ${loc.sar}",
+                  "${data.serviceCost.toStringAsFixed(2)} ${loc.sar}",
+                ],
               if (data.inspectionFee > 0)
                 [
                   loc.inspectionFee,
@@ -255,7 +266,6 @@ class InvoiceService {
           // Totals
           pw.Row(
             children: [
-              if (!isArabic) pw.Spacer(flex: 2),
               pw.Expanded(
                 flex: 1,
                 child: pw.Column(
@@ -320,7 +330,7 @@ class InvoiceService {
                   ],
                 ),
               ),
-              if (isArabic) pw.Spacer(flex: 2),
+              pw.Spacer(flex: 2),
             ],
           ),
 

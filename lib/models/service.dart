@@ -40,7 +40,7 @@ class ServiceModel {
 
   // the price in its lowest form
   double? price;
-  
+
   // Work hour pricing fields
   String? workStartTime;
   String? workEndTime;
@@ -119,8 +119,9 @@ class ServiceModel {
   }) {
     String? categoryName;
     if (categories != null && this.category != null) {
-      categoryName =
-          categories.firstWhere((element) => element.id == this.category).name;
+      categoryName = categories
+          .firstWhere((element) => element.id == this.category)
+          .name;
     }
     return ServiceModel(
       id: id ?? this.id,
@@ -159,27 +160,30 @@ class ServiceModel {
       name_ur: json['name_ur'] ?? json['name_ar'] ?? json['name'],
       description: json['description'],
       description_ar: json['description_ar'] ?? json['description'],
-      description_ur: json['description_ur'] ?? json['description_ar'] ?? json['description'],
+      description_ur:
+          json['description_ur'] ??
+          json['description_ar'] ??
+          json['description'],
       image: json['image'],
       rating: json['rating']?.toDouble(),
       ratingCount: json['ratingCount'],
       totalRating: json['totalRating']?.toDouble(),
       price: (json['price'] != null)
           ? (json['price'] is int
-              ? (json['price'] as int).toDouble()
-              : json['price'] as double)
+                ? (json['price'] as int).toDouble()
+                : json['price'] as double)
           : 0.0,
       workStartTime: json['workStartTime'],
       workEndTime: json['workEndTime'],
       onWorkHourPrice: (json['onWorkHourPrice'] != null)
           ? (json['onWorkHourPrice'] is int
-              ? (json['onWorkHourPrice'] as int).toDouble()
-              : json['onWorkHourPrice'] as double)
+                ? (json['onWorkHourPrice'] as int).toDouble()
+                : json['onWorkHourPrice'] as double)
           : 0.0,
       offWorkHourPrice: (json['offWorkHourPrice'] != null)
           ? (json['offWorkHourPrice'] is int
-              ? (json['offWorkHourPrice'] as int).toDouble()
-              : json['offWorkHourPrice'] as double)
+                ? (json['offWorkHourPrice'] as int).toDouble()
+                : json['offWorkHourPrice'] as double)
           : 0.0,
       workingDays: json['workingDays']?.cast<int>(),
       category: json['category'],
@@ -190,15 +194,16 @@ class ServiceModel {
       isActive: json['isActive'],
       discountPercentage: (json['discountPercentage'] != null)
           ? (json['discountPercentage'] is int
-              ? (json['discountPercentage'] as int).toDouble()
-              : json['discountPercentage'] as double)
+                ? (json['discountPercentage'] as int).toDouble()
+                : json['discountPercentage'] as double)
           : 0.0,
     );
   }
 
   // from firebase query document snapshot
   factory ServiceModel.fromQueryDocumentSnapshot(
-      QueryDocumentSnapshot snapshot) {
+    QueryDocumentSnapshot snapshot,
+  ) {
     Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
     return ServiceModel(
       id: snapshot.id,
@@ -207,27 +212,30 @@ class ServiceModel {
       name_ur: data['name_ur'] ?? data['name_ar'] ?? data['name'],
       description: data['description'],
       description_ar: data['description_ar'] ?? data['description'],
-      description_ur: data['description_ur'] ?? data['description_ar'] ?? data['description'],
+      description_ur:
+          data['description_ur'] ??
+          data['description_ar'] ??
+          data['description'],
       image: data['image'],
       rating: data['rating']?.toDouble(),
       ratingCount: data['ratingCount'],
       totalRating: data['totalRating']?.toDouble(),
       price: (data['price'] != null)
           ? (data['price'] is int
-              ? (data['price'] as int).toDouble()
-              : data['price'] as double)
+                ? (data['price'] as int).toDouble()
+                : data['price'] as double)
           : 0.0,
       workStartTime: data['workStartTime'],
       workEndTime: data['workEndTime'],
       onWorkHourPrice: (data['onWorkHourPrice'] != null)
           ? (data['onWorkHourPrice'] is int
-              ? (data['onWorkHourPrice'] as int).toDouble()
-              : data['onWorkHourPrice'] as double)
+                ? (data['onWorkHourPrice'] as int).toDouble()
+                : data['onWorkHourPrice'] as double)
           : 0.0,
       offWorkHourPrice: (data['offWorkHourPrice'] != null)
           ? (data['offWorkHourPrice'] is int
-              ? (data['offWorkHourPrice'] as int).toDouble()
-              : data['offWorkHourPrice'] as double)
+                ? (data['offWorkHourPrice'] as int).toDouble()
+                : data['offWorkHourPrice'] as double)
           : 0.0,
       workingDays: data['workingDays']?.cast<int>(),
       category: data['category'],
@@ -238,8 +246,8 @@ class ServiceModel {
       isActive: data['isActive'],
       discountPercentage: (data['discountPercentage'] != null)
           ? (data['discountPercentage'] is int
-              ? (data['discountPercentage'] as int).toDouble()
-              : data['discountPercentage'] as double)
+                ? (data['discountPercentage'] as int).toDouble()
+                : data['discountPercentage'] as double)
           : 0.0,
     );
   }
@@ -254,27 +262,30 @@ class ServiceModel {
       name_ur: data['name_ur'] ?? data['name_ar'] ?? data['name'],
       description: data['description'],
       description_ar: data['description_ar'] ?? data['description'],
-      description_ur: data['description_ur'] ?? data['description_ar'] ?? data['description'],
+      description_ur:
+          data['description_ur'] ??
+          data['description_ar'] ??
+          data['description'],
       image: data['image'],
       rating: data['rating']?.toDouble(),
       ratingCount: data['ratingCount'],
       totalRating: data['totalRating']?.toDouble(),
       price: (data['price'] != null)
           ? (data['price'] is int
-              ? (data['price'] as int).toDouble()
-              : data['price'] as double)
+                ? (data['price'] as int).toDouble()
+                : data['price'] as double)
           : 0.0,
       workStartTime: data['workStartTime'],
       workEndTime: data['workEndTime'],
       onWorkHourPrice: (data['onWorkHourPrice'] != null)
           ? (data['onWorkHourPrice'] is int
-              ? (data['onWorkHourPrice'] as int).toDouble()
-              : data['onWorkHourPrice'] as double)
+                ? (data['onWorkHourPrice'] as int).toDouble()
+                : data['onWorkHourPrice'] as double)
           : 0.0,
       offWorkHourPrice: (data['offWorkHourPrice'] != null)
           ? (data['offWorkHourPrice'] is int
-              ? (data['offWorkHourPrice'] as int).toDouble()
-              : data['offWorkHourPrice'] as double)
+                ? (data['offWorkHourPrice'] as int).toDouble()
+                : data['offWorkHourPrice'] as double)
           : 0.0,
       workingDays: data['workingDays']?.cast<int>(),
       category: data['category'],
@@ -285,8 +296,8 @@ class ServiceModel {
       isActive: data['isActive'],
       discountPercentage: (data['discountPercentage'] != null)
           ? (data['discountPercentage'] is int
-              ? (data['discountPercentage'] as int).toDouble()
-              : data['discountPercentage'] as double)
+                ? (data['discountPercentage'] as int).toDouble()
+                : data['discountPercentage'] as double)
           : 0.0,
     );
   }
@@ -366,20 +377,23 @@ class ServiceModel {
     if (workEndTime != previous.workEndTime && workEndTime != null) {
       json['workEndTime'] = workEndTime;
     }
-    if (onWorkHourPrice != previous.onWorkHourPrice && onWorkHourPrice != null) {
+    if (onWorkHourPrice != previous.onWorkHourPrice &&
+        onWorkHourPrice != null) {
       json['onWorkHourPrice'] = onWorkHourPrice;
     }
     if (offWorkHourPrice != previous.offWorkHourPrice &&
         offWorkHourPrice != null) {
       json['offWorkHourPrice'] = offWorkHourPrice;
     }
-    if (workingDays != null && !_areListsEqual(workingDays, previous.workingDays)) {
+    if (workingDays != null &&
+        !_areListsEqual(workingDays, previous.workingDays)) {
       json['workingDays'] = workingDays;
     }
     if (category != previous.category && category != null) {
       json['category'] = category;
     }
-    if (specialSection != null && !_areListsEqual(specialSection, previous.specialSection)) {
+    if (specialSection != null &&
+        !_areListsEqual(specialSection, previous.specialSection)) {
       json['specialSection'] = specialSection;
     }
     if (locations != null && !_areListsEqual(locations, previous.locations)) {
@@ -483,6 +497,6 @@ class ServiceModel {
     if (discountPercentage == null || discountPercentage! <= 0) {
       return currentPrice;
     }
-    return currentPrice * (1 - (discountPercentage! / 100));
+    return currentPrice * (1.00 - (discountPercentage! / 100.00));
   }
 }

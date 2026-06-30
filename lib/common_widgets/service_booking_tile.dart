@@ -1636,7 +1636,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
         'warranty.claimrequested': true,
         'warranty.requestedOn': Timestamp.now(),
         'warranty.preferredDateTime': Timestamp.fromDate(preferredDateTime),
-        'warranty.assignedTechnicianId': widget.booking.agent!.uid,
+        'warranty.assignedTechnicianId': widget.booking.agent?.uid ?? widget.booking.warranty?.assignedTechnicianId,
         'updatedAt': Timestamp.now(),
       });
 
@@ -1791,7 +1791,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
                             Expanded(
                               child: Text(
                                 _selectedDate != null
-                                    ? DateFormat('MMM d, y')
+                                    ? DateFormat.yMMMd(localization.localeName)
                                         .format(_selectedDate!)
                                     : localization.selectDate,
                                 style: TextStyle(
@@ -1844,8 +1844,8 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                _selectedTime != null
-                                    ? _selectedTime!.format(context)
+                                _selectedTime != null && selectedTimeCategory != -1 && selectedTimeSlot != -1
+                                    ? "${timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"].toString().substring(0, 5)} ${_getLocalizedTimeSlots(timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"])}"
                                     : localization.selectTime,
                                 style: TextStyle(
                                   fontSize: 13,

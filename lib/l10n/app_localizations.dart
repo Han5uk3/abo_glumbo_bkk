@@ -5271,6 +5271,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'just now'**
   String get justNow;
+
+  /// No description provided for @costBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost Breakdown'**
+  String get costBreakdown;
+
+  /// No description provided for @paymentProof.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Proof'**
+  String get paymentProof;
 }
 
 class _AppLocalizationsDelegate

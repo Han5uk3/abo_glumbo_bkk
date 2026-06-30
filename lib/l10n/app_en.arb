@@ -1040,5 +1040,7 @@
     }
   },
   "minuteAgo": "1 minute ago",
-  "justNow": "just now"
+  "justNow": "just now",
+  "costBreakdown": "Cost Breakdown",
+  "paymentProof": "Payment Proof"
 }
