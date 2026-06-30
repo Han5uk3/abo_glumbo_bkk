@@ -109,6 +109,7 @@ class BookingUtils {
       bool isOnHour = service.isOnWorkHour(currentTime: bookingDate);
       bool isRebook =
           rebookTechnicianId != null && rebookTechnicianId.isNotEmpty;
+
       // Auto-assign when no agent is explicitly selected by the customer
       // (the UI already enforces the decision matrix for technician selection vs auto-assign)
       bool shouldAutoAssign =
@@ -122,7 +123,7 @@ class BookingUtils {
         id: bookingId,
         service: updatedService,
         bookingDateTime: Timestamp.fromDate(bookingDate),
-        bookingStatusCode: requestId != null ? 'A' : 'P',
+        bookingStatusCode: (requestId != null && !isRebook) ? 'A' : 'P',
         notes: notes.trim(),
         issueImage: selectedImageDownloadUrl ?? "",
         issueVideo: selectedVideoDownloadUrl ?? "",
@@ -165,7 +166,7 @@ class BookingUtils {
         booking.bookingStatusCode = 'A';
         booking.assignedAt = booking.createdAt;
         booking.technicianSelectedAt = Timestamp.now();
-      } else if (requestId != null) {
+      } else if (requestId != null && !isRebook) {
         booking.bookingStatusCode = 'A';
         booking.assignedAt = booking.createdAt;
         booking.technicianSelectedAt = Timestamp.now();
@@ -423,6 +424,7 @@ class BookingUtils {
     required Map timeSlot,
     AddressModel? selectedAddress,
     MatchedServiceZone? serviceLocation,
+    List<String>? rejectedTechnicianUids,
   }) async {
     try {
       DateTime bookingDate = DateTime(
@@ -504,7 +506,7 @@ class BookingUtils {
         'updatedAt': Timestamp.now(),
         'status': 'searching',
         'acceptedTechnicians': [],
-        'rejectedTechnicians': [],
+        'rejectedTechnicians': rejectedTechnicianUids ?? [],
       };
 
       await AppFirestore.bookingRequestsCollectionRef.doc(bookingId).set(requestData);
@@ -526,6 +528,7 @@ class BookingUtils {
     required Map timeSlot,
     AddressModel? selectedAddress,
     MatchedServiceZone? serviceLocation,
+    List<String>? cancelledWorkerUids,
   }) async {
     try {
       DateTime bookingDate = DateTime(
@@ -609,6 +612,7 @@ class BookingUtils {
         updatedAt: Timestamp.now(),
         serviceLocation: serviceLocation,
         autoAssignmentStatus: 'ready_to_assign',
+        cancelledWorkerUids: cancelledWorkerUids,
       );
 
       // Save to standard bookings
@@ -635,6 +639,10 @@ class BookingUtils {
         'notificationSent': false,
         'agent': null,
       };
+
+      if (cancelledWorkerUids != null && cancelledWorkerUids.isNotEmpty) {
+        autoReqData['cancelledWorkerUids'] = cancelledWorkerUids;
+      }
 
       await AppFirestore.autoAssignmentRequestsCollectionRef.doc(bookingId).set(autoReqData);
       return bookingId;

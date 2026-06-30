@@ -2001,13 +2001,7 @@ class AppServices {
 
       if (isRebook) {
         // If rebook and rejected/declined, fallback to general search
-        batch.update(AppFirestore.bookingsCollectionRef.doc(bookingId), {
-          'rebookTechnicianId': null,
-          'agent': null,
-          'bookingStatusCode': 'P',
-          'autoAssignmentStatus': null, // Clear to allow broadcast
-          'updatedAt': FieldValue.serverTimestamp(),
-        });
+        await fallbackToGeneralSearch(bookingId);
       }
     }
 
@@ -2021,7 +2015,7 @@ class AppServices {
       'rebookTechnicianId': null,
       'agent': null,
       'bookingStatusCode': 'P',
-      'autoAssignmentStatus': null, // Allow general broadcast
+      'cancelledWorkerUids': cancelledWorkers,
       'updatedAt': FieldValue.serverTimestamp(),
     });
 

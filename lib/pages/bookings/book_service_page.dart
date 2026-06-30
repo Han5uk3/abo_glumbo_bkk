@@ -1786,6 +1786,9 @@ class _BookServicePageState extends State<BookServicePage> {
                       : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
                   selectedAddress: selectedAddress,
                   serviceLocation: _matchedServiceZone,
+                  rejectedTechnicianUids: widget.rebookTechnician != null 
+                      ? [widget.rebookTechnician!.uid!] 
+                      : null,
                 );
 
                 if (mounted) {
@@ -2650,6 +2653,9 @@ class _BookServicePageState extends State<BookServicePage> {
         timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
         selectedAddress: selectedAddress,
         serviceLocation: _matchedServiceZone,
+        cancelledWorkerUids: widget.rebookTechnician != null 
+            ? [widget.rebookTechnician!.uid!] 
+            : null,
       );
 
       setState(() => saving = false);
