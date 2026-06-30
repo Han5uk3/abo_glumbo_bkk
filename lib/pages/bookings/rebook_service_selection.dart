@@ -38,11 +38,17 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
 
     final technicianRoles = widget.technician.jobRoles ?? [];
 
+    final validCategories = categories.where((c) {
+      return technicianRoles.contains(c.id) ||
+          technicianRoles.contains(c.name) ||
+          technicianRoles.contains(c.name_ar) ||
+          technicianRoles.contains(c.name_ur);
+    }).toList();
+
+    final validCategoryIds = validCategories.map((c) => c.id).toList();
+
     final validServices = services
-        .where((s) => technicianRoles.contains(s.category))
-        .toList();
-    final validCategories = categories
-        .where((c) => technicianRoles.contains(c.id))
+        .where((s) => validCategoryIds.contains(s.category))
         .toList();
 
     if (mounted) {

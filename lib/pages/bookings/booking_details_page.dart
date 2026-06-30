@@ -191,7 +191,6 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
 
                 _buildLocationCard(customerSelectedAddress, context),
 
-                const SizedBox(height: 16),
                 if (!isWarranty)
                   _buildSectionCard(
                     context: context,
@@ -243,7 +242,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     context: context,
                     hasChat: false,
                     title: localization.additionalNotes,
-                    icon: Icons.note_rounded,
+                    icon: Icons.note_outlined,
                     children: [
                       Container(
                         width: double.infinity,
@@ -938,7 +937,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ),
               ),
               SizedBox(width: 8),
-              Text(localization.location, style: TextStyle(fontSize: 16)),
+              Text(
+                localization.location,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
             ],
           ),
           Divider(thickness: 1, color: Colors.grey.shade300),
