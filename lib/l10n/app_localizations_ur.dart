@@ -2821,4 +2821,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get paymentProof => 'ادائیگی کا ثبوت';
+
+  @override
+  String get settings => 'ترتیبات';
 }

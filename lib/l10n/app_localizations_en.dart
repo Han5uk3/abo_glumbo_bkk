@@ -2801,4 +2801,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paymentProof => 'Payment Proof';
+
+  @override
+  String get settings => 'Settings';
 }

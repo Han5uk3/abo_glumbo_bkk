@@ -75,11 +75,69 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
   Future<void> _checkLocationPermissionsOnOpen() async {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) return;
+      if (!serviceEnabled) {
+        if (mounted) {
+          bool? opened = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(
+                AppLocalizations.of(context)?.locationError ?? 'Location Error',
+              ),
+              content: Text(
+                AppLocalizations.of(context)?.locationServicesDisabled ??
+                    'Please enable location services to use this feature.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text(AppLocalizations.of(context)!.settings),
+                ),
+              ],
+            ),
+          );
+          if (opened == true) {
+            await Geolocator.openLocationSettings();
+          }
+        }
+        return;
+      }
 
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
-        await Geolocator.requestPermission();
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          bool? opened = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(
+                AppLocalizations.of(context)?.locationError ?? 'Location Error',
+              ),
+              content: Text(
+                AppLocalizations.of(context)?.locationPermissionDeniedForever ??
+                    'Please enable location permissions in app settings to use this feature.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Settings'),
+                ),
+              ],
+            ),
+          );
+          if (opened == true) {
+            await Geolocator.openAppSettings();
+          }
+        }
       }
     } catch (e) {
       log("Error checking location permissions: $e");
@@ -160,6 +218,33 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
 
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
+        if (mounted) {
+          bool? opened = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(
+                AppLocalizations.of(context)?.locationError ?? 'Location Error',
+              ),
+              content: Text(
+                AppLocalizations.of(context)?.locationServicesDisabled ??
+                    'Please enable location services to use this feature.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Settings'),
+                ),
+              ],
+            ),
+          );
+          if (opened == true) {
+            await Geolocator.openLocationSettings();
+          }
+        }
         throw Exception(
           AppLocalizations.of(context)?.locationServicesDisabled ??
               'Location services are disabled',
@@ -178,6 +263,33 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
       }
 
       if (permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          bool? opened = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(
+                AppLocalizations.of(context)?.locationError ?? 'Location Error',
+              ),
+              content: Text(
+                AppLocalizations.of(context)?.locationPermissionDeniedForever ??
+                    'Please enable location permissions in app settings to use this feature.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Settings'),
+                ),
+              ],
+            ),
+          );
+          if (opened == true) {
+            await Geolocator.openAppSettings();
+          }
+        }
         throw Exception(
           AppLocalizations.of(context)?.locationPermissionDeniedForever ??
               'Location permissions are permanently denied',

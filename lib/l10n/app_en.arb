@@ -1042,5 +1042,6 @@
   "minuteAgo": "1 minute ago",
   "justNow": "just now",
   "costBreakdown": "Cost Breakdown",
-  "paymentProof": "Payment Proof"
+  "paymentProof": "Payment Proof",
+  "settings": "Settings"
 }

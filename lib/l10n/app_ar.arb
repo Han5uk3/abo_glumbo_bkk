@@ -1047,5 +1047,6 @@
   "minuteAgo": "منذ دقيقة واحدة",
   "justNow": "الآن",
   "costBreakdown": "تفاصيل التكلفة",
-  "paymentProof": "إثبات الدفع"
+  "paymentProof": "إثبات الدفع",
+  "settings": "الإعدادات"
 }

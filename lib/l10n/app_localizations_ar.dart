@@ -2760,4 +2760,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get paymentProof => 'إثبات الدفع';
+
+  @override
+  String get settings => 'الإعدادات';
 }
