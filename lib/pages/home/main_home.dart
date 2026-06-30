@@ -175,8 +175,17 @@ class _HomeState extends State<Home> {
     BookingModel? bookingToReview;
     for (var b in _completedUnreviewedBookings) {
       if (!_sessionLaterBookings.contains(b.id)) {
-        bookingToReview = b;
-        break;
+        // Only auto-show popup if completed in the last 15 minutes
+        if (b.completedAt != null) {
+          final diff = DateTime.now().difference(b.completedAt!.toDate());
+          if (diff.inMinutes <= 15) {
+            bookingToReview = b;
+            break;
+          }
+        } else {
+          // If completedAt is somehow null, don't show it repeatedly.
+          // Or we could fallback to not showing. Let's just skip it.
+        }
       }
     }
 

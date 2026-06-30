@@ -775,8 +775,6 @@
   "bookingSummary": "بکنگ کا خلاصہ",
   "serviceName": "سروس",
   "bookingType": "بکنگ کی قسم",
-  "onHourBooking": "بکنگ اوقاتِ کار",
-  "offHourBooking": "بکنگ بعد اوقاتِ کار",
   "finalPrice": "حتمی قیمت",
   "technicianAssignment": "ٹیکنیشن کی تعیناتی",
   "autoAssignMessage": "آپ کا منتخب کردہ وقت ہمارے کام کے اوقات سے باہر ہے۔ ہم آپ کی سروس کے وقت سے پہلے ایک دستیاب ٹیکنیشن مقرر کریں گے اور تصدیق ہونے پر آپ کو مطلع کریں گے۔",
@@ -989,5 +987,50 @@
         "type": "String"
       }
     }
-  }
+  },
+  "discountPercentage": "رعایتی فیصد",
+  "discountAmount": "رعایتی رقم",
+  "yearsAgo": "{count} سال پہلے",
+  "@yearsAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "yearAgo": "1 سال پہلے",
+  "monthsAgo": "{count} مہینے پہلے",
+  "@monthsAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "monthAgo": "1 مہینہ پہلے",
+  "weeksAgo": "{count} ہفتے پہلے",
+  "@weeksAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "weekAgo": "1 ہفتہ پہلے",
+  "daysAgo": "{count} دن پہلے",
+  "@daysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "dayAgo": "1 دن پہلے",
+  "hoursAgo": "{count} گھنٹے پہلے",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "hourAgo": "1 گھنٹہ پہلے",
+  "minutesAgo": "{count} منٹ پہلے",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "minuteAgo": "1 منٹ پہلے",
+  "justNow": "ابھی ابھی"
 }

@@ -36,11 +36,20 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
     final services = await AppServices.listenToServices().first;
     final categories = await AppServices.listenToCategories().first;
 
+    final technicianRoles = widget.technician.jobRoles ?? [];
+
+    final validServices = services
+        .where((s) => technicianRoles.contains(s.category))
+        .toList();
+    final validCategories = categories
+        .where((c) => technicianRoles.contains(c.id))
+        .toList();
+
     if (mounted) {
       setState(() {
-        _allServices = services;
-        _allCategories = categories;
-        _filteredServices = services;
+        _allServices = validServices;
+        _allCategories = validCategories;
+        _filteredServices = validServices;
         _isLoading = false;
       });
     }

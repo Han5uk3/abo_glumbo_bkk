@@ -105,8 +105,9 @@ class _SignupPageState extends State<SignupPage> {
       }
 
       if (mounted) {
-        LocalStoreHelper.putUID(widget.uid);
-        debugPrint('✅ UID saved to local storage');
+        await LocalStoreHelper.putUID(widget.uid);
+        await LocalStoreHelper.putUserName(nameController.text.trim());
+        debugPrint('✅ UID and username saved to local storage');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

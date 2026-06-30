@@ -4339,13 +4339,13 @@ abstract class AppLocalizations {
   /// No description provided for @onHour.
   ///
   /// In en, this message translates to:
-  /// **'On-Hour'**
+  /// **'Working Hours'**
   String get onHour;
 
   /// No description provided for @offHour.
   ///
   /// In en, this message translates to:
-  /// **'Off-Hour'**
+  /// **'Outside Working Hours'**
   String get offHour;
 
   /// No description provided for @currentTiming.
@@ -4575,18 +4575,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Booking Type'**
   String get bookingType;
-
-  /// No description provided for @onHourBooking.
-  ///
-  /// In en, this message translates to:
-  /// **'On-Hour Booking'**
-  String get onHourBooking;
-
-  /// No description provided for @offHourBooking.
-  ///
-  /// In en, this message translates to:
-  /// **'Off-Hour Booking'**
-  String get offHourBooking;
 
   /// No description provided for @discountApplied.
   ///
@@ -5193,6 +5181,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Welcome, {username}'**
   String welcomeUser(String username);
+
+  /// No description provided for @discountPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Percentage'**
+  String get discountPercentage;
+
+  /// No description provided for @discountAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Amount'**
+  String get discountAmount;
+
+  /// No description provided for @yearsAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} years ago'**
+  String yearsAgo(int count);
+
+  /// No description provided for @yearAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'1 year ago'**
+  String get yearAgo;
+
+  /// No description provided for @monthsAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} months ago'**
+  String monthsAgo(int count);
+
+  /// No description provided for @monthAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'1 month ago'**
+  String get monthAgo;
+
+  /// No description provided for @weeksAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} weeks ago'**
+  String weeksAgo(int count);
+
+  /// No description provided for @weekAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'1 week ago'**
+  String get weekAgo;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String daysAgo(int count);
+
+  /// No description provided for @dayAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'1 day ago'**
+  String get dayAgo;
+
+  /// No description provided for @hoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} hours ago'**
+  String hoursAgo(int count);
+
+  /// No description provided for @hourAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'1 hour ago'**
+  String get hourAgo;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} minutes ago'**
+  String minutesAgo(int count);
+
+  /// No description provided for @minuteAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'1 minute ago'**
+  String get minuteAgo;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get justNow;
 }
 
 class _AppLocalizationsDelegate

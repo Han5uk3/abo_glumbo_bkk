@@ -2256,10 +2256,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Validating service area, please wait...';
 
   @override
-  String get onHour => 'On-Hour';
+  String get onHour => 'Working Hours';
 
   @override
-  String get offHour => 'Off-Hour';
+  String get offHour => 'Outside Working Hours';
 
   @override
   String get currentTiming => 'Current Timing:';
@@ -2381,12 +2381,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookingType => 'Booking Type';
-
-  @override
-  String get onHourBooking => 'On-Hour Booking';
-
-  @override
-  String get offHourBooking => 'Off-Hour Booking';
 
   @override
   String get discountApplied => 'Discount Applied';
@@ -2744,4 +2738,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String welcomeUser(String username) {
     return 'Welcome, $username';
   }
+
+  @override
+  String get discountPercentage => 'Discount Percentage';
+
+  @override
+  String get discountAmount => 'Discount Amount';
+
+  @override
+  String yearsAgo(int count) {
+    return '$count years ago';
+  }
+
+  @override
+  String get yearAgo => '1 year ago';
+
+  @override
+  String monthsAgo(int count) {
+    return '$count months ago';
+  }
+
+  @override
+  String get monthAgo => '1 month ago';
+
+  @override
+  String weeksAgo(int count) {
+    return '$count weeks ago';
+  }
+
+  @override
+  String get weekAgo => '1 week ago';
+
+  @override
+  String daysAgo(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String get dayAgo => '1 day ago';
+
+  @override
+  String hoursAgo(int count) {
+    return '$count hours ago';
+  }
+
+  @override
+  String get hourAgo => '1 hour ago';
+
+  @override
+  String minutesAgo(int count) {
+    return '$count minutes ago';
+  }
+
+  @override
+  String get minuteAgo => '1 minute ago';
+
+  @override
+  String get justNow => 'just now';
 }

@@ -1654,7 +1654,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get optional => 'اختياري';
 
   @override
-  String get completionDetails => 'تفاصيل الاكمال';
+  String get completionDetails => 'تفاصيل الانجاز';
 
   @override
   String get serviceCost => 'تكلفة الخدمة';
@@ -2215,10 +2215,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'جاري التحقق من منطقة الخدمة، يرجى الانتظار...';
 
   @override
-  String get onHour => 'الحجز بالساعة';
+  String get onHour => 'خلال أوقات العمل';
 
   @override
-  String get offHour => 'الحجز خارج الساعة';
+  String get offHour => 'خارج أوقات العمل';
 
   @override
   String get currentTiming => 'التوقيت الحالي:';
@@ -2340,12 +2340,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bookingType => 'نوع الحجز';
-
-  @override
-  String get onHourBooking => 'حجز دوام';
-
-  @override
-  String get offHourBooking => 'حجز بعد الدوام';
 
   @override
   String get discountApplied => 'تم تطبيق الخصم';
@@ -2703,4 +2697,61 @@ class AppLocalizationsAr extends AppLocalizations {
   String welcomeUser(String username) {
     return 'أهلاً بك، $username';
   }
+
+  @override
+  String get discountPercentage => 'نسبة الخصم';
+
+  @override
+  String get discountAmount => 'مبلغ الخصم';
+
+  @override
+  String yearsAgo(int count) {
+    return 'منذ $count سنوات';
+  }
+
+  @override
+  String get yearAgo => 'منذ سنة واحدة';
+
+  @override
+  String monthsAgo(int count) {
+    return 'منذ $count أشهر';
+  }
+
+  @override
+  String get monthAgo => 'منذ شهر واحد';
+
+  @override
+  String weeksAgo(int count) {
+    return 'منذ $count أسابيع';
+  }
+
+  @override
+  String get weekAgo => 'منذ أسبوع واحد';
+
+  @override
+  String daysAgo(int count) {
+    return 'منذ $count أيام';
+  }
+
+  @override
+  String get dayAgo => 'منذ يوم واحد';
+
+  @override
+  String hoursAgo(int count) {
+    return 'منذ $count ساعات';
+  }
+
+  @override
+  String get hourAgo => 'منذ ساعة واحدة';
+
+  @override
+  String minutesAgo(int count) {
+    return 'منذ $count دقائق';
+  }
+
+  @override
+  String get minuteAgo => 'منذ دقيقة واحدة';
+
+  @override
+  String get justNow => 'الآن';
 }

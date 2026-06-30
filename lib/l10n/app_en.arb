@@ -724,8 +724,8 @@
   "noActiveServiceZones": "Service unavailable: No active service zones defined",
   "failedToValidateServiceArea": "Failed to validate service area",
   "validatingServiceAreaPleaseWait": "Validating service area, please wait...",
-  "onHour": "On-Hour",
-  "offHour": "Off-Hour",
+  "onHour": "Working Hours",
+  "offHour": "Outside Working Hours",
   "currentTiming": "Current Timing:",
   "pleaseSelectATimeSlot": "Please select a time slot",
   "cannotBookForPastTime": "Cannot book for past time",
@@ -782,8 +782,6 @@
   "bookingSummary": "Booking Summary",
   "serviceName": "Service",
   "bookingType": "Booking Type",
-  "onHourBooking": "On-Hour Booking",
-  "offHourBooking": "Off-Hour Booking",
   "discountApplied": "Discount Applied",
   "noDiscount": "No Discount",
   "finalPrice": "Final Price",
@@ -997,5 +995,50 @@
         "type": "String"
       }
     }
-  }
+  },
+  "discountPercentage": "Discount Percentage",
+  "discountAmount": "Discount Amount",
+  "yearsAgo": "{count} years ago",
+  "@yearsAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "yearAgo": "1 year ago",
+  "monthsAgo": "{count} months ago",
+  "@monthsAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "monthAgo": "1 month ago",
+  "weeksAgo": "{count} weeks ago",
+  "@weeksAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "weekAgo": "1 week ago",
+  "daysAgo": "{count} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "dayAgo": "1 day ago",
+  "hoursAgo": "{count} hours ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "hourAgo": "1 hour ago",
+  "minutesAgo": "{count} minutes ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "minuteAgo": "1 minute ago",
+  "justNow": "just now"
 }

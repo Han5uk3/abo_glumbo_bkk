@@ -553,7 +553,7 @@
   "canceledOn": "تم الغاءه في",
   "completedOn": "تم اكماله في",
   "optional": "اختياري",
-  "completionDetails": "تفاصيل الاكمال",
+  "completionDetails": "تفاصيل الانجاز",
   "serviceCost": "تكلفة الخدمة",
   "serviceItems": "عناصر الخدمة",
   "uploadFilesTitle": "الوثائق المرفقة",
@@ -729,8 +729,8 @@
   "noActiveServiceZones": "الخدمة غير متوفرة: لا توجد مناطق خدمة نشطة محددة",
   "failedToValidateServiceArea": "فشل التحقق من منطقة الخدمة",
   "validatingServiceAreaPleaseWait": "جاري التحقق من منطقة الخدمة، يرجى الانتظار...",
-  "onHour": "الحجز بالساعة",
-  "offHour": "الحجز خارج الساعة",
+  "onHour": "خلال أوقات العمل",
+  "offHour": "خارج أوقات العمل",
   "currentTiming": "التوقيت الحالي:",
   "pleaseSelectATimeSlot": "يرجى اختيار الموعد المتاح",
   "cannotBookForPastTime": "لا يمكن حجز موعد في الماضي",
@@ -792,8 +792,6 @@
   "dateAndTime": "التاريخ والوقت",
   "address": "العنوان",
   "bookingType": "نوع الحجز",
-  "onHourBooking": "حجز دوام",
-  "offHourBooking": "حجز بعد الدوام",
   "price": "السعر",
   "discount": "الخصم",
   "discountApplied": "تم تطبيق الخصم",
@@ -1002,5 +1000,50 @@
         "type": "String"
       }
     }
-  }
+  },
+  "discountPercentage": "نسبة الخصم",
+  "discountAmount": "مبلغ الخصم",
+  "yearsAgo": "منذ {count} سنوات",
+  "@yearsAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "yearAgo": "منذ سنة واحدة",
+  "monthsAgo": "منذ {count} أشهر",
+  "@monthsAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "monthAgo": "منذ شهر واحد",
+  "weeksAgo": "منذ {count} أسابيع",
+  "@weeksAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "weekAgo": "منذ أسبوع واحد",
+  "daysAgo": "منذ {count} أيام",
+  "@daysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "dayAgo": "منذ يوم واحد",
+  "hoursAgo": "منذ {count} ساعات",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "hourAgo": "منذ ساعة واحدة",
+  "minutesAgo": "منذ {count} دقائق",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "minuteAgo": "منذ دقيقة واحدة",
+  "justNow": "الآن"
 }

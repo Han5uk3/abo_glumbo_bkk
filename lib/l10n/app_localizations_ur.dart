@@ -2399,12 +2399,6 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bookingType => 'بکنگ کی قسم';
 
   @override
-  String get onHourBooking => 'بکنگ اوقاتِ کار';
-
-  @override
-  String get offHourBooking => 'بکنگ بعد اوقاتِ کار';
-
-  @override
   String get discountApplied => 'ڈسکاؤنٹ لاگو ہو گیا';
 
   @override
@@ -2764,4 +2758,61 @@ class AppLocalizationsUr extends AppLocalizations {
   String welcomeUser(String username) {
     return 'خوش آمدید، $username';
   }
+
+  @override
+  String get discountPercentage => 'رعایتی فیصد';
+
+  @override
+  String get discountAmount => 'رعایتی رقم';
+
+  @override
+  String yearsAgo(int count) {
+    return '$count سال پہلے';
+  }
+
+  @override
+  String get yearAgo => '1 سال پہلے';
+
+  @override
+  String monthsAgo(int count) {
+    return '$count مہینے پہلے';
+  }
+
+  @override
+  String get monthAgo => '1 مہینہ پہلے';
+
+  @override
+  String weeksAgo(int count) {
+    return '$count ہفتے پہلے';
+  }
+
+  @override
+  String get weekAgo => '1 ہفتہ پہلے';
+
+  @override
+  String daysAgo(int count) {
+    return '$count دن پہلے';
+  }
+
+  @override
+  String get dayAgo => '1 دن پہلے';
+
+  @override
+  String hoursAgo(int count) {
+    return '$count گھنٹے پہلے';
+  }
+
+  @override
+  String get hourAgo => '1 گھنٹہ پہلے';
+
+  @override
+  String minutesAgo(int count) {
+    return '$count منٹ پہلے';
+  }
+
+  @override
+  String get minuteAgo => '1 منٹ پہلے';
+
+  @override
+  String get justNow => 'ابھی ابھی';
 }

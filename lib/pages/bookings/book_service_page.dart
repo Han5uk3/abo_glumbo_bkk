@@ -628,10 +628,7 @@ class _BookServicePageState extends State<BookServicePage> {
           padding: const EdgeInsets.all(16),
           child: Text(
             AppLocalizations.of(context)?.selectLocation ?? 'Select Location',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
         _buildAddressSelectionWidget(),
@@ -647,10 +644,7 @@ class _BookServicePageState extends State<BookServicePage> {
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
           child: Text(
             AppLocalizations.of(context)?.bookingType ?? 'Booking Type',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
         _buildBookingTypeSelector(),
@@ -668,7 +662,8 @@ class _BookServicePageState extends State<BookServicePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppLocalizations.of(context)?.selectDate ?? 'Select Date',
+                        AppLocalizations.of(context)?.selectDate ??
+                            'Select Date',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -702,7 +697,10 @@ class _BookServicePageState extends State<BookServicePage> {
                                       ? DateFormat(
                                           'dd MMM yyyy',
                                         ).format(selectedDate!)
-                                      : AppLocalizations.of(context)?.selectDate ?? 'Select Date',
+                                      : AppLocalizations.of(
+                                              context,
+                                            )?.selectDate ??
+                                            'Select Date',
                                   style: TextStyle(
                                     color: selectedDate != null
                                         ? Colors.black87
@@ -726,7 +724,8 @@ class _BookServicePageState extends State<BookServicePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppLocalizations.of(context)?.selectTime ?? 'Available Slots',
+                        AppLocalizations.of(context)?.selectTime ??
+                            'Available Slots',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -1149,9 +1148,9 @@ class _BookServicePageState extends State<BookServicePage> {
                       const SizedBox(width: 6),
                       Text(
                         isOnHour
-                            ? (AppLocalizations.of(context)?.onHourBooking ??
+                            ? (AppLocalizations.of(context)?.onHour ??
                                   'On-Hour')
-                            : (AppLocalizations.of(context)?.offHourBooking ??
+                            : (AppLocalizations.of(context)?.offHour ??
                                   'Off-Hour'),
                         style: TextStyle(
                           fontSize: 12,
@@ -1185,10 +1184,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 Text(
                   AppLocalizations.of(context)?.inspectionFee ??
                       'Inspection Fee',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade700,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
                 ),
                 const Spacer(),
                 Column(
@@ -1441,9 +1437,7 @@ class _BookServicePageState extends State<BookServicePage> {
                       headerStyle: HeaderStyle(
                         formatButtonVisible: false,
                         titleCentered: true,
-                        titleTextStyle: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        titleTextStyle: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       daysOfWeekStyle: DaysOfWeekStyle(
                         weekdayStyle: TextStyle(
@@ -1489,9 +1483,7 @@ class _BookServicePageState extends State<BookServicePage> {
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        todayTextStyle: TextStyle(
-                          color: AppColors.primary,
-                        ),
+                        todayTextStyle: TextStyle(color: AppColors.primary),
                       ),
                       selectedDayPredicate: (day) =>
                           isSameDay(day, selectedDate),
@@ -1603,10 +1595,7 @@ class _BookServicePageState extends State<BookServicePage> {
         children: [
           Text(
             AppLocalizations.of(context)!.details,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           RichText(
@@ -1898,10 +1887,7 @@ class _BookServicePageState extends State<BookServicePage> {
                         ? 'ٹیکنیشن کا خودکار تعین'
                         : 'Auto-Assignment Schedule'),
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Container(
@@ -1990,10 +1976,7 @@ class _BookServicePageState extends State<BookServicePage> {
       children: [
         Text(
           AppLocalizations.of(context)?.bookingSummary ?? 'Booking Summary',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         _buildReviewCard(
@@ -2025,10 +2008,8 @@ class _BookServicePageState extends State<BookServicePage> {
               label:
                   AppLocalizations.of(context)?.bookingType ?? 'Booking Type',
               value: isAssignmentOnHour
-                  ? (AppLocalizations.of(context)?.onHourBooking ??
-                        'On-Hour Booking')
-                  : (AppLocalizations.of(context)?.offHourBooking ??
-                        'Off-Hour Booking'),
+                  ? (AppLocalizations.of(context)!.onHour)
+                  : (AppLocalizations.of(context)!.offHour),
               valueColor: isAssignmentOnHour ? Colors.green : Colors.orange,
             ),
             const Divider(height: 20),
@@ -2123,10 +2104,7 @@ class _BookServicePageState extends State<BookServicePage> {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[500],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
               ),
               const SizedBox(height: 4),
               Text(
@@ -2766,10 +2744,7 @@ class _BookServicePageState extends State<BookServicePage> {
                                       true)
                               ? "${selectedAddress!.buildingNumber.isNotEmpty ? '${selectedAddress!.buildingNumber}, ' : ''}${selectedAddress!.streetName ?? ''}"
                               : "Saved Location",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 10,
-                          ),
+                          style: TextStyle(color: Colors.black, fontSize: 10),
                           textAlign: isRTL ? TextAlign.right : TextAlign.left,
                         ),
                       ],
@@ -2831,10 +2806,7 @@ class _BookServicePageState extends State<BookServicePage> {
         children: [
           Loader(color: AppColors.primary, size: 12),
           const SizedBox(width: 8),
-          Text(
-            message,
-            style: TextStyle(color: Colors.grey, fontSize: 12),
-          ),
+          Text(message, style: TextStyle(color: Colors.grey, fontSize: 12)),
         ],
       ),
     );

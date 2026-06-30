@@ -19,7 +19,6 @@ import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/utils/whatsapp_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/rebook_service_selection.dart';
 import 'package:flutter/services.dart';
@@ -60,7 +59,9 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   Widget _buildBookingTimestamp(BuildContext context, BookingModel booking) {
     final locale = AppLocalizations.of(context)?.localeName ?? 'en';
 
-    if ((booking.bookingStatusCode == "P" || booking.bookingStatusCode == "SR") && booking.createdAt != null) {
+    if ((booking.bookingStatusCode == "P" ||
+            booking.bookingStatusCode == "SR") &&
+        booking.createdAt != null) {
       return _timestampText(
         "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), locale)}",
       );
@@ -217,7 +218,9 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     children: [
                       if (booking.isOnHour != null)
                         _buildInfoRow(
-                          booking.isOnHour == true ? localization.onHourBooking : localization.offHourBooking,
+                          booking.isOnHour == true
+                              ? localization.onHour
+                              : localization.offHour,
                           "",
                         ),
                       _buildInfoRow(
@@ -530,7 +533,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         if (booking.completionData?.totalCost != null)
                           _buildInfoRow(
                             localization.amount,
-                            '${localization.sar} ${((booking.completionData?.totalCost ?? 0.0) + booking.service.getDiscountedPrice(booking.effectiveInspectionFee)).toStringAsFixed(2)}',
+                            '${((booking.completionData?.totalCost ?? 0.0) + booking.service.getDiscountedPrice(booking.effectiveInspectionFee)).toStringAsFixed(2)} ${localization.sar}',
                             isHighlighted: true,
                           ),
                       ],
@@ -541,30 +544,72 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       booking.bookingStatusCode.toLowerCase() == 'c') ...[
                     _buildCompletionDataCard(context),
                     const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton.icon(
-                        onPressed: () => InvoiceService.generateAndShowInvoice(
-                          context,
-                          booking,
-                        ),
-                        icon: const Icon(Icons.download_rounded, color: Colors.white),
-                        label: const Text(
-                          "Download Invoice",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: ElevatedButton.icon(
+                              onPressed: () =>
+                                  InvoiceService.generateAndShowInvoice(
+                                    context,
+                                    booking,
+                                  ),
+                              icon: const Icon(
+                                Icons.download_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              label: const Text(
+                                "Download",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: ElevatedButton.icon(
+                              onPressed: () =>
+                                  InvoiceService.generateAndShareInvoice(
+                                    context,
+                                    booking,
+                                  ),
+                              icon: const Icon(
+                                Icons.share_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              label: const Text(
+                                "Share",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                   const SizedBox(height: 100),
@@ -792,27 +837,24 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        const SizedBox(width: 10),
                                         Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                          child: Row(
                                             children: [
                                               Text(
-                                                AppLocalizations.of(
-                                                  context,
-                                                )!.bookingId,
+                                                "${AppLocalizations.of(context)!.bookingId}: ",
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
                                               Text(
-                                                "#${booking.newBookingId ?? booking.id}",
-                                                style: const TextStyle(
-                                                  fontSize: 10,
+                                                booking.newBookingId ??
+                                                    booking.id,
+                                                textDirection:
+                                                    TextDirection.ltr,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
                                               ),
                                             ],
@@ -822,7 +864,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                         IconButton(
                                           onPressed: () {
                                             Clipboard.setData(
-                                              ClipboardData(text: booking.newBookingId ?? booking.id),
+                                              ClipboardData(
+                                                text:
+                                                    booking.newBookingId ??
+                                                    booking.id,
+                                              ),
                                             );
                                             ScaffoldMessenger.of(
                                               context,
@@ -889,7 +935,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     delegate: _SliverAppBarDelegate(
                       TabBar(
                         isScrollable: true,
-                        tabAlignment: Directionality.of(context) == TextDirection.rtl
+                        tabAlignment:
+                            Directionality.of(context) == TextDirection.rtl
                             ? TabAlignment.center
                             : TabAlignment.start,
                         labelColor: AppColors.blue1,
@@ -960,10 +1007,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ),
               ),
               SizedBox(width: 8),
-              Text(
-                localization.location,
-                style: TextStyle(fontSize: 16),
-              ),
+              Text(localization.location, style: TextStyle(fontSize: 16)),
             ],
           ),
           Divider(thickness: 1, color: Colors.grey.shade300),
@@ -1207,7 +1251,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           if (booking.paymentCompleted || booking.paymentModeCode.isNotEmpty)
             _buildInfoRow(
               AppLocalizations.of(context)!.paymentMode,
-              (booking.paymentModeCode.toLowerCase() == 'c' || booking.paymentModeCode.toLowerCase() == 'a')
+              (booking.paymentModeCode.toLowerCase() == 'c' ||
+                      booking.paymentModeCode.toLowerCase() == 'a')
                   ? AppLocalizations.of(context)!.insideApp
                   : AppLocalizations.of(context)!.outsideApp,
             ),
@@ -1216,10 +1261,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         if (completionData.fileUrls.isNotEmpty) ...[
           Text(
             AppLocalizations.of(context)!.uploadFilesTitle,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 12),
           ..._buildFileLinks(context, completionData.fileUrls),
@@ -1229,10 +1271,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context)!.serviceItems,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 12),
           Container(
@@ -1311,15 +1350,16 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
             AppLocalizations.of(context)!.serviceCost,
             '${completionData.serviceCost.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
           ),
-          if (booking.service.discountPercentage != null && booking.service.discountPercentage! > 0) ...[
+          if (booking.service.discountPercentage != null &&
+              booking.service.discountPercentage! > 0) ...[
             const SizedBox(height: 12),
             _buildInfoRow(
-              "Discount Percentage",
+              AppLocalizations.of(context)!.discountPercentage,
               '${booking.service.discountPercentage!.toStringAsFixed(0)}%',
             ),
             const SizedBox(height: 12),
             _buildInfoRow(
-              "Discount Amount",
+              AppLocalizations.of(context)!.discountAmount,
               '${(completionData.serviceCost * (booking.service.discountPercentage! / 100)).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
             ),
           ],
@@ -1331,14 +1371,12 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           '${booking.effectiveInspectionFee.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
         ),
 
-        if (booking.paymentProof != null && booking.paymentProof!.isNotEmpty) ...[
+        if (booking.paymentProof != null &&
+            booking.paymentProof!.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text(
             "Payment Proof",
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 12),
           ..._buildFileLinks(context, booking.paymentProof!),
@@ -1359,10 +1397,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 booking.paymentCompleted
                     ? AppLocalizations.of(context)!.amountPaid
                     : AppLocalizations.of(context)!.amountToBePaid,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
               Text(
                 '${((completionData.totalCost) + (booking.effectiveInspectionFee)).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
@@ -1376,32 +1411,6 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           ),
         ),
         const SizedBox(height: 12),
-      ],
-    );
-  }
-
-  Widget _buildCostRow(
-    BuildContext context, {
-    required String label,
-    required double amount,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        Text(
-          '${amount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
       ],
     );
   }
@@ -1884,10 +1893,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               const SizedBox(width: 8),
               Text(
                 AppLocalizations.of(context)?.service ?? '',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -1943,11 +1949,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-
-                        color: Colors.black,
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     SizedBox(height: 8),
                     if (description.isNotEmpty) ...[
@@ -1956,10 +1958,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         description,
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                       ),
                     ],
                   ],
@@ -2253,7 +2252,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   void _checkRebookTimeout(BookingModel booking) {
     if (_isCheckingTimeout) return;
     if (booking.rebookTechnicianId != null &&
-        (booking.bookingStatusCode == 'P' || booking.bookingStatusCode == 'SR')) {
+        (booking.bookingStatusCode == 'P' ||
+            booking.bookingStatusCode == 'SR')) {
       _isCheckingTimeout = true;
       AppFirestore.jobOffersCollectionRef
           .where('bookingId', isEqualTo: booking.id)
@@ -2478,28 +2478,32 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
 
   String _formatTimeAgo(DateTime time) {
     final diff = DateTime.now().difference(time);
+    final l10n = AppLocalizations.of(context)!;
+
     if (diff.inDays >= 365) {
       final years = (diff.inDays / 365).floor();
-      return '$years ${years == 1 ? "year" : "years"} ago';
+      return years == 1 ? l10n.yearAgo : l10n.yearsAgo(years);
     }
     if (diff.inDays >= 30) {
       final months = (diff.inDays / 30).floor();
-      return '$months ${months == 1 ? "month" : "months"} ago';
+      return months == 1 ? l10n.monthAgo : l10n.monthsAgo(months);
     }
     if (diff.inDays >= 7) {
       final weeks = (diff.inDays / 7).floor();
-      return '$weeks ${weeks == 1 ? "week" : "weeks"} ago';
+      return weeks == 1 ? l10n.weekAgo : l10n.weeksAgo(weeks);
     }
     if (diff.inDays >= 1) {
-      return '${diff.inDays} ${diff.inDays == 1 ? "day" : "days"} ago';
+      return diff.inDays == 1 ? l10n.dayAgo : l10n.daysAgo(diff.inDays);
     }
     if (diff.inHours >= 1) {
-      return '${diff.inHours} ${diff.inHours == 1 ? "hour" : "hours"} ago';
+      return diff.inHours == 1 ? l10n.hourAgo : l10n.hoursAgo(diff.inHours);
     }
     if (diff.inMinutes >= 1) {
-      return '${diff.inMinutes} ${diff.inMinutes == 1 ? "minute" : "minutes"} ago';
+      return diff.inMinutes == 1
+          ? l10n.minuteAgo
+          : l10n.minutesAgo(diff.inMinutes);
     }
-    return 'just now';
+    return l10n.justNow;
   }
 }
 

@@ -251,6 +251,9 @@ class AppServices {
         await AppFirestore.customersCollectionRef
             .doc(currentUid)
             .update(updateData);
+        if (updateData.containsKey('name')) {
+          await LocalStoreHelper.putUserName(customerData.name ?? '');
+        }
       }
       return customerData;
     } catch (e) {
@@ -280,8 +283,7 @@ class AppServices {
         .map((snapshot) {
           return snapshot.docs
               .map(
-                (doc) =>
-                    CategoryModel.fromJson(doc.data() as Map<String, dynamic>),
+                (doc) => CategoryModel.fromQuerySnapshot(doc),
               )
               .toList();
         });
@@ -297,8 +299,7 @@ class AppServices {
         .map((snapshot) {
           return snapshot.docs
               .map(
-                (doc) =>
-                    ServiceModel.fromJson(doc.data() as Map<String, dynamic>),
+                (doc) => ServiceModel.fromQueryDocumentSnapshot(doc),
               )
               .toList();
         });
@@ -311,8 +312,7 @@ class AppServices {
         .map((snapshot) {
           return snapshot.docs
               .map(
-                (doc) =>
-                    ServiceModel.fromJson(doc.data() as Map<String, dynamic>),
+                (doc) => ServiceModel.fromQueryDocumentSnapshot(doc),
               )
               .toList();
         });

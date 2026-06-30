@@ -255,7 +255,7 @@ class InvoiceService {
           // Totals
           pw.Row(
             children: [
-              pw.Spacer(flex: 2),
+              if (!isArabic) pw.Spacer(flex: 2),
               pw.Expanded(
                 flex: 1,
                 child: pw.Column(
@@ -320,6 +320,7 @@ class InvoiceService {
                   ],
                 ),
               ),
+              if (isArabic) pw.Spacer(flex: 2),
             ],
           ),
 

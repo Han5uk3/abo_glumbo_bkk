@@ -237,19 +237,11 @@ class _HomePageState extends State<HomePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${AppLocalizations.of(context)!.welcome},",
+                        "${AppLocalizations.of(context)!.welcome}, ${LocalStoreHelper.getUserName()}",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Text(
-                        LocalStoreHelper.getUserName(),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],

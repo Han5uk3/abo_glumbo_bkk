@@ -122,30 +122,27 @@ class ServiceBookingTile extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Wrap(
-                              children: [
-                                Text(
-                                  "#${booking.newBookingId ?? booking.id}",
-                                  style: TextStyle(fontSize: 9),
-                                ),
-                                Text(
-                                  booking.service.nameLocalized(
-                                        languageCode:
-                                            AppLocalizations.of(
-                                              context,
-                                            )?.localeName ??
-                                            'en',
-                                      ) ??
-                                      '',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              "#${booking.newBookingId ?? booking.id}",
+                              style: TextStyle(fontSize: 9),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              booking.service.nameLocalized(
+                                    languageCode:
+                                        AppLocalizations.of(
+                                          context,
+                                        )?.localeName ??
+                                        'en',
+                                  ) ??
+                                  '',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                                color: Colors.black,
+                              ),
                             ),
 
                             // Text(
