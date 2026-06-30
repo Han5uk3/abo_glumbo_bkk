@@ -88,7 +88,7 @@ class _BookServicePageState extends State<BookServicePage> {
       ],
     },
     {
-      "label": "After noon",
+      "label": "Evening",
       "values": [
         {"label": "12:00 PM", "time": const TimeOfDay(hour: 12, minute: 0)},
         {"label": "12:30 PM", "time": const TimeOfDay(hour: 12, minute: 30)},
@@ -98,11 +98,6 @@ class _BookServicePageState extends State<BookServicePage> {
         {"label": "02:30 PM", "time": const TimeOfDay(hour: 14, minute: 30)},
         {"label": "03:00 PM", "time": const TimeOfDay(hour: 15, minute: 0)},
         {"label": "03:30 PM", "time": const TimeOfDay(hour: 15, minute: 30)},
-      ],
-    },
-    {
-      "label": "Evening",
-      "values": [
         {"label": "04:00 PM", "time": const TimeOfDay(hour: 16, minute: 0)},
         {"label": "04:30 PM", "time": const TimeOfDay(hour: 16, minute: 30)},
         {"label": "05:00 PM", "time": const TimeOfDay(hour: 17, minute: 0)},
@@ -111,11 +106,6 @@ class _BookServicePageState extends State<BookServicePage> {
         {"label": "06:30 PM", "time": const TimeOfDay(hour: 18, minute: 30)},
         {"label": "07:00 PM", "time": const TimeOfDay(hour: 19, minute: 0)},
         {"label": "07:30 PM", "time": const TimeOfDay(hour: 19, minute: 30)},
-      ],
-    },
-    {
-      "label": "Night",
-      "values": [
         {"label": "08:00 PM", "time": const TimeOfDay(hour: 20, minute: 0)},
         {"label": "08:30 PM", "time": const TimeOfDay(hour: 20, minute: 30)},
         {"label": "09:00 PM", "time": const TimeOfDay(hour: 21, minute: 0)},

@@ -2250,7 +2250,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               }
 
               if (shouldFallback) {
-                AppServices.fallbackToGeneralSearch(booking.id);
+                AppServices.fallbackToGeneralSearch(booking.id, booking.rebookTechnicianId);
               }
             }
             _isCheckingTimeout = false;

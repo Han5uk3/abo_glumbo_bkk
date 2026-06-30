@@ -2001,23 +2001,28 @@ class AppServices {
 
       if (isRebook) {
         // If rebook and rejected/declined, fallback to general search
-        await fallbackToGeneralSearch(bookingId);
+        await fallbackToGeneralSearch(bookingId, technicianId);
       }
     }
 
     await batch.commit();
   }
 
-  static Future<void> fallbackToGeneralSearch(String bookingId) async {
+  static Future<void> fallbackToGeneralSearch(String bookingId, [String? technicianId]) async {
     final batch = FirebaseFirestore.instance.batch();
 
-    batch.update(AppFirestore.bookingsCollectionRef.doc(bookingId), {
+    final updateData = <String, dynamic>{
       'rebookTechnicianId': null,
       'agent': null,
       'bookingStatusCode': 'P',
-      'cancelledWorkerUids': cancelledWorkers,
       'updatedAt': FieldValue.serverTimestamp(),
-    });
+    };
+
+    if (technicianId != null) {
+      updateData['cancelledWorkerUids'] = FieldValue.arrayUnion([technicianId]);
+    }
+
+    batch.update(AppFirestore.bookingsCollectionRef.doc(bookingId), updateData);
 
     // Mark any pending rebook offers as expired
     final offers = await AppFirestore.jobOffersCollectionRef
