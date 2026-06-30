@@ -190,6 +190,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ),
 
                 _buildLocationCard(customerSelectedAddress, context),
+                SizedBox(height: 12),
 
                 if (!isWarranty)
                   _buildSectionCard(
@@ -907,8 +908,15 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     return Container(
       width: double.maxFinite,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
         color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -2250,7 +2258,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               }
 
               if (shouldFallback) {
-                AppServices.fallbackToGeneralSearch(booking.id, booking.rebookTechnicianId);
+                AppServices.fallbackToGeneralSearch(
+                  booking.id,
+                  booking.rebookTechnicianId,
+                );
               }
             }
             _isCheckingTimeout = false;
