@@ -47,9 +47,18 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
 
     final validCategoryIds = validCategories.map((c) => c.id).toList();
 
-    final validServices = services
-        .where((s) => validCategoryIds.contains(s.category))
-        .toList();
+    final List<ServiceModel> validServices = [];
+    final Set<String> addedCategoryIds = {};
+
+    for (final s in services) {
+      if (validCategoryIds.contains(s.category)) {
+        final categoryId = s.category ?? 'Other';
+        if (!addedCategoryIds.contains(categoryId)) {
+          addedCategoryIds.add(categoryId);
+          validServices.add(s);
+        }
+      }
+    }
 
     if (mounted) {
       setState(() {
