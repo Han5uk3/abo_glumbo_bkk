@@ -265,10 +265,9 @@ class BookingUtils {
         await userDoc.update({"rating": newRating});
       }
 
-      // Update unified wallet with tip amount (only for full service bookings - mode 1)
+      // Update unified wallet with tip amount
       if ((review?.tipAmount ?? 0) > 0 &&
-          review?.paymentType?.isNotEmpty == true &&
-          booking.completionData?.mode == 1) {
+          review?.paymentType?.isNotEmpty == true) {
         try {
           final isCashTip = review?.paymentType?.toLowerCase() == 'cash';
           await UnifiedPayoutServices.updateWalletAmounts(
@@ -277,7 +276,7 @@ class BookingUtils {
             isCashTip: isCashTip,
           );
           debugPrint(
-            '✅ Unified wallet updated with tip: ${review?.tipAmount} (${isCashTip ? "Cash" : "Card"}) for full service booking',
+            '✅ Unified wallet updated with tip: ${review?.tipAmount} (${isCashTip ? "Cash" : "Card"})',
           );
         } catch (e) {
           debugPrint('❌ Error updating unified wallet with tip: $e');

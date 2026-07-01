@@ -115,12 +115,23 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
         );
       }
 
-      final success = await BookingUtils.saveReview(
-        booking: widget.booking!,
-        review: widget.review?.copyWith(isTipPaid: true),
-      );
-
-      return success;
+      if (widget.booking != null) {
+        final success = await BookingUtils.saveReview(
+          booking: widget.booking!,
+          review: widget.review?.copyWith(isTipPaid: true),
+        );
+        return success;
+      } else {
+        if (widget.review?.workerId != null &&
+            (widget.review?.tipAmount ?? 0) > 0) {
+          await UnifiedPayoutServices.updateWalletAmounts(
+            workerId: widget.review!.workerId!,
+            tipsIncrement: widget.review!.tipAmount!,
+            isCashTip: false,
+          );
+        }
+        return true;
+      }
     } catch (e) {
       debugPrint('Error saving review: $e');
       return false;
