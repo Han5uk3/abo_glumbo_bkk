@@ -2875,7 +2875,7 @@ abstract class AppLocalizations {
   /// No description provided for @thankYouMessage.
   ///
   /// In en, this message translates to:
-  /// **'Thank you for your rating and tip!\nWe’re happy to serve you and hope to see you again soon.'**
+  /// **'Thank you for your rating and tip!\nWeâ€™re happy to serve you and hope to see you again soon.'**
   String get thankYouMessage;
 
   /// No description provided for @noLiveTrackingAvailable.
@@ -3205,7 +3205,7 @@ abstract class AppLocalizations {
   /// Message explaining the inspection fee amount and payment terms
   ///
   /// In en, this message translates to:
-  /// **'Inspection fee: {fee} SAR — paid only after the technician arrives and inspects the issue.'**
+  /// **'Inspection fee: {fee} SAR â€” paid only after the technician arrives and inspects the issue.'**
   String inspectionFeeNote(String fee);
 
   /// No description provided for @pleaseSelectAllLocationFields.
@@ -3295,7 +3295,7 @@ abstract class AppLocalizations {
   /// No description provided for @completionDetails.
   ///
   /// In en, this message translates to:
-  /// **'Completion Details'**
+  /// **'Completed Details'**
   String get completionDetails;
 
   /// No description provided for @serviceCost.
@@ -3979,7 +3979,7 @@ abstract class AppLocalizations {
   /// No description provided for @terms5.
   ///
   /// In en, this message translates to:
-  /// **'You have the right to rate the Technician\'s performance after service completion, and you must ensure that ratings are honest and objective.'**
+  /// **'You have the right to rate the Technician\'s performance after service completion, and you must ensure that ratings are honestÂ andÂ objective.'**
   String get terms5;
 
   /// No description provided for @policy1.
@@ -3997,7 +3997,7 @@ abstract class AppLocalizations {
   /// No description provided for @policy3.
   ///
   /// In en, this message translates to:
-  /// **'Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.'**
+  /// **'Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable serviceÂ delivery.'**
   String get policy3;
 
   /// No description provided for @pleaseSelectAValid.
@@ -4843,7 +4843,7 @@ abstract class AppLocalizations {
   /// No description provided for @technicianAutoAssignedBeforeAppointment.
   ///
   /// In en, this message translates to:
-  /// **'A technician will be automatically assigned before the appointment based on availability.'**
+  /// **'A technician will be automatically assigned before your scheduled time based on availability.'**
   String get technicianAutoAssignedBeforeAppointment;
 
   /// No description provided for @searchCancelledBackgrounded.
@@ -5011,7 +5011,7 @@ abstract class AppLocalizations {
   /// No description provided for @biometricError.
   ///
   /// In en, this message translates to:
-  /// **'❌ Biometric error'**
+  /// **'âŒ Biometric error'**
   String get biometricError;
 
   /// No description provided for @unknownError.
@@ -5289,6 +5289,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
+
+  /// No description provided for @discountAppliesToInspectionFeeOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount applies to the inspection fee only.'**
+  String get discountAppliesToInspectionFeeOnly;
 }
 
 class _AppLocalizationsDelegate

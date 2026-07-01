@@ -306,6 +306,17 @@ class InvoiceService {
                           ),
                         ],
                       ),
+                    if ((booking.service.discountPercentage ?? 0) > 0)
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.only(top: 4, bottom: 4),
+                        child: pw.Text(
+                          loc.discountAppliesToInspectionFeeOnly,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            color: PdfColors.grey,
+                          ),
+                        ),
+                      ),
                     pw.Divider(),
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,

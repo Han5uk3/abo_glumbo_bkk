@@ -1448,7 +1448,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get thankYouMessage =>
-      'Thank you for your rating and tip!\nWe’re happy to serve you and hope to see you again soon.';
+      'Thank you for your rating and tip!\nWeâ€™re happy to serve you and hope to see you again soon.';
 
   @override
   String get noLiveTrackingAvailable => 'No live tracking available';
@@ -1631,7 +1631,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String inspectionFeeNote(String fee) {
-    return 'Inspection fee: $fee SAR — paid only after the technician arrives and inspects the issue.';
+    return 'Inspection fee: $fee SAR â€” paid only after the technician arrives and inspects the issue.';
   }
 
   @override
@@ -1678,7 +1678,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get optional => 'Optional';
 
   @override
-  String get completionDetails => 'Completion Details';
+  String get completionDetails => 'Completed Details';
 
   @override
   String get serviceCost => 'Service Cost';
@@ -2050,7 +2050,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get terms5 =>
-      'You have the right to rate the Technician\'s performance after service completion, and you must ensure that ratings are honest and objective.';
+      'You have the right to rate the Technician\'s performance after service completion, and you must ensure that ratings are honestÂ andÂ objective.';
 
   @override
   String get policy1 =>
@@ -2062,7 +2062,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get policy3 =>
-      'Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.';
+      'Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable serviceÂ delivery.';
 
   @override
   String pleaseSelectAValid(Object value) {
@@ -2523,7 +2523,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get technicianAutoAssignedBeforeAppointment =>
-      'A technician will be automatically assigned before the appointment based on availability.';
+      'A technician will be automatically assigned before your scheduled time based on availability.';
 
   @override
   String get searchCancelledBackgrounded =>
@@ -2638,7 +2638,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thankYouInvoice => 'Thank you for choosing Abo Glumbo!';
 
   @override
-  String get biometricError => '❌ Biometric error';
+  String get biometricError => 'âŒ Biometric error';
 
   @override
   String get unknownError => 'Unknown error';
@@ -2804,4 +2804,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings => 'Settings';
+
+  @override
+  String get discountAppliesToInspectionFeeOnly =>
+      'Discount applies to the inspection fee only.';
 }

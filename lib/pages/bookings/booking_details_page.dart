@@ -15,6 +15,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/timeline.dart';
 import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/utils/whatsapp_utils.dart';
@@ -2253,7 +2254,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 shouldFallback = true;
               } else if (status == 'pending' &&
                   expiresAt != null &&
-                  expiresAt.toDate().isBefore(DateTime.now())) {
+                  expiresAt.toDate().isBefore(TimeService.now)) {
                 shouldFallback = true;
               }
 

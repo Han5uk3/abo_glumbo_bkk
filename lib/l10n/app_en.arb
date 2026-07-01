@@ -1,4 +1,4 @@
-{
+﻿{
   "appName": "abo glumbo",
   "waitingForRequestedTechnician": "Waiting for the requested technician to respond",
   "lookingForTechnicians": "Looking for nearby technicians...",
@@ -461,7 +461,7 @@
   "exitAppTitle": "Exit App",
   "arrivalTime": "Arrival Time",
   "min": "min",
-  "thankYouMessage": "Thank you for your rating and tip!\nWe’re happy to serve you and hope to see you again soon.",
+  "thankYouMessage": "Thank you for your rating and tip!\nWeâ€™re happy to serve you and hope to see you again soon.",
   "noLiveTrackingAvailable": "No live tracking available",
   "calculating": "Calculating...",
   "waitingForAgentLocation": "Waiting for agent location...",
@@ -526,7 +526,7 @@
       }
     }
   },
-  "inspectionFeeNote": "Inspection fee: {fee} SAR — paid only after the technician arrives and inspects the issue.",
+  "inspectionFeeNote": "Inspection fee: {fee} SAR â€” paid only after the technician arrives and inspects the issue.",
   "@inspectionFeeNote": {
     "description": "Message explaining the inspection fee amount and payment terms",
     "placeholders": {
@@ -550,7 +550,7 @@
   "canceledOn": "Canceled on",
   "completedOn": "Completed on",
   "optional": "Optional",
-  "completionDetails": "Completion Details",
+  "completionDetails": "Completed Details",
   "serviceCost": "Service Cost",
   "serviceItems": "Service Items",
   "uploadFilesTitle": "Proof of Completion / Supporting Documents",
@@ -664,10 +664,10 @@
   "terms4p1": "Warranty (Guarantee): Completed work is subject to the Platform's",
   "warrantyPolicy": "Warranty Policy",
   "terms4p2": "the full details of which can be reviewed via the dedicated link.",
-  "terms5": "You have the right to rate the Technician's performance after service completion, and you must ensure that ratings are honest and objective.",
+  "terms5": "You have the right to rate the Technician's performance after service completion, and you must ensure that ratings are honestÂ andÂ objective.",
   "policy1": "Name, phone number, email address, the precise service location address, order history, and Technician ratings.",
   "policy2": "Used to match you with Technicians, facilitate the booking and payment process, and send order notifications.",
-  "policy3": "Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable service delivery.",
+  "policy3": "Your Name, phone number, and location address are shared ONLY with the Technician who accepted your request to enable serviceÂ delivery.",
   "pleaseSelectAValid": "Please select a valid {value}",
   "showingResults": "Showing {count} results. Type to search",
   "typeProvinceNameToSearch": "Type province name to search...",
@@ -826,7 +826,7 @@
   "lookingForAvailableTechniciansNearby": "Looking for available technicians nearby...",
   "noTechniciansAvailableAtTheMoment": "No technicians available to handle your request at the moment.",
   "searchAgain": "Search Again",
-  "technicianAutoAssignedBeforeAppointment": "A technician will be automatically assigned before the appointment based on availability.",
+  "technicianAutoAssignedBeforeAppointment": "A technician will be automatically assigned before your scheduled time based on availability.",
   "searchCancelledBackgrounded": "Searching Cancelled. The app was backgrounded.",
   "stayOnScreenWarning": "Please stay on this screen. Navigating away or closing the app will cancel the search.",
   "failedResendOtp": "Failed to resend OTP. Please try again.",
@@ -952,7 +952,7 @@
   },
   "totalLabel": "Total:",
   "thankYouInvoice": "Thank you for choosing Abo Glumbo!",
-  "biometricError": "❌ Biometric error",
+  "biometricError": "âŒ Biometric error",
   "unknownError": "Unknown error",
   "errorDuringLogin": "Error during login",
   "backToLogin": "Back to Login",
@@ -1001,47 +1001,60 @@
   "yearsAgo": "{count} years ago",
   "@yearsAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "yearAgo": "1 year ago",
   "monthsAgo": "{count} months ago",
   "@monthsAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "monthAgo": "1 month ago",
   "weeksAgo": "{count} weeks ago",
   "@weeksAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "weekAgo": "1 week ago",
   "daysAgo": "{count} days ago",
   "@daysAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "dayAgo": "1 day ago",
   "hoursAgo": "{count} hours ago",
   "@hoursAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "hourAgo": "1 hour ago",
   "minutesAgo": "{count} minutes ago",
   "@minutesAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "minuteAgo": "1 minute ago",
   "justNow": "just now",
   "costBreakdown": "Cost Breakdown",
   "paymentProof": "Payment Proof",
-  "settings": "Settings"
+  "settings": "Settings",
+  "discountAppliesToInspectionFeeOnly": "Discount applies to the inspection fee only."
 }

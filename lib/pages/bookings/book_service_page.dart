@@ -1222,17 +1222,36 @@ class _BookServicePageState extends State<BookServicePage> {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      AppLocalizations.of(context)?.inspectionFeeNote(
-                            (hasDiscount ? discountedPrice : price)
-                                .toStringAsFixed(2),
-                          ) ??
-                          'Inspection fee: ${(hasDiscount ? discountedPrice : price).toStringAsFixed(2)} SAR — paid only after the technician arrives and inspects the issue.',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: AppColors.secondary,
-                        height: 1.4,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)?.inspectionFeeNote(
+                                (hasDiscount ? discountedPrice : price)
+                                    .toStringAsFixed(2),
+                              ) ??
+                              'Inspection fee: ${(hasDiscount ? discountedPrice : price).toStringAsFixed(2)} SAR — paid only after the technician arrives and inspects the issue.',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: AppColors.secondary,
+                            height: 1.4,
+                          ),
+                        ),
+                        if (hasDiscount)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              AppLocalizations.of(context)?.discountAppliesToInspectionFeeOnly ?? 
+                              'Discount applies to the inspection fee only.',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: AppColors.secondary,
+                                fontWeight: FontWeight.bold,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ],
@@ -1776,8 +1795,8 @@ class _BookServicePageState extends State<BookServicePage> {
                       : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
                   selectedAddress: selectedAddress,
                   serviceLocation: _matchedServiceZone,
-                  rejectedTechnicianUids: widget.rebookTechnician != null 
-                      ? [widget.rebookTechnician!.uid!] 
+                  rejectedTechnicianUids: widget.rebookTechnician != null
+                      ? [widget.rebookTechnician!.uid!]
                       : null,
                 );
 
@@ -1900,19 +1919,10 @@ class _BookServicePageState extends State<BookServicePage> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      isToday
-                          ? (AppLocalizations.of(context)?.localeName == 'ar'
-                                ? 'سنقوم بإرسال طلبك إلى الفنيين النشطين في منطقتك. ستتمكن من اختيار فنيك المفضل بمجرد قبولهم.'
-                                : AppLocalizations.of(context)?.localeName ==
-                                      'ur'
-                                ? 'ہم آپ کی درخواست آپ کے علاقے کے فعال ٹیکنیشنز کو بھیجیں گے۔ آپ ان کے قبول کرتے ہی اپنے پسندیدہ ٹیکنیشن کا انتخاب کر سکتے ہیں۔'
-                                : 'We will broadcast your request to active technicians in your area. You will be able to select your preferred technician from those who accept.')
-                          : (AppLocalizations.of(context)?.localeName == 'ar'
-                                ? 'سيقوم النظام بتعيين فني بناءً على التوفر قبل 3 ساعات على الأقل من الوقت المحدد.'
-                                : AppLocalizations.of(context)?.localeName ==
-                                      'ur'
-                                ? 'سسٹم شیڈول وقت سے کم از کم 3 گھنٹے پہلے دستیابی کی بنیاد پر ایک ٹیکنیشن کا تعین کرے گا۔'
-                                : 'The system will assign a technician based on availability at least 3 hours before the scheduled time.'),
+                      AppLocalizations.of(
+                            context,
+                          )?.technicianAutoAssignedBeforeAppointment ??
+                          "",
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.blue.shade800,
@@ -2643,8 +2653,8 @@ class _BookServicePageState extends State<BookServicePage> {
         timeSlot: timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
         selectedAddress: selectedAddress,
         serviceLocation: _matchedServiceZone,
-        cancelledWorkerUids: widget.rebookTechnician != null 
-            ? [widget.rebookTechnician!.uid!] 
+        cancelledWorkerUids: widget.rebookTechnician != null
+            ? [widget.rebookTechnician!.uid!]
             : null,
       );
 

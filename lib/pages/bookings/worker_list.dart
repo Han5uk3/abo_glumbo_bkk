@@ -15,6 +15,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/worker_card.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -201,7 +202,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
     // 4. Create Job Request
     final requestId = AppFirestore.jobRequestsCollectionRef.doc().id;
     final now = Timestamp.now();
-    final expiresAt = Timestamp.fromDate(DateTime.now().add(const Duration(seconds: 120)));
+    final expiresAt = Timestamp.fromDate(TimeService.now.add(const Duration(seconds: 120)));
 
     final request = JobRequestModel(
       id: requestId,

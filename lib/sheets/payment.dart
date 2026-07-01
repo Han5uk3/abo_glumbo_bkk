@@ -133,9 +133,18 @@ class _PaymentWindowState extends State<PaymentWindow> {
       isLoading = true;
     });
 
-    double finalAmount = widget.booking.completionData?.totalCost ??
-        double.tryParse(widget.service.price.toString()) ??
-        0;
+    double inspectionFee =
+        widget.booking.completionData?.inspectionFee ??
+        widget.booking.service.price ??
+        0.0;
+    double discountedInspectionFee = widget.booking.service.getDiscountedPrice(
+      inspectionFee,
+    );
+    double totalServiceCost = widget.booking.completionData?.totalCost ?? 0.0;
+
+    double finalAmount = widget.booking.completionData != null
+        ? (totalServiceCost + discountedInspectionFee)
+        : discountedInspectionFee;
 
     String orderId = generateOrderId(
       widget.customerData.uid ?? "guest",
@@ -369,7 +378,8 @@ class _PaymentWindowState extends State<PaymentWindow> {
             builder: (BuildContext dialogContext) {
               return AlertDialog(
                 title: Text(
-                  (AppLocalizations.of(context)?.applePayNotAvailable ?? 'Apple Pay Not Available'),
+                  (AppLocalizations.of(context)?.applePayNotAvailable ??
+                      'Apple Pay Not Available'),
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 content: Column(
@@ -379,7 +389,10 @@ class _PaymentWindowState extends State<PaymentWindow> {
                     Icon(Icons.error_outline, color: Colors.red, size: 50),
                     SizedBox(height: 16),
                     Text(
-                      (AppLocalizations.of(context)?.applePayNotAvailableDevice ?? 'Apple Pay is not available on this device.'),
+                      (AppLocalizations.of(
+                            context,
+                          )?.applePayNotAvailableDevice ??
+                          'Apple Pay is not available on this device.'),
                       style: TextStyle(fontSize: 16),
                     ),
                     SizedBox(height: 8),
@@ -405,7 +418,10 @@ class _PaymentWindowState extends State<PaymentWindow> {
                       Navigator.of(dialogContext).pop();
                     },
                     child: Text(
-                      (AppLocalizations.of(context)?.chooseAnotherPaymentMethod ?? 'Choose Another Payment Method'),
+                      (AppLocalizations.of(
+                            context,
+                          )?.chooseAnotherPaymentMethod ??
+                          'Choose Another Payment Method'),
                       style: TextStyle(
                         color: AppColors.secondary,
                         fontWeight: FontWeight.bold,
@@ -443,7 +459,8 @@ class _PaymentWindowState extends State<PaymentWindow> {
           builder: (BuildContext dialogContext) {
             return AlertDialog(
               title: Text(
-                (AppLocalizations.of(context)?.applePayError ?? 'Apple Pay Error'),
+                (AppLocalizations.of(context)?.applePayError ??
+                    'Apple Pay Error'),
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               content: Column(
@@ -453,24 +470,19 @@ class _PaymentWindowState extends State<PaymentWindow> {
                   Icon(Icons.error_outline, color: Colors.red, size: 50),
                   SizedBox(height: 16),
                   Text(
-                    (AppLocalizations.of(context)?.errorProcessingApplePay ?? 'There was an error processing your Apple Pay payment.'),
+                    (AppLocalizations.of(context)?.errorProcessingApplePay ??
+                        'There was an error processing your Apple Pay payment.'),
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Error details:',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                   ),
                   SizedBox(height: 4),
                   Text(
                     e.toString(),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.red[700],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.red[700]),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -482,7 +494,8 @@ class _PaymentWindowState extends State<PaymentWindow> {
                     Navigator.of(dialogContext).pop();
                   },
                   child: Text(
-                    (AppLocalizations.of(context)?.tryAnotherPaymentMethod ?? 'Try Another Payment Method'),
+                    (AppLocalizations.of(context)?.tryAnotherPaymentMethod ??
+                        'Try Another Payment Method'),
                     style: TextStyle(
                       color: AppColors.secondary,
                       fontWeight: FontWeight.bold,
@@ -510,10 +523,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
               SizedBox(width: 8),
               Text(
                 'Apple Pay',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ],
           ),
@@ -523,10 +533,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
             children: [
               Icon(Icons.error_outline, color: Colors.orange, size: 50),
               SizedBox(height: 16),
-              Text(
-                message,
-                style: TextStyle(fontSize: 16, height: 1.4),
-              ),
+              Text(message, style: TextStyle(fontSize: 16, height: 1.4)),
             ],
           ),
           actions: [
@@ -535,7 +542,8 @@ class _PaymentWindowState extends State<PaymentWindow> {
                 Navigator.of(dialogContext).pop();
               },
               child: Text(
-                (AppLocalizations.of(context)?.useAnotherPaymentMethod ?? 'Use Another Payment Method'),
+                (AppLocalizations.of(context)?.useAnotherPaymentMethod ??
+                    'Use Another Payment Method'),
                 style: TextStyle(
                   color: AppColors.secondary,
                   fontWeight: FontWeight.bold,
@@ -765,7 +773,9 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
       Timestamp.now(),
       amount: widget.amount,
       paymentStatus: "completed",
-      paymentMethod: widget.paymentModeCode == "C" ? "Inside App" : "Outside App",
+      paymentMethod: widget.paymentModeCode == "C"
+          ? "Inside App"
+          : "Outside App",
       createdAt: Timestamp.now(),
       orderId: widget.orderId,
       customerId: widget.customer.uid ?? "",
@@ -794,10 +804,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                 const SizedBox(width: 12),
                 Text(
                   AppLocalizations.of(context)!.confirmPayment,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ],
             ),
@@ -823,9 +830,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.amountToBePaid,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                           Text(
                             '${totalAmount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
@@ -842,9 +847,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.amountPaid,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                           Text(
                             '${paidAmount.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
@@ -864,10 +867,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
                   AppLocalizations.of(
                     context,
                   )!.areYouSureYouWantToConfirmThisPayment,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -908,7 +908,7 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
         );
         await saveTransaction();
 
-        // NOTE: Cash payments are "outside-app" payments — the technician collects 
+        // NOTE: Cash payments are "outside-app" payments — the technician collects
         // the cash directly. The wallet tracking for these payments is handled by
         // the technician app's verify_payment_sheet when they upload payment proof.
         // We do NOT track cash payments as in-app earnings here.

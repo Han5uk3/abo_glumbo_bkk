@@ -17,6 +17,7 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 
 final String hiveBoxName = 'myBox';
 GlobalKey<NavigatorState>? navigatorKey = GlobalKey();
@@ -129,6 +130,9 @@ Future<void> main() async {
       debugPrint('⚠️ System UI setup failed (non-critical): $e');
       // Continue anyway
     }
+
+    // 7. Initialize Time Service
+    await TimeService.init();
 
     debugPrint('🚀 App initialization complete - launching app');
     runApp(MyApp(navigatorKey: navigatorKey));

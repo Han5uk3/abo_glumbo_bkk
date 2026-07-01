@@ -10,6 +10,7 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -126,7 +127,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
       final requestId = AppFirestore.jobRequestsCollectionRef.doc().id;
       final now = Timestamp.now();
       final expiresAt = Timestamp.fromDate(
-        DateTime.now().add(const Duration(seconds: 120)),
+        TimeService.now.add(const Duration(seconds: 120)),
       );
 
       final request = JobRequestModel(

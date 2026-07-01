@@ -308,6 +308,18 @@ class _CategoryDetailState extends State<CategoryDetail> {
                                       fontSize: 12,
                                     ),
                                   ),
+                                  if ((service.discountPercentage ?? 0) > 0) ...[
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      AppLocalizations.of(context)?.discountAppliesToInspectionFeeOnly ?? 
+                                      'Discount applies to the inspection fee only.',
+                                      style: TextStyle(
+                                        color: Colors.redAccent,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),

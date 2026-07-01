@@ -9,2758 +9,2905 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appName => 'أبو جلمبو';
+  String get appName => 'Ø£Ø¨Ùˆ Ø¬Ù„Ù…Ø¨Ùˆ';
 
   @override
-  String get waitingForRequestedTechnician => 'في انتظار رد الفني المطلوب';
+  String get waitingForRequestedTechnician =>
+      'ÙÙŠ Ø§Ù†ØªØ¸Ø§Ø± Ø±Ø¯ Ø§Ù„ÙÙ†ÙŠ Ø§Ù„Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get lookingForTechnicians => 'جاري البحث عن فنيين قريبين...';
+  String get lookingForTechnicians =>
+      'Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø¨Ø­Ø« Ø¹Ù† ÙÙ†ÙŠÙŠÙ† Ù‚Ø±ÙŠØ¨ÙŠÙ†...';
 
   @override
-  String get appLoginCaption => 'التطبيق للعثور على محترفين مؤهلين.';
+  String get appLoginCaption =>
+      'Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ù„Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ù…Ø­ØªØ±ÙÙŠÙ† Ù…Ø¤Ù‡Ù„ÙŠÙ†.';
 
   @override
-  String get mobileNumber => 'رقم الهاتف';
+  String get mobileNumber => 'Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ';
 
   @override
-  String get seconds => 'ثانية';
+  String get seconds => 'Ø«Ø§Ù†ÙŠØ©';
 
   @override
-  String get continueText => 'متابعة';
+  String get continueText => 'Ù…ØªØ§Ø¨Ø¹Ø©';
 
   @override
-  String get byContinuingYouAgreeToOur => 'بالاستمرار، فإنك توافق على';
+  String get byContinuingYouAgreeToOur =>
+      'Ø¨Ø§Ù„Ø§Ø³ØªÙ…Ø±Ø§Ø±ØŒ ÙØ¥Ù†Ùƒ ØªÙˆØ§ÙÙ‚ Ø¹Ù„Ù‰';
 
   @override
-  String get termsOfUseAndPrivacyPolicy => 'شروط الاستخدام وسياسة الخصوصية';
+  String get termsOfUseAndPrivacyPolicy =>
+      'Ø´Ø±ÙˆØ· Ø§Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… ÙˆØ³ÙŠØ§Ø³Ø© Ø§Ù„Ø®ØµÙˆØµÙŠØ©';
 
   @override
-  String get otpAutoVerified => 'تم التحقق التلقائي';
+  String get otpAutoVerified => 'ØªÙ… Ø§Ù„ØªØ­Ù‚Ù‚ Ø§Ù„ØªÙ„Ù‚Ø§Ø¦ÙŠ';
 
   @override
   String get somethingWentWrongTryAgain =>
-      'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
+      'Ø­Ø¯Ø« Ø®Ø·Ø£ Ù…Ø§. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.';
 
   @override
-  String get otpSent => 'تم إرسال رمز التحقق';
+  String get otpSent => 'ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚';
 
   @override
-  String get highestRating => 'أعلى تقييم';
+  String get highestRating => 'Ø£Ø¹Ù„Ù‰ ØªÙ‚ÙŠÙŠÙ…';
 
   @override
-  String get verifiedAndProfessionalTechnicians => 'فنيين موثوقين ومحترفين';
+  String get verifiedAndProfessionalTechnicians =>
+      'ÙÙ†ÙŠÙŠÙ† Ù…ÙˆØ«ÙˆÙ‚ÙŠÙ† ÙˆÙ…Ø­ØªØ±ÙÙŠÙ†';
 
   @override
-  String get nearest => 'الأقرب';
+  String get nearest => 'Ø§Ù„Ø£Ù‚Ø±Ø¨';
 
   @override
-  String get bookservice => 'احجز خدمة';
+  String get bookservice => 'Ø§Ø­Ø¬Ø² Ø®Ø¯Ù…Ø©';
 
   @override
-  String get failedToLoadImage => 'فشل تحميل الصورة';
+  String get failedToLoadImage => 'ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØµÙˆØ±Ø©';
 
   @override
-  String get describeYourIssueInDetail => 'يرجى وصف مشكلتك بالتفصيل';
+  String get describeYourIssueInDetail =>
+      'ÙŠØ±Ø¬Ù‰ ÙˆØµÙ Ù…Ø´ÙƒÙ„ØªÙƒ Ø¨Ø§Ù„ØªÙØµÙŠÙ„';
 
   @override
-  String get issueMedia => 'مرفقات المشكلة';
+  String get issueMedia => 'Ù…Ø±ÙÙ‚Ø§Øª Ø§Ù„Ù…Ø´ÙƒÙ„Ø©';
 
   @override
-  String get notes => 'ملاحظات';
+  String get notes => 'Ù…Ù„Ø§Ø­Ø¸Ø§Øª';
 
   @override
-  String get image => 'صورة';
+  String get image => 'ØµÙˆØ±Ø©';
 
   @override
-  String get technicianIsBusy => 'الفني مشغول';
+  String get technicianIsBusy => 'Ø§Ù„ÙÙ†ÙŠ Ù…Ø´ØºÙˆÙ„';
 
   @override
-  String get login => 'تسجيل الدخول';
+  String get login => 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„';
 
   @override
-  String get bookings => 'الحجوزات';
+  String get bookings => 'Ø§Ù„Ø­Ø¬ÙˆØ²Ø§Øª';
 
   @override
-  String get errorOccurred => 'حدث خطأ ما';
+  String get errorOccurred => 'Ø­Ø¯Ø« Ø®Ø·Ø£ Ù…Ø§';
 
   @override
-  String get details => 'تفاصيل';
+  String get details => 'ØªÙØ§ØµÙŠÙ„';
 
   @override
-  String get aboutThisService => 'عن هذه الخدمة';
+  String get aboutThisService => 'Ø¹Ù† Ù‡Ø°Ù‡ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get backtobooking => 'العودة إلى الحجز';
+  String get backtobooking => 'Ø§Ù„Ø¹ÙˆØ¯Ø© Ø¥Ù„Ù‰ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get otphasbeensentto => 'تم إرسال رمز التحقق إلى';
+  String get otphasbeensentto => 'ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚ Ø¥Ù„Ù‰';
 
   @override
-  String get profile => 'الملف الشخصي';
+  String get profile => 'Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ';
 
   @override
-  String get resendOTPin => 'إعادة إرسال الرمز';
+  String get resendOTPin => 'Ø¥Ø¹Ø§Ø¯Ø© Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø±Ù…Ø²';
 
   @override
-  String get edit => 'تعديل';
+  String get edit => 'ØªØ¹Ø¯ÙŠÙ„';
 
   @override
-  String get sText => 'ث';
+  String get sText => 'Ø«';
 
   @override
   String get verifiedTrustedAndProfessionalTechnicians =>
-      'فنيين موثوقين ومحترفين';
+      'ÙÙ†ÙŠÙŠÙ† Ù…ÙˆØ«ÙˆÙ‚ÙŠÙ† ÙˆÙ…Ø­ØªØ±ÙÙŠÙ†';
 
   @override
-  String get getStarted => 'ابدأ';
+  String get getStarted => 'Ø§Ø¨Ø¯Ø£';
 
   @override
-  String get onboard1 => 'مرحباً بك في أبو جلمبو! نحن شريكك الجديد لراحة بالك.';
+  String get onboard1 =>
+      'Ù…Ø±Ø­Ø¨Ø§Ù‹ Ø¨Ùƒ ÙÙŠ Ø£Ø¨Ùˆ Ø¬Ù„Ù…Ø¨Ùˆ! Ù†Ø­Ù† Ø´Ø±ÙŠÙƒÙƒ Ø§Ù„Ø¬Ø¯ÙŠØ¯ Ù„Ø±Ø§Ø­Ø© Ø¨Ø§Ù„Ùƒ.';
 
   @override
-  String get onboard1desc => 'هل أنت مستعد لصيانة منزلك؟ ابدأ طلبك الأول الآن.';
+  String get onboard1desc =>
+      'Ù‡Ù„ Ø£Ù†Øª Ù…Ø³ØªØ¹Ø¯ Ù„ØµÙŠØ§Ù†Ø© Ù…Ù†Ø²Ù„ÙƒØŸ Ø§Ø¨Ø¯Ø£ Ø·Ù„Ø¨Ùƒ Ø§Ù„Ø£ÙˆÙ„ Ø§Ù„Ø¢Ù†.';
 
   @override
-  String get namehomeworketc => 'الاسم (المنزل، العمل، إلخ)';
+  String get namehomeworketc =>
+      'Ø§Ù„Ø§Ø³Ù… (Ø§Ù„Ù…Ù†Ø²Ù„ØŒ Ø§Ù„Ø¹Ù…Ù„ØŒ Ø¥Ù„Ø®)';
 
   @override
-  String get technicianIsBusyatThisTime => 'الفني مشغول في هذا الوقت';
+  String get technicianIsBusyatThisTime =>
+      'Ø§Ù„ÙÙ†ÙŠ Ù…Ø´ØºÙˆÙ„ ÙÙŠ Ù‡Ø°Ø§ Ø§Ù„ÙˆÙ‚Øª';
 
   @override
-  String get yourTechnicianIsMovingToYourLocation => 'الفني في طريقه إلى موقعك';
+  String get yourTechnicianIsMovingToYourLocation =>
+      'Ø§Ù„ÙÙ†ÙŠ ÙÙŠ Ø·Ø±ÙŠÙ‚Ù‡ Ø¥Ù„Ù‰ Ù…ÙˆÙ‚Ø¹Ùƒ';
 
   @override
-  String get issueImage => 'مشكلة في الصورة';
+  String get issueImage => 'Ù…Ø´ÙƒÙ„Ø© ÙÙŠ Ø§Ù„ØµÙˆØ±Ø©';
 
   @override
-  String get loadingVideo => 'جاري تحميل الفيديو';
+  String get loadingVideo => 'Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„ÙÙŠØ¯ÙŠÙˆ';
 
   @override
-  String get tapForLiveLocationTracking => 'اضغط لتتبع الموقع المباشر';
+  String get tapForLiveLocationTracking =>
+      'Ø§Ø¶ØºØ· Ù„ØªØªØ¨Ø¹ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±';
 
   @override
-  String get allMarkedAsRead => 'تم وضع علامة على جميع الإشعارات كمقروءة';
+  String get allMarkedAsRead =>
+      'ØªÙ… ÙˆØ¶Ø¹ Ø¹Ù„Ø§Ù…Ø© Ø¹Ù„Ù‰ Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª ÙƒÙ…Ù‚Ø±ÙˆØ¡Ø©';
 
   @override
   String get pleaseAddANameToIdentifyTheLocation =>
-      'يرجى إضافة اسم لتحديد الموقع';
+      'ÙŠØ±Ø¬Ù‰ Ø¥Ø¶Ø§ÙØ© Ø§Ø³Ù… Ù„ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get failedToLoadVideo => 'فشل تحميل الفيديو';
+  String get failedToLoadVideo => 'ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„ÙÙŠØ¯ÙŠÙˆ';
 
   @override
-  String get video => 'فيديو';
+  String get video => 'ÙÙŠØ¯ÙŠÙˆ';
 
   @override
   String get markAllAsReadMessage =>
-      'هل أنت متأكد من أنك تريد وضع علامة على جميع الإشعارات كمقروءة؟';
+      'Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ù…Ù† Ø£Ù†Ùƒ ØªØ±ÙŠØ¯ ÙˆØ¶Ø¹ Ø¹Ù„Ø§Ù…Ø© Ø¹Ù„Ù‰ Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª ÙƒÙ…Ù‚Ø±ÙˆØ¡Ø©ØŸ';
 
   @override
-  String get mostOrders => 'الأكثر طلبًا';
+  String get mostOrders => 'Ø§Ù„Ø£ÙƒØ«Ø± Ø·Ù„Ø¨Ù‹Ø§';
 
   @override
   String get anErrorOccurredPleaseTryAgainLater =>
-      'حدث خطأ ما. يرجى المحاولة لاحقًا';
+      'Ø­Ø¯Ø« Ø®Ø·Ø£ Ù…Ø§. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù„Ø§Ø­Ù‚Ù‹Ø§';
 
   @override
-  String get pleaseEnterAValidPhoneNumber => 'يرجى إدخال رقم هاتف صحيح';
+  String get pleaseEnterAValidPhoneNumber =>
+      'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ø±Ù‚Ù… Ù‡Ø§ØªÙ ØµØ­ÙŠØ­';
 
   @override
-  String get invalidOtp => 'رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى';
+  String get invalidOtp =>
+      'Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚ ØºÙŠØ± ØµØ­ÙŠØ­. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰';
 
   @override
-  String get otpVerification => 'التحقق من رمز التحقق';
+  String get otpVerification => 'Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚';
 
   @override
-  String get enterTheOtpSentToTheNumber => 'أدخل رمز التحقق المرسل إلى الرقم';
+  String get enterTheOtpSentToTheNumber =>
+      'Ø£Ø¯Ø®Ù„ Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚ Ø§Ù„Ù…Ø±Ø³Ù„ Ø¥Ù„Ù‰ Ø§Ù„Ø±Ù‚Ù…';
 
   @override
-  String get change => 'تغيير';
+  String get change => 'ØªØºÙŠÙŠØ±';
 
   @override
   String get areYouSureYouWantToConfirmThisPayment =>
-      'هل تريد تأكيد هذا الدفع؟';
+      'Ù‡Ù„ ØªØ±ÙŠØ¯ ØªØ£ÙƒÙŠØ¯ Ù‡Ø°Ø§ Ø§Ù„Ø¯ÙØ¹ØŸ';
 
   @override
-  String get confirm => 'تأكيد';
+  String get confirm => 'ØªØ£ÙƒÙŠØ¯';
 
   @override
-  String get enterOtp => 'أدخل رمز التحقق';
+  String get enterOtp => 'Ø£Ø¯Ø®Ù„ Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚';
 
   @override
-  String get verifyOtp => 'تحقق من رمز التحقق';
+  String get verifyOtp => 'ØªØ­Ù‚Ù‚ Ù…Ù† Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚';
 
   @override
-  String get language => 'اللغة';
+  String get language => 'Ø§Ù„Ù„ØºØ©';
 
   @override
-  String get logout => 'تسجيل الخروج';
+  String get logout => 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬';
 
   @override
-  String get areYouSureYouWantToLogout => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
+  String get areYouSureYouWantToLogout =>
+      'Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ø£Ù†Ùƒ ØªØ±ÙŠØ¯ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬ØŸ';
 
   @override
-  String get account => 'الحساب';
+  String get account => 'Ø§Ù„Ø­Ø³Ø§Ø¨';
 
   @override
-  String get wishlist => 'قائمة المفضلين';
+  String get wishlist => 'Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…ÙØ¶Ù„ÙŠÙ†';
 
   @override
-  String get selectLanguage => 'اختر اللغة';
+  String get selectLanguage => 'Ø§Ø®ØªØ± Ø§Ù„Ù„ØºØ©';
 
   @override
-  String get failedToLoadCategories => 'فشل في تحميل الفئات';
+  String get failedToLoadCategories => 'ÙØ´Ù„ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„ÙØ¦Ø§Øª';
 
   @override
-  String get home => 'الرئيسية';
+  String get home => 'Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©';
 
   @override
-  String get myBooking => 'حجوزاتي';
+  String get myBooking => 'Ø­Ø¬ÙˆØ²Ø§ØªÙŠ';
 
   @override
-  String get categories => 'الفئات';
+  String get categories => 'Ø§Ù„ÙØ¦Ø§Øª';
 
   @override
-  String get error => 'خطأ';
+  String get error => 'Ø®Ø·Ø£';
 
   @override
-  String get searchHere => 'ابحث هنا';
+  String get searchHere => 'Ø§Ø¨Ø­Ø« Ù‡Ù†Ø§';
 
   @override
-  String get availableServices => 'الخدمات المتاحة';
+  String get availableServices => 'Ø§Ù„Ø®Ø¯Ù…Ø§Øª Ø§Ù„Ù…ØªØ§Ø­Ø©';
 
   @override
-  String get failedToLoadLocations => 'فشل في تحميل المواقع';
+  String get failedToLoadLocations => 'ÙØ´Ù„ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹';
 
   @override
-  String get retry => 'إعادة المحاولة';
+  String get retry => 'Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©';
 
   @override
-  String get selectLocation => 'اختر الموقع';
+  String get selectLocation => 'Ø§Ø®ØªØ± Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get profileUpdatedSuccessfully => 'تم تحديث الملف الشخصي بنجاح';
+  String get profileUpdatedSuccessfully =>
+      'ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get failedToUpdateProfile => 'فشل في تحديث الملف الشخصي';
+  String get failedToUpdateProfile =>
+      'ÙØ´Ù„ ÙÙŠ ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ';
 
   @override
-  String get profileManagement => 'إدارة الملف الشخصي';
+  String get profileManagement => 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ';
 
   @override
-  String get yourName => 'الاسم';
+  String get yourName => 'Ø§Ù„Ø§Ø³Ù…';
 
   @override
-  String get nameIsRequired => 'الاسم مطلوب';
+  String get nameIsRequired => 'Ø§Ù„Ø§Ø³Ù… Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get enterAValidName => 'يرجى إدخال اسم صحيح';
+  String get enterAValidName => 'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ø§Ø³Ù… ØµØ­ÙŠØ­';
 
   @override
-  String get emailAddress => 'البريد الإلكتروني';
+  String get emailAddress => 'Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ';
 
   @override
-  String get emailIsRequired => 'البريد الإلكتروني مطلوب';
+  String get emailIsRequired => 'Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get enterAValidEmail => 'يرجى إدخال بريد إلكتروني صحيح';
+  String get enterAValidEmail =>
+      'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ø¨Ø±ÙŠØ¯ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ØµØ­ÙŠØ­';
 
   @override
-  String get phoneNumber => 'رقم الهاتف';
+  String get phoneNumber => 'Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ';
 
   @override
-  String get locationIsRequired => 'الموقع مطلوب';
+  String get locationIsRequired => 'Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get buildingNumber => 'رقم المبنى';
+  String get buildingNumber => 'Ø±Ù‚Ù… Ø§Ù„Ù…Ø¨Ù†Ù‰';
 
   @override
-  String get buildingNumberIsRequired => 'رقم المبنى مطلوب';
+  String get buildingNumberIsRequired => 'Ø±Ù‚Ù… Ø§Ù„Ù…Ø¨Ù†Ù‰ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get streetName => 'اسم الشارع';
+  String get streetName => 'Ø§Ø³Ù… Ø§Ù„Ø´Ø§Ø±Ø¹';
 
   @override
-  String get streetNameIsRequired => 'اسم الشارع مطلوب';
+  String get streetNameIsRequired => 'Ø§Ø³Ù… Ø§Ù„Ø´Ø§Ø±Ø¹ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get districtName => 'اسم المنطقة';
+  String get districtName => 'Ø§Ø³Ù… Ø§Ù„Ù…Ù†Ø·Ù‚Ø©';
 
   @override
-  String get districtNameIsRequired => 'اسم المنطقة مطلوب';
+  String get districtNameIsRequired => 'Ø§Ø³Ù… Ø§Ù„Ù…Ù†Ø·Ù‚Ø© Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get cityNameIsRequired => 'اسم المدينة مطلوب';
+  String get cityNameIsRequired => 'Ø§Ø³Ù… Ø§Ù„Ù…Ø¯ÙŠÙ†Ø© Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get postcode => 'الرمز البريدي';
+  String get postcode => 'Ø§Ù„Ø±Ù…Ø² Ø§Ù„Ø¨Ø±ÙŠØ¯ÙŠ';
 
   @override
-  String get postcodeIsRequired => 'الرمز البريدي مطلوب';
+  String get postcodeIsRequired => 'Ø§Ù„Ø±Ù…Ø² Ø§Ù„Ø¨Ø±ÙŠØ¯ÙŠ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get extensionNumber => 'رقم داخلي';
+  String get extensionNumber => 'Ø±Ù‚Ù… Ø¯Ø§Ø®Ù„ÙŠ';
 
   @override
-  String get extensionNumberIsRequired => 'الرقم الداخلي مطلوب';
+  String get extensionNumberIsRequired =>
+      'Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get update => 'تحديث';
+  String get update => 'ØªØ­Ø¯ÙŠØ«';
 
   @override
-  String get accountCreatedSuccessfully => 'تم إنشاء الحساب بنجاح';
+  String get accountCreatedSuccessfully =>
+      'ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get failedToCreateAccount => 'فشل في إنشاء الحساب';
+  String get failedToCreateAccount => 'ÙØ´Ù„ ÙÙŠ Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨';
 
   @override
-  String get createAccount => 'إنشاء حساب';
+  String get createAccount => 'Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨';
 
   @override
   String get pleaseFillTheInputBelowHereToContinue =>
-      'يرجى ملء المعلومات أدناه للمتابعة';
+      'ÙŠØ±Ø¬Ù‰ Ù…Ù„Ø¡ Ø§Ù„Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø£Ø¯Ù†Ø§Ù‡ Ù„Ù„Ù…ØªØ§Ø¨Ø¹Ø©';
 
   @override
-  String get failedToLoadContent => 'فشل في تحميل المحتوى';
+  String get failedToLoadContent => 'ÙØ´Ù„ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ø­ØªÙˆÙ‰';
 
   @override
-  String get noAddress => 'لا يوجد عنوان';
+  String get noAddress => 'Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø¹Ù†ÙˆØ§Ù†';
 
   @override
-  String get searchForAService => 'ابحث عن خدمة';
+  String get searchForAService => 'Ø§Ø¨Ø­Ø« Ø¹Ù† Ø®Ø¯Ù…Ø©';
 
   @override
-  String get jobCategories => 'فئات الوظائف';
+  String get jobCategories => 'ÙØ¦Ø§Øª Ø§Ù„ÙˆØ¸Ø§Ø¦Ù';
 
   @override
   String get failedToLoadDataPleaseTryAgainLater =>
-      'فشل في تحميل البيانات. يرجى المحاولة لاحقًا.';
+      'ÙØ´Ù„ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù„Ø§Ø­Ù‚Ù‹Ø§.';
 
   @override
-  String get noBookingsFound => 'لم يتم العثور على حجوزات.';
+  String get noBookingsFound => 'Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø­Ø¬ÙˆØ²Ø§Øª.';
 
   @override
-  String get searchServices => 'ابحث عن الخدمات...';
+  String get searchServices => 'Ø§Ø¨Ø­Ø« Ø¹Ù† Ø§Ù„Ø®Ø¯Ù…Ø§Øª...';
 
   @override
-  String get noServicesInYourWishlist => 'لا توجد خدمات في قائمة المفضلات';
+  String get noServicesInYourWishlist =>
+      'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø®Ø¯Ù…Ø§Øª ÙÙŠ Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…ÙØ¶Ù„Ø§Øª';
 
   @override
-  String get failedToSaveBooking => 'فشل في حفظ الحجز';
+  String get failedToSaveBooking => 'ÙØ´Ù„ ÙÙŠ Ø­ÙØ¸ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get morning => 'صباحًا';
+  String get morning => 'ØµØ¨Ø§Ø­Ù‹Ø§';
 
   @override
-  String get afterNoon => 'بعد الظهر';
+  String get afterNoon => 'Ø¨Ø¹Ø¯ Ø§Ù„Ø¸Ù‡Ø±';
 
   @override
-  String get evening => 'مساءً';
+  String get evening => 'Ù…Ø³Ø§Ø¡Ù‹';
 
   @override
-  String get serviceBookedSuccessfully => 'تم حجز الخدمة بنجاح';
+  String get serviceBookedSuccessfully => 'ØªÙ… Ø­Ø¬Ø² Ø§Ù„Ø®Ø¯Ù…Ø© Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get checkForBookingStatus => 'تحقق من حالة الحجز في قسم \'حجوزاتي\'';
+  String get checkForBookingStatus =>
+      'ØªØ­Ù‚Ù‚ Ù…Ù† Ø­Ø§Ù„Ø© Ø§Ù„Ø­Ø¬Ø² ÙÙŠ Ù‚Ø³Ù… \'Ø­Ø¬ÙˆØ²Ø§ØªÙŠ\'';
 
   @override
-  String get selectDateTime => 'حدد التاريخ والوقت';
+  String get selectDateTime => 'Ø­Ø¯Ø¯ Ø§Ù„ØªØ§Ø±ÙŠØ® ÙˆØ§Ù„ÙˆÙ‚Øª';
 
   @override
-  String get completeYourBooking => 'أكمل حجزك';
+  String get completeYourBooking => 'Ø£ÙƒÙ…Ù„ Ø­Ø¬Ø²Ùƒ';
 
   @override
-  String get selectDate => 'حدد التاريخ';
+  String get selectDate => 'Ø­Ø¯Ø¯ Ø§Ù„ØªØ§Ø±ÙŠØ®';
 
   @override
-  String get availableTimeSlot => 'الفترة الزمنية المتاحة';
+  String get availableTimeSlot => 'Ø§Ù„ÙØªØ±Ø© Ø§Ù„Ø²Ù…Ù†ÙŠØ© Ø§Ù„Ù…ØªØ§Ø­Ø©';
 
   @override
-  String get addNotes => 'إضافة ملاحظات';
+  String get addNotes => 'Ø¥Ø¶Ø§ÙØ© Ù…Ù„Ø§Ø­Ø¸Ø§Øª';
 
   @override
-  String get paymentMode => 'طريقة الدفع';
+  String get paymentMode => 'Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get cashInHand => 'نقدًا';
+  String get cashInHand => 'Ù†Ù‚Ø¯Ù‹Ø§';
 
   @override
-  String get netBankingUpiCard => 'تحويل بنكي / UPI / بطاقة';
+  String get netBankingUpiCard => 'ØªØ­ÙˆÙŠÙ„ Ø¨Ù†ÙƒÙŠ / UPI / Ø¨Ø·Ø§Ù‚Ø©';
 
   @override
-  String get pleaseSelectADate => 'يرجى تحديد التاريخ';
+  String get pleaseSelectADate => 'ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ¯ Ø§Ù„ØªØ§Ø±ÙŠØ®';
 
   @override
-  String get back => 'رجوع';
+  String get back => 'Ø±Ø¬ÙˆØ¹';
 
   @override
-  String get bookAppointment => 'حجز موعد';
+  String get bookAppointment => 'Ø­Ø¬Ø² Ù…ÙˆØ¹Ø¯';
 
   @override
-  String get rating => 'التقييم';
+  String get rating => 'Ø§Ù„ØªÙ‚ÙŠÙŠÙ…';
 
   @override
-  String get price => 'السعر';
+  String get price => 'Ø§Ù„Ø³Ø¹Ø±';
 
   @override
-  String get reviewSubmittedSuccessfully => 'تم تقديم التقييم بنجاح';
+  String get reviewSubmittedSuccessfully =>
+      'ØªÙ… ØªÙ‚Ø¯ÙŠÙ… Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get anErrorOccurred => 'حدث خطأ';
+  String get anErrorOccurred => 'Ø­Ø¯Ø« Ø®Ø·Ø£';
 
   @override
-  String get submitAReview => 'إرسال المراجعة';
+  String get submitAReview => 'Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©';
 
   @override
-  String get overallRating => 'التقييم العام';
+  String get overallRating => 'Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø¹Ø§Ù…';
 
   @override
-  String get writeYourReviewHere => 'اكتب مراجعتك هنا';
+  String get writeYourReviewHere => 'Ø§ÙƒØªØ¨ Ù…Ø±Ø§Ø¬Ø¹ØªÙƒ Ù‡Ù†Ø§';
 
   @override
-  String get pleaseWriteAReview => 'يرجى كتابة مراجعة';
+  String get pleaseWriteAReview => 'ÙŠØ±Ø¬Ù‰ ÙƒØªØ§Ø¨Ø© Ù…Ø±Ø§Ø¬Ø¹Ø©';
 
   @override
-  String get cancel => 'إلغاء';
+  String get cancel => 'Ø¥Ù„ØºØ§Ø¡';
 
   @override
-  String get bookingCancelled => 'تم إلغاء الحجز';
+  String get bookingCancelled => 'ØªÙ… Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get failedToCancelBooking => 'فشل إلغاء الحجز';
+  String get failedToCancelBooking => 'ÙØ´Ù„ Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
   String get areYouSureToWanttoCancelthisBooking =>
-      'هل تريد بالفعل إلغاء هذا الحجز؟';
+      'Ù‡Ù„ ØªØ±ÙŠØ¯ Ø¨Ø§Ù„ÙØ¹Ù„ Ø¥Ù„ØºØ§Ø¡ Ù‡Ø°Ø§ Ø§Ù„Ø­Ø¬Ø²ØŸ';
 
   @override
   String get cancellationOnlyAvailableUntilTechnicianAccepts =>
-      'الإلغاء متاح فقط قبل قبول الفني';
+      'Ø§Ù„Ø¥Ù„ØºØ§Ø¡ Ù…ØªØ§Ø­ ÙÙ‚Ø· Ù‚Ø¨Ù„ Ù‚Ø¨ÙˆÙ„ Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get youWillBeRefundedTheFullAmount => 'سيتم استرداد المبلغ بالكامل';
+  String get youWillBeRefundedTheFullAmount =>
+      'Ø³ÙŠØªÙ… Ø§Ø³ØªØ±Ø¯Ø§Ø¯ Ø§Ù„Ù…Ø¨Ù„Øº Ø¨Ø§Ù„ÙƒØ§Ù…Ù„';
 
   @override
-  String get no => 'لا';
+  String get no => 'Ù„Ø§';
 
   @override
-  String get yesCancel => 'نعم، قم بالإلغاء';
+  String get yesCancel => 'Ù†Ø¹Ù…ØŒ Ù‚Ù… Ø¨Ø§Ù„Ø¥Ù„ØºØ§Ø¡';
 
   @override
-  String get failedToLoadServices => 'فشل تحميل الخدمات';
+  String get failedToLoadServices => 'ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø®Ø¯Ù…Ø§Øª';
 
   @override
-  String get writeAReview => 'اكتب مراجعة';
+  String get writeAReview => 'Ø§ÙƒØªØ¨ Ù…Ø±Ø§Ø¬Ø¹Ø©';
 
   @override
-  String get reviewSubmitted => 'تم تقديم المراجعة';
+  String get reviewSubmitted => 'ØªÙ… ØªÙ‚Ø¯ÙŠÙ… Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©';
 
   @override
-  String get canceled => 'ملغى';
+  String get canceled => 'Ù…Ù„ØºÙ‰';
 
   @override
-  String get requestService => 'طلب خدمة';
+  String get requestService => 'Ø·Ù„Ø¨ Ø®Ø¯Ù…Ø©';
 
   @override
-  String get submit => 'إرسال';
+  String get submit => 'Ø¥Ø±Ø³Ø§Ù„';
 
   @override
-  String get completed => 'مُكتمل';
+  String get completed => 'Ù…ÙÙƒØªÙ…Ù„';
 
   @override
-  String get contactUs => 'اتصل بنا';
+  String get contactUs => 'Ø§ØªØµÙ„ Ø¨Ù†Ø§';
 
   @override
-  String get deleteAccount => 'حذف الحساب';
+  String get deleteAccount => 'Ø­Ø°Ù Ø§Ù„Ø­Ø³Ø§Ø¨';
 
   @override
   String get areYouSureYouWantToDeleteAccount =>
-      'هل أنت متأكد من حذف الحساب نهائيًا؟';
+      'Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ù…Ù† Ø­Ø°Ù Ø§Ù„Ø­Ø³Ø§Ø¨ Ù†Ù‡Ø§Ø¦ÙŠÙ‹Ø§ØŸ';
 
   @override
-  String get signUpLater => 'المتابعة كضيف';
+  String get signUpLater => 'Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© ÙƒØ¶ÙŠÙ';
 
   @override
-  String get signUp => 'تسجيل';
+  String get signUp => 'ØªØ³Ø¬ÙŠÙ„';
 
   @override
-  String get visualizeYourIssue => 'صوّر مشكلتك';
+  String get visualizeYourIssue => 'ØµÙˆÙ‘Ø± Ù…Ø´ÙƒÙ„ØªÙƒ';
 
   @override
-  String get upload => 'رفع';
+  String get upload => 'Ø±ÙØ¹';
 
   @override
-  String get addImageOrVideoOfIssue => 'أضف صورة أو فيديو للمشكلة';
+  String get addImageOrVideoOfIssue =>
+      'Ø£Ø¶Ù ØµÙˆØ±Ø© Ø£Ùˆ ÙÙŠØ¯ÙŠÙˆ Ù„Ù„Ù…Ø´ÙƒÙ„Ø©';
 
   @override
-  String get completePayment => 'أكمل الدفع';
+  String get completePayment => 'Ø£ÙƒÙ…Ù„ Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get payment => 'دفع';
+  String get payment => 'Ø¯ÙØ¹';
 
   @override
-  String get cards => 'داخل التطبيق';
+  String get cards => 'Ø¯Ø§Ø®Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get applePay => 'دفع بواسطة Apple Pay';
+  String get applePay => 'Ø¯ÙØ¹ Ø¨ÙˆØ§Ø³Ø·Ø© Apple Pay';
 
   @override
-  String get completedBold => 'مُكتمل';
+  String get completedBold => 'Ù…ÙÙƒØªÙ…Ù„';
 
   @override
-  String get paymentProcessedSuccessfully => 'تمت معالجة الدفع بنجاح';
+  String get paymentProcessedSuccessfully =>
+      'ØªÙ…Øª Ù…Ø¹Ø§Ù„Ø¬Ø© Ø§Ù„Ø¯ÙØ¹ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get cashOnHands => 'خارج التطبيق';
+  String get cashOnHands => 'Ø®Ø§Ø±Ø¬ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get insideApp => 'داخل التطبيق';
+  String get insideApp => 'Ø¯Ø§Ø®Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get outsideApp => 'خارج التطبيق';
+  String get outsideApp => 'Ø®Ø§Ø±Ø¬ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get amount => 'المبلغ';
+  String get amount => 'Ø§Ù„Ù…Ø¨Ù„Øº';
 
   @override
-  String get processingPayment => 'جاري معالجة الدفع';
+  String get processingPayment => 'Ø¬Ø§Ø±ÙŠ Ù…Ø¹Ø§Ù„Ø¬Ø© Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get amountPaid => 'المبلغ المدفوع';
+  String get amountPaid => 'Ø§Ù„Ù…Ø¨Ù„Øº Ø§Ù„Ù…Ø¯ÙÙˆØ¹';
 
   @override
-  String get reviewNow => 'قيم الآن';
+  String get reviewNow => 'Ù‚ÙŠÙ… Ø§Ù„Ø¢Ù†';
 
   @override
-  String get chooseYourTechnician => 'اختر الفني';
+  String get chooseYourTechnician => 'Ø§Ø®ØªØ± Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get chooseSource => 'اختر المصدر';
+  String get chooseSource => 'Ø§Ø®ØªØ± Ø§Ù„Ù…ØµØ¯Ø±';
 
   @override
   String get noTechniciansFoundMatchingYourSearch =>
-      'لم يتم العثور على فنيين مطابقين لبحثك';
+      'Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ ÙÙ†ÙŠÙŠÙ† Ù…Ø·Ø§Ø¨Ù‚ÙŠÙ† Ù„Ø¨Ø­Ø«Ùƒ';
 
   @override
-  String get searchTechnicians => 'ابحث عن فنيين';
+  String get searchTechnicians => 'Ø§Ø¨Ø­Ø« Ø¹Ù† ÙÙ†ÙŠÙŠÙ†';
 
   @override
-  String get mode => 'الوضع';
+  String get mode => 'Ø§Ù„ÙˆØ¶Ø¹';
 
   @override
-  String get kmaway => 'كم منك';
+  String get kmaway => 'ÙƒÙ… Ù…Ù†Ùƒ';
 
   @override
-  String get orders => 'الطلبات';
+  String get orders => 'Ø§Ù„Ø·Ù„Ø¨Ø§Øª';
 
   @override
-  String get services => 'الخدمات';
+  String get services => 'Ø§Ù„Ø®Ø¯Ù…Ø§Øª';
 
   @override
-  String get completedOrders => 'الطلبات المكتملة';
+  String get completedOrders => 'Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…ÙƒØªÙ…Ù„Ø©';
 
   @override
-  String get reviews => 'التقييمات';
+  String get reviews => 'Ø§Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª';
 
   @override
-  String get inspectionOnly => 'فحص فقط';
+  String get inspectionOnly => 'ÙØ­Øµ ÙÙ‚Ø·';
 
   @override
-  String get fullService => 'خدمة كاملة';
+  String get fullService => 'Ø®Ø¯Ù…Ø© ÙƒØ§Ù…Ù„Ø©';
 
   @override
-  String get selectVideoSource => 'اختر مصدر الفيديو';
+  String get selectVideoSource => 'Ø§Ø®ØªØ± Ù…ØµØ¯Ø± Ø§Ù„ÙÙŠØ¯ÙŠÙˆ';
 
   @override
-  String get camera => 'الكاميرا';
+  String get camera => 'Ø§Ù„ÙƒØ§Ù…ÙŠØ±Ø§';
 
   @override
-  String get noTechniciansFound => 'لم يتم العثور على فنيين';
+  String get noTechniciansFound => 'Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ ÙÙ†ÙŠÙŠÙ†';
 
   @override
-  String get gallery => 'المعرض';
+  String get gallery => 'Ø§Ù„Ù…Ø¹Ø±Ø¶';
 
   @override
-  String get selectImageSource => 'اختر مصدر الصورة';
+  String get selectImageSource => 'Ø§Ø®ØªØ± Ù…ØµØ¯Ø± Ø§Ù„ØµÙˆØ±Ø©';
 
   @override
-  String get confirmPayment => 'تأكيد الدفع';
+  String get confirmPayment => 'ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø¯ÙØ¹';
 
   @override
   String get processingPaymentDesc =>
-      'يرجى الانتظار أثناء معالجة معاملتك بأمان';
+      'ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø± Ø£Ø«Ù†Ø§Ø¡ Ù…Ø¹Ø§Ù„Ø¬Ø© Ù…Ø¹Ø§Ù…Ù„ØªÙƒ Ø¨Ø£Ù…Ø§Ù†';
 
   @override
-  String get transactionError => 'خطأ في المعاملة';
+  String get transactionError => 'Ø®Ø·Ø£ ÙÙŠ Ø§Ù„Ù…Ø¹Ø§Ù…Ù„Ø©';
 
   @override
-  String get transactionErrorDesc => 'حدث خطأ غير متوقع. يرجى المحاولة لاحقًا';
+  String get transactionErrorDesc =>
+      'Ø­Ø¯Ø« Ø®Ø·Ø£ ØºÙŠØ± Ù…ØªÙˆÙ‚Ø¹. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù„Ø§Ø­Ù‚Ù‹Ø§';
 
   @override
-  String get paymentSuccessful => 'تم الدفع بنجاح';
+  String get paymentSuccessful => 'ØªÙ… Ø§Ù„Ø¯ÙØ¹ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get paymentSuccessfulDesc => 'تم تأكيد حجزك بنجاح';
+  String get paymentSuccessfulDesc => 'ØªÙ… ØªØ£ÙƒÙŠØ¯ Ø­Ø¬Ø²Ùƒ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get paymentFailed => 'فشل الدفع';
+  String get paymentFailed => 'ÙØ´Ù„ Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get paymentFailedDesc => 'لم يتم حفظ الحجز. يرجى المحاولة مرة أخرى';
+  String get paymentFailedDesc =>
+      'Ù„Ù… ÙŠØªÙ… Ø­ÙØ¸ Ø§Ù„Ø­Ø¬Ø². ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰';
 
   @override
-  String get paymentPending => 'الدفع معلق';
+  String get paymentPending => 'Ø§Ù„Ø¯ÙØ¹ Ù…Ø¹Ù„Ù‚';
 
   @override
   String get paymentPendingDesc =>
-      'تم تأكيد حجزك، يرجى الدفع نقدًا عند تقديم الخدمة';
+      'ØªÙ… ØªØ£ÙƒÙŠØ¯ Ø­Ø¬Ø²ÙƒØŒ ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø¯ÙØ¹ Ù†Ù‚Ø¯Ù‹Ø§ Ø¹Ù†Ø¯ ØªÙ‚Ø¯ÙŠÙ… Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get ok => 'حسنًا';
+  String get ok => 'Ø­Ø³Ù†Ù‹Ø§';
 
   @override
-  String get signupRequired => 'التسجيل مطلوب';
+  String get signupRequired => 'Ø§Ù„ØªØ³Ø¬ÙŠÙ„ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
   String get signUpRequiredDes =>
-      'أنت تستخدم التطبيق كضيف. للتسجيل للوصول إلى المزيد من الميزات، يرجى تسجيل الدخول أو إنشاء حساب';
+      'Ø£Ù†Øª ØªØ³ØªØ®Ø¯Ù… Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ ÙƒØ¶ÙŠÙ. Ù„Ù„ØªØ³Ø¬ÙŠÙ„ Ù„Ù„ÙˆØµÙˆÙ„ Ø¥Ù„Ù‰ Ø§Ù„Ù…Ø²ÙŠØ¯ Ù…Ù† Ø§Ù„Ù…ÙŠØ²Ø§ØªØŒ ÙŠØ±Ø¬Ù‰ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø£Ùˆ Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨';
 
   @override
-  String get contactSupportOptions => 'خيارات الاتصال بالدعم';
+  String get contactSupportOptions =>
+      'Ø®ÙŠØ§Ø±Ø§Øª Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø¯Ø¹Ù…';
 
   @override
-  String get contactByEmail => 'الاتصال عن طريق البريد الإلكتروني';
+  String get contactByEmail =>
+      'Ø§Ù„Ø§ØªØµØ§Ù„ Ø¹Ù† Ø·Ø±ÙŠÙ‚ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ';
 
   @override
-  String get contactByWhatsApp => 'التواصل عبر الواتساب';
+  String get contactByWhatsApp => 'Ø§Ù„ØªÙˆØ§ØµÙ„ Ø¹Ø¨Ø± Ø§Ù„ÙˆØ§ØªØ³Ø§Ø¨';
 
   @override
-  String get invalidVerificationCode => 'كود التحقق غير صحيح';
+  String get invalidVerificationCode => 'ÙƒÙˆØ¯ Ø§Ù„ØªØ­Ù‚Ù‚ ØºÙŠØ± ØµØ­ÙŠØ­';
 
   @override
   String get invalidVerificationId =>
-      'معرف التحقق غير صحيح. يرجى طلب رمز جديد.';
+      'Ù…Ø¹Ø±Ù Ø§Ù„ØªØ­Ù‚Ù‚ ØºÙŠØ± ØµØ­ÙŠØ­. ÙŠØ±Ø¬Ù‰ Ø·Ù„Ø¨ Ø±Ù…Ø² Ø¬Ø¯ÙŠØ¯.';
 
   @override
-  String get otpExpired => 'انتهت صلاحية الرمز. يرجى طلب رمز جديد.';
+  String get otpExpired =>
+      'Ø§Ù†ØªÙ‡Øª ØµÙ„Ø§Ø­ÙŠØ© Ø§Ù„Ø±Ù…Ø². ÙŠØ±Ø¬Ù‰ Ø·Ù„Ø¨ Ø±Ù…Ø² Ø¬Ø¯ÙŠØ¯.';
 
   @override
-  String get quotaExceeded => 'تم تجاوز الحد الأقصى للرسائل. حاول لاحقًا.';
+  String get quotaExceeded =>
+      'ØªÙ… ØªØ¬Ø§ÙˆØ² Ø§Ù„Ø­Ø¯ Ø§Ù„Ø£Ù‚ØµÙ‰ Ù„Ù„Ø±Ø³Ø§Ø¦Ù„. Ø­Ø§ÙˆÙ„ Ù„Ø§Ø­Ù‚Ù‹Ø§.';
 
   @override
   String get tooManyAttempts =>
-      'عدد المحاولات كبير جدًا. يرجى الانتظار والمحاولة لاحقًا.';
+      'Ø¹Ø¯Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø§Øª ÙƒØ¨ÙŠØ± Ø¬Ø¯Ù‹Ø§. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø± ÙˆØ§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù„Ø§Ø­Ù‚Ù‹Ø§.';
 
   @override
   String get tooManyRequests =>
-      'طلبات كثيرة جدًا. يرجى الانتظار والمحاولة لاحقًا.';
+      'Ø·Ù„Ø¨Ø§Øª ÙƒØ«ÙŠØ±Ø© Ø¬Ø¯Ù‹Ø§. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø± ÙˆØ§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù„Ø§Ø­Ù‚Ù‹Ø§.';
 
   @override
-  String get internalError => 'حدث خطأ داخلي. يرجى المحاولة لاحقًا.';
+  String get internalError =>
+      'Ø­Ø¯Ø« Ø®Ø·Ø£ Ø¯Ø§Ø®Ù„ÙŠ. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù„Ø§Ø­Ù‚Ù‹Ø§.';
 
   @override
   String get netTechnicianror =>
-      'خطأ في الاتصال بالشبكة. يرجى التحقق من الاتصال.';
+      'Ø®Ø·Ø§Ù” ÙÙŠ Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø´Ø¨ÙƒØ©. ÙŠØ±Ø¬Ù‰ Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø§ØªØµØ§Ù„.';
 
   @override
-  String get verificationFailed => 'فشل التحقق. يرجى المحاولة مرة أخرى.';
+  String get verificationFailed =>
+      'ÙØ´Ù„ Ø§Ù„ØªØ­Ù‚Ù‚. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.';
 
   @override
-  String get pending => 'قيد الانتظار';
+  String get pending => 'Ù‚ÙŠØ¯ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø±';
 
   @override
-  String get confirmed => 'مؤكد';
+  String get confirmed => 'Ù…Ø¤ÙƒØ¯';
 
   @override
-  String get paymentPendings => 'دفعات معلقة';
+  String get paymentPendings => 'Ø¯ÙØ¹Ø§Øª Ù…Ø¹Ù„Ù‚Ø©';
 
   @override
-  String get pastBookings => 'الحجوزات السابقة';
+  String get pastBookings => 'Ø§Ù„Ø­Ø¬ÙˆØ²Ø§Øª Ø§Ù„Ø³Ø§Ø¨Ù‚Ø©';
 
   @override
-  String get startTyping => 'ابدأ الكتابة للبحث عن الخدمات';
+  String get startTyping =>
+      'Ø§Ø¨Ø¯Ø£ Ø§Ù„ÙƒØªØ§Ø¨Ø© Ù„Ù„Ø¨Ø­Ø« Ø¹Ù† Ø§Ù„Ø®Ø¯Ù…Ø§Øª';
 
   @override
-  String get noServicesFound => 'لم يتم العثور على خدمات';
+  String get noServicesFound => 'Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø®Ø¯Ù…Ø§Øª';
 
   @override
-  String get rememberMe => 'تذكرني';
+  String get rememberMe => 'ØªØ°ÙƒØ±Ù†ÙŠ';
 
   @override
-  String get sar => 'ر.س';
+  String get sar => 'Ø±.Ø³';
 
   @override
-  String get discount => 'الخصم';
+  String get discount => 'Ø§Ù„Ø®ØµÙ…';
 
   @override
-  String get off => 'خصم';
+  String get off => 'Ø®ØµÙ…';
 
   @override
-  String get originalPrice => 'السعر الأصلي';
+  String get originalPrice => 'Ø§Ù„Ø³Ø¹Ø± Ø§Ù„Ø£ØµÙ„ÙŠ';
 
   @override
-  String get am => 'ص';
+  String get am => 'Øµ';
 
   @override
-  String get pm => 'م';
+  String get pm => 'Ù…';
 
   @override
-  String get night => 'ليلاً';
+  String get night => 'Ù„ÙŠÙ„Ø§Ù‹';
 
   @override
-  String get bookingDetails => 'تفاصيل الحجز';
+  String get bookingDetails => 'ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get serviceInformation => 'معلومات الخدمة';
+  String get serviceInformation => 'Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get description => 'الوصف';
+  String get description => 'Ø§Ù„ÙˆØµÙ';
 
   @override
-  String get servicePrice => 'سعر الخدمة';
+  String get servicePrice => 'Ø³Ø¹Ø± Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get schedule => 'الجدول';
+  String get schedule => 'Ø§Ù„Ø¬Ø¯ÙˆÙ„';
 
   @override
-  String get dateAndTime => 'التاريخ والوقت';
+  String get dateAndTime => 'Ø§Ù„ØªØ§Ø±ÙŠØ® ÙˆØ§Ù„ÙˆÙ‚Øª';
 
   @override
-  String get cancelledBy => 'تم الإلغاء بواسطة';
+  String get cancelledBy => 'ØªÙ… Ø§Ù„Ø¥Ù„ØºØ§Ø¡ Ø¨ÙˆØ§Ø³Ø·Ø©';
 
   @override
-  String get customer => 'العميل';
+  String get customer => 'Ø§Ù„Ø¹Ù…ÙŠÙ„';
 
   @override
-  String get admin => 'الادمن';
+  String get admin => 'Ø§Ù„Ø§Ø¯Ù…Ù†';
 
   @override
-  String get address => 'العنوان';
+  String get address => 'Ø§Ù„Ø¹Ù†ÙˆØ§Ù†';
 
   @override
-  String get cancellationReason => 'سبب الإلغاء';
+  String get cancellationReason => 'Ø³Ø¨Ø¨ Ø§Ù„Ø¥Ù„ØºØ§Ø¡';
 
   @override
-  String get cancelledOn => 'تم الإلغاء في';
+  String get cancelledOn => 'ØªÙ… Ø§Ù„Ø¥Ù„ØºØ§Ø¡ ÙÙŠ';
 
   @override
-  String get cancellationDetails => 'تفاصيل الإلغاء';
+  String get cancellationDetails => 'ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø¥Ù„ØºØ§Ø¡';
 
   @override
-  String get pleaseEnterCancellationReason => 'يرجى إدخال سبب الإلغاء';
+  String get pleaseEnterCancellationReason =>
+      'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ø³Ø¨Ø¨ Ø§Ù„Ø¥Ù„ØºØ§Ø¡';
 
   @override
-  String get reasonForCancellation => 'سبب الإلغاء';
+  String get reasonForCancellation => 'Ø³Ø¨Ø¨ Ø§Ù„Ø¥Ù„ØºØ§Ø¡';
 
   @override
-  String get pricingAndPayment => 'التسعيرة والدفع';
+  String get pricingAndPayment => 'Ø§Ù„ØªØ³Ø¹ÙŠØ±Ø© ÙˆØ§Ù„Ø¯ÙØ¹';
 
   @override
-  String get additionalNotes => 'وصف المشكلة';
+  String get additionalNotes => 'ÙˆØµÙ Ø§Ù„Ù…Ø´ÙƒÙ„Ø©';
 
   @override
-  String get paymentMethod => 'طريقة الدفع';
+  String get paymentMethod => 'Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get customerReview => 'تقييم العميل';
+  String get customerReview => 'ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø¹Ù…ÙŠÙ„';
 
   @override
-  String get review => 'المراجعة';
+  String get review => 'Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©';
 
   @override
-  String get reviewedOn => 'تم التقييم في';
+  String get reviewedOn => 'ØªÙ… Ø§Ù„ØªÙ‚ÙŠÙŠÙ… ÙÙŠ';
 
   @override
-  String get accepted => 'مؤكد';
+  String get accepted => 'Ù…Ø¤ÙƒØ¯';
 
   @override
-  String get rejected => 'مرفوض';
+  String get rejected => 'Ù…Ø±ÙÙˆØ¶';
 
   @override
-  String get cancelled => 'ملغي';
+  String get cancelled => 'Ù…Ù„ØºÙŠ';
 
   @override
-  String get unknown => 'غير معروف';
+  String get unknown => 'ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ';
 
   @override
-  String get service => 'الخدمة';
+  String get service => 'Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get permissionLocation => 'لا يمكن استرداد الموقع. تحقق من الأذونات.';
+  String get permissionLocation =>
+      'Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø§Ø³ØªØ±Ø¯Ø§Ø¯ Ø§Ù„Ù…ÙˆÙ‚Ø¹. ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø£Ø°ÙˆÙ†Ø§Øª.';
 
   @override
-  String get location => 'الموقع';
+  String get location => 'Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
   String get enterServiceLocation =>
-      'أدخل موقع الخدمة أو اضغط للحصول على الموقع الحالي';
+      'Ø£Ø¯Ø®Ù„ Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø®Ø¯Ù…Ø© Ø£Ùˆ Ø§Ø¶ØºØ· Ù„Ù„Ø­ØµÙˆÙ„ Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø­Ø§Ù„ÙŠ';
 
   @override
-  String get yourLocation => 'موقعك';
+  String get yourLocation => 'Ù…ÙˆÙ‚Ø¹Ùƒ';
 
   @override
-  String get paymentCancelled => 'تم إلغاء الدفع';
+  String get paymentCancelled => 'ØªÙ… Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get paymentCancelledDesc => 'لقد قمت بإلغاء الدفع';
+  String get paymentCancelledDesc => 'Ù„Ù‚Ø¯ Ù‚Ù…Øª Ø¨Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get lessthan50SAR => 'أقل من 50 ر.س';
+  String get lessthan50SAR => 'Ø£Ù‚Ù„ Ù…Ù† 50 Ø±.Ø³';
 
   @override
-  String get fiftySARto100SAR => '50 ر.س إلى 100 ر.س';
+  String get fiftySARto100SAR => '50 Ø±.Ø³ Ø¥Ù„Ù‰ 100 Ø±.Ø³';
 
   @override
-  String get hundredSARto150SAR => '100 ر.س إلى 150 ر.س';
+  String get hundredSARto150SAR => '100 Ø±.Ø³ Ø¥Ù„Ù‰ 150 Ø±.Ø³';
 
   @override
-  String get onefiftySARto200SAR => '150 ر.س إلى 200 ر.س';
+  String get onefiftySARto200SAR => '150 Ø±.Ø³ Ø¥Ù„Ù‰ 200 Ø±.Ø³';
 
   @override
-  String get morethan200SAR => 'أكثر من 200 ر.س';
+  String get morethan200SAR => 'Ø£ÙƒØ«Ø± Ù…Ù† 200 Ø±.Ø³';
 
   @override
-  String get filterBy => 'التصفية بواسطة';
+  String get filterBy => 'Ø§Ù„ØªØµÙÙŠØ© Ø¨ÙˆØ§Ø³Ø·Ø©';
 
   @override
-  String get applyFilter => 'تطبيق التصفية';
+  String get applyFilter => 'ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„ØªØµÙÙŠØ©';
 
   @override
-  String get initializingPayment => 'جاري تحميل الدفع...';
+  String get initializingPayment => 'Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¯ÙØ¹...';
 
   @override
-  String get paymentWasDeclined => 'تم رفض الدفع';
+  String get paymentWasDeclined => 'ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get paymentWasCancelledByUser => 'تم إلغاء الدفع بواسطة المستخدم';
+  String get paymentWasCancelledByUser =>
+      'ØªÙ… Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø¯ÙØ¹ Ø¨ÙˆØ§Ø³Ø·Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…';
 
   @override
-  String get errorInitializingPayment => 'خطأ في تحميل الدفع';
+  String get errorInitializingPayment => 'Ø®Ø·Ø£ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¯ÙØ¹';
 
   @override
   String get telrNotConfigured =>
-      'إعدادات Telr غير مكونة. يرجى تحديث قسم TelrConfig';
+      'Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Telr ØºÙŠØ± Ù…ÙƒÙˆÙ†Ø©. ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ« Ù‚Ø³Ù… TelrConfig';
 
   @override
-  String get paymentError => 'خطأ في الدفع';
+  String get paymentError => 'Ø®Ø·Ø£ ÙÙŠ Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get paymentFailedDesc2 => 'لا تقلق، سيتم حفظ المبلغ في حسابك';
+  String get paymentFailedDesc2 =>
+      'Ù„Ø§ ØªÙ‚Ù„Ù‚ØŒ Ø³ÙŠØªÙ… Ø­ÙØ¸ Ø§Ù„Ù…Ø¨Ù„Øº ÙÙŠ Ø­Ø³Ø§Ø¨Ùƒ';
 
   @override
-  String get errorDetails => 'تفاصيل الخطأ';
+  String get errorDetails => 'ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø®Ø·Ø£';
 
   @override
-  String get orderId => 'رقم الطلب';
+  String get orderId => 'Ø±Ù‚Ù… Ø§Ù„Ø·Ù„Ø¨';
 
   @override
-  String get tryAgain => 'حاول مرة أخرى';
+  String get tryAgain => 'Ø­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰';
 
   @override
-  String get goToHome => 'الذهاب إلى الصفحة الرئيسية';
+  String get goToHome => 'Ø§Ù„Ø°Ù‡Ø§Ø¨ Ø¥Ù„Ù‰ Ø§Ù„ØµÙØ­Ø© Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©';
 
   @override
-  String get bookingCompleted => 'تم الحجز';
+  String get bookingCompleted => 'ØªÙ… Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get bookingCompletedDesc => 'تم تأكيد الحجز. سيتم التواصل معك قريبًا';
+  String get bookingCompletedDesc =>
+      'ØªÙ… ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø­Ø¬Ø². Ø³ÙŠØªÙ… Ø§Ù„ØªÙˆØ§ØµÙ„ Ù…Ø¹Ùƒ Ù‚Ø±ÙŠØ¨Ù‹Ø§';
 
   @override
-  String get date => 'التاريخ';
+  String get date => 'Ø§Ù„ØªØ§Ø±ÙŠØ®';
 
   @override
-  String get time => 'الوقت';
+  String get time => 'Ø§Ù„ÙˆÙ‚Øª';
 
   @override
-  String get backToHome => 'العودة إلى الصفحة الرئيسية';
+  String get backToHome => 'Ø§Ù„Ø¹ÙˆØ¯Ø© Ø¥Ù„Ù‰ Ø§Ù„ØµÙØ­Ø© Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©';
 
   @override
-  String get resend => 'إعادة الإرسال';
+  String get resend => 'Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ø¥Ø±Ø³Ø§Ù„';
 
   @override
-  String get copyOrderId => 'نسخ رقم الطلب';
+  String get copyOrderId => 'Ù†Ø³Ø® Ø±Ù‚Ù… Ø§Ù„Ø·Ù„Ø¨';
 
   @override
-  String get orderIdCopied => 'تم نسخ رقم الطلب';
+  String get orderIdCopied => 'ØªÙ… Ù†Ø³Ø® Ø±Ù‚Ù… Ø§Ù„Ø·Ù„Ø¨';
 
   @override
-  String get didntreciveCode => 'لم تستلم الكود؟';
+  String get didntreciveCode => 'Ù„Ù… ØªØ³ØªÙ„Ù… Ø§Ù„ÙƒÙˆØ¯ØŸ';
 
   @override
-  String get filtered => 'تمت التصفية';
+  String get filtered => 'ØªÙ…Øª Ø§Ù„ØªØµÙÙŠØ©';
 
   @override
-  String get paymentStatus => 'حالة الدفع';
+  String get paymentStatus => 'Ø­Ø§Ù„Ø© Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get pendingPayment => 'الدفعة معلقة. يرجى الدفع عند تقديم الخدمة';
+  String get pendingPayment =>
+      'Ø§Ù„Ø¯ÙØ¹Ø© Ù…Ø¹Ù„Ù‚Ø©. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø¯ÙØ¹ Ø¹Ù†Ø¯ ØªÙ‚Ø¯ÙŠÙ… Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get notifications => 'الإشعارات';
+  String get notifications => 'Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª';
 
   @override
-  String get noNotificationsYet => 'لا توجد إشعارات حتى الآن';
+  String get noNotificationsYet =>
+      'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø­ØªÙ‰ Ø§Ù„Ø¢Ù†';
 
   @override
-  String get noNotificationsMessage => 'لا توجد إشعارات حتى الآن';
+  String get noNotificationsMessage =>
+      'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø­ØªÙ‰ Ø§Ù„Ø¢Ù†';
 
   @override
-  String get markAllAsRead => 'تحديث كل الإشعارات كمقروءة';
+  String get markAllAsRead =>
+      'ØªØ­Ø¯ÙŠØ« ÙƒÙ„ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª ÙƒÙ…Ù‚Ø±ÙˆØ¡Ø©';
 
   @override
-  String get unexpectedErrorOccurred => 'حدث خطأ غير متوقع';
+  String get unexpectedErrorOccurred => 'Ø­Ø¯Ø« Ø®Ø·Ø£ ØºÙŠØ± Ù…ØªÙˆÙ‚Ø¹';
 
   @override
-  String get filtersApplied => 'تم تطبيق التصفية';
+  String get filtersApplied => 'ØªÙ… ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„ØªØµÙÙŠØ©';
 
   @override
-  String get clear => 'مسح';
+  String get clear => 'Ù…Ø³Ø­';
 
   @override
-  String get filter => 'تصفية';
+  String get filter => 'ØªØµÙÙŠØ©';
 
   @override
-  String get filtersAppliedText => 'تم تطبيق التصفية';
+  String get filtersAppliedText => 'ØªÙ… ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„ØªØµÙÙŠØ©';
 
   @override
-  String get filterServices => 'تصفية الخدمات';
+  String get filterServices => 'ØªØµÙÙŠØ© Ø§Ù„Ø®Ø¯Ù…Ø§Øª';
 
   @override
-  String get reset => 'إعادة تعيين';
+  String get reset => 'Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ†';
 
   @override
-  String get priceRange => 'نطاق الأسعار';
+  String get priceRange => 'Ù†Ø·Ø§Ù‚ Ø§Ù„Ø£Ø³Ø¹Ø§Ø±';
 
   @override
-  String get noCategoriesAvailable => 'لا توجد فئات متاحة';
+  String get noCategoriesAvailable => 'Ù„Ø§ ØªÙˆØ¬Ø¯ ÙØ¦Ø§Øª Ù…ØªØ§Ø­Ø©';
 
   @override
-  String get minimumRating => 'الحد الأدنى للتقييم';
+  String get minimumRating => 'Ø§Ù„Ø­Ø¯ Ø§Ù„Ø£Ø¯Ù†Ù‰ Ù„Ù„ØªÙ‚ÙŠÙŠÙ…';
 
   @override
-  String get applyFilters => 'تطبيق التصفية';
+  String get applyFilters => 'ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„ØªØµÙÙŠØ©';
 
   @override
-  String get under50 => 'أقل من 50 ر.س';
+  String get under50 => 'Ø£Ù‚Ù„ Ù…Ù† 50 Ø±.Ø³';
 
   @override
-  String get from50to100 => '50 - 100 ر.س';
+  String get from50to100 => '50 - 100 Ø±.Ø³';
 
   @override
-  String get from100to200 => '100 - 200 ر.س';
+  String get from100to200 => '100 - 200 Ø±.Ø³';
 
   @override
-  String get from200to500 => '200 - 500 ر.س';
+  String get from200to500 => '200 - 500 Ø±.Ø³';
 
   @override
-  String get from500to1000 => '500 - 1000 ر.س';
+  String get from500to1000 => '500 - 1000 Ø±.Ø³';
 
   @override
-  String get above1000 => 'أكثر من 1000 ر.س';
+  String get above1000 => 'Ø£ÙƒØ«Ø± Ù…Ù† 1000 Ø±.Ø³';
 
   @override
-  String get phoneNumberAlreadyUpdated => 'رقم الهاتف محدث بالفعل';
+  String get phoneNumberAlreadyUpdated =>
+      'Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ù…Ø­Ø¯Ø« Ø¨Ø§Ù„ÙØ¹Ù„';
 
   @override
-  String get pleaseAddCountryCode => 'يرجى إضافة رمز الدولة +966';
+  String get pleaseAddCountryCode =>
+      'ÙŠØ±Ø¬Ù‰ Ø¥Ø¶Ø§ÙØ© Ø±Ù…Ø² Ø§Ù„Ø¯ÙˆÙ„Ø© +966';
 
   @override
-  String get district => 'المنطقة';
+  String get district => 'Ø§Ù„Ù…Ù†Ø·Ù‚Ø©';
 
   @override
-  String get phoneNumberAlreadyExists => 'رقم الهاتف موجود بالفعل';
+  String get phoneNumberAlreadyExists =>
+      'Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ù…ÙˆØ¬ÙˆØ¯ Ø¨Ø§Ù„ÙØ¹Ù„';
 
   @override
-  String get selectFilter => 'اختر تصفية للفئة';
+  String get selectFilter => 'Ø§Ø®ØªØ± ØªØµÙÙŠØ© Ù„Ù„ÙØ¦Ø©';
 
   @override
-  String get migratingData => 'جارٍ نقل بياناتك';
+  String get migratingData => 'Ø¬Ø§Ø±Ù Ù†Ù‚Ù„ Ø¨ÙŠØ§Ù†Ø§ØªÙƒ';
 
   @override
   String get weAreMigratingYourData =>
-      'نقوم بنقل بياناتك بأمان إلى رقمك الجديد. قد تستغرق العملية بضع دقائق';
+      'Ù†Ù‚ÙˆÙ… Ø¨Ù†Ù‚Ù„ Ø¨ÙŠØ§Ù†Ø§ØªÙƒ Ø¨Ø£Ù…Ø§Ù† Ø¥Ù„Ù‰ Ø±Ù‚Ù…Ùƒ Ø§Ù„Ø¬Ø¯ÙŠØ¯. Ù‚Ø¯ ØªØ³ØªØºØ±Ù‚ Ø§Ù„Ø¹Ù…Ù„ÙŠØ© Ø¨Ø¶Ø¹ Ø¯Ù‚Ø§Ø¦Ù‚';
 
   @override
   String get pleaseDontCloseTheApp =>
-      'يرجى عدم إغلاق التطبيق أثناء هذه العملية لتجنب فقدان البيانات';
+      'ÙŠØ±Ø¬Ù‰ Ø¹Ø¯Ù… Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø£Ø«Ù†Ø§Ø¡ Ù‡Ø°Ù‡ Ø§Ù„Ø¹Ù…Ù„ÙŠØ© Ù„ØªØ¬Ù†Ø¨ ÙÙ‚Ø¯Ø§Ù† Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª';
 
   @override
-  String get transferringData => 'الحالة: جاري نقل البيانات...';
+  String get transferringData =>
+      'Ø§Ù„Ø­Ø§Ù„Ø©: Ø¬Ø§Ø±ÙŠ Ù†Ù‚Ù„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª...';
 
   @override
-  String get pleaseSelectAValidTime => 'يرجى تحديد وقت صحيح';
+  String get pleaseSelectAValidTime => 'ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ¯ ÙˆÙ‚Øª ØµØ­ÙŠØ­';
 
   @override
-  String get sendingOTP => 'جاري إرسال رمز التحقق...';
+  String get sendingOTP => 'Ø¬Ø§Ø±ÙŠ Ø¥Ø±Ø³Ø§Ù„ Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚...';
 
   @override
-  String get useCurrentLocation => 'استخدام الموقع الحالي';
+  String get useCurrentLocation => 'Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø­Ø§Ù„ÙŠ';
 
   @override
-  String get searchLocations => 'البحث عن الموقع';
+  String get searchLocations => 'Ø§Ù„Ø¨Ø­Ø« Ø¹Ù† Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get selectDistrict => 'اختر المنطقة';
+  String get selectDistrict => 'Ø§Ø®ØªØ± Ø§Ù„Ù…Ù†Ø·Ù‚Ø©';
 
   @override
-  String get deleteAccoundSnack => 'جارٍ حذف الحساب... سيتم تسجيل الخروج';
+  String get deleteAccoundSnack =>
+      'Ø¬Ø§Ø±Ù Ø­Ø°Ù Ø§Ù„Ø­Ø³Ø§Ø¨... Ø³ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬';
 
   @override
-  String get bioMetricAuthentication => 'تفعيل بصمة الدخول';
+  String get bioMetricAuthentication => 'ØªÙØ¹ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¯Ø®ÙˆÙ„';
 
   @override
-  String get chooseServiceAddress => 'اختر عنوان الخدمة';
+  String get chooseServiceAddress => 'Ø§Ø®ØªØ± Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get pickServiceAddress => 'حدد العنوان الذي تحتاجه للخدمة';
+  String get pickServiceAddress =>
+      'Ø­Ø¯Ø¯ Ø§Ù„Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ø°ÙŠ ØªØ­ØªØ§Ø¬Ù‡ Ù„Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get serviceto => 'الخدمة ل:';
+  String get serviceto => 'Ø§Ù„Ø®Ø¯Ù…Ø© Ù„:';
 
   @override
-  String get selectServiceAddress => 'حدد عنوان الخدمة';
+  String get selectServiceAddress => 'Ø­Ø¯Ø¯ Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get goToBookings => 'الانتقال إلى الحجوزات';
+  String get goToBookings => 'Ø§Ù„Ø§Ù†ØªÙ‚Ø§Ù„ Ø¥Ù„Ù‰ Ø§Ù„Ø­Ø¬ÙˆØ²Ø§Øª';
 
   @override
-  String get savedAddresses => 'العناوين المحفوظة';
+  String get savedAddresses => 'Ø§Ù„Ø¹Ù†Ø§ÙˆÙŠÙ† Ø§Ù„Ù…Ø­ÙÙˆØ¸Ø©';
 
   @override
-  String get addNew => 'إضافة جديد';
+  String get addNew => 'Ø¥Ø¶Ø§ÙØ© Ø¬Ø¯ÙŠØ¯';
 
   @override
-  String get bookingIdCopied => 'تم نسخ رقم الحجز';
+  String get bookingIdCopied => 'ØªÙ… Ù†Ø³Ø® Ø±Ù‚Ù… Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get selected => 'محدد';
+  String get selected => 'Ù…Ø­Ø¯Ø¯';
 
   @override
-  String get pleaseAddANewAddress => 'يرجى إضافة عنوان جديد';
+  String get pleaseAddANewAddress => 'ÙŠØ±Ø¬Ù‰ Ø¥Ø¶Ø§ÙØ© Ø¹Ù†ÙˆØ§Ù† Ø¬Ø¯ÙŠØ¯';
 
   @override
   String get locationServicesDisabled =>
-      'خدمات الموقع معطلة. يرجى تفعيلها في إعدادات الجهاز';
+      'Ø®Ø¯Ù…Ø§Øª Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…Ø¹Ø·Ù„Ø©. ÙŠØ±Ø¬Ù‰ ØªÙØ¹ÙŠÙ„Ù‡Ø§ ÙÙŠ Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ø¬Ù‡Ø§Ø²';
 
   @override
   String get locationPermissionDenied =>
-      'تم رفض إذن الموقع. يرجى تفعيله في إعدادات الجهاز';
+      'ØªÙ… Ø±ÙØ¶ Ø¥Ø°Ù† Ø§Ù„Ù…ÙˆÙ‚Ø¹. ÙŠØ±Ø¬Ù‰ ØªÙØ¹ÙŠÙ„Ù‡ ÙÙŠ Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ø¬Ù‡Ø§Ø²';
 
   @override
   String get locationPermissionDeniedForever =>
-      'تم رفض إذن الموقع دائمًا. يرجى تفعيله في إعدادات الجهاز';
+      'ØªÙ… Ø±ÙØ¶ Ø¥Ø°Ù† Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¯Ø§Ø¦Ù…Ù‹Ø§. ÙŠØ±Ø¬Ù‰ ØªÙØ¹ÙŠÙ„Ù‡ ÙÙŠ Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ø¬Ù‡Ø§Ø²';
 
   @override
   String get couldNotGetCurrentLocation =>
-      'لا يمكن استخراج الموقع. تحقق من الأذونات';
+      'Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø§Ø³ØªØ®Ø±Ø§Ø¬ Ø§Ù„Ù…ÙˆÙ‚Ø¹. ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø£Ø°ÙˆÙ†Ø§Øª';
 
   @override
-  String get selectedLocation => 'الموقع المحدد';
+  String get selectedLocation => 'Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø­Ø¯Ø¯';
 
   @override
-  String get unableToGetAddress => 'لا يمكن استخراج العنوان';
+  String get unableToGetAddress =>
+      'Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø§Ø³ØªØ®Ø±Ø§Ø¬ Ø§Ù„Ø¹Ù†ÙˆØ§Ù†';
 
   @override
-  String get couldNotFindLocation => 'لا يمكن العثور على الموقع';
+  String get couldNotFindLocation =>
+      'Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get gettingAddress => 'جاري استخراج العنوان...';
+  String get gettingAddress => 'Ø¬Ø§Ø±ÙŠ Ø§Ø³ØªØ®Ø±Ø§Ø¬ Ø§Ù„Ø¹Ù†ÙˆØ§Ù†...';
 
   @override
-  String get buildingName => 'اسم المبنى';
+  String get buildingName => 'Ø§Ø³Ù… Ø§Ù„Ù…Ø¨Ù†Ù‰';
 
   @override
-  String get buildingNameRequired => 'اسم المبنى مطلوب';
+  String get buildingNameRequired => 'Ø§Ø³Ù… Ø§Ù„Ù…Ø¨Ù†Ù‰ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get fullNameRequired => 'الاسم الكامل مطلوب';
+  String get fullNameRequired => 'Ø§Ù„Ø§Ø³Ù… Ø§Ù„ÙƒØ§Ù…Ù„ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get fullName => 'الاسم الكامل';
+  String get fullName => 'Ø§Ù„Ø§Ø³Ù… Ø§Ù„ÙƒØ§Ù…Ù„';
 
   @override
-  String get invalidPhoneNumberFormat => 'تنسيق رقم الهاتف غير صحيح';
+  String get invalidPhoneNumberFormat =>
+      'ØªÙ†Ø³ÙŠÙ‚ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ØºÙŠØ± ØµØ­ÙŠØ­';
 
   @override
-  String get saveAddress => 'حفظ العنوان';
+  String get saveAddress => 'Ø­ÙØ¸ Ø§Ù„Ø¹Ù†ÙˆØ§Ù†';
 
   @override
-  String get chooseLocation => 'اختر الموقع';
+  String get chooseLocation => 'Ø§Ø®ØªØ± Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get useMyCurrentLocation => 'استخدام الموقع الحالي';
+  String get useMyCurrentLocation => 'Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø­Ø§Ù„ÙŠ';
 
   @override
-  String get addAddressDetails => 'إضافة تفاصيل العنوان';
+  String get addAddressDetails => 'Ø¥Ø¶Ø§ÙØ© ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø¹Ù†ÙˆØ§Ù†';
 
   @override
-  String get pleaseSelectServiceAddress => 'يرجى تحديد عنوان الخدمة';
+  String get pleaseSelectServiceAddress =>
+      'ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ¯ Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get paymentDeclined => 'تم رفض الدفع';
+  String get paymentDeclined => 'ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get tipAmount => 'مبلغ الإكرامية';
+  String get tipAmount => 'Ù…Ø¨Ù„Øº Ø§Ù„Ø¥ÙƒØ±Ø§Ù…ÙŠØ©';
 
   @override
-  String get failedToSaveReview => 'فشل حفظ التقييم';
+  String get failedToSaveReview => 'ÙØ´Ù„ Ø­ÙØ¸ Ø§Ù„ØªÙ‚ÙŠÙŠÙ…';
 
   @override
-  String get thankTheTechnician => 'شكرًا للفني';
+  String get thankTheTechnician => 'Ø´ÙƒØ±Ù‹Ø§ Ù„Ù„ÙÙ†ÙŠ';
 
   @override
-  String get showAppreciationWithTip => 'أظهر التقدير مع الإكرامية';
+  String get showAppreciationWithTip =>
+      'Ø£Ø¸Ù‡Ø± Ø§Ù„ØªÙ‚Ø¯ÙŠØ± Ù…Ø¹ Ø§Ù„Ø¥ÙƒØ±Ø§Ù…ÙŠØ©';
 
   @override
-  String get enterCustomTipAmount => 'أدخل مبلغ الإكرامية المخصص';
+  String get enterCustomTipAmount =>
+      'Ø£Ø¯Ø®Ù„ Ù…Ø¨Ù„Øº Ø§Ù„Ø¥ÙƒØ±Ø§Ù…ÙŠØ© Ø§Ù„Ù…Ø®ØµØµ';
 
   @override
-  String get selectPaymentMethod => 'حدد طريقة الدفع';
+  String get selectPaymentMethod => 'Ø­Ø¯Ø¯ Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get payInCash => 'الدفع خارج التطبيق';
+  String get payInCash => 'Ø§Ù„Ø¯ÙØ¹ Ø®Ø§Ø±Ø¬ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get tip => 'إكرامية:';
+  String get tip => 'Ø¥ÙƒØ±Ø§Ù…ÙŠØ©:';
 
   @override
-  String get card => 'داخل التطبيق';
+  String get card => 'Ø¯Ø§Ø®Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get cash => 'خارج التطبيق';
+  String get cash => 'Ø®Ø§Ø±Ø¬ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get custom => 'مخصص';
+  String get custom => 'Ù…Ø®ØµØµ';
 
   @override
-  String get writeYourReview => 'اكتب تقييمك';
+  String get writeYourReview => 'Ø§ÙƒØªØ¨ ØªÙ‚ÙŠÙŠÙ…Ùƒ';
 
   @override
-  String get processing => 'جاري المعالجة...';
+  String get processing => 'Ø¬Ø§Ø±ÙŠ Ø§Ù„Ù…Ø¹Ø§Ù„Ø¬Ø©...';
 
   @override
-  String get submitting => 'جاري الإرسال...';
+  String get submitting => 'Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø¥Ø±Ø³Ø§Ù„...';
 
   @override
-  String get submitTip => 'إرسال & إكرامية';
+  String get submitTip => 'Ø¥Ø±Ø³Ø§Ù„ & Ø¥ÙƒØ±Ø§Ù…ÙŠØ©';
 
   @override
-  String get payWithCard => 'الدفع داخل التطبيق';
+  String get payWithCard => 'Ø§Ù„Ø¯ÙØ¹ Ø¯Ø§Ø®Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get pleaseSelectRating => 'يرجى تحديد التقييم';
+  String get pleaseSelectRating => 'ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ¯ Ø§Ù„ØªÙ‚ÙŠÙŠÙ…';
 
   @override
-  String get pleaseSelectPaymentMethod => 'يرجى تحديد طريقة الدفع';
+  String get pleaseSelectPaymentMethod =>
+      'ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ¯ Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get pleaseEnterValidTipAmount => 'يرجى إدخال مبلغ إكرامية صحيح';
+  String get pleaseEnterValidTipAmount =>
+      'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ù…Ø¨Ù„Øº Ø¥ÙƒØ±Ø§Ù…ÙŠØ© ØµØ­ÙŠØ­';
 
   @override
-  String get minimumTipAmount => 'الحد الأدنى لمبلغ الإكرامية هو 5 ر.س';
+  String get minimumTipAmount =>
+      'Ø§Ù„Ø­Ø¯ Ø§Ù„Ø£Ø¯Ù†Ù‰ Ù„Ù…Ø¨Ù„Øº Ø§Ù„Ø¥ÙƒØ±Ø§Ù…ÙŠØ© Ù‡Ùˆ 5 Ø±.Ø³';
 
   @override
-  String get pleaseEnterTipAmount => 'يرجى إدخال مبلغ الإكرامية';
+  String get pleaseEnterTipAmount =>
+      'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ù…Ø¨Ù„Øº Ø§Ù„Ø¥ÙƒØ±Ø§Ù…ÙŠØ©';
 
   @override
-  String get submitReviewAndTip => 'إرسال التقييم والإكرامية';
+  String get submitReviewAndTip =>
+      'Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ‚ÙŠÙŠÙ… ÙˆØ§Ù„Ø¥ÙƒØ±Ø§Ù…ÙŠØ©';
 
   @override
-  String get submitReview => 'إرسال التقييم';
+  String get submitReview => 'Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ‚ÙŠÙŠÙ…';
 
   @override
-  String get liveTracking => 'تتبع مباشر';
+  String get liveTracking => 'ØªØªØ¨Ø¹ Ù…Ø¨Ø§Ø´Ø±';
 
   @override
-  String get loadingLocation => 'جاري تحميل الموقع...';
+  String get loadingLocation => 'Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…ÙˆÙ‚Ø¹...';
 
   @override
-  String get trackTechnician => 'تتبع الفني';
+  String get trackTechnician => 'ØªØªØ¨Ø¹ Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get phoneNumberInvalid => 'رقم الهاتف غير صحيح';
+  String get phoneNumberInvalid => 'Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ØºÙŠØ± ØµØ­ÙŠØ­';
 
   @override
-  String get notificationLanguage => 'لغة الإشعارات';
+  String get notificationLanguage => 'Ù„ØºØ© Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª';
 
   @override
-  String get removeAddress => 'حذف العنوان';
+  String get removeAddress => 'Ø­Ø°Ù Ø§Ù„Ø¹Ù†ÙˆØ§Ù†';
 
   @override
-  String get enableBiometricAuthentication => 'تفعيل التحقق بواسطة البصمة';
+  String get enableBiometricAuthentication =>
+      'ØªÙØ¹ÙŠÙ„ Ø§Ù„ØªØ­Ù‚Ù‚ Ø¨ÙˆØ§Ø³Ø·Ø© Ø§Ù„Ø¨ØµÙ…Ø©';
 
   @override
-  String get loading => 'جاري التحميل...';
+  String get loading => 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...';
 
   @override
-  String get call => 'اتصال';
+  String get call => 'Ø§ØªØµØ§Ù„';
 
   @override
-  String get biometricNotSupported => 'ميزة البصمة غير مدعومة';
+  String get biometricNotSupported =>
+      'Ù…ÙŠØ²Ø© Ø§Ù„Ø¨ØµÙ…Ø© ØºÙŠØ± Ù…Ø¯Ø¹ÙˆÙ…Ø©';
 
   @override
-  String get pleaseAuthenticateToContinue => 'يرجى مصادقة البصمة للمتابعة';
+  String get pleaseAuthenticateToContinue =>
+      'ÙŠØ±Ø¬Ù‰ Ù…ØµØ§Ø¯Ù‚Ø© Ø§Ù„Ø¨ØµÙ…Ø© Ù„Ù„Ù…ØªØ§Ø¨Ø¹Ø©';
 
   @override
-  String get authenticationFailed => 'فشل مصادقة البصمة';
+  String get authenticationFailed => 'ÙØ´Ù„ Ù…ØµØ§Ø¯Ù‚Ø© Ø§Ù„Ø¨ØµÙ…Ø©';
 
   @override
-  String get biometricNotAvailable => 'ميزة البصمة غير متوفرة';
+  String get biometricNotAvailable =>
+      'Ù…ÙŠØ²Ø© Ø§Ù„Ø¨ØµÙ…Ø© ØºÙŠØ± Ù…ØªÙˆÙØ±Ø©';
 
   @override
-  String get biometricTemporarilyLocked => 'ميزة البصمة مقفلة مؤقتًا';
+  String get biometricTemporarilyLocked =>
+      'Ù…ÙŠØ²Ø© Ø§Ù„Ø¨ØµÙ…Ø© Ù…Ù‚ÙÙ„Ø© Ù…Ø¤Ù‚ØªÙ‹Ø§';
 
   @override
-  String get notificationLanguageChanged => 'تم تغيير لغة الإشعارات';
+  String get notificationLanguageChanged =>
+      'ØªÙ… ØªØºÙŠÙŠØ± Ù„ØºØ© Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª';
 
   @override
-  String get noWishlistItems => 'لا توجد عناصر مفضلة';
+  String get noWishlistItems => 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¹Ù†Ø§ØµØ± Ù…ÙØ¶Ù„Ø©';
 
   @override
-  String get errorFillingProfile => 'خطأ في تعبئة الملف الشخصي';
+  String get errorFillingProfile =>
+      'Ø®Ø·Ø£ ÙÙŠ ØªØ¹Ø¨Ø¦Ø© Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ';
 
   @override
-  String get errorFetchingLocations => 'خطأ في جلب المواقع';
+  String get errorFetchingLocations => 'Ø®Ø·Ø£ ÙÙŠ Ø¬Ù„Ø¨ Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹';
 
   @override
-  String get bookingSuccess => 'نجاح الحجز';
+  String get bookingSuccess => 'Ù†Ø¬Ø§Ø­ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get bookingFailed => 'فشل الحجز';
+  String get bookingFailed => 'ÙØ´Ù„ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get bookingCancelError => 'خطأ في إلغاء الحجز';
+  String get bookingCancelError => 'Ø®Ø·Ø£ ÙÙŠ Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get category => 'الفئة';
+  String get category => 'Ø§Ù„ÙØ¦Ø©';
 
   @override
   String get selectFromSavedAddresses =>
-      'اختر من عناوينك المحفوظة أو أضف عنوانًا جديدًا.';
+      'Ø§Ø®ØªØ± Ù…Ù† Ø¹Ù†Ø§ÙˆÙŠÙ†Ùƒ Ø§Ù„Ù…Ø­ÙÙˆØ¸Ø© Ø£Ùˆ Ø£Ø¶Ù Ø¹Ù†ÙˆØ§Ù†Ù‹Ø§ Ø¬Ø¯ÙŠØ¯Ù‹Ø§.';
 
   @override
-  String get phoneNumberRequired => 'رقم الهاتف مطلوب';
+  String get phoneNumberRequired => 'Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
   String get failedToSaveAddress =>
-      'فشل في حفظ العنوان. يرجى المحاولة مرة أخرى';
+      'ÙØ´Ù„ ÙÙŠ Ø­ÙØ¸ Ø§Ù„Ø¹Ù†ÙˆØ§Ù†. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰';
 
   @override
-  String get unableToGetLocation => 'لا يمكن الحصول على الموقع';
+  String get unableToGetLocation =>
+      'Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø§Ù„Ø­ØµÙˆÙ„ Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get tapRefreshToGetLocation => 'انقر على إعادة تحميل لتحديث الموقع';
+  String get tapRefreshToGetLocation =>
+      'Ø§Ù†Ù‚Ø± Ø¹Ù„Ù‰ Ø¥Ø¹Ø§Ø¯Ø© ØªØ­Ù…ÙŠÙ„ Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get serviceFound => 'تم العثور على الخدمة';
+  String get serviceFound => 'ØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get servicesFound => 'تم العثور على الخدمات';
+  String get servicesFound => 'ØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ø®Ø¯Ù…Ø§Øª';
 
   @override
-  String get technicianArrivesToLocationIn => 'الفني يوصل للموقع في';
+  String get technicianArrivesToLocationIn =>
+      'Ø§Ù„ÙÙ†ÙŠ ÙŠÙˆØµÙ„ Ù„Ù„Ù…ÙˆÙ‚Ø¹ ÙÙŠ';
 
   @override
-  String get away => 'بعيد';
+  String get away => 'Ø¨Ø¹ÙŠØ¯';
 
   @override
-  String get yourTechnicianIsOnTheWay => 'فنيك في الطريق';
+  String get yourTechnicianIsOnTheWay => 'ÙÙ†ÙŠÙƒ ÙÙŠ Ø§Ù„Ø·Ø±ÙŠÙ‚';
 
   @override
-  String get serviceProvider => 'الفني';
+  String get serviceProvider => 'Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get callServiceProvider => 'اتصل بالفني';
+  String get callServiceProvider => 'Ø§ØªØµÙ„ Ø¨Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get disable => 'تعطيل';
+  String get disable => 'ØªØ¹Ø·ÙŠÙ„';
 
   @override
-  String get biometricEnabled => 'تم تفعيل البصمة';
+  String get biometricEnabled => 'ØªÙ… ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©';
 
   @override
-  String get biometricDisabled => 'تم تعطيل البصمة';
+  String get biometricDisabled => 'ØªÙ… ØªØ¹Ø·ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©';
 
   @override
   String get disableBiometricWarning =>
-      'تعطيل البصمة سيمنعك من تسجيل الدخول باستخدام البصمة';
+      'ØªØ¹Ø·ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø© Ø³ÙŠÙ…Ù†Ø¹Ùƒ Ù…Ù† ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ø¨ØµÙ…Ø©';
 
   @override
   String get youWillNeedPhoneOtp =>
-      'سوف تحتاج إلى استخدام رقم الهاتف وOTP لتسجيل الدخول';
+      'Ø³ÙˆÙ ØªØ­ØªØ§Ø¬ Ø§Ù•Ù„Ù‰ Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ÙˆOTP Ù„ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„';
 
   @override
-  String get disableBiometric => 'تعطيل البصمة';
+  String get disableBiometric => 'ØªØ¹Ø·ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©';
 
   @override
-  String get whatWillBeDeleted => 'سوف يتم حذف:';
+  String get whatWillBeDeleted => 'Ø³ÙˆÙ ÙŠØªÙ… Ø­Ø°Ù:';
 
   @override
-  String get personalInfo => 'معلومات شخصية';
+  String get personalInfo => 'Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø´Ø®ØµÙŠØ©';
 
   @override
-  String get bookingHistory => 'تاريخ الحجز';
+  String get bookingHistory => 'ØªØ§Ø±ÙŠØ® Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get delete => 'حذف';
+  String get delete => 'Ø­Ø°Ù';
 
   @override
-  String get onWarranty => 'على الضمان';
+  String get onWarranty => 'Ø¹Ù„Ù‰ Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get warrantyDetails => 'تفاصيل الضمان';
+  String get warrantyDetails => 'ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get warrantyAppliedOn => 'تم تطبيق الضمان';
+  String get warrantyAppliedOn => 'ØªÙ… ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get warrantyRequestEscalated => 'تم تصعيد طلب الضمان';
+  String get warrantyRequestEscalated => 'ØªÙ… ØªØµØ¹ÙŠØ¯ Ø·Ù„Ø¨ Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get submitComplaint => 'تقديم شكوى';
+  String get submitComplaint => 'ØªÙ‚Ø¯ÙŠÙ… Ø´ÙƒÙˆÙ‰';
 
   @override
-  String get repairRequestedSuccessfully => 'تم طلب الإصلاح بنجاح';
+  String get repairRequestedSuccessfully =>
+      'ØªÙ… Ø·Ù„Ø¨ Ø§Ù„Ø¥ØµÙ„Ø§Ø­ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get expiresOn => 'ينتهي في';
+  String get expiresOn => 'ÙŠÙ†ØªÙ‡ÙŠ ÙÙŠ';
 
   @override
-  String get expiredOn => 'انتهى في';
+  String get expiredOn => 'Ø§Ù†ØªÙ‡Ù‰ ÙÙŠ';
 
   @override
-  String get requestedOn => 'طُلب في';
+  String get requestedOn => 'Ø·ÙÙ„Ø¨ ÙÙŠ';
 
   @override
-  String get requestRepair => 'طلب إصلاح';
+  String get requestRepair => 'Ø·Ù„Ø¨ Ø¥ØµÙ„Ø§Ø­';
 
   @override
-  String get importantInformation => 'معلومات مهمة';
+  String get importantInformation => 'Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ù…Ù‡Ù…Ø©';
 
   @override
-  String get dayLeft => 'يوم متبقٍ';
+  String get dayLeft => 'ÙŠÙˆÙ… Ù…ØªØ¨Ù‚Ù';
 
   @override
-  String get daysLeft => 'أيام متبقية';
+  String get daysLeft => 'Ø£ÙŠØ§Ù… Ù…ØªØ¨Ù‚ÙŠØ©';
 
   @override
-  String get repairRequested => 'تم طلب الإصلاح';
+  String get repairRequested => 'ØªÙ… Ø·Ù„Ø¨ Ø§Ù„Ø¥ØµÙ„Ø§Ø­';
 
   @override
-  String get requested => 'تم الطلب';
+  String get requested => 'ØªÙ… Ø§Ù„Ø·Ù„Ø¨';
 
   @override
-  String get yes => 'نعم';
+  String get yes => 'Ù†Ø¹Ù…';
 
   @override
-  String get active => 'نشط';
+  String get active => 'Ù†Ø´Ø·';
 
   @override
-  String get expired => 'منتهي';
+  String get expired => 'Ù…Ù†ØªÙ‡ÙŠ';
 
   @override
-  String get claimStarted => 'تم بدء المطالبة';
+  String get claimStarted => 'ØªÙ… Ø¨Ø¯Ø¡ Ø§Ù„Ù…Ø·Ø§Ù„Ø¨Ø©';
 
   @override
-  String get claimed => 'تمت المطالبة';
+  String get claimed => 'ØªÙ…Øª Ø§Ù„Ù…Ø·Ø§Ù„Ø¨Ø©';
 
   @override
-  String get status => 'الحالة';
+  String get status => 'Ø§Ù„Ø­Ø§Ù„Ø©';
 
   @override
-  String get appliedOn => 'تم التقديم في';
+  String get appliedOn => 'ØªÙ… Ø§Ù„ØªÙ‚Ø¯ÙŠÙ… ÙÙŠ';
 
   @override
-  String get loadingChat => 'جاري تحميل الدردشة';
+  String get loadingChat => 'Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¯Ø±Ø¯Ø´Ø©';
 
   @override
-  String get or => 'أو';
+  String get or => 'Ø§Ù”Ùˆ';
 
   @override
-  String get rejectedBy => 'تم رفضه';
+  String get rejectedBy => 'ØªÙ… Ø±ÙØ¶Ù‡';
 
   @override
-  String get documents => 'وثائق';
+  String get documents => 'ÙˆØ«Ø§Ø¦Ù‚';
 
   @override
-  String get allData => 'جميع البيانات المرتبطة';
+  String get allData => 'Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…Ø±ØªØ¨Ø·Ø©';
 
   @override
   String get deleteAccountWarning =>
-      'هل أنت متأكد أنك تريد حذف حسابك؟ هذا الإجراء لا يمكن التراجع عنه';
+      'Ù‡Ù„ Ø§Ù”Ù†Øª Ù…ØªØ§Ù”ÙƒØ¯ Ø§Ù”Ù†Ùƒ ØªØ±ÙŠØ¯ Ø­Ø°Ù Ø­Ø³Ø§Ø¨ÙƒØŸ Ù‡Ø°Ø§ Ø§Ù„Ø§Ù•Ø¬Ø±Ø§Ø¡ Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø§Ù„ØªØ±Ø§Ø¬Ø¹ Ø¹Ù†Ù‡';
 
   @override
-  String get invalidOtpCode => 'رمز التحقق غير صحيح';
+  String get invalidOtpCode => 'Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚ ØºÙŠØ± ØµØ­ÙŠØ­';
 
   @override
-  String get errorSavingAddress => 'خطأ في حفظ العنوان';
+  String get errorSavingAddress => 'Ø®Ø·Ø£ ÙÙŠ Ø­ÙØ¸ Ø§Ù„Ø¹Ù†ÙˆØ§Ù†';
 
   @override
-  String get loadingNotifications => 'جاري تحميل الإشعارات...';
+  String get loadingNotifications =>
+      'Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª...';
 
   @override
-  String get loadingMore => 'جاري تحميل المزيد...';
+  String get loadingMore => 'Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ø²ÙŠØ¯...';
 
   @override
-  String get refresh => 'تحديث';
+  String get refresh => 'ØªØ­Ø¯ÙŠØ«';
 
   @override
-  String get errorLoadingNotifications => 'خطأ في تحميل الإشعارات';
+  String get errorLoadingNotifications =>
+      'Ø®Ø·Ø£ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª';
 
   @override
-  String get errorRefreshingNotifications => 'خطأ في تحديث الإشعارات';
+  String get errorRefreshingNotifications =>
+      'Ø®Ø·Ø£ ÙÙŠ ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª';
 
   @override
-  String get exit => 'خروج';
+  String get exit => 'Ø®Ø±ÙˆØ¬';
 
   @override
-  String get exitAppMessage => 'هل تريد الخروج من التطبيق؟';
+  String get exitAppMessage =>
+      'Ù‡Ù„ ØªØ±ÙŠØ¯ Ø§Ù„Ø®Ø±ÙˆØ¬ Ù…Ù† Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ØŸ';
 
   @override
-  String get exitAppTitle => 'الخروج من التطبيق';
+  String get exitAppTitle => 'Ø§Ù„Ø®Ø±ÙˆØ¬ Ù…Ù† Ø§Ù„ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get arrivalTime => 'وقت الوصول';
+  String get arrivalTime => 'ÙˆÙ‚Øª Ø§Ù„ÙˆØµÙˆÙ„';
 
   @override
-  String get min => 'دقيقة';
+  String get min => 'Ø¯Ù‚ÙŠÙ‚Ø©';
 
   @override
   String get thankYouMessage =>
-      'شكرًا لتقييمك ودعمك! \nيسعدنا خدمتك ونتطلع لرؤيتك مرة أخرى قريبًا';
+      'Ø´ÙƒØ±Ù‹Ø§ Ù„ØªÙ‚ÙŠÙŠÙ…Ùƒ ÙˆØ¯Ø¹Ù…Ùƒ! \nÙŠØ³Ø¹Ø¯Ù†Ø§ Ø®Ø¯Ù…ØªÙƒ ÙˆÙ†ØªØ·Ù„Ø¹ Ù„Ø±Ø¤ÙŠØªÙƒ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰ Ù‚Ø±ÙŠØ¨Ù‹Ø§';
 
   @override
-  String get noLiveTrackingAvailable => 'لا يوجد تتبع مباشر';
+  String get noLiveTrackingAvailable => 'Ù„Ø§ ÙŠÙˆØ¬Ø¯ ØªØªØ¨Ø¹ Ù…Ø¨Ø§Ø´Ø±';
 
   @override
-  String get calculating => 'جاري التحليل...';
+  String get calculating => 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù„ÙŠÙ„...';
 
   @override
-  String get waitingForAgentLocation => 'انتظار موقع الفني...';
+  String get waitingForAgentLocation => 'Ø§Ù†ØªØ¸Ø§Ø± Ù…ÙˆÙ‚Ø¹ Ø§Ù„ÙÙ†ÙŠ...';
 
   @override
-  String get technicianInfo => 'معلومات الفني';
+  String get technicianInfo => 'Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get name => 'الاسم';
+  String get name => 'Ø§Ù„Ø§Ø³Ù…';
 
   @override
   String get errorLoadingMoreNotifications =>
-      'خطأ في تحميل المزيد من الإشعارات';
+      'Ø®Ø·Ø£ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ø²ÙŠØ¯ Ù…Ù† Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª';
 
   @override
-  String get neighbourhood => 'الحي';
+  String get neighbourhood => 'Ø§Ù„Ø­ÙŠ';
 
   @override
-  String get neighbourhoodIsRequired => 'الحي مطلوب';
+  String get neighbourhoodIsRequired => 'Ø§Ù„Ø­ÙŠ Ù…Ø·Ù„ÙˆØ¨';
 
   @override
-  String get termsAndConditions => 'الشروط والأحكام';
+  String get termsAndConditions => 'Ø§Ù„Ø´Ø±ÙˆØ· ÙˆØ§Ù„Ø£Ø­ÙƒØ§Ù…';
 
   @override
-  String get accept => 'أوافق';
+  String get accept => 'Ø£ÙˆØ§ÙÙ‚';
 
   @override
-  String get city => 'المدينة';
+  String get city => 'Ø§Ù„Ù…Ø¯ÙŠÙ†Ø©';
 
   @override
-  String get faq => 'الأسئلة الشائعة';
+  String get faq => 'Ø§Ù„Ø£Ø³Ø¦Ù„Ø© Ø§Ù„Ø´Ø§Ø¦Ø¹Ø©';
 
   @override
-  String get noFaqsAvailable => 'لا توجد أسئلة شائعة حالياً';
+  String get noFaqsAvailable =>
+      'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø£Ø³Ø¦Ù„Ø© Ø´Ø§Ø¦Ø¹Ø© Ø­Ø§Ù„ÙŠØ§Ù‹';
 
   @override
-  String get doYouAccept => 'هل توافق على الشروط والأحكام؟';
+  String get doYouAccept =>
+      'Ù‡Ù„ ØªÙˆØ§ÙÙ‚ Ø¹Ù„Ù‰ Ø§Ù„Ø´Ø±ÙˆØ· ÙˆØ§Ù„Ø£Ø­ÙƒØ§Ù…ØŸ';
 
   @override
-  String get accountBlocked => 'الحساب محظور';
+  String get accountBlocked => 'Ø§Ù„Ø­Ø³Ø§Ø¨ Ù…Ø­Ø¸ÙˆØ±';
 
   @override
-  String get fraudOrRelatedActivities => 'احتيال أو أنشطة ذات صلة';
+  String get fraudOrRelatedActivities =>
+      'Ø§Ø­ØªÙŠØ§Ù„ Ø£Ùˆ Ø£Ù†Ø´Ø·Ø© Ø°Ø§Øª ØµÙ„Ø©';
 
   @override
-  String get improperConduct => 'سلوك غير لائق';
+  String get improperConduct => 'Ø³Ù„ÙˆÙƒ ØºÙŠØ± Ù„Ø§Ø¦Ù‚';
 
   @override
-  String get violationOfTermsAndConditions => 'انتهاك الشروط والأحكام';
+  String get violationOfTermsAndConditions =>
+      'Ø§Ù†ØªÙ‡Ø§Ùƒ Ø§Ù„Ø´Ø±ÙˆØ· ÙˆØ§Ù„Ø£Ø­ÙƒØ§Ù…';
 
   @override
   String get pleaseContactAdmin =>
-      'يرجى الاتصال بالدعم الفني لمعرفة سبب حظر الحساب والخطوات اللازمة لإعادة تفعيله';
+      'ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø¯Ø¹Ù… Ø§Ù„ÙÙ†ÙŠ Ù„Ù…Ø¹Ø±ÙØ© Ø³Ø¨Ø¨ Ø­Ø¸Ø± Ø§Ù„Ø­Ø³Ø§Ø¨ ÙˆØ§Ù„Ø®Ø·ÙˆØ§Øª Ø§Ù„Ù„Ø§Ø²Ù…Ø© Ù„Ø¥Ø¹Ø§Ø¯Ø© ØªÙØ¹ÙŠÙ„Ù‡';
 
   @override
-  String get exitApp => 'الخروج من التطبيق';
+  String get exitApp => 'Ø§Ù„Ø®Ø±ÙˆØ¬ Ù…Ù† Ø§Ù„ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get pleaseSelectaTechnician => 'يرجى تحديد فني';
+  String get pleaseSelectaTechnician => 'ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ¯ ÙÙ†ÙŠ';
 
   @override
-  String get chooseTechnician => 'اختر فني';
+  String get chooseTechnician => 'Ø§Ø®ØªØ± ÙÙ†ÙŠ';
 
   @override
-  String get within => 'في';
+  String get within => 'ÙÙŠ';
 
   @override
-  String get km => 'كم';
+  String get km => 'ÙƒÙ…';
 
   @override
-  String get completeBooking => 'إكمال الحجز';
+  String get completeBooking => 'Ø¥ÙƒÙ…Ø§Ù„ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
   String get accountBlockedMessage =>
-      'تم حظر حسابك من قبل المسؤول للأسباب التالية:';
+      'ØªÙ… Ø­Ø¸Ø± Ø­Ø³Ø§Ø¨Ùƒ Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„ Ù„Ù„Ø£Ø³Ø¨Ø§Ø¨ Ø§Ù„ØªØ§Ù„ÙŠØ©:';
 
   @override
   String get byCreatingAnAccountYouAgreeToOur =>
-      'من خلال إنشاء حساب، فإنك توافق على';
+      'Ù…Ù† Ø®Ù„Ø§Ù„ Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ØŒ ÙØ¥Ù†Ùƒ ØªÙˆØ§ÙÙ‚ Ø¹Ù„Ù‰';
 
   @override
-  String get bookingConfirmed => 'تم تأكيد الحجز!';
+  String get bookingConfirmed => 'ØªÙ… ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø­Ø¬Ø²!';
 
   @override
-  String get bookingSuccessMessage => 'تم تأكيد الحجز بنجاح';
+  String get bookingSuccessMessage => 'ØªÙ… ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø­Ø¬Ø² Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get bookingId => 'رقم الحجز';
+  String get bookingId => 'Ø±Ù‚Ù… Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get serviceDetails => 'تفاصيل الخدمة';
+  String get serviceDetails => 'ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get inspectionFee => 'رسوم الفحص';
+  String get inspectionFee => 'Ø±Ø³ÙˆÙ… Ø§Ù„ÙØ­Øµ';
 
   @override
-  String get technicianDetails => 'تفاصيل الفني';
+  String get technicianDetails => 'ØªÙØ§ØµÙŠÙ„ Ø§Ù„ÙÙ†ÙŠ';
 
   @override
   String get inspectionDisclaimer =>
-      'يغطي رسوم الفحص فقط. سيتم حساب التكلفة الكلية بعد انتهاء الخدمة';
+      'ÙŠØºØ·ÙŠ Ø±Ø³ÙˆÙ… Ø§Ù„ÙØ­Øµ ÙÙ‚Ø·. Ø³ÙŠØªÙ… Ø­Ø³Ø§Ø¨ Ø§Ù„ØªÙƒÙ„ÙØ© Ø§Ù„ÙƒÙ„ÙŠØ© Ø¨Ø¹Ø¯ Ø§Ù†ØªÙ‡Ø§Ø¡ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
   String get costDisclaimer =>
-      'التكلفة المعروضة هي رسوم الفحص. سيتم حساب التكلفة الكلية بعد انتهاء الخدمة';
+      'Ø§Ù„ØªÙƒÙ„ÙØ© Ø§Ù„Ù…Ø¹Ø±ÙˆØ¶Ø© Ù‡ÙŠ Ø±Ø³ÙˆÙ… Ø§Ù„ÙØ­Øµ. Ø³ÙŠØªÙ… Ø­Ø³Ø§Ø¨ Ø§Ù„ØªÙƒÙ„ÙØ© Ø§Ù„ÙƒÙ„ÙŠØ© Ø¨Ø¹Ø¯ Ø§Ù†ØªÙ‡Ø§Ø¡ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get noSupportAvailable => 'لا يوجد دعم متاح حالياً';
+  String get noSupportAvailable => 'Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø¯Ø¹Ù… Ù…ØªØ§Ø­ Ø­Ø§Ù„ÙŠØ§Ù‹';
 
   @override
-  String get contactByPhone => 'الاتصال بواسطة الهاتف';
+  String get contactByPhone => 'Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨ÙˆØ§Ø³Ø·Ø© Ø§Ù„Ù‡Ø§ØªÙ';
 
   @override
   String get pleaseContactSupport =>
-      'يرجى الاتصال بالدعم لمعرفة سبب الحظر والخطوات اللازمة لإعادة تفعيل الحساب';
+      'ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø¯Ø¹Ù… Ù„Ù…Ø¹Ø±ÙØ© Ø³Ø¨Ø¨ Ø§Ù„Ø­Ø¸Ø± ÙˆØ§Ù„Ø®Ø·ÙˆØ§Øª Ø§Ù„Ù„Ø§Ø²Ù…Ø© Ù„Ø¥Ø¹Ø§Ø¯Ø© ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø­Ø³Ø§Ø¨';
 
   @override
   String get yourAccountHasBeenBlocked =>
-      'تم حظر حسابك من قبل المسؤول لسبب واحد أو أكثر من الأسباب التالية:';
+      'ØªÙ… Ø­Ø¸Ø± Ø­Ø³Ø§Ø¨Ùƒ Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„ Ù„Ø³Ø¨Ø¨ ÙˆØ§Ø­Ø¯ Ø£Ùˆ Ø£ÙƒØ«Ø± Ù…Ù† Ø§Ù„Ø£Ø³Ø¨Ø§Ø¨ Ø§Ù„ØªØ§Ù„ÙŠØ©:';
 
   @override
-  String get serviceLocation => 'موقع الخدمة';
+  String get serviceLocation => 'Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get cashPayment => 'الدفع نقدًا';
+  String get cashPayment => 'Ø§Ù„Ø¯ÙØ¹ Ù†Ù‚Ø¯Ù‹Ø§';
 
   @override
-  String get amountToBePaid => 'المبلغ المستحق';
+  String get amountToBePaid => 'Ø§Ù„Ù…Ø¨Ù„Øº Ø§Ù„Ù…Ø³ØªØ­Ù‚';
 
   @override
-  String get balanceToReceive => 'الرصيد المستحق';
+  String get balanceToReceive => 'Ø§Ù„Ø±ØµÙŠØ¯ Ø§Ù„Ù…Ø³ØªØ­Ù‚';
 
   @override
-  String get pleaseEnterTheAmountPaid => 'يرجى إدخال المبلغ المدفوع';
+  String get pleaseEnterTheAmountPaid =>
+      'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ø§Ù„Ù…Ø¨Ù„Øº Ø§Ù„Ù…Ø¯ÙÙˆØ¹';
 
   @override
-  String get pleaseEnterAValidAmount => 'يرجى إدخال مبلغ صحيح';
+  String get pleaseEnterAValidAmount => 'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ù…Ø¨Ù„Øº ØµØ­ÙŠØ­';
 
   @override
-  String get amountMustBeAtLeast => 'المبلغ يجب أن يكون على الأقل';
+  String get amountMustBeAtLeast =>
+      'Ø§Ù„Ù…Ø¨Ù„Øº ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„';
 
   @override
-  String get amountMustBeEqualTo => 'المبلغ يجب أن يكون مساويًا ل';
+  String get amountMustBeEqualTo =>
+      'Ø§Ù„Ù…Ø¨Ù„Øº ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† Ù…Ø³Ø§ÙˆÙŠÙ‹Ø§ Ù„';
 
   @override
   String get noPendingBookingsMessage =>
-      'لا توجد حجوزات معلقة حاليًا. سيتم عرض الطلبات الجديدة هنا';
+      'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø­Ø¬ÙˆØ²Ø§Øª Ù…Ø¹Ù„Ù‚Ø© Ø­Ø§Ù„ÙŠÙ‹Ø§. Ø³ÙŠØªÙ… Ø¹Ø±Ø¶ Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© Ù‡Ù†Ø§';
 
   @override
   String get noConfirmedBookingsMessage =>
-      'لا توجد حجوزات مؤكدة حاليًا. سيتم عرضها بعد قبول الفني';
+      'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø­Ø¬ÙˆØ²Ø§Øª Ù…Ø¤ÙƒØ¯Ø© Ø­Ø§Ù„ÙŠÙ‹Ø§. Ø³ÙŠØªÙ… Ø¹Ø±Ø¶Ù‡Ø§ Ø¨Ø¹Ø¯ Ù‚Ø¨ÙˆÙ„ Ø§Ù„ÙÙ†ÙŠ';
 
   @override
   String get noCompletedBookingsMessage =>
-      'ستُعرض حجوزاتك المكتملة هنا بعد انتهاء الخدمة';
+      'Ø³ØªÙØ¹Ø±Ø¶ Ø­Ø¬ÙˆØ²Ø§ØªÙƒ Ø§Ù„Ù…ÙƒØªÙ…Ù„Ø© Ù‡Ù†Ø§ Ø¨Ø¹Ø¯ Ø§Ù†ØªÙ‡Ø§Ø¡ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
   String get noPendingPaymentBookingsMessage =>
-      'لا توجد حجوزات بمدفوعات معلقة!';
+      'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø­Ø¬ÙˆØ²Ø§Øª Ø¨Ù…Ø¯ÙÙˆØ¹Ø§Øª Ù…Ø¹Ù„Ù‚Ø©!';
 
   @override
-  String get noCancelledBookingsMessage => 'لا توجد حجوزات ملغاة!';
+  String get noCancelledBookingsMessage =>
+      'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø­Ø¬ÙˆØ²Ø§Øª Ù…Ù„ØºØ§Ø©!';
 
   @override
-  String get noBookingsMessage => 'لا توجد حجوزات حاليًا';
+  String get noBookingsMessage => 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø­Ø¬ÙˆØ²Ø§Øª Ø­Ø§Ù„ÙŠÙ‹Ø§';
 
   @override
   String noBookingFound(String type) {
-    return 'لا توجد حجوزات $type';
+    return 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø­Ø¬ÙˆØ²Ø§Øª $type';
   }
 
   @override
   String inspectionFeeNote(String fee) {
-    return 'رسوم المعاينة: $fee ر.س — تُدفع فقط بعد وصول الفني ومعاينة المشكلة';
+    return 'Ø±Ø³ÙˆÙ… Ø§Ù„Ù…Ø¹Ø§ÙŠÙ†Ø©: $fee Ø±.Ø³ â€” ØªÙØ¯ÙØ¹ ÙÙ‚Ø· Ø¨Ø¹Ø¯ ÙˆØµÙˆÙ„ Ø§Ù„ÙÙ†ÙŠ ÙˆÙ…Ø¹Ø§ÙŠÙ†Ø© Ø§Ù„Ù…Ø´ÙƒÙ„Ø©';
   }
 
   @override
-  String get pleaseSelectAllLocationFields => 'يرجى تحديد جميع حقول الموقع';
+  String get pleaseSelectAllLocationFields =>
+      'ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ¯ Ø¬Ù…ÙŠØ¹ Ø­Ù‚ÙˆÙ„ Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get apply => 'تطبيق';
+  String get apply => 'ØªØ·Ø¨ÙŠÙ‚';
 
   @override
-  String get clearFilter => 'مسح التصفية';
+  String get clearFilter => 'Ù…Ø³Ø­ Ø§Ù„ØªØµÙÙŠØ©';
 
   @override
-  String get filterByLocation => 'تصفية حسب الموقع';
+  String get filterByLocation => 'ØªØµÙÙŠØ© Ø­Ø³Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get province => 'الولاية';
+  String get province => 'Ø§Ù„ÙˆÙ„Ø§ÙŠØ©';
 
   @override
-  String get creatingAccount => 'انشاء حساب';
+  String get creatingAccount => 'Ø§Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨';
 
   @override
-  String get pleaseSelectNeighborhood => 'يرجى تحديد الحي';
+  String get pleaseSelectNeighborhood => 'ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ø­ÙŠ';
 
   @override
-  String get pleaseSelectCity => 'يرجى تحديد المدينة';
+  String get pleaseSelectCity => 'ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…Ø¯ÙŠÙ†Ø©';
 
   @override
-  String get pleaseSelectProvince => 'يرجى تحديد الولاية';
+  String get pleaseSelectProvince => 'ÙŠØ±Ø¬Ù‰ ØªØ­Ø¯ÙŠØ¯ Ø§Ù„ÙˆÙ„Ø§ÙŠØ©';
 
   @override
-  String get bookedOn => 'تم الحجز في';
+  String get bookedOn => 'ØªÙ… Ø§Ù„Ø­Ø¬Ø² ÙÙŠ';
 
   @override
-  String get acceptedOn => 'تم تأكيده في';
+  String get acceptedOn => 'ØªÙ… ØªØ£ÙƒÙŠØ¯Ù‡ ÙÙŠ';
 
   @override
-  String get canceledOn => 'تم الغاءه في';
+  String get canceledOn => 'ØªÙ… Ø§Ù„ØºØ§Ø¡Ù‡ ÙÙŠ';
 
   @override
-  String get completedOn => 'تم اكماله في';
+  String get completedOn => 'ØªÙ… Ø§ÙƒÙ…Ø§Ù„Ù‡ ÙÙŠ';
 
   @override
-  String get optional => 'اختياري';
+  String get optional => 'Ø§Ø®ØªÙŠØ§Ø±ÙŠ';
 
   @override
-  String get completionDetails => 'تفاصيل الانجاز';
+  String get completionDetails => 'ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø§Ù†Ø¬Ø§Ø²';
 
   @override
-  String get serviceCost => 'تكلفة الخدمة';
+  String get serviceCost => 'ØªÙƒÙ„ÙØ© Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get serviceItems => 'عناصر الخدمة';
+  String get serviceItems => 'Ø¹Ù†Ø§ØµØ± Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get uploadFilesTitle => 'الوثائق المرفقة';
+  String get uploadFilesTitle => 'Ø§Ù„ÙˆØ«Ø§ÙŠÙ”Ù‚ Ø§Ù„Ù…Ø±ÙÙ‚Ø©';
 
   @override
-  String get inspection => 'المعاينة';
+  String get inspection => 'Ø§Ù„Ù…Ø¹Ø§ÙŠÙ†Ø©';
 
   @override
-  String get invoiceType => 'نوع الفاتورة';
+  String get invoiceType => 'Ù†ÙˆØ¹ Ø§Ù„ÙØ§ØªÙˆØ±Ø©';
 
   @override
-  String get warrantyInformation => 'معلومات الضمان';
+  String get warrantyInformation => 'Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get whatsCovered => 'ما يغطيه الضمان';
+  String get whatsCovered => 'Ù…Ø§ ÙŠØºØ·ÙŠÙ‡ Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get issueone => 'خطأ في التركيب أو سوء المصنعية.';
+  String get issueone =>
+      'Ø®Ø·Ø£ ÙÙŠ Ø§Ù„ØªØ±ÙƒÙŠØ¨ Ø£Ùˆ Ø³ÙˆØ¡ Ø§Ù„Ù…ØµÙ†Ø¹ÙŠØ©.';
 
   @override
-  String get issuetwo => 'أداء دون المستوى المطلوب من الفني.';
+  String get issuetwo =>
+      'Ø£Ø¯Ø§Ø¡ Ø¯ÙˆÙ† Ø§Ù„Ù…Ø³ØªÙˆÙ‰ Ø§Ù„Ù…Ø·Ù„ÙˆØ¨ Ù…Ù† Ø§Ù„ÙÙ†ÙŠ.';
 
   @override
-  String get issuethree => 'نفس العطل الأصلي الذي تم إصلاحه.';
+  String get issuethree =>
+      'Ù†ÙØ³ Ø§Ù„Ø¹Ø·Ù„ Ø§Ù„Ø£ØµÙ„ÙŠ Ø§Ù„Ø°ÙŠ ØªÙ… Ø¥ØµÙ„Ø§Ø­Ù‡.';
 
   @override
-  String get issuefour => 'صالح لمرة واحدة خلال ٧ أيام من تاريخ الإكمال';
+  String get issuefour =>
+      'ØµØ§Ù„Ø­ Ù„Ù…Ø±Ø© ÙˆØ§Ø­Ø¯Ø© Ø®Ù„Ø§Ù„ Ù§ Ø£ÙŠØ§Ù… Ù…Ù† ØªØ§Ø±ÙŠØ® Ø§Ù„Ø¥ÙƒÙ…Ø§Ù„';
 
   @override
-  String get whatsNotCovered => 'ما لا يغطيه الضمان';
+  String get whatsNotCovered => 'Ù…Ø§ Ù„Ø§ ÙŠØºØ·ÙŠÙ‡ Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get notissueone => 'قطع غيار أو مواد معيبة.';
+  String get notissueone => 'Ù‚Ø·Ø¹ ØºÙŠØ§Ø± Ø£Ùˆ Ù…ÙˆØ§Ø¯ Ù…Ø¹ÙŠØ¨Ø©.';
 
   @override
-  String get notissuetwo => 'إساءة الاستخدام أو العبث بعد الخدمة.';
+  String get notissuetwo =>
+      'Ø¥Ø³Ø§Ø¡Ø© Ø§Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø£Ùˆ Ø§Ù„Ø¹Ø¨Ø« Ø¨Ø¹Ø¯ Ø§Ù„Ø®Ø¯Ù…Ø©.';
 
   @override
-  String get notissuethree => 'تدخلات طرف ثالث.';
+  String get notissuethree => 'ØªØ¯Ø®Ù„Ø§Øª Ø·Ø±Ù Ø«Ø§Ù„Ø«.';
 
   @override
   String get notissuefour =>
-      'زيادة التيار الكهربائي (Power surges)، تسربات المياه، الكوارث الطبيعية.';
+      'Ø²ÙŠØ§Ø¯Ø© Ø§Ù„ØªÙŠØ§Ø± Ø§Ù„ÙƒÙ‡Ø±Ø¨Ø§Ø¦ÙŠ (Power surges)ØŒ ØªØ³Ø±Ø¨Ø§Øª Ø§Ù„Ù…ÙŠØ§Ù‡ØŒ Ø§Ù„ÙƒÙˆØ§Ø±Ø« Ø§Ù„Ø·Ø¨ÙŠØ¹ÙŠØ©.';
 
   @override
-  String get notissuefive => 'الاهتراء والتآكل الطبيعي.';
+  String get notissuefive => 'Ø§Ù„Ø§Ù‡ØªØ±Ø§Ø¡ ÙˆØ§Ù„ØªØ¢ÙƒÙ„ Ø§Ù„Ø·Ø¨ÙŠØ¹ÙŠ.';
 
   @override
   String get claimText =>
-      'للمطالبة بالضمان، قدّم طلبًا عبر التطبيق خلال ٧ أيام من إتمام الخدمة. ويمكن المطالبة بالضمان مرة واحدة فقط.';
+      'Ù„Ù„Ù…Ø·Ø§Ù„Ø¨Ø© Ø¨Ø§Ù„Ø¶Ù…Ø§Ù†ØŒ Ù‚Ø¯Ù‘Ù… Ø·Ù„Ø¨Ù‹Ø§ Ø¹Ø¨Ø± Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø®Ù„Ø§Ù„ Ù§ Ø£ÙŠØ§Ù… Ù…Ù† Ø¥ØªÙ…Ø§Ù… Ø§Ù„Ø®Ø¯Ù…Ø©. ÙˆÙŠÙ…ÙƒÙ† Ø§Ù„Ù…Ø·Ø§Ù„Ø¨Ø© Ø¨Ø§Ù„Ø¶Ù…Ø§Ù† Ù…Ø±Ø© ÙˆØ§Ø­Ø¯Ø© ÙÙ‚Ø·.';
 
   @override
   String get warrantyAlertContent =>
-      'هل ترغب في طلب اصلاح تحت ضمان لهذه الخدمة؟';
+      'Ù‡Ù„ ØªØ±ØºØ¨ ÙÙŠ Ø·Ù„Ø¨ Ø§ØµÙ„Ø§Ø­ ØªØ­Øª Ø¶Ù…Ø§Ù† Ù„Ù‡Ø°Ù‡ Ø§Ù„Ø®Ø¯Ù…Ø©ØŸ';
 
   @override
-  String get transactionId => 'رقم المعاملة';
+  String get transactionId => 'Ø±Ù‚Ù… Ø§Ù„Ù…Ø¹Ø§Ù…Ù„Ø©';
 
   @override
-  String get repairUnderWarranty => 'اصلاح تحت ضمان';
+  String get repairUnderWarranty => 'Ø§ØµÙ„Ø§Ø­ ØªØ­Øª Ø¶Ù…Ø§Ù†';
 
   @override
   String get warrantyRepairSubmittedSuccessfully =>
-      'تم ارسال طلب اصلاح تحت ضمان بنجاح';
+      'ØªÙ… Ø§Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ø§ØµÙ„Ø§Ø­ ØªØ­Øª Ø¶Ù…Ø§Ù† Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get requestRepairUnderWarranty => 'طلب اصلاح تحت ضمان';
+  String get requestRepairUnderWarranty => 'Ø·Ù„Ø¨ Ø§ØµÙ„Ø§Ø­ ØªØ­Øª Ø¶Ù…Ø§Ù†';
 
   @override
-  String get networkError => 'خطأ في الشبكة. يرجى التحقق من اتصالك.';
+  String get networkError =>
+      'Ø®Ø·Ø£ ÙÙŠ Ø§Ù„Ø´Ø¨ÙƒØ©. ÙŠØ±Ø¬Ù‰ Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§ØªØµØ§Ù„Ùƒ.';
 
   @override
-  String get technician => 'فني';
+  String get technician => 'ÙÙ†ÙŠ';
 
   @override
-  String get typeMessage => 'اكتب رسالة...';
+  String get typeMessage => 'Ø§ÙƒØªØ¨ Ø±Ø³Ø§Ù„Ø©...';
 
   @override
-  String get noMessages => 'لا توجد رسائل بعد';
+  String get noMessages => 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø±Ø³Ø§Ø¦Ù„ Ø¨Ø¹Ø¯';
 
   @override
-  String get startConversation => 'ابدأ محادثة';
+  String get startConversation => 'Ø§Ø¨Ø¯Ø£ Ù…Ø­Ø§Ø¯Ø«Ø©';
 
   @override
-  String get errorLoadingMessages => 'خطأ في تحميل الرسائل';
+  String get errorLoadingMessages => 'Ø®Ø·Ø£ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø±Ø³Ø§Ø¦Ù„';
 
   @override
-  String get today => 'اليوم';
+  String get today => 'Ø§Ù„ÙŠÙˆÙ…';
 
   @override
-  String get yesterday => 'أمس';
+  String get yesterday => 'Ø£Ù…Ø³';
 
   @override
-  String get chat => 'الدردشة';
+  String get chat => 'Ø§Ù„Ø¯Ø±Ø¯Ø´Ø©';
 
   @override
-  String get chatWithTechnician => 'الدردشة مع الفني';
+  String get chatWithTechnician => 'Ø§Ù„Ø¯Ø±Ø¯Ø´Ø© Ù…Ø¹ Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get mins => 'دقائق';
+  String get mins => 'Ø¯Ù‚Ø§ÙŠÙ”Ù‚';
 
   @override
-  String get hour => 'ساعة';
+  String get hour => 'Ø³Ø§Ø¹Ø©';
 
   @override
-  String get iddocument => 'وثيقة الهوية';
+  String get iddocument => 'ÙˆØ«ÙŠÙ‚Ø© Ø§Ù„Ù‡ÙˆÙŠØ©';
 
   @override
-  String get failedToPickImage => 'فشل في اختيار الصورة';
+  String get failedToPickImage => 'ÙØ´Ù„ ÙÙŠ Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„ØµÙˆØ±Ø©';
 
   @override
-  String get tapToUpload => 'اضغط لتحميل';
+  String get tapToUpload => 'Ø§Ø¶ØºØ· Ù„ØªØ­Ù…ÙŠÙ„';
 
   @override
-  String get tapToView => 'اضغط لعرض';
+  String get tapToView => 'Ø§Ø¶ØºØ· Ù„Ø¹Ø±Ø¶';
 
   @override
-  String get rejectedOn => 'تم رفضه في';
+  String get rejectedOn => 'ØªÙ… Ø±ÙØ¶Ù‡ ÙÙŠ';
 
   @override
-  String get fetching => 'جاري الجلب';
+  String get fetching => 'Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø¬Ù„Ø¨';
 
   @override
-  String get issueVideo => 'فيديو المشكلة';
+  String get issueVideo => 'ÙÙŠØ¯ÙŠÙˆ Ø§Ù„Ù…Ø´ÙƒÙ„Ø©';
 
   @override
-  String get hours => 'ساعات';
+  String get hours => 'Ø³Ø§Ø¹Ø§Øª';
 
   @override
-  String get locationError => 'خطأ في الموقع';
+  String get locationError => 'Ø®Ø·Ø£ ÙÙŠ Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get bookingTimeline => 'تتبع الحجز';
+  String get bookingTimeline => 'ØªØªØ¨Ø¹ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
   String get escalateWarrantyConfirmation =>
-      'هل أنت متأكد أنك تريد تصعيد طلب الضمان؟';
+      'Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ø£Ù†Ùƒ ØªØ±ÙŠØ¯ ØªØµØ¹ÙŠØ¯ Ø·Ù„Ø¨ Ø§Ù„Ø¶Ù…Ø§Ù†ØŸ';
 
   @override
-  String get complaintSubmittedSuccessfully => 'تم تقديم الشكوى بنجاح';
+  String get complaintSubmittedSuccessfully =>
+      'ØªÙ… ØªÙ‚Ø¯ÙŠÙ… Ø§Ù„Ø´ÙƒÙˆÙ‰ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get createdAt => 'تاريخ الإنشاء';
+  String get createdAt => 'ØªØ§Ø±ÙŠØ® Ø§Ù„Ø¥Ù†Ø´Ø§Ø¡';
 
   @override
-  String get customerSubmittedBookingRequest => 'قدم العميل طلب حجز';
+  String get customerSubmittedBookingRequest =>
+      'Ù‚Ø¯Ù… Ø§Ù„Ø¹Ù…ÙŠÙ„ Ø·Ù„Ø¨ Ø­Ø¬Ø²';
 
   @override
-  String get originalServiceCompleted => 'اكتملت الخدمة الأصلية';
+  String get originalServiceCompleted =>
+      'Ø§ÙƒØªÙ…Ù„Øª Ø§Ù„Ø®Ø¯Ù…Ø© Ø§Ù„Ø£ØµÙ„ÙŠØ©';
 
   @override
-  String get serviceHasBeenSuccessfullyCompleted => 'تم إكمال الخدمة بنجاح';
+  String get serviceHasBeenSuccessfullyCompleted =>
+      'ØªÙ… Ø¥ÙƒÙ…Ø§Ù„ Ø§Ù„Ø®Ø¯Ù…Ø© Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get warrantyRepairRequested => 'تم طلب إصلاح الضمان';
+  String get warrantyRepairRequested => 'ØªÙ… Ø·Ù„Ø¨ Ø¥ØµÙ„Ø§Ø­ Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
   String get customerRequestedRepairUnderWarranty =>
-      'طلب العميل إصلاحًا تحت الضمان';
+      'Ø·Ù„Ø¨ Ø§Ù„Ø¹Ù…ÙŠÙ„ Ø¥ØµÙ„Ø§Ø­Ù‹Ø§ ØªØ­Øª Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get warrantyRepairAccepted => 'تم تأكيد إصلاح الضمان';
+  String get warrantyRepairAccepted =>
+      'ØªÙ… ØªØ£ÙƒÙŠØ¯ Ø¥ØµÙ„Ø§Ø­ Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get technicianAcceptedTheRequest => 'أكد الفني الطلب';
+  String get technicianAcceptedTheRequest => 'Ø£ÙƒØ¯ Ø§Ù„ÙÙ†ÙŠ Ø§Ù„Ø·Ù„Ø¨';
 
   @override
-  String get trackingStartedAt => 'بدأ التتبع في';
+  String get trackingStartedAt => 'Ø¨Ø¯Ø£ Ø§Ù„ØªØªØ¨Ø¹ ÙÙŠ';
 
   @override
-  String get serviceTrackingInitiated => 'تم بدء تتبع الخدمة';
+  String get serviceTrackingInitiated => 'ØªÙ… Ø¨Ø¯Ø¡ ØªØªØ¨Ø¹ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get trackingStoppedAt => 'توقف التتبع في';
+  String get trackingStoppedAt => 'ØªÙˆÙ‚Ù Ø§Ù„ØªØªØ¨Ø¹ ÙÙŠ';
 
   @override
-  String get serviceTrackingStopped => 'تم إيقاف تتبع الخدمة';
+  String get serviceTrackingStopped => 'ØªÙ… Ø¥ÙŠÙ‚Ø§Ù ØªØªØ¨Ø¹ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get warrantyRepairCompleted => 'اكتمل إصلاح الضمان';
+  String get warrantyRepairCompleted => 'Ø§ÙƒØªÙ…Ù„ Ø¥ØµÙ„Ø§Ø­ Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get technicianCompletedTheRequest => 'أكمل الفني الطلب';
+  String get technicianCompletedTheRequest => 'Ø£ÙƒÙ…Ù„ Ø§Ù„ÙÙ†ÙŠ Ø§Ù„Ø·Ù„Ø¨';
 
   @override
-  String get warrantyExpired => 'انتهت صلاحية الضمان';
+  String get warrantyExpired => 'Ø§Ù†ØªÙ‡Øª ØµÙ„Ø§Ø­ÙŠØ© Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get warrantyPeriodHasExpired => 'انتهت فترة الضمان';
+  String get warrantyPeriodHasExpired => 'Ø§Ù†ØªÙ‡Øª ÙØªØ±Ø© Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
-  String get unknownTechnician => 'فني غير معروف';
+  String get unknownTechnician => 'ÙÙ†ÙŠ ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ';
 
   @override
-  String get technicianCancelled => 'ألغى الفني';
+  String get technicianCancelled => 'Ø£Ù„ØºÙ‰ Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get tryAdjustingYourSearchOrFilters => 'حاول تعديل البحث أو الفلاتر';
+  String get tryAdjustingYourSearchOrFilters =>
+      'Ø­Ø§ÙˆÙ„ ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ø¨Ø­Ø« Ø£Ùˆ Ø§Ù„ÙÙ„Ø§ØªØ±';
 
   @override
-  String get cancelledByTechnician => 'تم الإلغاء بواسطة الفني';
+  String get cancelledByTechnician =>
+      'ØªÙ… Ø§Ù„Ø¥Ù„ØºØ§Ø¡ Ø¨ÙˆØ§Ø³Ø·Ø© Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get warrantyRejectedByAdmin => 'تم رفض الضمان من قبل المسؤول';
+  String get warrantyRejectedByAdmin =>
+      'ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø¶Ù…Ø§Ù† Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„';
 
   @override
-  String get cancelledByYou => 'تم الإلغاء من قبلك';
+  String get cancelledByYou => 'ØªÙ… Ø§Ù„Ø¥Ù„ØºØ§Ø¡ Ù…Ù† Ù‚Ø¨Ù„Ùƒ';
 
   @override
-  String get youCancelledThisBooking => 'لقد ألغيت هذا الحجز';
+  String get youCancelledThisBooking => 'Ù„Ù‚Ø¯ Ø£Ù„ØºÙŠØª Ù‡Ø°Ø§ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get waitingForYourPayment => 'بانتظار دفعتك';
+  String get waitingForYourPayment => 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø¯ÙØ¹ØªÙƒ';
 
   @override
-  String get warrantyRejectedByTechnician => 'تم رفض الضمان من قبل الفني';
+  String get warrantyRejectedByTechnician =>
+      'ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø¶Ù…Ø§Ù† Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get paymentCompleted => 'اكتمل الدفع';
+  String get paymentCompleted => 'Ø§ÙƒØªÙ…Ù„ Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get paymentSuccessfullyCompleted => 'تم إتمام الدفع بنجاح';
+  String get paymentSuccessfullyCompleted =>
+      'ØªÙ… Ø¥ØªÙ…Ø§Ù… Ø§Ù„Ø¯ÙØ¹ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
   String get warrantyRequestWasRejectedByAdmin =>
-      'تم رفض طلب الضمان من قبل المسؤول';
+      'ØªÙ… Ø±ÙØ¶ Ø·Ù„Ø¨ Ø§Ù„Ø¶Ù…Ø§Ù† Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„';
 
   @override
-  String get youSubmittedTheBookingRequest => 'قدمت طلب الحجز';
+  String get youSubmittedTheBookingRequest => 'Ù‚Ø¯Ù…Øª Ø·Ù„Ø¨ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
   String get warrantyRequestWasRejectedByTechnician =>
-      'تم رفض طلب الضمان من قبل الفني';
+      'ØªÙ… Ø±ÙØ¶ Ø·Ù„Ø¨ Ø§Ù„Ø¶Ù…Ø§Ù† Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get acceptedAt => 'مؤكد في';
+  String get acceptedAt => 'Ù…Ø¤ÙƒØ¯ ÙÙŠ';
 
   @override
-  String get serviceProviderConfirmedAppointment => 'أكد مقدم الخدمة الموعد';
+  String get serviceProviderConfirmedAppointment =>
+      'Ø£ÙƒØ¯ Ù…Ù‚Ø¯Ù… Ø§Ù„Ø®Ø¯Ù…Ø© Ø§Ù„Ù…ÙˆØ¹Ø¯';
 
   @override
-  String get completedAt => 'اكتمل في';
+  String get completedAt => 'Ø§ÙƒØªÙ…Ù„ ÙÙŠ';
 
   @override
-  String get rejectedAt => 'تم الرفض في';
+  String get rejectedAt => 'ØªÙ… Ø§Ù„Ø±ÙØ¶ ÙÙŠ';
 
   @override
   String get bookingWasRejectedByServiceProvider =>
-      'تم رفض الحجز من قبل مقدم الخدمة';
+      'ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø­Ø¬Ø² Ù…Ù† Ù‚Ø¨Ù„ Ù…Ù‚Ø¯Ù… Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get cancelledByCustomer => 'تم الإلغاء من قبل العميل';
+  String get cancelledByCustomer =>
+      'ØªÙ… Ø§Ù„Ø¥Ù„ØºØ§Ø¡ Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ø¹Ù…ÙŠÙ„';
 
   @override
-  String get bookingWasCancelledByCustomer => 'تم إلغاء الحجز من قبل العميل';
+  String get bookingWasCancelledByCustomer =>
+      'ØªÙ… Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø­Ø¬Ø² Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ø¹Ù…ÙŠÙ„';
 
   @override
-  String get serviceInProgress => 'الخدمة قيد التنفيذ';
+  String get serviceInProgress => 'Ø§Ù„Ø®Ø¯Ù…Ø© Ù‚ÙŠØ¯ Ø§Ù„ØªÙ†ÙÙŠØ°';
 
   @override
-  String get current => 'الحالي';
+  String get current => 'Ø§Ù„Ø­Ø§Ù„ÙŠ';
 
   @override
-  String get serviceIsCurrentlyBeingPerformed => 'يتم تنفيذ الخدمة حاليًا';
+  String get serviceIsCurrentlyBeingPerformed =>
+      'ÙŠØªÙ… ØªÙ†ÙÙŠØ° Ø§Ù„Ø®Ø¯Ù…Ø© Ø­Ø§Ù„ÙŠÙ‹Ø§';
 
   @override
-  String get waitingForServiceProvider => 'في انتظار مقدم الخدمة';
+  String get waitingForServiceProvider =>
+      'ÙÙŠ Ø§Ù†ØªØ¸Ø§Ø± Ù…Ù‚Ø¯Ù… Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
   String get waitingForTechnicianToStartService =>
-      'في انتظار الفني لبدء الخدمة';
+      'ÙÙŠ Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„ÙÙ†ÙŠ Ù„Ø¨Ø¯Ø¡ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get waitingForServiceProviderResponse => 'في انتظار رد مقدم الخدمة';
+  String get waitingForServiceProviderResponse =>
+      'ÙÙŠ Ø§Ù†ØªØ¸Ø§Ø± Ø±Ø¯ Ù…Ù‚Ø¯Ù… Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get waitingForAcceptance => 'في انتظار القبول';
+  String get waitingForAcceptance => 'ÙÙŠ Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù‚Ø¨ÙˆÙ„';
 
   @override
-  String get waitingForAdmin => 'في انتظار المسؤول';
+  String get waitingForAdmin => 'ÙÙŠ Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„';
 
   @override
   String get waitingForAdminToReassign =>
-      'في انتظار المسؤول لإعادة تعيين الفني';
+      'ÙÙŠ Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„ Ù„Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get introduction => 'مقدمة';
+  String get introduction => 'Ù…Ù‚Ø¯Ù…Ø©';
 
   @override
-  String get privacyPolicy => 'سياسة الخصوصية';
+  String get privacyPolicy => 'Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø®ØµÙˆØµÙŠØ©';
 
   @override
-  String get termsOfUse => 'شروط الاستخدام';
+  String get termsOfUse => 'Ø´Ø±ÙˆØ· Ø§Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù…';
 
   @override
-  String get and => 'و';
+  String get and => 'Ùˆ';
 
   @override
-  String get policy1title => 'البيانات التي نجمعها';
+  String get policy1title => 'Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„ØªÙŠ Ù†Ø¬Ù…Ø¹Ù‡Ø§';
 
   @override
-  String get policy2title => 'كيفية الاستخدام';
+  String get policy2title => 'ÙƒÙŠÙÙŠØ© Ø§Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù…';
 
   @override
-  String get policy3title => 'مشاركة البيانات';
+  String get policy3title => 'Ù…Ø´Ø§Ø±ÙƒØ© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª';
 
   @override
-  String get terms1title => 'المسؤولية عن الطلب';
+  String get terms1title => 'Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„ÙŠØ© Ø¹Ù† Ø§Ù„Ø·Ù„Ø¨';
 
   @override
-  String get terms2title => 'رسوم المعاينة';
+  String get terms2title => 'Ø±Ø³ÙˆÙ… Ø§Ù„Ù…Ø¹Ø§ÙŠÙ†Ø©';
 
   @override
-  String get terms3title => 'الدفع والتكلفة النهائية';
+  String get terms3title => 'Ø§Ù„Ø¯ÙØ¹ ÙˆØ§Ù„ØªÙƒÙ„ÙØ© Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠØ©';
 
   @override
-  String get terms4title => 'الضمان (الكفالة)';
+  String get terms4title => 'Ø§Ù„Ø¶Ù…Ø§Ù† (Ø§Ù„ÙƒÙØ§Ù„Ø©)';
 
   @override
-  String get terms5title => 'التقييم';
+  String get terms5title => 'Ø§Ù„ØªÙ‚ÙŠÙŠÙ…';
 
   @override
   String get phoneNumberUpdateInfo =>
-      'أدخل رقم الهاتف الذي يبدأ بـ \'05\' لتحديث رقم الهاتف';
+      'Ø£Ø¯Ø®Ù„ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ø§Ù„Ø°ÙŠ ÙŠØ¨Ø¯Ø£ Ø¨Ù€ \'05\' Ù„ØªØ­Ø¯ÙŠØ« Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ';
 
   @override
   String get termsIntroduction =>
-      'يُعد استخدامك للتطبيق قبولاً كاملاً وغير مشروط لهذه الشروط. التطبيق هو منصة وساطة إلكترونية تربطك بمقدمي الخدمات الفنية فقط.';
+      'ÙŠÙØ¹Ø¯ Ø§Ø³ØªØ®Ø¯Ø§Ù…Ùƒ Ù„Ù„ØªØ·Ø¨ÙŠÙ‚ Ù‚Ø¨ÙˆÙ„Ø§Ù‹ ÙƒØ§Ù…Ù„Ø§Ù‹ ÙˆØºÙŠØ± Ù…Ø´Ø±ÙˆØ· Ù„Ù‡Ø°Ù‡ Ø§Ù„Ø´Ø±ÙˆØ·. Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ù‡Ùˆ Ù…Ù†ØµØ© ÙˆØ³Ø§Ø·Ø© Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠØ© ØªØ±Ø¨Ø·Ùƒ Ø¨Ù…Ù‚Ø¯Ù…ÙŠ Ø§Ù„Ø®Ø¯Ù…Ø§Øª Ø§Ù„ÙÙ†ÙŠØ© ÙÙ‚Ø·.';
 
   @override
   String get terms1 =>
-      'تلتزم بتقديم وصف دقيق وكافٍ للمشكلة (نص، صورة، فيديو) وموقع الخدمة لتمكين الفني من الاستجابة.';
+      'ØªÙ„ØªØ²Ù… Ø¨ØªÙ‚Ø¯ÙŠÙ… ÙˆØµÙ Ø¯Ù‚ÙŠÙ‚ ÙˆÙƒØ§ÙÙ Ù„Ù„Ù…Ø´ÙƒÙ„Ø© (Ù†ØµØŒ ØµÙˆØ±Ø©ØŒ ÙÙŠØ¯ÙŠÙˆ) ÙˆÙ…ÙˆÙ‚Ø¹ Ø§Ù„Ø®Ø¯Ù…Ø© Ù„ØªÙ…ÙƒÙŠÙ† Ø§Ù„ÙÙ†ÙŠ Ù…Ù† Ø§Ù„Ø§Ø³ØªØ¬Ø§Ø¨Ø©.';
 
   @override
   String get terms2 =>
-      'أنت مسؤول عن دفع رسوم المعاينة/الفحص المحددة (إذا وجدت) بمجرد قبول الفني للطلب وتوجهه إلى الموقع. هذه الرسوم غير قابلة للاسترداد عادةً.';
+      'Ø£Ù†Øª Ù…Ø³Ø¤ÙˆÙ„ Ø¹Ù† Ø¯ÙØ¹ Ø±Ø³ÙˆÙ… Ø§Ù„Ù…Ø¹Ø§ÙŠÙ†Ø©/Ø§Ù„ÙØ­Øµ Ø§Ù„Ù…Ø­Ø¯Ø¯Ø© (Ø¥Ø°Ø§ ÙˆØ¬Ø¯Øª) Ø¨Ù…Ø¬Ø±Ø¯ Ù‚Ø¨ÙˆÙ„ Ø§Ù„ÙÙ†ÙŠ Ù„Ù„Ø·Ù„Ø¨ ÙˆØªÙˆØ¬Ù‡Ù‡ Ø¥Ù„Ù‰ Ø§Ù„Ù…ÙˆÙ‚Ø¹. Ù‡Ø°Ù‡ Ø§Ù„Ø±Ø³ÙˆÙ… ØºÙŠØ± Ù‚Ø§Ø¨Ù„Ø© Ù„Ù„Ø§Ø³ØªØ±Ø¯Ø§Ø¯ Ø¹Ø§Ø¯Ø©Ù‹.';
 
   @override
   String get terms3 =>
-      'الدفع والتكلفة النهائية: يتم الاتفاق على التكلفة الإجمالية للخدمة مباشرة مع الفني بعد المعاينة، وتتم الموافقة عليها عبر التطبيق قبل بدء العمل. أنت مسؤول عن سداد المبلغ المتفق عليه كاملاً.';
+      'Ø§Ù„Ø¯ÙØ¹ ÙˆØ§Ù„ØªÙƒÙ„ÙØ© Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠØ©: ÙŠØªÙ… Ø§Ù„Ø§ØªÙØ§Ù‚ Ø¹Ù„Ù‰ Ø§Ù„ØªÙƒÙ„ÙØ© Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠØ© Ù„Ù„Ø®Ø¯Ù…Ø© Ù…Ø¨Ø§Ø´Ø±Ø© Ù…Ø¹ Ø§Ù„ÙÙ†ÙŠ Ø¨Ø¹Ø¯ Ø§Ù„Ù…Ø¹Ø§ÙŠÙ†Ø©ØŒ ÙˆØªØªÙ… Ø§Ù„Ù…ÙˆØ§ÙÙ‚Ø© Ø¹Ù„ÙŠÙ‡Ø§ Ø¹Ø¨Ø± Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ù‚Ø¨Ù„ Ø¨Ø¯Ø¡ Ø§Ù„Ø¹Ù…Ù„. Ø£Ù†Øª Ù…Ø³Ø¤ÙˆÙ„ Ø¹Ù† Ø³Ø¯Ø§Ø¯ Ø§Ù„Ù…Ø¨Ù„Øº Ø§Ù„Ù…ØªÙÙ‚ Ø¹Ù„ÙŠÙ‡ ÙƒØ§Ù…Ù„Ø§Ù‹.';
 
   @override
-  String get terms4p1 => 'يخضع العمل المنجز لـ';
+  String get terms4p1 => 'ÙŠØ®Ø¶Ø¹ Ø§Ù„Ø¹Ù…Ù„ Ø§Ù„Ù…Ù†Ø¬Ø² Ù„Ù€';
 
   @override
-  String get warrantyPolicy => 'سياسة الضمان';
+  String get warrantyPolicy => 'Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø¶Ù…Ø§Ù†';
 
   @override
   String get terms4p2 =>
-      'الخاصة بالمنصة، والتي يمكنك الاطلاع على تفاصيلها الكاملة عبر الرابط المخصص.';
+      'Ø§Ù„Ø®Ø§ØµØ© Ø¨Ø§Ù„Ù…Ù†ØµØ©ØŒ ÙˆØ§Ù„ØªÙŠ ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ø§Ø·Ù„Ø§Ø¹ Ø¹Ù„Ù‰ ØªÙØ§ØµÙŠÙ„Ù‡Ø§ Ø§Ù„ÙƒØ§Ù…Ù„Ø© Ø¹Ø¨Ø± Ø§Ù„Ø±Ø§Ø¨Ø· Ø§Ù„Ù…Ø®ØµØµ.';
 
   @override
   String get terms5 =>
-      'يحق لك تقييم أداء الفني بعد إتمام الخدمة، وتلتزم بأن تكون التقييمات صادقة وموضوعية.';
+      'ÙŠØ­Ù‚ Ù„Ùƒ ØªÙ‚ÙŠÙŠÙ… Ø£Ø¯Ø§Ø¡ Ø§Ù„ÙÙ†ÙŠ Ø¨Ø¹Ø¯ Ø¥ØªÙ…Ø§Ù… Ø§Ù„Ø®Ø¯Ù…Ø©ØŒ ÙˆØªÙ„ØªØ²Ù… Ø¨Ø£Ù† ØªÙƒÙˆÙ† Ø§Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª ØµØ§Ø¯Ù‚Ø© ÙˆÙ…ÙˆØ¶ÙˆØ¹ÙŠØ©.';
 
   @override
   String get policy1 =>
-      'الاسم، رقم الهاتف، البريد الإلكتروني، عنوان الموقع الدقيق لتلقي الخدمة، سجل الطلبات، تقييمات الفنيين.';
+      'Ø§Ù„Ø§Ø³Ù…ØŒ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙØŒ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠØŒ Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø¯Ù‚ÙŠÙ‚ Ù„ØªÙ„Ù‚ÙŠ Ø§Ù„Ø®Ø¯Ù…Ø©ØŒ Ø³Ø¬Ù„ Ø§Ù„Ø·Ù„Ø¨Ø§ØªØŒ ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„ÙÙ†ÙŠÙŠÙ†.';
 
   @override
   String get policy2 =>
-      'تستخدم لربطك بالفنيين، وتسهيل عملية الحجز والدفع، وإرسال إشعارات الطلبات.';
+      'ØªØ³ØªØ®Ø¯Ù… Ù„Ø±Ø¨Ø·Ùƒ Ø¨Ø§Ù„ÙÙ†ÙŠÙŠÙ†ØŒ ÙˆØªØ³Ù‡ÙŠÙ„ Ø¹Ù…Ù„ÙŠØ© Ø§Ù„Ø­Ø¬Ø² ÙˆØ§Ù„Ø¯ÙØ¹ØŒ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ø·Ù„Ø¨Ø§Øª.';
 
   @override
   String get policy3 =>
-      'يتم مشاركة الاسم ورقم الهاتف وعنوان الموقع فقط مع الفني الذي تم قبول طلبه لتمكينه من أداء الخدمة.';
+      'ÙŠØªÙ… Ù…Ø´Ø§Ø±ÙƒØ© Ø§Ù„Ø§Ø³Ù… ÙˆØ±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ÙˆØ¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙÙ‚Ø· Ù…Ø¹ Ø§Ù„ÙÙ†ÙŠ Ø§Ù„Ø°ÙŠ ØªÙ… Ù‚Ø¨ÙˆÙ„ Ø·Ù„Ø¨Ù‡ Ù„ØªÙ…ÙƒÙŠÙ†Ù‡ Ù…Ù† Ø£Ø¯Ø§Ø¡ Ø§Ù„Ø®Ø¯Ù…Ø©.';
 
   @override
   String pleaseSelectAValid(Object value) {
-    return 'يرجى اختيار $value بشكل صحيح';
+    return 'ÙŠØ±Ø¬Ù‰ Ø§Ø®ØªÙŠØ§Ø± $value Ø¨Ø´ÙƒÙ„ ØµØ­ÙŠØ­';
   }
 
   @override
   String showingResults(Object count) {
-    return 'عرض $count من النتائج. اكتب للبحث';
+    return 'Ø¹Ø±Ø¶ $count Ù…Ù† Ø§Ù„Ù†ØªØ§Ø¦Ø¬. Ø§ÙƒØªØ¨ Ù„Ù„Ø¨Ø­Ø«';
   }
 
   @override
-  String get typeProvinceNameToSearch => 'اكتب اسم المنطقة للبحث...';
+  String get typeProvinceNameToSearch =>
+      'Ø§ÙƒØªØ¨ Ø§Ø³Ù… Ø§Ù„Ù…Ù†Ø·Ù‚Ø© Ù„Ù„Ø¨Ø­Ø«...';
 
   @override
-  String get typeCityNameToSearch => 'اكتب اسم المدينة للبحث...';
+  String get typeCityNameToSearch =>
+      'Ø§ÙƒØªØ¨ Ø§Ø³Ù… Ø§Ù„Ù…Ø¯ÙŠÙ†Ø© Ù„Ù„Ø¨Ø­Ø«...';
 
   @override
-  String get typeNeighborhoodNameToSearch => 'اكتب اسم الحي للبحث...';
+  String get typeNeighborhoodNameToSearch =>
+      'Ø§ÙƒØªØ¨ Ø§Ø³Ù… Ø§Ù„Ø­ÙŠ Ù„Ù„Ø¨Ø­Ø«...';
 
   @override
-  String get loginDescription => 'فنيين محترفين وموثوقين. اطلب الخدمة بلمسة!';
+  String get loginDescription =>
+      'ÙÙ†ÙŠÙŠÙ† Ù…Ø­ØªØ±ÙÙŠÙ† ÙˆÙ…ÙˆØ«ÙˆÙ‚ÙŠÙ†. Ø§Ø·Ù„Ø¨ Ø§Ù„Ø®Ø¯Ù…Ø© Ø¨Ù„Ù…Ø³Ø©!';
 
   @override
   String get categoriesDescription =>
-      'اختر التصنيف الرئيسي (الكهربائي/السباك) لتبدأ طلب الخدمة';
+      'Ø§Ø®ØªØ± Ø§Ù„ØªØµÙ†ÙŠÙ Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠ (Ø§Ù„ÙƒÙ‡Ø±Ø¨Ø§Ø¦ÙŠ/Ø§Ù„Ø³Ø¨Ø§Ùƒ) Ù„ØªØ¨Ø¯Ø£ Ø·Ù„Ø¨ Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get welcomeToAboGlumbo => 'أهلاً بك في ابو جلمبو!';
+  String get welcomeToAboGlumbo => 'Ø£Ù‡Ù„Ø§Ù‹ Ø¨Ùƒ ÙÙŠ Ø§Ø¨Ùˆ Ø¬Ù„Ù…Ø¨Ùˆ!';
 
   @override
   String get welcomeDescription =>
-      'لقد أصبحنا شريكك الجديد لراحة بالك. جاهزون لصيانة منزلك. ابدأ الآن بطلب خدمتك الأولى.';
+      'Ù„Ù‚Ø¯ Ø£ØµØ¨Ø­Ù†Ø§ Ø´Ø±ÙŠÙƒÙƒ Ø§Ù„Ø¬Ø¯ÙŠØ¯ Ù„Ø±Ø§Ø­Ø© Ø¨Ø§Ù„Ùƒ. Ø¬Ø§Ù‡Ø²ÙˆÙ† Ù„ØµÙŠØ§Ù†Ø© Ù…Ù†Ø²Ù„Ùƒ. Ø§Ø¨Ø¯Ø£ Ø§Ù„Ø¢Ù† Ø¨Ø·Ù„Ø¨ Ø®Ø¯Ù…ØªÙƒ Ø§Ù„Ø£ÙˆÙ„Ù‰.';
 
   @override
-  String get newServiceRequest => 'طلب خدمة جديدة';
+  String get newServiceRequest => 'Ø·Ù„Ø¨ Ø®Ø¯Ù…Ø© Ø¬Ø¯ÙŠØ¯Ø©';
 
   @override
-  String get uploadPaymentProof => 'رفع إثبات الدفع';
+  String get uploadPaymentProof => 'Ø±ÙØ¹ Ø¥Ø«Ø¨Ø§Øª Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get paymentProofFiles => 'ملفات إثبات الدفع';
+  String get paymentProofFiles => 'Ù…Ù„ÙØ§Øª Ø¥Ø«Ø¨Ø§Øª Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get pleaseSelectAtLeastOneFile => 'يرجى اختيار ملف واحد على الأقل';
+  String get pleaseSelectAtLeastOneFile =>
+      'ÙŠØ±Ø¬Ù‰ Ø§Ø®ØªÙŠØ§Ø± Ù…Ù„Ù ÙˆØ§Ø­Ø¯ Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„';
 
   @override
-  String get pleaseEnterValidAmount => 'يرجى إدخال مبلغ صحيح';
+  String get pleaseEnterValidAmount => 'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ù…Ø¨Ù„Øº ØµØ­ÙŠØ­';
 
   @override
-  String get paymentProofUploadedSuccessfully => 'تم رفع إثبات الدفع بنجاح';
+  String get paymentProofUploadedSuccessfully =>
+      'ØªÙ… Ø±ÙØ¹ Ø¥Ø«Ø¨Ø§Øª Ø§Ù„Ø¯ÙØ¹ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get selectFiles => 'اختر الملفات';
+  String get selectFiles => 'Ø§Ø®ØªØ± Ø§Ù„Ù…Ù„ÙØ§Øª';
 
   @override
-  String get addMoreFiles => 'إضافة المزيد من الملفات';
+  String get addMoreFiles => 'Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ø²ÙŠØ¯ Ù…Ù† Ø§Ù„Ù…Ù„ÙØ§Øª';
 
   @override
-  String get failedToFetchLocation => 'فشل في جلب الموقع';
+  String get failedToFetchLocation => 'ÙØ´Ù„ ÙÙŠ Ø¬Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
   String get locationWillBeAutomaticallyDetected =>
-      'سيتم تحديد الموقع تلقائيًا';
+      'Ø³ÙŠØªÙ… ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§';
 
   @override
-  String get uploading => 'جاري الرفع...';
+  String get uploading => 'Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø±ÙØ¹...';
 
   @override
-  String get noBookings => 'لا يوجد حجوزات';
+  String get noBookings => 'Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø­Ø¬ÙˆØ²Ø§Øª';
 
   @override
-  String get uploadProof => 'رفع الإثبات';
+  String get uploadProof => 'Ø±ÙØ¹ Ø§Ù„Ø¥Ø«Ø¨Ø§Øª';
 
   @override
-  String get customerAboutUsTitle => 'من نحن';
+  String get customerAboutUsTitle => 'Ù…Ù† Ù†Ø­Ù†';
 
   @override
-  String get customerAboutHeadline => 'راحة بالك تبدأ من هنا';
+  String get customerAboutHeadline => 'Ø±Ø§Ø­Ø© Ø¨Ø§Ù„Ùƒ ØªØ¨Ø¯Ø£ Ù…Ù† Ù‡Ù†Ø§';
 
   @override
   String get customerAboutIntro =>
-      'نحن ندرك تماماً التحديات التي تواجهك عند البحث عن فنيين مؤهلين وموثوقين للخدمات المنزلية. لهذا السبب، تم إنشاء تطبيقنا ليكون جسرك الوحيد نحو خدمات الصيانة والإصلاح الاحترافية في مجالات الكهرباء، والسباكة، والتكييف، والدهانات، وغيرها.';
+      'Ù†Ø­Ù† Ù†Ø¯Ø±Ùƒ ØªÙ…Ø§Ù…Ø§Ù‹ Ø§Ù„ØªØ­Ø¯ÙŠØ§Øª Ø§Ù„ØªÙŠ ØªÙˆØ§Ø¬Ù‡Ùƒ Ø¹Ù†Ø¯ Ø§Ù„Ø¨Ø­Ø« Ø¹Ù† ÙÙ†ÙŠÙŠÙ† Ù…Ø¤Ù‡Ù„ÙŠÙ† ÙˆÙ…ÙˆØ«ÙˆÙ‚ÙŠÙ† Ù„Ù„Ø®Ø¯Ù…Ø§Øª Ø§Ù„Ù…Ù†Ø²Ù„ÙŠØ©. Ù„Ù‡Ø°Ø§ Ø§Ù„Ø³Ø¨Ø¨ØŒ ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ ØªØ·Ø¨ÙŠÙ‚Ù†Ø§ Ù„ÙŠÙƒÙˆÙ† Ø¬Ø³Ø±Ùƒ Ø§Ù„ÙˆØ­ÙŠØ¯ Ù†Ø­Ùˆ Ø®Ø¯Ù…Ø§Øª Ø§Ù„ØµÙŠØ§Ù†Ø© ÙˆØ§Ù„Ø¥ØµÙ„Ø§Ø­ Ø§Ù„Ø§Ø­ØªØ±Ø§ÙÙŠØ© ÙÙŠ Ù…Ø¬Ø§Ù„Ø§Øª Ø§Ù„ÙƒÙ‡Ø±Ø¨Ø§Ø¡ØŒ ÙˆØ§Ù„Ø³Ø¨Ø§ÙƒØ©ØŒ ÙˆØ§Ù„ØªÙƒÙŠÙŠÙØŒ ÙˆØ§Ù„Ø¯Ù‡Ø§Ù†Ø§ØªØŒ ÙˆØºÙŠØ±Ù‡Ø§.';
 
   @override
-  String get customerWhyChooseUs => 'لماذا تختارنا؟';
+  String get customerWhyChooseUs => 'Ù„Ù…Ø§Ø°Ø§ ØªØ®ØªØ§Ø±Ù†Ø§ØŸ';
 
   @override
-  String get customerCertifiedExpertsTitle => 'خبراء معتمدون';
+  String get customerCertifiedExpertsTitle => 'Ø®Ø¨Ø±Ø§Ø¡ Ù…Ø¹ØªÙ…Ø¯ÙˆÙ†';
 
   @override
   String get customerCertifiedExpertsDesc =>
-      'نتعامل فقط مع فنيين تم التحقق من كفاءتهم وخبرتهم لضمان أعلى مستوى من الجودة.';
+      'Ù†ØªØ¹Ø§Ù…Ù„ ÙÙ‚Ø· Ù…Ø¹ ÙÙ†ÙŠÙŠÙ† ØªÙ… Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† ÙƒÙØ§Ø¡ØªÙ‡Ù… ÙˆØ®Ø¨Ø±ØªÙ‡Ù… Ù„Ø¶Ù…Ø§Ù† Ø£Ø¹Ù„Ù‰ Ù…Ø³ØªÙˆÙ‰ Ù…Ù† Ø§Ù„Ø¬ÙˆØ¯Ø©.';
 
   @override
-  String get customerSeamlessExperienceTitle => 'تجربة سلسة';
+  String get customerSeamlessExperienceTitle => 'ØªØ¬Ø±Ø¨Ø© Ø³Ù„Ø³Ø©';
 
   @override
   String get customerSeamlessExperienceDesc =>
-      'وداعاً للبحث والمكالمات المتعددة. يمكنك طلب الخدمة وتحديد موعدها خلال ثوانٍ قليلة عبر واجهة سهلة الاستخدام.';
+      'ÙˆØ¯Ø§Ø¹Ø§Ù‹ Ù„Ù„Ø¨Ø­Ø« ÙˆØ§Ù„Ù…ÙƒØ§Ù„Ù…Ø§Øª Ø§Ù„Ù…ØªØ¹Ø¯Ø¯Ø©. ÙŠÙ…ÙƒÙ†Ùƒ Ø·Ù„Ø¨ Ø§Ù„Ø®Ø¯Ù…Ø© ÙˆØªØ­Ø¯ÙŠØ¯ Ù…ÙˆØ¹Ø¯Ù‡Ø§ Ø®Ù„Ø§Ù„ Ø«ÙˆØ§Ù†Ù Ù‚Ù„ÙŠÙ„Ø© Ø¹Ø¨Ø± ÙˆØ§Ø¬Ù‡Ø© Ø³Ù‡Ù„Ø© Ø§Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù….';
 
   @override
-  String get customerTransparencyTitle => 'شفافية تامة';
+  String get customerTransparencyTitle => 'Ø´ÙØ§ÙÙŠØ© ØªØ§Ù…Ø©';
 
   @override
   String get customerTransparencyDesc =>
-      'نحرص على تقديم أسعار واضحة لرسوم الفحص وتفاصيل كاملة للخدمة قبل وبعد التنفيذ، بالإضافة إلى ضمان موثق على أعمالنا.';
+      'Ù†Ø­Ø±Øµ Ø¹Ù„Ù‰ ØªÙ‚Ø¯ÙŠÙ… Ø£Ø³Ø¹Ø§Ø± ÙˆØ§Ø¶Ø­Ø© Ù„Ø±Ø³ÙˆÙ… Ø§Ù„ÙØ­Øµ ÙˆØªÙØ§ØµÙŠÙ„ ÙƒØ§Ù…Ù„Ø© Ù„Ù„Ø®Ø¯Ù…Ø© Ù‚Ø¨Ù„ ÙˆØ¨Ø¹Ø¯ Ø§Ù„ØªÙ†ÙÙŠØ°ØŒ Ø¨Ø§Ù„Ø¥Ø¶Ø§ÙØ© Ø¥Ù„Ù‰ Ø¶Ù…Ø§Ù† Ù…ÙˆØ«Ù‚ Ø¹Ù„Ù‰ Ø£Ø¹Ù…Ø§Ù„Ù†Ø§.';
 
   @override
   String get customerMission =>
-      'مهمتنا هي تحويل مهمة الصيانة المعقدة إلى تجربة بسيطة ومضمونة.';
+      'Ù…Ù‡Ù…ØªÙ†Ø§ Ù‡ÙŠ ØªØ­ÙˆÙŠÙ„ Ù…Ù‡Ù…Ø© Ø§Ù„ØµÙŠØ§Ù†Ø© Ø§Ù„Ù…Ø¹Ù‚Ø¯Ø© Ø¥Ù„Ù‰ ØªØ¬Ø±Ø¨Ø© Ø¨Ø³ÙŠØ·Ø© ÙˆÙ…Ø¶Ù…ÙˆÙ†Ø©.';
 
   @override
   String get serviceNotAvailableInRegion =>
-      'هذه الخدمة غير متوفرة في منطقتك حالياً. سيتم إضافتها لاحقاً.';
+      'Ù‡Ø°Ù‡ Ø§Ù„Ø®Ø¯Ù…Ø© ØºÙŠØ± Ù…ØªÙˆÙØ±Ø© ÙÙŠ Ù…Ù†Ø·Ù‚ØªÙƒ Ø­Ø§Ù„ÙŠØ§Ù‹. Ø³ÙŠØªÙ… Ø¥Ø¶Ø§ÙØªÙ‡Ø§ Ù„Ø§Ø­Ù‚Ø§Ù‹.';
 
   @override
-  String get serviceUnavailable => 'الخدمة غير متوفرة';
+  String get serviceUnavailable => 'Ø§Ù„Ø®Ø¯Ù…Ø© ØºÙŠØ± Ù…ØªÙˆÙØ±Ø©';
 
   @override
   String get serviceUnavailableLongMessage =>
-      'الخدمة غير متوفرة في هذا الموقع حاليًا، نأمل في توسيع خدماتنا لتشمل هذه المنطقة في المستقبل';
+      'Ø§Ù„Ø®Ø¯Ù…Ø© ØºÙŠØ± Ù…ØªÙˆÙØ±Ø© ÙÙŠ Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø­Ø§Ù„ÙŠÙ‹Ø§ØŒ Ù†Ø£Ù…Ù„ ÙÙŠ ØªÙˆØ³ÙŠØ¹ Ø®Ø¯Ù…Ø§ØªÙ†Ø§ Ù„ØªØ´Ù…Ù„ Ù‡Ø°Ù‡ Ø§Ù„Ù…Ù†Ø·Ù‚Ø© ÙÙŠ Ø§Ù„Ù…Ø³ØªÙ‚Ø¨Ù„';
 
   @override
-  String get serviceNow => 'خدمة فورية';
+  String get serviceNow => 'Ø®Ø¯Ù…Ø© ÙÙˆØ±ÙŠØ©';
 
   @override
-  String get serviceForLater => 'خدمة مجدولة';
+  String get serviceForLater => 'Ø®Ø¯Ù…Ø© Ù…Ø¬Ø¯ÙˆÙ„Ø©';
 
   @override
-  String get placeAndTiming => 'المكان والوقت';
+  String get placeAndTiming => 'Ø§Ù„Ù…ÙƒØ§Ù† ÙˆØ§Ù„ÙˆÙ‚Øª';
 
   @override
-  String get counterOfferFromTechnician => 'تحديث بخصوص طلبك';
+  String get counterOfferFromTechnician => 'ØªØ­Ø¯ÙŠØ« Ø¨Ø®ØµÙˆØµ Ø·Ù„Ø¨Ùƒ';
 
   @override
-  String get technicianProposedNewTime => 'لقد اقترح الفني وقتاً جديداً لحجزك.';
+  String get technicianProposedNewTime =>
+      'Ù„Ù‚Ø¯ Ø§Ù‚ØªØ±Ø­ Ø§Ù„ÙÙ†ÙŠ ÙˆÙ‚ØªØ§Ù‹ Ø¬Ø¯ÙŠØ¯Ø§Ù‹ Ù„Ø­Ø¬Ø²Ùƒ.';
 
   @override
-  String get acceptOffer => 'قبول العرض';
+  String get acceptOffer => 'Ù‚Ø¨ÙˆÙ„ Ø§Ù„Ø¹Ø±Ø¶';
 
   @override
-  String get suggestAnotherTime => 'اقتراح وقت آخر';
+  String get suggestAnotherTime => 'Ø§Ù‚ØªØ±Ø§Ø­ ÙˆÙ‚Øª Ø¢Ø®Ø±';
 
   @override
   String get rescheduleBookingTimeConfirmation =>
-      'هل أنت متأكد من أنك تريد قبول وقت الموعد الجديد هذا؟ سيتم تحديث جدول الحجز على الفور.';
+      'Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ù…Ù† Ø£Ù†Ùƒ ØªØ±ÙŠØ¯ Ù‚Ø¨ÙˆÙ„ ÙˆÙ‚Øª Ø§Ù„Ù…ÙˆØ¹Ø¯ Ø§Ù„Ø¬Ø¯ÙŠØ¯ Ù‡Ø°Ø§ØŸ Ø³ÙŠØªÙ… ØªØ­Ø¯ÙŠØ« Ø¬Ø¯ÙˆÙ„ Ø§Ù„Ø­Ø¬Ø² Ø¹Ù„Ù‰ Ø§Ù„ÙÙˆØ±.';
 
   @override
-  String get counterOfferResponseSent => 'تم إرسال الرد على العرض بنجاح';
+  String get counterOfferResponseSent =>
+      'ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø±Ø¯ Ø¹Ù„Ù‰ Ø§Ù„Ø¹Ø±Ø¶ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get rejectOffer => 'رفض العرض';
+  String get rejectOffer => 'Ø±ÙØ¶ Ø§Ù„Ø¹Ø±Ø¶';
 
   @override
-  String get proposedTime => 'الوقت المقترح';
+  String get proposedTime => 'Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…Ù‚ØªØ±Ø­';
 
   @override
-  String get counterPropose => 'اقتراح بديل';
+  String get counterPropose => 'Ø§Ù‚ØªØ±Ø§Ø­ Ø¨Ø¯ÙŠÙ„';
 
   @override
-  String get proposeNewTime => 'اقتراح وقت جديد';
+  String get proposeNewTime => 'Ø§Ù‚ØªØ±Ø§Ø­ ÙˆÙ‚Øª Ø¬Ø¯ÙŠØ¯';
 
   @override
-  String get counterOfferSent => 'تم إرسال الاقتراح البديل';
+  String get counterOfferSent =>
+      'ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø§Ù‚ØªØ±Ø§Ø­ Ø§Ù„Ø¨Ø¯ÙŠÙ„';
 
   @override
-  String get waitingForTechnician => 'في انتظار رد الفني';
+  String get waitingForTechnician => 'ÙÙŠ Ø§Ù†ØªØ¸Ø§Ø± Ø±Ø¯ Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get checkingServiceAvailability => 'جاري التحقق من توفر الخدمة...';
+  String get checkingServiceAvailability =>
+      'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† ØªÙˆÙØ± Ø§Ù„Ø®Ø¯Ù…Ø©...';
 
   @override
   String get serviceAreaNotConfigured =>
-      'الخدمة غير متوفرة: لم يتم إعداد مناطق الخدمة حالياً';
+      'Ø§Ù„Ø®Ø¯Ù…Ø© ØºÙŠØ± Ù…ØªÙˆÙØ±Ø©: Ù„Ù… ÙŠØªÙ… Ø¥Ø¹Ø¯Ø§Ø¯ Ù…Ù†Ø§Ø·Ù‚ Ø§Ù„Ø®Ø¯Ù…Ø© Ø­Ø§Ù„ÙŠØ§Ù‹';
 
   @override
   String get noActiveServiceZones =>
-      'الخدمة غير متوفرة: لا توجد مناطق خدمة نشطة محددة';
+      'Ø§Ù„Ø®Ø¯Ù…Ø© ØºÙŠØ± Ù…ØªÙˆÙØ±Ø©: Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†Ø§Ø·Ù‚ Ø®Ø¯Ù…Ø© Ù†Ø´Ø·Ø© Ù…Ø­Ø¯Ø¯Ø©';
 
   @override
-  String get failedToValidateServiceArea => 'فشل التحقق من منطقة الخدمة';
+  String get failedToValidateServiceArea =>
+      'ÙØ´Ù„ Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ù…Ù†Ø·Ù‚Ø© Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
   String get validatingServiceAreaPleaseWait =>
-      'جاري التحقق من منطقة الخدمة، يرجى الانتظار...';
+      'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ù…Ù†Ø·Ù‚Ø© Ø§Ù„Ø®Ø¯Ù…Ø©ØŒ ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø±...';
 
   @override
-  String get onHour => 'خلال أوقات العمل';
+  String get onHour => 'Ø®Ù„Ø§Ù„ Ø£ÙˆÙ‚Ø§Øª Ø§Ù„Ø¹Ù…Ù„';
 
   @override
-  String get offHour => 'خارج أوقات العمل';
+  String get offHour => 'Ø®Ø§Ø±Ø¬ Ø£ÙˆÙ‚Ø§Øª Ø§Ù„Ø¹Ù…Ù„';
 
   @override
-  String get currentTiming => 'التوقيت الحالي:';
+  String get currentTiming => 'Ø§Ù„ØªÙˆÙ‚ÙŠØª Ø§Ù„Ø­Ø§Ù„ÙŠ:';
 
   @override
-  String get pleaseSelectATimeSlot => 'يرجى اختيار الموعد المتاح';
+  String get pleaseSelectATimeSlot =>
+      'ÙŠØ±Ø¬Ù‰ Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ù…ÙˆØ¹Ø¯ Ø§Ù„Ù…ØªØ§Ø­';
 
   @override
-  String get cannotBookForPastTime => 'لا يمكن حجز موعد في الماضي';
+  String get cannotBookForPastTime =>
+      'Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø­Ø¬Ø² Ù…ÙˆØ¹Ø¯ ÙÙŠ Ø§Ù„Ù…Ø§Ø¶ÙŠ';
 
   @override
   String get cannotBookDuringOffHours =>
-      'لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة أثناء ساعات العمل.';
+      'Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø§Ù„Ø­Ø¬Ø² Ø®Ø§Ø±Ø¬ Ø³Ø§Ø¹Ø§Øª Ø§Ù„Ø¹Ù…Ù„. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ø£Ø«Ù†Ø§Ø¡ Ø³Ø§Ø¹Ø§Øª Ø§Ù„Ø¹Ù…Ù„.';
 
   @override
   String get finalizingBookingInfo =>
-      'يرجى الانتظار بينما نقوم بإنهاء إجراءات الحجز...';
+      'ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø± Ø¨ÙŠÙ†Ù…Ø§ Ù†Ù‚ÙˆÙ… Ø¨Ø¥Ù†Ù‡Ø§Ø¡ Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª Ø§Ù„Ø­Ø¬Ø²...';
 
   @override
   String technicianAssignmentNotification(String name) {
-    return 'تم حجز الفني $name بنجاح.';
+    return 'ØªÙ… Ø­Ø¬Ø² Ø§Ù„ÙÙ†ÙŠ $name Ø¨Ù†Ø¬Ø§Ø­.';
   }
 
   @override
   String technicianBookedSuccessfully(String name) {
-    return 'تم حجز الفني $name بنجاح.';
+    return 'ØªÙ… Ø­Ø¬Ø² Ø§Ù„ÙÙ†ÙŠ $name Ø¨Ù†Ø¬Ø§Ø­.';
   }
 
   @override
-  String get verificationPending => 'قيد التحقق من الدفع';
+  String get verificationPending => 'Ù‚ÙŠØ¯ Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø¯ÙØ¹';
 
   @override
   String get waitingForTechnicianVerification =>
-      'في انتظار تحقق الفني من الدفع';
+      'ÙÙŠ Ø§Ù†ØªØ¸Ø§Ø± ØªØ­Ù‚Ù‚ Ø§Ù„ÙÙ†ÙŠ Ù…Ù† Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get verifyPayment => 'التحقق من الدفع';
+  String get verifyPayment => 'Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get confirmPaymentReceipt => 'تأكيد استلام الدفع';
+  String get confirmPaymentReceipt => 'ØªØ£ÙƒÙŠØ¯ Ø§Ø³ØªÙ„Ø§Ù… Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get uploadTechnicianPaymentProof => 'رفع إثبات استلام الدفع';
+  String get uploadTechnicianPaymentProof =>
+      'Ø±ÙØ¹ Ø¥Ø«Ø¨Ø§Øª Ø§Ø³ØªÙ„Ø§Ù… Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get paymentVerifiedSuccessfully => 'تم التحقق من الدفع بنجاح';
+  String get paymentVerifiedSuccessfully =>
+      'ØªÙ… Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø¯ÙØ¹ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get paidOn => 'تاريخ الدفع';
+  String get paidOn => 'ØªØ§Ø±ÙŠØ® Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get pleaseEnterTransactionId => 'يرجى إدخال رقم العملية';
+  String get pleaseEnterTransactionId =>
+      'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ø±Ù‚Ù… Ø§Ù„Ø¹Ù…Ù„ÙŠØ©';
 
   @override
-  String get enterTransactionId => 'أدخل رقم العملية';
+  String get enterTransactionId => 'Ø£Ø¯Ø®Ù„ Ø±Ù‚Ù… Ø§Ù„Ø¹Ù…Ù„ÙŠØ©';
 
   @override
-  String get errorUploading => 'خطأ أثناء الرفع';
+  String get errorUploading => 'Ø®Ø·Ø£ Ø£Ø«Ù†Ø§Ø¡ Ø§Ù„Ø±ÙØ¹';
 
   @override
-  String get counterProposalStarted => 'بدء الاقتراح البديل';
+  String get counterProposalStarted => 'Ø¨Ø¯Ø¡ Ø§Ù„Ø§Ù‚ØªØ±Ø§Ø­ Ø§Ù„Ø¨Ø¯ÙŠÙ„';
 
   @override
-  String get counterProposalAccepted => 'تأكيد الاقتراح البديل';
+  String get counterProposalAccepted =>
+      'ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø§Ù‚ØªØ±Ø§Ø­ Ø§Ù„Ø¨Ø¯ÙŠÙ„';
 
   @override
-  String get counterOfferResponse => 'تم إرسال الرد بنجاح';
+  String get counterOfferResponse => 'ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø±Ø¯ Ø¨Ù†Ø¬Ø§Ø­';
 
   @override
-  String get waitingForYourResponse => 'في انتظار ردك';
+  String get waitingForYourResponse => 'ÙÙŠ Ø§Ù†ØªØ¸Ø§Ø± Ø±Ø¯Ùƒ';
 
   @override
-  String get selectTime => 'اختر الوقت';
+  String get selectTime => 'Ø§Ø®ØªØ± Ø§Ù„ÙˆÙ‚Øª';
 
   @override
-  String get pleaseSelectALaterTime => 'يرجى اختيار وقت لاحق';
+  String get pleaseSelectALaterTime => 'ÙŠØ±Ø¬Ù‰ Ø§Ø®ØªÙŠØ§Ø± ÙˆÙ‚Øª Ù„Ø§Ø­Ù‚';
 
   @override
-  String get submitCounterOffer => 'إرسال اقتراح بديل';
+  String get submitCounterOffer => 'Ø¥Ø±Ø³Ø§Ù„ Ø§Ù‚ØªØ±Ø§Ø­ Ø¨Ø¯ÙŠÙ„';
 
   @override
-  String get proposalRejected => 'تم رفض الاقتراح';
+  String get proposalRejected => 'ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø§Ù‚ØªØ±Ø§Ø­';
 
   @override
-  String get proposalAccepted => 'تم تأكيد الاقتراح';
+  String get proposalAccepted => 'ØªÙ… ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø§Ù‚ØªØ±Ø§Ø­';
 
   @override
-  String get technicianRejectedProposal => 'رفض الفني اقتراحك.';
+  String get technicianRejectedProposal => 'Ø±ÙØ¶ Ø§Ù„ÙÙ†ÙŠ Ø§Ù‚ØªØ±Ø§Ø­Ùƒ.';
 
   @override
-  String get youRejectedProposal => 'لقد رفضت اقتراح الفني.';
+  String get youRejectedProposal => 'Ù„Ù‚Ø¯ Ø±ÙØ¶Øª Ø§Ù‚ØªØ±Ø§Ø­ Ø§Ù„ÙÙ†ÙŠ.';
 
   @override
-  String get appointmentRescheduledTo => 'تم إعادة جدولة الموعد إلى';
+  String get appointmentRescheduledTo =>
+      'ØªÙ… Ø¥Ø¹Ø§Ø¯Ø© Ø¬Ø¯ÙˆÙ„Ø© Ø§Ù„Ù…ÙˆØ¹Ø¯ Ø¥Ù„Ù‰';
 
   @override
-  String get poor => 'سيء';
+  String get poor => 'Ø³ÙŠØ¡';
 
   @override
-  String get fair => 'مقبول';
+  String get fair => 'Ù…Ù‚Ø¨ÙˆÙ„';
 
   @override
-  String get good => 'جيد';
+  String get good => 'Ø¬ÙŠØ¯';
 
   @override
-  String get veryGood => 'جيد جداً';
+  String get veryGood => 'Ø¬ÙŠØ¯ Ø¬Ø¯Ø§Ù‹';
 
   @override
-  String get excellent => 'ممتاز';
+  String get excellent => 'Ù…Ù…ØªØ§Ø²';
 
   @override
-  String get reviewAndConfirm => 'مراجعة وتأكيد';
+  String get reviewAndConfirm => 'Ù…Ø±Ø§Ø¬Ø¹Ø© ÙˆØªØ£ÙƒÙŠØ¯';
 
   @override
-  String get bookingSummary => 'ملخص الحجز';
+  String get bookingSummary => 'Ù…Ù„Ø®Øµ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get serviceName => 'الخدمة';
+  String get serviceName => 'Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get bookingType => 'نوع الحجز';
+  String get bookingType => 'Ù†ÙˆØ¹ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get discountApplied => 'تم تطبيق الخصم';
+  String get discountApplied => 'ØªÙ… ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ø®ØµÙ…';
 
   @override
-  String get noDiscount => 'لا يوجد خصم';
+  String get noDiscount => 'Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø®ØµÙ…';
 
   @override
-  String get finalPrice => 'السعر النهائي';
+  String get finalPrice => 'Ø§Ù„Ø³Ø¹Ø± Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠ';
 
   @override
-  String get technicianAssignment => 'تعيين الفني';
+  String get technicianAssignment => 'ØªØ¹ÙŠÙŠÙ† Ø§Ù„ÙÙ†ÙŠ';
 
   @override
   String get autoAssignMessage =>
-      'الوقت المحدد للخدمة خارج أوقات العمل. سيتم تعيين فني متاح قبل موعد الخدمة حسب التوفر، وسيتم إشعارك عند تأكيد الطلب.';
+      'Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…Ø­Ø¯Ø¯ Ù„Ù„Ø®Ø¯Ù…Ø© Ø®Ø§Ø±Ø¬ Ø£ÙˆÙ‚Ø§Øª Ø§Ù„Ø¹Ù…Ù„. Ø³ÙŠØªÙ… ØªØ¹ÙŠÙŠÙ† ÙÙ†ÙŠ Ù…ØªØ§Ø­ Ù‚Ø¨Ù„ Ù…ÙˆØ¹Ø¯ Ø§Ù„Ø®Ø¯Ù…Ø© Ø­Ø³Ø¨ Ø§Ù„ØªÙˆÙØ±ØŒ ÙˆØ³ÙŠØªÙ… Ø¥Ø´Ø¹Ø§Ø±Ùƒ Ø¹Ù†Ø¯ ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø·Ù„Ø¨.';
 
   @override
-  String get youSelectedTechnician => 'لقد اخترت فنياً';
+  String get youSelectedTechnician => 'Ù„Ù‚Ø¯ Ø§Ø®ØªØ±Øª ÙÙ†ÙŠØ§Ù‹';
 
   @override
-  String get confirmBooking => 'تأكيد الحجز';
+  String get confirmBooking => 'ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
-  String get listeningForSms => 'بانتظار الرسائل القصيرة...';
+  String get listeningForSms =>
+      'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ø±Ø³Ø§Ø¦Ù„ Ø§Ù„Ù‚ØµÙŠØ±Ø©...';
 
   @override
   String get noTechniciansMatchFilters =>
-      'لا يوجد فنيون يطابقون الفلاتر المحددة';
+      'Ù„Ø§ ÙŠÙˆØ¬Ø¯ ÙÙ†ÙŠÙˆÙ† ÙŠØ·Ø§Ø¨Ù‚ÙˆÙ† Ø§Ù„ÙÙ„Ø§ØªØ± Ø§Ù„Ù…Ø­Ø¯Ø¯Ø©';
 
   @override
   String get tryRemovingFilters =>
-      'حاول إزالة بعض الفلاتر لرؤية المزيد من الفنيين';
+      'Ø­Ø§ÙˆÙ„ Ø¥Ø²Ø§Ù„Ø© Ø¨Ø¹Ø¶ Ø§Ù„ÙÙ„Ø§ØªØ± Ù„Ø±Ø¤ÙŠØ© Ø§Ù„Ù…Ø²ÙŠØ¯ Ù…Ù† Ø§Ù„ÙÙ†ÙŠÙŠÙ†';
 
   @override
-  String get showAllTechnicians => 'عرض جميع الفنيين';
+  String get showAllTechnicians => 'Ø¹Ø±Ø¶ Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙÙ†ÙŠÙŠÙ†';
 
   @override
-  String get tooFarAway => 'بعيد جداً';
+  String get tooFarAway => 'Ø¨Ø¹ÙŠØ¯ Ø¬Ø¯Ø§Ù‹';
 
   @override
   String get technicianTooFarMessage =>
-      'هذا الفني بعيد جداً عن موقع الخدمة ولا يمكن اختياره';
+      'Ù‡Ø°Ø§ Ø§Ù„ÙÙ†ÙŠ Ø¨Ø¹ÙŠØ¯ Ø¬Ø¯Ø§Ù‹ Ø¹Ù† Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø®Ø¯Ù…Ø© ÙˆÙ„Ø§ ÙŠÙ…ÙƒÙ† Ø§Ø®ØªÙŠØ§Ø±Ù‡';
 
   @override
-  String get rebookTechnician => 'إعادة حجز الفني';
+  String get rebookTechnician => 'Ø¥Ø¹Ø§Ø¯Ø© Ø­Ø¬Ø² Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get selectService => 'اختر الخدمة';
+  String get selectService => 'Ø§Ø®ØªØ± Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
   String get rejectionProfessionalMessage =>
-      'هل أنت غير متاح حالياً لهذا الموعد؟ بدلاً من الرفض، يمكنك اقتراح وقت أكثر ملاءمة للعميل.';
+      'Ù‡Ù„ Ø£Ù†Øª ØºÙŠØ± Ù…ØªØ§Ø­ Ø­Ø§Ù„ÙŠØ§Ù‹ Ù„Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ¹Ø¯ØŸ Ø¨Ø¯Ù„Ø§Ù‹ Ù…Ù† Ø§Ù„Ø±ÙØ¶ØŒ ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù‚ØªØ±Ø§Ø­ ÙˆÙ‚Øª Ø£ÙƒØ«Ø± Ù…Ù„Ø§Ø¡Ù…Ø© Ù„Ù„Ø¹Ù…ÙŠÙ„.';
 
   @override
-  String get proposeAlternativeTime => 'اقتراح وقت بديل';
+  String get proposeAlternativeTime => 'Ø§Ù‚ØªØ±Ø§Ø­ ÙˆÙ‚Øª Ø¨Ø¯ÙŠÙ„';
 
   @override
-  String get technicianSelected => 'تم اختيار الفني';
+  String get technicianSelected => 'ØªÙ… Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get technicianArrived => 'وصل الفني';
+  String get technicianArrived => 'ÙˆØµÙ„ Ø§Ù„ÙÙ†ÙŠ';
 
   @override
-  String get paymentRequested => 'تم طلب الدفع';
+  String get paymentRequested => 'ØªÙ… Ø·Ù„Ø¨ Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get reassignedAt => 'تمت إعادة التعيين في';
+  String get reassignedAt => 'ØªÙ…Øª Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ØªØ¹ÙŠÙŠÙ† ÙÙŠ';
 
   @override
-  String get newTechnicianAssigned => 'تم تعيين فني جديد';
+  String get newTechnicianAssigned => 'ØªÙ… ØªØ¹ÙŠÙŠÙ† ÙÙ†ÙŠ Ø¬Ø¯ÙŠØ¯';
 
   @override
-  String get technicianStartedTracking => 'الفني في الطريق';
+  String get technicianStartedTracking => 'Ø§Ù„ÙÙ†ÙŠ ÙÙŠ Ø§Ù„Ø·Ø±ÙŠÙ‚';
 
   @override
-  String get technicianArrivedAtLocation => 'وصل الفني إلى الموقع';
+  String get technicianArrivedAtLocation =>
+      'ÙˆØµÙ„ Ø§Ù„ÙÙ†ÙŠ Ø¥Ù„Ù‰ Ø§Ù„Ù…ÙˆÙ‚Ø¹';
 
   @override
-  String get inspectionCompleted => 'اكتمل الفحص';
+  String get inspectionCompleted => 'Ø§ÙƒØªÙ…Ù„ Ø§Ù„ÙØ­Øµ';
 
   @override
-  String get fullServiceCompleted => 'اكتملت الخدمة بالكامل';
+  String get fullServiceCompleted => 'Ø§ÙƒØªÙ…Ù„Øª Ø§Ù„Ø®Ø¯Ù…Ø© Ø¨Ø§Ù„ÙƒØ§Ù…Ù„';
 
   @override
-  String get cancelledByAdmin => 'تم الإلغاء من قبل المسؤول';
+  String get cancelledByAdmin =>
+      'ØªÙ… Ø§Ù„Ø¥Ù„ØºØ§Ø¡ Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„';
 
   @override
-  String get reject => 'رفض';
+  String get reject => 'Ø±ÙØ¶';
 
   @override
-  String get bookingCancelledByAdmin => 'تم إلغاء الطلب من قبل المسؤول';
+  String get bookingCancelledByAdmin =>
+      'ØªÙ… Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø·Ù„Ø¨ Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„';
 
   @override
-  String get trustBarWarranty => 'ضمان';
+  String get trustBarWarranty => 'Ø¶Ù…Ø§Ù†';
 
   @override
-  String get trustBarWarrantyDesc => 'ضمان الخدمة لمدة ٧ أيام';
+  String get trustBarWarrantyDesc =>
+      'Ø¶Ù…Ø§Ù† Ø§Ù„Ø®Ø¯Ù…Ø© Ù„Ù…Ø¯Ø© Ù§ Ø£ÙŠØ§Ù…';
 
   @override
-  String get trustBarSpeed => 'سرعة';
+  String get trustBarSpeed => 'Ø³Ø±Ø¹Ø©';
 
   @override
-  String get trustBarSpeedDesc => 'خدمة سريعة وموثوقة';
+  String get trustBarSpeedDesc => 'Ø®Ø¯Ù…Ø© Ø³Ø±ÙŠØ¹Ø© ÙˆÙ…ÙˆØ«ÙˆÙ‚Ø©';
 
   @override
-  String get trustBarQuality => 'جودة';
+  String get trustBarQuality => 'Ø¬ÙˆØ¯Ø©';
 
   @override
-  String get trustBarQualityDesc => 'فنيين محترفين ومعتمدين';
+  String get trustBarQualityDesc =>
+      'ÙÙ†ÙŠÙŠÙ† Ù…Ø­ØªØ±ÙÙŠÙ† ÙˆÙ…Ø¹ØªÙ…Ø¯ÙŠÙ†';
 
   @override
-  String get howCanWeHelp => 'كيف يمكننا مساعدتك اليوم؟';
+  String get howCanWeHelp => 'ÙƒÙŠÙ ÙŠÙ…ÙƒÙ†Ù†Ø§ Ù…Ø³Ø§Ø¹Ø¯ØªÙƒ Ø§Ù„ÙŠÙˆÙ…ØŸ';
 
   @override
   String get visualizeYourIssueSubtitle =>
-      'تساعد الصور ومقاطع الفيديو الفني على الاستعداد وتوفر وقتك.';
+      'ØªØ³Ø§Ø¹Ø¯ Ø§Ù„ØµÙˆØ± ÙˆÙ…Ù‚Ø§Ø·Ø¹ Ø§Ù„ÙÙŠØ¯ÙŠÙˆ Ø§Ù„ÙÙ†ÙŠ Ø¹Ù„Ù‰ Ø§Ù„Ø§Ø³ØªØ¹Ø¯Ø§Ø¯ ÙˆØªÙˆÙØ± ÙˆÙ‚ØªÙƒ.';
 
   @override
-  String get problemDescription => 'وصف المشكلة';
+  String get problemDescription => 'ÙˆØµÙ Ø§Ù„Ù…Ø´ÙƒÙ„Ø©';
 
   @override
-  String get problemDescriptionHint => 'مثال: المكيف لا يبرد...';
+  String get problemDescriptionHint =>
+      'Ù…Ø«Ø§Ù„: Ø§Ù„Ù…ÙƒÙŠÙ Ù„Ø§ ÙŠØ¨Ø±Ø¯...';
 
   @override
-  String get shareInvoice => 'مشاركة الفاتورة';
+  String get shareInvoice => 'Ù…Ø´Ø§Ø±ÙƒØ© Ø§Ù„ÙØ§ØªÙˆØ±Ø©';
 
   @override
-  String get downloadInvoice => 'تنزيل الفاتورة';
+  String get downloadInvoice => 'ØªÙ†Ø²ÙŠÙ„ Ø§Ù„ÙØ§ØªÙˆØ±Ø©';
 
   @override
   String get lookingForAvailableTechniciansNearby =>
-      'جاري البحث عن فنيين متاحين بالقرب منك...';
+      'Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø¨Ø­Ø« Ø¹Ù† ÙÙ†ÙŠÙŠÙ† Ù…ØªØ§Ø­ÙŠÙ† Ø¨Ø§Ù„Ù‚Ø±Ø¨ Ù…Ù†Ùƒ...';
 
   @override
   String get noTechniciansAvailableAtTheMoment =>
-      'لا يوجد فنيون متاحون لتلبية طلبك في الوقت الحالي.';
+      'Ù„Ø§ ÙŠÙˆØ¬Ø¯ ÙÙ†ÙŠÙˆÙ† Ù…ØªØ§Ø­ÙˆÙ† Ù„ØªÙ„Ø¨ÙŠØ© Ø·Ù„Ø¨Ùƒ ÙÙŠ Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ø­Ø§Ù„ÙŠ.';
 
   @override
-  String get searchAgain => 'البحث مجدداً';
+  String get searchAgain => 'Ø§Ù„Ø¨Ø­Ø« Ù…Ø¬Ø¯Ø¯Ø§Ù‹';
 
   @override
   String get technicianAutoAssignedBeforeAppointment =>
-      'سيتم تعيين فني تلقائيًا قبل الموعد بناءً على التوفر.';
+      'Ø³ÙŠØªÙ… ØªØ¹ÙŠÙŠÙ† ÙÙ†ÙŠ ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§ Ù‚Ø¨Ù„ Ù…ÙˆØ¹Ø¯ Ø§Ù„Ø®Ø¯Ù…Ø© Ø­Ø³Ø¨ Ø§Ù„ØªÙˆÙØ±';
 
   @override
   String get searchCancelledBackgrounded =>
-      'تم إلغاء البحث. تم تشغيل التطبيق في الخلفية.';
+      'ØªÙ… Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø¨Ø­Ø«. ØªÙ… ØªØ´ØºÙŠÙ„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ ÙÙŠ Ø§Ù„Ø®Ù„ÙÙŠØ©.';
 
   @override
   String get stayOnScreenWarning =>
-      'يرجى البقاء على هذه الشاشة. سيؤدي مغادرة الشاشة أو إغلاق التطبيق إلى إلغاء البحث.';
+      'ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø¨Ù‚Ø§Ø¡ Ø¹Ù„Ù‰ Ù‡Ø°Ù‡ Ø§Ù„Ø´Ø§Ø´Ø©. Ø³ÙŠØ¤Ø¯ÙŠ Ù…ØºØ§Ø¯Ø±Ø© Ø§Ù„Ø´Ø§Ø´Ø© Ø£Ùˆ Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø¥Ù„Ù‰ Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø¨Ø­Ø«.';
 
   @override
   String get failedResendOtp =>
-      'فشل في إعادة إرسال رمز التحقق. يرجى المحاولة مرة أخرى.';
+      'ÙØ´Ù„ ÙÙŠ Ø¥Ø¹Ø§Ø¯Ø© Ø¥Ø±Ø³Ø§Ù„ Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.';
 
   @override
   String get verificationIdNotFound =>
-      'لم يتم العثور على معرف التحقق. يرجى المحاولة مرة أخرى.';
+      'Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ù…Ø¹Ø±Ù Ø§Ù„ØªØ­Ù‚Ù‚. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.';
 
   @override
   String failedToOpenChat(String error) {
-    return 'فشل في فتح الدردشة: $error';
+    return 'ÙØ´Ù„ ÙÙŠ ÙØªØ­ Ø§Ù„Ø¯Ø±Ø¯Ø´Ø©: $error';
   }
 
   @override
   String failedToSendMessage(String error) {
-    return 'فشل في إرسال الرسالة: $error';
+    return 'ÙØ´Ù„ ÙÙŠ Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø±Ø³Ø§Ù„Ø©: $error';
   }
 
   @override
-  String get failedToCompleteBooking => 'فشل في إكمال الحجز';
+  String get failedToCompleteBooking => 'ÙØ´Ù„ ÙÙŠ Ø¥ÙƒÙ…Ø§Ù„ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
   String errorUpdatingFavorite(String error) {
-    return 'خطأ في تحديث المفضلة: $error';
+    return 'Ø®Ø·Ø£ ÙÙŠ ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…ÙØ¶Ù„Ø©: $error';
   }
 
   @override
   String errorGeneral(String error) {
-    return 'خطأ: $error';
+    return 'Ø®Ø·Ø£: $error';
   }
 
   @override
-  String get invoiceTitle => 'فاتورة حجز الخدمة';
+  String get invoiceTitle => 'ÙØ§ØªÙˆØ±Ø© Ø­Ø¬Ø² Ø§Ù„Ø®Ø¯Ù…Ø©';
 
   @override
-  String get invoiceWord => 'فاتورة';
+  String get invoiceWord => 'ÙØ§ØªÙˆØ±Ø©';
 
   @override
   String invoiceNumber(String number) {
-    return 'رقم الفاتورة: $number';
+    return 'Ø±Ù‚Ù… Ø§Ù„ÙØ§ØªÙˆØ±Ø©: $number';
   }
 
   @override
   String dateString(String date) {
-    return 'التاريخ: $date';
+    return 'Ø§Ù„ØªØ§Ø±ÙŠØ®: $date';
   }
 
   @override
-  String get statusPaid => 'الحالة: مدفوع';
+  String get statusPaid => 'Ø§Ù„Ø­Ø§Ù„Ø©: Ù…Ø¯ÙÙˆØ¹';
 
   @override
-  String get billTo => 'فاتورة إلى:';
+  String get billTo => 'ÙØ§ØªÙˆØ±Ø© Ø¥Ù„Ù‰:';
 
   @override
-  String get bookingDetailsInvoice => 'تفاصيل الحجز:';
+  String get bookingDetailsInvoice => 'ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø­Ø¬Ø²:';
 
   @override
   String serviceLabel(String service) {
-    return 'الخدمة: $service';
+    return 'Ø§Ù„Ø®Ø¯Ù…Ø©: $service';
   }
 
   @override
   String technicianLabel(String technician) {
-    return 'الفني: $technician';
+    return 'Ø§Ù„ÙÙ†ÙŠ: $technician';
   }
 
   @override
   String techPhoneLabel(String phone) {
-    return 'هاتف الفني: $phone';
+    return 'Ù‡Ø§ØªÙ Ø§Ù„ÙÙ†ÙŠ: $phone';
   }
 
   @override
   String completedAtLabel(String time) {
-    return 'اكتمل في: $time';
+    return 'Ø§ÙƒØªÙ…Ù„ ÙÙŠ: $time';
   }
 
   @override
   String warrantyLabel(String duration) {
-    return 'الضمان: $duration';
+    return 'Ø§Ù„Ø¶Ù…Ø§Ù†: $duration';
   }
 
   @override
   String paymentModeLabel(String mode) {
-    return 'طريقة الدفع: $mode';
+    return 'Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„Ø¯ÙØ¹: $mode';
   }
 
   @override
   String transactionIdLabel(String id) {
-    return 'معرف العملية: $id';
+    return 'Ù…Ø¹Ø±Ù Ø§Ù„Ø¹Ù…Ù„ÙŠØ©: $id';
   }
 
   @override
-  String get subtotal => 'المجموع الفرعي:';
+  String get subtotal => 'Ø§Ù„Ù…Ø¬Ù…ÙˆØ¹ Ø§Ù„ÙØ±Ø¹ÙŠ:';
 
   @override
   String sarAmount(String amount) {
-    return '$amount ر.س';
+    return '$amount Ø±.Ø³';
   }
 
   @override
-  String get totalLabel => 'الإجمالي:';
+  String get totalLabel => 'Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ:';
 
   @override
-  String get thankYouInvoice => 'شكرًا لاختيارك Abo Glumbo!';
+  String get thankYouInvoice => 'Ø´ÙƒØ±Ù‹Ø§ Ù„Ø§Ø®ØªÙŠØ§Ø±Ùƒ Abo Glumbo!';
 
   @override
-  String get biometricError => '❌ خطأ في المصادقة البيومترية';
+  String get biometricError =>
+      'âŒ Ø®Ø·Ø£ ÙÙŠ Ø§Ù„Ù…ØµØ§Ø¯Ù‚Ø© Ø§Ù„Ø¨ÙŠÙˆÙ…ØªØ±ÙŠØ©';
 
   @override
-  String get unknownError => 'خطأ غير معروف';
+  String get unknownError => 'Ø®Ø·Ø£ ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ';
 
   @override
-  String get errorDuringLogin => 'خطأ أثناء تسجيل الدخول';
+  String get errorDuringLogin => 'Ø®Ø·Ø£ Ø£Ø«Ù†Ø§Ø¡ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„';
 
   @override
-  String get backToLogin => 'العودة إلى تسجيل الدخول';
+  String get backToLogin => 'Ø§Ù„Ø¹ÙˆØ¯Ø© Ø¥Ù„Ù‰ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„';
 
   @override
   String get areYouSureYouWantToGoBackToLogin =>
-      'هل أنت متأكد أنك تريد العودة إلى شاشة تسجيل الدخول؟';
+      'Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ø£Ù†Ùƒ ØªØ±ÙŠØ¯ Ø§Ù„Ø¹ÙˆØ¯Ø© Ø¥Ù„Ù‰ Ø´Ø§Ø´Ø© ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ØŸ';
 
   @override
   String get loadingCustomerData =>
-      'جاري تحميل بيانات العميل، يرجى الانتظار...';
+      'Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¹Ù…ÙŠÙ„ØŒ ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø±...';
 
   @override
-  String get failedToCreateBookingRequest => 'فشل في إنشاء طلب الحجز';
+  String get failedToCreateBookingRequest =>
+      'ÙØ´Ù„ ÙÙŠ Ø¥Ù†Ø´Ø§Ø¡ Ø·Ù„Ø¨ Ø§Ù„Ø­Ø¬Ø²';
 
   @override
   String get pleaseWaitCustomerDataLoad =>
-      'يرجى الانتظار لتحميل بيانات العميل أو تحديد تاريخ';
+      'ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø± Ù„ØªØ­Ù…ÙŠÙ„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¹Ù…ÙŠÙ„ Ø£Ùˆ ØªØ­Ø¯ÙŠØ¯ ØªØ§Ø±ÙŠØ®';
 
   @override
-  String get accountNotRegisteredCustomer => 'هذا الحساب غير مسجل كعميل.';
+  String get accountNotRegisteredCustomer =>
+      'Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨ ØºÙŠØ± Ù…Ø³Ø¬Ù„ ÙƒØ¹Ù…ÙŠÙ„.';
 
   @override
-  String get applePayNotAvailable => 'Apple Pay غير متوفر';
+  String get applePayNotAvailable => 'Apple Pay ØºÙŠØ± Ù…ØªÙˆÙØ±';
 
   @override
   String get applePayNotAvailableDevice =>
-      'Apple Pay غير متوفر على هذا الجهاز.';
+      'Apple Pay ØºÙŠØ± Ù…ØªÙˆÙØ± Ø¹Ù„Ù‰ Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø².';
 
   @override
-  String get chooseAnotherPaymentMethod => 'اختر طريقة دفع أخرى';
+  String get chooseAnotherPaymentMethod =>
+      'Ø§Ø®ØªØ± Ø·Ø±ÙŠÙ‚Ø© Ø¯ÙØ¹ Ø£Ø®Ø±Ù‰';
 
   @override
-  String get tryAnotherPaymentMethod => 'جرب طريقة دفع أخرى';
+  String get tryAnotherPaymentMethod => 'Ø¬Ø±Ø¨ Ø·Ø±ÙŠÙ‚Ø© Ø¯ÙØ¹ Ø£Ø®Ø±Ù‰';
 
   @override
-  String get applePayError => 'خطأ في Apple Pay';
+  String get applePayError => 'Ø®Ø·Ø£ ÙÙŠ Apple Pay';
 
   @override
-  String get errorProcessingApplePay => 'حدث خطأ أثناء معالجة دفع Apple Pay.';
+  String get errorProcessingApplePay =>
+      'Ø­Ø¯Ø« Ø®Ø·Ø£ Ø£Ø«Ù†Ø§Ø¡ Ù…Ø¹Ø§Ù„Ø¬Ø© Ø¯ÙØ¹ Apple Pay.';
 
   @override
-  String get useAnotherPaymentMethod => 'استخدم طريقة دفع أخرى';
+  String get useAnotherPaymentMethod =>
+      'Ø§Ø³ØªØ®Ø¯Ù… Ø·Ø±ÙŠÙ‚Ø© Ø¯ÙØ¹ Ø£Ø®Ø±Ù‰';
 
   @override
   String get failedLoadLocations =>
-      'فشل تحميل المواقع. قد لا تكون فلاتر الموقع متوفرة.';
+      'ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹. Ù‚Ø¯ Ù„Ø§ ØªÙƒÙˆÙ† ÙÙ„Ø§ØªØ± Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…ØªÙˆÙØ±Ø©.';
 
   @override
   String get failedLoadCategories =>
-      'فشل تحميل الفئات. قد لا تكون بعض الفلاتر متوفرة.';
+      'ÙØ´Ù„ ØªØ­Ù…ÙŠÙ„ Ø§Ù„ÙØ¦Ø§Øª. Ù‚Ø¯ Ù„Ø§ ØªÙƒÙˆÙ† Ø¨Ø¹Ø¶ Ø§Ù„ÙÙ„Ø§ØªØ± Ù…ØªÙˆÙØ±Ø©.';
 
   @override
   String get pleaseSelectTechnician =>
-      'الرجاء اختيار أحد الفنيين المقبولين أدناه للمتابعة.';
+      'Ø§Ù„Ø±Ø¬Ø§Ø¡ Ø§Ø®ØªÙŠØ§Ø± Ø£Ø­Ø¯ Ø§Ù„ÙÙ†ÙŠÙŠÙ† Ø§Ù„Ù…Ù‚Ø¨ÙˆÙ„ÙŠÙ† Ø£Ø¯Ù†Ø§Ù‡ Ù„Ù„Ù…ØªØ§Ø¨Ø¹Ø©.';
 
   @override
-  String get requestExpiresIn => 'ينتهي الطلب خلال:';
+  String get requestExpiresIn => 'ÙŠÙ†ØªÙ‡ÙŠ Ø§Ù„Ø·Ù„Ø¨ Ø®Ù„Ø§Ù„:';
 
   @override
-  String get lookingForNearbyTechnicians => 'جاري البحث عن فنيين بالقرب منك...';
+  String get lookingForNearbyTechnicians =>
+      'Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø¨Ø­Ø« Ø¹Ù† ÙÙ†ÙŠÙŠÙ† Ø¨Ø§Ù„Ù‚Ø±Ø¨ Ù…Ù†Ùƒ...';
 
   @override
   String get pleaseWaitTechniciansHave120s =>
-      'الرجاء الانتظار، لدى الفنيين المؤهلين 120 ثانية للقبول.';
+      'Ø§Ù„Ø±Ø¬Ø§Ø¡ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø±ØŒ Ù„Ø¯Ù‰ Ø§Ù„ÙÙ†ÙŠÙŠÙ† Ø§Ù„Ù…Ø¤Ù‡Ù„ÙŠÙ† 120 Ø«Ø§Ù†ÙŠØ© Ù„Ù„Ù‚Ø¨ÙˆÙ„.';
 
   @override
-  String get noTechniciansAccepted => 'لم يقبل أي فني';
+  String get noTechniciansAccepted => 'Ù„Ù… ÙŠÙ‚Ø¨Ù„ Ø£ÙŠ ÙÙ†ÙŠ';
 
   @override
   String get allTechniciansBusy =>
-      'جميع الفنيين مشغولون حالياً أو لم يقبلوا في الوقت المحدد.';
+      'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙÙ†ÙŠÙŠÙ† Ù…Ø´ØºÙˆÙ„ÙˆÙ† Ø­Ø§Ù„ÙŠØ§Ù‹ Ø£Ùˆ Ù„Ù… ÙŠÙ‚Ø¨Ù„ÙˆØ§ ÙÙŠ Ø§Ù„ÙˆÙ‚Øª Ø§Ù„Ù…Ø­Ø¯Ø¯.';
 
   @override
-  String get waitingForTechniciansToAccept => 'بانتظار قبول الفنيين...';
+  String get waitingForTechniciansToAccept =>
+      'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ù‚Ø¨ÙˆÙ„ Ø§Ù„ÙÙ†ÙŠÙŠÙ†...';
 
   @override
   String acceptedTechniciansCount(int count) {
-    return 'الفنيون المقبولون ($count)';
+    return 'Ø§Ù„ÙÙ†ÙŠÙˆÙ† Ø§Ù„Ù…Ù‚Ø¨ÙˆÙ„ÙˆÙ† ($count)';
   }
 
   @override
-  String get welcome => 'مرحبًا';
+  String get welcome => 'Ù…Ø±Ø­Ø¨Ù‹Ø§';
 
   @override
-  String get jobsCount => 'مهمة';
+  String get jobsCount => 'Ù…Ù‡Ù…Ø©';
 
   @override
   String welcomeUser(String username) {
-    return 'أهلاً بك، $username';
+    return 'Ø£Ù‡Ù„Ø§Ù‹ Ø¨ÙƒØŒ $username';
   }
 
   @override
-  String get discountPercentage => 'نسبة الخصم';
+  String get discountPercentage => 'Ù†Ø³Ø¨Ø© Ø§Ù„Ø®ØµÙ…';
 
   @override
-  String get discountAmount => 'مبلغ الخصم';
+  String get discountAmount => 'Ù…Ø¨Ù„Øº Ø§Ù„Ø®ØµÙ…';
 
   @override
   String yearsAgo(int count) {
-    return 'منذ $count سنوات';
+    return 'Ù…Ù†Ø° $count Ø³Ù†ÙˆØ§Øª';
   }
 
   @override
-  String get yearAgo => 'منذ سنة واحدة';
+  String get yearAgo => 'Ù…Ù†Ø° Ø³Ù†Ø© ÙˆØ§Ø­Ø¯Ø©';
 
   @override
   String monthsAgo(int count) {
-    return 'منذ $count أشهر';
+    return 'Ù…Ù†Ø° $count Ø£Ø´Ù‡Ø±';
   }
 
   @override
-  String get monthAgo => 'منذ شهر واحد';
+  String get monthAgo => 'Ù…Ù†Ø° Ø´Ù‡Ø± ÙˆØ§Ø­Ø¯';
 
   @override
   String weeksAgo(int count) {
-    return 'منذ $count أسابيع';
+    return 'Ù…Ù†Ø° $count Ø£Ø³Ø§Ø¨ÙŠØ¹';
   }
 
   @override
-  String get weekAgo => 'منذ أسبوع واحد';
+  String get weekAgo => 'Ù…Ù†Ø° Ø£Ø³Ø¨ÙˆØ¹ ÙˆØ§Ø­Ø¯';
 
   @override
   String daysAgo(int count) {
-    return 'منذ $count أيام';
+    return 'Ù…Ù†Ø° $count Ø£ÙŠØ§Ù…';
   }
 
   @override
-  String get dayAgo => 'منذ يوم واحد';
+  String get dayAgo => 'Ù…Ù†Ø° ÙŠÙˆÙ… ÙˆØ§Ø­Ø¯';
 
   @override
   String hoursAgo(int count) {
-    return 'منذ $count ساعات';
+    return 'Ù…Ù†Ø° $count Ø³Ø§Ø¹Ø§Øª';
   }
 
   @override
-  String get hourAgo => 'منذ ساعة واحدة';
+  String get hourAgo => 'Ù…Ù†Ø° Ø³Ø§Ø¹Ø© ÙˆØ§Ø­Ø¯Ø©';
 
   @override
   String minutesAgo(int count) {
-    return 'منذ $count دقائق';
+    return 'Ù…Ù†Ø° $count Ø¯Ù‚Ø§Ø¦Ù‚';
   }
 
   @override
-  String get minuteAgo => 'منذ دقيقة واحدة';
+  String get minuteAgo => 'Ù…Ù†Ø° Ø¯Ù‚ÙŠÙ‚Ø© ÙˆØ§Ø­Ø¯Ø©';
 
   @override
-  String get justNow => 'الآن';
+  String get justNow => 'Ø§Ù„Ø¢Ù†';
 
   @override
-  String get costBreakdown => 'تفاصيل التكلفة';
+  String get costBreakdown => 'ØªÙØ§ØµÙŠÙ„ Ø§Ù„ØªÙƒÙ„ÙØ©';
 
   @override
-  String get paymentProof => 'إثبات الدفع';
+  String get paymentProof => 'Ø¥Ø«Ø¨Ø§Øª Ø§Ù„Ø¯ÙØ¹';
 
   @override
-  String get settings => 'الإعدادات';
+  String get settings => 'Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª';
+
+  @override
+  String get discountAppliesToInspectionFeeOnly =>
+      'ينطبق الخصم على رسوم الفحص فقط.';
 }

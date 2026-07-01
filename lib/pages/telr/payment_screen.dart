@@ -111,21 +111,22 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             ),
     );
 
+    ServiceModel? activeService = widget.booking?.service ?? widget.service;
+    
     double inspectionFee =
         widget.booking?.completionData?.inspectionFee ??
-        widget.booking?.service.price ??
-        widget.service?.price ??
+        activeService?.price ??
         0.0;
+    
+    double discountedInspectionFee = activeService != null 
+        ? activeService.getDiscountedPrice(inspectionFee) 
+        : inspectionFee;
+
     double totalServiceCost = widget.booking?.completionData?.totalCost ?? 0.0;
     double finalAmount = widget.booking?.completionData != null
-        ? (totalServiceCost + inspectionFee)
+        ? (totalServiceCost + discountedInspectionFee)
         : widget.isFromBooking
-        ? (double.tryParse(
-                widget.service?.price.toString() ??
-                    widget.booking?.service.price.toString() ??
-                    '0.00',
-              ) ??
-              0.0)
+        ? discountedInspectionFee
         : widget.review?.tipAmount ?? 0.0;
 
     orderId = generateOrderId(widget.customerData.uid ?? '', finalAmount);

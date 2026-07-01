@@ -5,7 +5,9 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class EmbeddedTechnicianSearch extends StatefulWidget {
@@ -109,7 +111,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
     _countdownTimer?.cancel();
     if (createdAt == null) return;
 
-    final elapsed = DateTime.now().difference(createdAt.toDate()).inSeconds;
+    final elapsed = TimeService.now.difference(createdAt.toDate()).inSeconds;
 
     if (mounted) {
       setState(() {
@@ -127,7 +129,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
 
   void _startTimer(Timestamp createdAt) {
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      final elapsed = DateTime.now().difference(createdAt.toDate()).inSeconds;
+      final elapsed = TimeService.now.difference(createdAt.toDate()).inSeconds;
       final remaining = (120 - elapsed).clamp(0, 120);
 
       if (mounted) {
