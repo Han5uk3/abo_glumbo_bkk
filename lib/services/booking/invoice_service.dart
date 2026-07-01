@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -8,6 +11,9 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter/widgets.dart' as material_widgets;
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/models/invoice.dart';
+import 'package:http/http.dart' as http;
 
 class InvoiceService {
   static Future<pw.Document?> _buildInvoiceDocument(
@@ -26,17 +32,26 @@ class InvoiceService {
       // Logo not found, proceed without it
     }
 
-    final data = booking.completionData;
-    if (data == null) return null;
+    final data =
+        booking.completionData ??
+        CompletionDataModel(
+          fileUrls: [],
+          mode: 0,
+          paymentMethod: booking.paymentModeCode,
+          serviceCost: 0,
+          totalCost: 0,
+          serviceItems: [],
+          inspectionFee: booking.effectiveInspectionFee,
+        );
 
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
     final completedAtStr = booking.completedAt != null
         ? dateFormat.format(booking.completedAt!.toDate())
         : ((loc.localeName == 'ar')
-            ? 'غير متوفر'
-            : (loc.localeName == 'ur')
-                ? 'دستیاب نہیں'
-                : 'N/A');
+              ? 'غير متوفر'
+              : (loc.localeName == 'ur')
+              ? 'دستیاب نہیں'
+              : 'N/A');
 
     final isArabic = loc.localeName == 'ar' || loc.localeName == 'ur';
     final ttf = await PdfGoogleFonts.cairoRegular();
@@ -84,7 +99,10 @@ class InvoiceService {
                   ),
                   pw.SizedBox(height: 10),
                   pw.Text(
-                    loc.invoiceNumber(booking.newBookingId ?? booking.id.substring(0, 8).toUpperCase()),
+                    loc.invoiceNumber(
+                      booking.newBookingId ??
+                          booking.id.substring(0, 8).toUpperCase(),
+                    ),
                   ),
                   pw.Text(loc.dateString(dateFormat.format(DateTime.now()))),
                   pw.Text(
@@ -116,17 +134,23 @@ class InvoiceService {
                     ),
             );
 
-            final daysDiff = booking.warranty?.expiredOn != null &&
+            final daysDiff =
+                booking.warranty?.expiredOn != null &&
                     (booking.warranty?.createdAt != null ||
                         booking.completedAt != null)
-                ? booking.warranty!.expiredOn!.difference(booking.warranty!.createdAt ?? booking.completedAt!.toDate()).inDays
+                ? booking.warranty!.expiredOn!
+                      .difference(
+                        booking.warranty!.createdAt ??
+                            booking.completedAt!.toDate(),
+                      )
+                      .inDays
                 : 7;
 
             final warrantyDuration = (loc.localeName == 'ar')
                 ? "$daysDiff أيام"
                 : (loc.localeName == 'ur')
-                    ? "$daysDiff دن"
-                    : "$daysDiff Days";
+                ? "$daysDiff دن"
+                : "$daysDiff Days";
 
             return pw.Row(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -144,8 +168,8 @@ class InvoiceService {
                             ((loc.localeName == 'ar')
                                 ? 'عميلنا العزيز'
                                 : (loc.localeName == 'ur')
-                                    ? 'معزز صارف'
-                                    : 'Valued Customer'),
+                                ? 'معزز صارف'
+                                : 'Valued Customer'),
                       ),
                       pw.Text(booking.customer.phone ?? ""),
                       pw.Text(booking.customer.email ?? ""),
@@ -193,7 +217,8 @@ class InvoiceService {
                       pw.Text(loc.warrantyLabel(warrantyDuration)),
                       pw.Text(
                         loc.paymentModeLabel(
-                          (booking.paymentModeCode.toUpperCase() == 'C' || booking.paymentModeCode.toUpperCase() == 'A')
+                          (booking.paymentModeCode.toUpperCase() == 'C' ||
+                                  booking.paymentModeCode.toUpperCase() == 'A')
                               ? (loc.insideApp)
                               : (loc.outsideApp),
                         ),
@@ -230,8 +255,8 @@ class InvoiceService {
             headers: (loc.localeName == 'ar')
                 ? ['الوصف', 'الكمية', 'سعر الوحدة', 'المبلغ']
                 : (loc.localeName == 'ur')
-                    ? ['تفصیل', 'مقدار', 'فی اکائی قیمت', 'رقم']
-                    : ['Description', 'Quantity', 'Unit Price', 'Amount'],
+                ? ['تفصیل', 'مقدار', 'فی اکائی قیمت', 'رقم']
+                : ['Description', 'Quantity', 'Unit Price', 'Amount'],
             data: [
               ...data.serviceItems.map(
                 (item) => [
@@ -246,8 +271,8 @@ class InvoiceService {
                   (loc.localeName == 'ar')
                       ? 'تكلفة الخدمة'
                       : (loc.localeName == 'ur')
-                          ? 'سروس کی قیمت'
-                          : 'Service Cost',
+                      ? 'سروس کی قیمت'
+                      : 'Service Cost',
                   '1',
                   "${data.serviceCost.toStringAsFixed(2)} ${loc.sar}",
                   "${data.serviceCost.toStringAsFixed(2)} ${loc.sar}",
@@ -294,11 +319,11 @@ class InvoiceService {
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
                           pw.Text(
-                              (loc.localeName == 'ar')
-                                  ? 'الخصم (${booking.service.discountPercentage}%)'
-                                  : (loc.localeName == 'ur')
-                                      ? 'رعایت (${booking.service.discountPercentage}%)'
-                                      : 'Discount (${booking.service.discountPercentage}%)'
+                            (loc.localeName == 'ar')
+                                ? 'الخصم (${booking.service.discountPercentage}%)'
+                                : (loc.localeName == 'ur')
+                                ? 'رعایت (${booking.service.discountPercentage}%)'
+                                : 'Discount (${booking.service.discountPercentage}%)',
                           ),
                           pw.Text(
                             '- ${(data.inspectionFee - booking.service.getDiscountedPrice(data.inspectionFee)).toStringAsFixed(2)} ${loc.sar}',
@@ -351,11 +376,9 @@ class InvoiceService {
               (loc.localeName == 'ar')
                   ? 'شكرا لاختيارك أبو جلمبو'
                   : (loc.localeName == 'ur')
-                      ? 'ابو جلمبو کا انتخاب کرنے کا شکریہ'
-                      : 'Thank you for choosing Abo Glumbo',
-              style: pw.TextStyle(
-                color: PdfColors.grey,
-              ),
+                  ? 'ابو جلمبو کا انتخاب کرنے کا شکریہ'
+                  : 'Thank you for choosing Abo Glumbo',
+              style: pw.TextStyle(color: PdfColors.grey),
             ),
           ),
         ],
@@ -365,16 +388,91 @@ class InvoiceService {
     return pdf;
   }
 
+  static Future<Uint8List?> _getOrGenerateInvoiceBytes(
+    material_widgets.BuildContext context,
+    BookingModel booking,
+  ) async {
+    // If we already have the URL cached, download the bytes.
+    if (booking.invoicePdfUrl != null && booking.invoicePdfUrl!.isNotEmpty) {
+      try {
+        final response = await http.get(Uri.parse(booking.invoicePdfUrl!));
+        if (response.statusCode == 200) {
+          return response.bodyBytes;
+        }
+      } catch (e) {
+        debugPrint('Error downloading existing invoice: $e');
+      }
+    }
+
+    // Fallback: generate it locally
+    final pdf = await _buildInvoiceDocument(context, booking);
+    if (pdf == null) return null;
+    return await pdf.save();
+  }
+
+  static Future<bool> generateAndUploadInvoice(
+    material_widgets.BuildContext context,
+    BookingModel booking,
+  ) async {
+    try {
+      final invoiceId =
+          '${booking.newBookingId ?? booking.id}_${booking.customer.uid}';
+
+      final pdf = await _buildInvoiceDocument(context, booking);
+      if (pdf == null) return false;
+
+      final bytes = await pdf.save();
+
+      // Upload to Firebase Storage
+      final storageRef = FirebaseStorage.instance.ref(
+        'invoices/$invoiceId.pdf',
+      );
+      await storageRef.putData(
+        bytes,
+        SettableMetadata(contentType: 'application/pdf'),
+      );
+      final downloadUrl = await storageRef.getDownloadURL();
+
+      // Save to invoices collection
+      final invoiceModel = InvoiceModel(
+        id: invoiceId,
+        invoiceUrl: downloadUrl,
+        createdAt: Timestamp.now(),
+        bookingId: booking.id,
+        newBookingId: booking.newBookingId,
+        userId: booking.customer.uid ?? '',
+        technicianId: booking.agent?.uid,
+      );
+
+      await FirebaseFirestore.instance
+          .collection('invoices')
+          .doc(invoiceId)
+          .set(invoiceModel.toMap());
+
+      // Update booking
+      await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+        'invoiceId': invoiceId,
+        'invoicePdfUrl': downloadUrl,
+      });
+
+      return true;
+    } catch (e) {
+      debugPrint('Error generating and uploading invoice: $e');
+      return false;
+    }
+  }
+
   static Future<void> generateAndShowInvoice(
     material_widgets.BuildContext context,
     BookingModel booking,
   ) async {
-    final pdf = await _buildInvoiceDocument(context, booking);
-    if (pdf == null) return;
+    final bytes = await _getOrGenerateInvoiceBytes(context, booking);
+    if (bytes == null) return;
 
     await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) => pdf.save(),
-      name: booking.newBookingId ?? booking.id.substring(0, 8).toUpperCase(),
+      onLayout: (PdfPageFormat format) async => bytes,
+      name:
+          '${booking.newBookingId ?? booking.id.substring(0, 8).toUpperCase()}.pdf',
     );
   }
 
@@ -382,13 +480,13 @@ class InvoiceService {
     material_widgets.BuildContext context,
     BookingModel booking,
   ) async {
-    final pdf = await _buildInvoiceDocument(context, booking);
-    if (pdf == null) return;
+    final bytes = await _getOrGenerateInvoiceBytes(context, booking);
+    if (bytes == null) return;
 
-    final bytes = await pdf.save();
     await Printing.sharePdf(
       bytes: bytes,
-      filename: '${booking.newBookingId ?? booking.id.substring(0, 8).toUpperCase()}.pdf',
+      filename:
+          '${booking.newBookingId ?? booking.id.substring(0, 8).toUpperCase()}.pdf',
     );
   }
 }

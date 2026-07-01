@@ -13,6 +13,7 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
 import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
+import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -769,6 +770,9 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
   }
 
   Future<bool> saveTransaction() async {
+    final String invoiceId =
+        '${widget.booking.newBookingId ?? widget.booking.id}_${widget.booking.customer.uid}';
+
     TransactionModel transaction = TransactionModel(
       Timestamp.now(),
       amount: widget.amount,
@@ -781,8 +785,13 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
       customerId: widget.customer.uid ?? "",
       workerId: widget.worker.uid ?? "",
       bookingId: widget.booking.id,
+      invoiceId: invoiceId,
     );
-    return await BookingUtils.saveTransaction(transaction: transaction);
+    bool isSaved = await BookingUtils.saveTransaction(transaction: transaction);
+    if (isSaved) {
+      await InvoiceService.generateAndUploadInvoice(context, widget.booking);
+    }
+    return isSaved;
   }
 
   void _processPayment() async {

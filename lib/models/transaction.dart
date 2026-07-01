@@ -10,6 +10,7 @@ class TransactionModel {
   final Timestamp updatedAt;
   final String bookingId;
   final String orderId;
+  final String? invoiceId;
 
   TransactionModel(
     this.updatedAt, {
@@ -21,6 +22,7 @@ class TransactionModel {
     required this.createdAt,
     required this.orderId,
     required this.bookingId,
+    this.invoiceId,
   });
 
   // Add any necessary methods for your transaction model
@@ -36,6 +38,7 @@ class TransactionModel {
       'updatedAt': updatedAt,
       'bookingId': bookingId,
       'orderId': orderId,
+      'invoiceId': invoiceId,
     };
   }
 
@@ -49,8 +52,8 @@ class TransactionModel {
       paymentStatus: map['paymentStatus'],
       paymentMethod: map['paymentMethod'],
       createdAt: Timestamp.fromDate(map['createdAt']),
-      
       orderId: map['orderId'],
+      invoiceId: map['invoiceId'],
     );
   }
 

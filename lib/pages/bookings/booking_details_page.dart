@@ -527,7 +527,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       children: [
                         _buildInfoRow(
                           localization.mode,
-                          booking.completionData?.mode == 0
+                          (booking.completionData == null || booking.completionData?.mode == 0)
                               ? localization.inspectionOnly
                               : localization.fullService,
                         ),
@@ -1163,11 +1163,15 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   }
 
   Widget _buildCompletionDataCard(BuildContext context) {
-    if (booking.completionData == null) {
-      return const SizedBox.shrink();
-    }
-
-    final completionData = booking.completionData!;
+    final completionData = booking.completionData ?? CompletionDataModel(
+      fileUrls: [],
+      mode: 0,
+      paymentMethod: booking.paymentModeCode,
+      serviceCost: 0,
+      totalCost: 0,
+      serviceItems: [],
+      inspectionFee: booking.effectiveInspectionFee,
+    );
 
     return _buildSectionCard(
       context: context,

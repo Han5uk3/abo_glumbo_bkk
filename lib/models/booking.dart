@@ -61,6 +61,8 @@ class BookingModel {
   Timestamp? counterProposalStartedAt;
   CounterOfferModel? activeCounterOffer;
   String? rebookTechnicianId; // ✅ Added
+  String? invoiceId;
+  String? invoicePdfUrl;
 
   /// The service location zone that the customer's address matched during
   /// booking validation. Used by the technician/admin app to display which
@@ -133,6 +135,8 @@ class BookingModel {
     this.counterProposalStartedAt,
     this.rebookTechnicianId, // ✅ Added
     this.isTrackingPaused, // ✅ Added
+    this.invoiceId,
+    this.invoicePdfUrl,
   });
 
   BookingModel.fromMap(Map<String, dynamic> data)
@@ -211,6 +215,8 @@ class BookingModel {
       technicianSelectedAt = data['technicianSelectedAt'], // ✅ Added
       cancelledBy = data['cancelledBy'], // ✅ Added
       isTrackingPaused = data['isTrackingPaused'], // ✅ Added
+      invoiceId = data['invoiceId'],
+      invoicePdfUrl = data['invoicePdfUrl'],
       cancelledAt = data['cancelledAt'];
 
   factory BookingModel.fromJson(Map<String, dynamic> data) {
@@ -277,6 +283,8 @@ class BookingModel {
       'assignmentScheduledTime': assignmentScheduledTime,
       'rebookTechnicianId': rebookTechnicianId, // ✅ Added
       'isTrackingPaused': isTrackingPaused, // ✅ Added
+      'invoiceId': invoiceId,
+      'invoicePdfUrl': invoicePdfUrl,
     };
 
     map['id'] = id;

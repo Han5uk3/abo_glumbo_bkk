@@ -12,6 +12,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
 import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
+import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +75,11 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
             : double.tryParse(widget.service?.price.toString() ?? '0.00') ??
                 0.00;
 
+    String? invoiceId;
+    if (widget.isFromBooking && widget.booking != null && widget.customerData.uid != null) {
+      invoiceId = '${widget.booking!.newBookingId ?? widget.booking!.id}_${widget.customerData.uid}';
+    }
+
     TransactionModel transaction = TransactionModel(
       Timestamp.now(),
       amount: amount,
@@ -84,8 +90,16 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
       customerId: widget.customerData.uid ?? "",
       workerId: widget.booking?.agent?.uid ?? widget.agent?.uid ?? "",
       bookingId: bookingId ?? widget.booking?.id ?? "",
+      invoiceId: invoiceId,
     );
-    return await BookingUtils.saveTransaction(transaction: transaction);
+    bool saved = await BookingUtils.saveTransaction(transaction: transaction);
+    
+    // Only generate invoice if it's from a booking payment (not a standalone tip)
+    if (saved && invoiceId != null && widget.booking != null) {
+      await InvoiceService.generateAndUploadInvoice(context, widget.booking!);
+    }
+    
+    return saved;
   }
 
 
