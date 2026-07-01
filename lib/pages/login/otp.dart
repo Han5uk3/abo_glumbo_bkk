@@ -268,7 +268,7 @@ class _OtpPageState extends State<OtpPage> {
         for (final notificationDoc in notificationQuery.docs) {
           await AppFirestore.notificationsCollectionRef
               .doc(notificationDoc.id)
-              .delete();
+              .update({'userId': newUid});
         }
       }
 
