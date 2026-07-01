@@ -8,6 +8,7 @@ import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/job_request.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/services/time_service.dart';
@@ -174,10 +175,10 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
     }
   }
 
-  Future<dynamic> _fetchCustomerData() async {
+  Future<CustomerModel> _fetchCustomerData() async {
     final uid = LocalStoreHelper.getUID();
     final doc = await AppFirestore.customersCollectionRef.doc(uid).get();
-    return doc.data();
+    return CustomerModel.fromJson(doc.data() as Map<String, dynamic>);
   }
 
   void _startTimer() {

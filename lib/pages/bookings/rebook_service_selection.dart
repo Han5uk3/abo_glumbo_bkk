@@ -5,6 +5,7 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/book_service_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -25,18 +26,35 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
   List<ServiceModel> _filteredServices = [];
   bool _isLoading = true;
   String _searchQuery = "";
+  late UserModel _technician;
 
   @override
   void initState() {
     super.initState();
+    _technician = widget.technician;
     _loadData();
   }
 
   Future<void> _loadData() async {
+    List<String> technicianRoles = _technician.jobRoles ?? [];
+
+    if (_technician.uid != null) {
+      try {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(_technician.uid)
+            .get();
+        if (doc.exists) {
+          _technician = UserModel.fromDocumentSnapshot(doc);
+          technicianRoles = _technician.jobRoles ?? [];
+        }
+      } catch (e) {
+        debugPrint('Error fetching technician: $e');
+      }
+    }
+
     final services = await AppServices.listenToServices().first;
     final categories = await AppServices.listenToCategories().first;
-
-    final technicianRoles = widget.technician.jobRoles ?? [];
 
     final validCategories = categories.where((c) {
       return technicianRoles.contains(c.id) ||
@@ -48,15 +66,10 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
     final validCategoryIds = validCategories.map((c) => c.id).toList();
 
     final List<ServiceModel> validServices = [];
-    final Set<String> addedCategoryIds = {};
 
     for (final s in services) {
-      if (validCategoryIds.contains(s.category)) {
-        final categoryId = s.category ?? 'Other';
-        if (!addedCategoryIds.contains(categoryId)) {
-          addedCategoryIds.add(categoryId);
-          validServices.add(s);
-        }
+      if (s.isActive && validCategoryIds.contains(s.category)) {
+        validServices.add(s);
       }
     }
 
@@ -95,6 +108,7 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           l10n.selectService,
           style: TextStyle(
@@ -232,63 +246,70 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
           MaterialPageRoute(
             builder: (context) => BookServicePage(
               service: service,
-              rebookTechnician: widget.technician,
+              rebookTechnician: _technician,
             ),
           ),
         );
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.grey[100]!)),
-        ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: CachedNetworkImage(
-                imageUrl: service.image ?? "",
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-                errorWidget: (context, url, error) => Container(
-                  width: 50,
-                  height: 50,
-                  color: Colors.grey[200],
-                  child: const Icon(
-                    Icons.miscellaneous_services,
-                    color: Colors.grey,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Card(
+          elevation: 3,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: CachedNetworkImage(
+                    imageUrl: service.image ?? "",
+                    width: 65,
+                    height: 65,
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => Container(
+                      width: 65,
+                      height: 65,
+                      color: Colors.grey[200],
+                      child: const Icon(
+                        Icons.miscellaneous_services,
+                        color: Colors.grey,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    service.nameLocalized(languageCode: locale) ?? '',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        service.nameLocalized(languageCode: locale) ?? '',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        service.descriptionLocalized(languageCode: locale) ??
+                            '',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    service.descriptionLocalized(languageCode: locale) ?? '',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
+                  color: Colors.grey,
+                ),
+              ],
             ),
-            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-          ],
+          ),
         ),
       ),
     );

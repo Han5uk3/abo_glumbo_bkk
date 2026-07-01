@@ -282,9 +282,7 @@ class AppServices {
         .snapshots()
         .map((snapshot) {
           return snapshot.docs
-              .map(
-                (doc) => CategoryModel.fromQuerySnapshot(doc),
-              )
+              .map((doc) => CategoryModel.fromQuerySnapshot(doc))
               .toList();
         });
   }
@@ -298,9 +296,7 @@ class AppServices {
         .snapshots()
         .map((snapshot) {
           return snapshot.docs
-              .map(
-                (doc) => ServiceModel.fromQueryDocumentSnapshot(doc),
-              )
+              .map((doc) => ServiceModel.fromQueryDocumentSnapshot(doc))
               .toList();
         });
   }
@@ -311,9 +307,7 @@ class AppServices {
         .snapshots()
         .map((snapshot) {
           return snapshot.docs
-              .map(
-                (doc) => ServiceModel.fromQueryDocumentSnapshot(doc),
-              )
+              .map((doc) => ServiceModel.fromQueryDocumentSnapshot(doc))
               .toList();
         });
   }
@@ -771,40 +765,43 @@ class AppServices {
           .where('isStarted', isEqualTo: true)
           .snapshots();
 
-      return Rx.combineLatest2<QuerySnapshot, QuerySnapshot, List<BookingModel>>(
-        activeBookingsStream,
-        warrantyBookingsStream,
-        (activeSnapshot, warrantySnapshot) {
-          final Map<String, BookingModel> bookingMap = {};
+      return Rx.combineLatest2<
+        QuerySnapshot,
+        QuerySnapshot,
+        List<BookingModel>
+      >(activeBookingsStream, warrantyBookingsStream, (
+        activeSnapshot,
+        warrantySnapshot,
+      ) {
+        final Map<String, BookingModel> bookingMap = {};
 
-          // Process normal active bookings
-          for (var doc in activeSnapshot.docs) {
-            final booking = BookingModel.fromJson(
-              doc.data() as Map<String, dynamic>,
-            );
-            bookingMap[booking.id] = booking;
-          }
+        // Process normal active bookings
+        for (var doc in activeSnapshot.docs) {
+          final booking = BookingModel.fromJson(
+            doc.data() as Map<String, dynamic>,
+          );
+          bookingMap[booking.id] = booking;
+        }
 
-          // Process active warranty bookings
-          for (var doc in warrantySnapshot.docs) {
-            final booking = BookingModel.fromJson(
-              doc.data() as Map<String, dynamic>,
-            );
-            bookingMap[booking.id] = booking;
-          }
+        // Process active warranty bookings
+        for (var doc in warrantySnapshot.docs) {
+          final booking = BookingModel.fromJson(
+            doc.data() as Map<String, dynamic>,
+          );
+          bookingMap[booking.id] = booking;
+        }
 
-          final combined = bookingMap.values.toList();
+        final combined = bookingMap.values.toList();
 
-          // Sort by createdAt descending
-          combined.sort((a, b) {
-            final aTime = a.createdAt?.toDate() ?? DateTime(0);
-            final bTime = b.createdAt?.toDate() ?? DateTime(0);
-            return bTime.compareTo(aTime);
-          });
+        // Sort by createdAt descending
+        combined.sort((a, b) {
+          final aTime = a.createdAt?.toDate() ?? DateTime(0);
+          final bTime = b.createdAt?.toDate() ?? DateTime(0);
+          return bTime.compareTo(aTime);
+        });
 
-          return combined;
-        },
-      );
+        return combined;
+      });
     } catch (e) {
       debugPrint('❌ Error listening to active bookings: $e');
       return Stream.value([]);
@@ -831,40 +828,43 @@ class AppServices {
           .where('warranty.warrantyStatusCode', isEqualTo: 'S')
           .snapshots();
 
-      return Rx.combineLatest2<QuerySnapshot, QuerySnapshot, List<BookingModel>>(
-        activeBookingsStream,
-        warrantyBookingsStream,
-        (activeSnapshot, warrantySnapshot) {
-          final Map<String, BookingModel> bookingMap = {};
+      return Rx.combineLatest2<
+        QuerySnapshot,
+        QuerySnapshot,
+        List<BookingModel>
+      >(activeBookingsStream, warrantyBookingsStream, (
+        activeSnapshot,
+        warrantySnapshot,
+      ) {
+        final Map<String, BookingModel> bookingMap = {};
 
-          // Process normal active bookings
-          for (var doc in activeSnapshot.docs) {
-            final booking = BookingModel.fromJson(
-              doc.data() as Map<String, dynamic>,
-            );
-            bookingMap[booking.id] = booking;
-          }
+        // Process normal active bookings
+        for (var doc in activeSnapshot.docs) {
+          final booking = BookingModel.fromJson(
+            doc.data() as Map<String, dynamic>,
+          );
+          bookingMap[booking.id] = booking;
+        }
 
-          // Process active warranty bookings
-          for (var doc in warrantySnapshot.docs) {
-            final booking = BookingModel.fromJson(
-              doc.data() as Map<String, dynamic>,
-            );
-            bookingMap[booking.id] = booking;
-          }
+        // Process active warranty bookings
+        for (var doc in warrantySnapshot.docs) {
+          final booking = BookingModel.fromJson(
+            doc.data() as Map<String, dynamic>,
+          );
+          bookingMap[booking.id] = booking;
+        }
 
-          final combined = bookingMap.values.toList();
+        final combined = bookingMap.values.toList();
 
-          // Sort by createdAt descending
-          combined.sort((a, b) {
-            final aTime = a.createdAt?.toDate() ?? DateTime(0);
-            final bTime = b.createdAt?.toDate() ?? DateTime(0);
-            return bTime.compareTo(aTime);
-          });
+        // Sort by createdAt descending
+        combined.sort((a, b) {
+          final aTime = a.createdAt?.toDate() ?? DateTime(0);
+          final bTime = b.createdAt?.toDate() ?? DateTime(0);
+          return bTime.compareTo(aTime);
+        });
 
-          return combined;
-        },
-      );
+        return combined;
+      });
     } catch (e) {
       debugPrint('❌ Error listening to accepted bookings: $e');
       return Stream.value([]);
@@ -905,9 +905,7 @@ class AppServices {
         .snapshots()
         .map((snapshot) {
           return snapshot.docs
-              .map(
-                (doc) => UserModel.fromDocumentSnapshot(doc),
-              )
+              .map((doc) => UserModel.fromDocumentSnapshot(doc))
               .toList();
         });
   }
@@ -1033,9 +1031,7 @@ class AppServices {
         .snapshots()
         .map((snapshot) {
           return snapshot.docs
-              .map(
-                (doc) => UserModel.fromDocumentSnapshot(doc),
-              )
+              .map((doc) => UserModel.fromDocumentSnapshot(doc))
               .where((user) {
                 // Filter logic for admin roles: Exclude customer service admins
                 if (user.isAdmin == true) {
@@ -1565,7 +1561,6 @@ class AppServices {
     }
   }
 
-
   static Future<bool> respondToCounterOffer({
     required BookingModel booking,
     required String response, // 'accepted' or 'rejected'
@@ -1664,15 +1659,15 @@ class AppServices {
           .doc(customerId)
           .collection('notifications')
           .add({
-        'titleEn': titleEn,
-        'titleAr': titleAr,
-        'bodyEn': bodyEn,
-        'bodyAr': bodyAr,
-        'type': type,
-        'data': data,
-        'createdAt': FieldValue.serverTimestamp(),
-        'read': false,
-      });
+            'titleEn': titleEn,
+            'titleAr': titleAr,
+            'bodyEn': bodyEn,
+            'bodyAr': bodyAr,
+            'type': type,
+            'data': data,
+            'createdAt': FieldValue.serverTimestamp(),
+            'read': false,
+          });
     } catch (e) {
       debugPrint('Error recording customer notification: $e');
     }
@@ -1714,7 +1709,7 @@ class AppServices {
         });
       }
       await batch.commit();
-      
+
       return request.id;
     } catch (e) {
       debugPrint('Error broadcasting job request: $e');
@@ -1778,12 +1773,7 @@ class AppServices {
       'id': bookingId,
       'customerId': request.customer.uid,
       'customer': request.customer.toJson(),
-      'agent': {
-        'uid': selectedTechnician.uid,
-        'name': selectedTechnician.name,
-        'phone': selectedTechnician.phone,
-        'profileUrl': selectedTechnician.profileUrl,
-      },
+      'agent': selectedTechnician.toJson(),
       'service': request.service.toJson(),
       'address': request.address.toJson(),
       'bookingDateTime': request.bookingDateTime ?? request.createdAt,
@@ -1845,20 +1835,20 @@ class AppServices {
   static Future<void> deleteJobRequest(String requestId) async {
     try {
       debugPrint('🗑️ Deleting Job Request and Offers for: $requestId');
-      
+
       // 1. Delete associated Job Offers
       final offers = await AppFirestore.jobOffersCollectionRef
           .where('requestId', isEqualTo: requestId)
           .get();
-      
+
       final batch = FirebaseFirestore.instance.batch();
       for (var doc in offers.docs) {
         batch.delete(doc.reference);
       }
-      
+
       // 2. Delete the Job Request itself
       batch.delete(AppFirestore.jobRequestsCollectionRef.doc(requestId));
-      
+
       await batch.commit();
 
       debugPrint('✅ Successfully deleted Job Request and Offers');
@@ -1904,7 +1894,9 @@ class AppServices {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      final offerDoc = await AppFirestore.jobOffersCollectionRef.doc(offerId).get();
+      final offerDoc = await AppFirestore.jobOffersCollectionRef
+          .doc(offerId)
+          .get();
       if (offerDoc.exists) {
         final offerData = offerDoc.data() as Map<String, dynamic>;
         final technicianId = offerData['technicianId'];
@@ -1962,12 +1954,7 @@ class AppServices {
         batch.update(AppFirestore.bookingsCollectionRef.doc(bookingId), {
           'bookingDateTime': proposedTime,
           'bookingStatusCode': 'A',
-          'agent': {
-            'uid': techData['uid'],
-            'name': techData['name'],
-            'phone': techData['phone'],
-            'profileUrl': techData['profileUrl'],
-          },
+          'agent': UserModel.fromDocumentSnapshot(techSnapshot).toJson(),
           'autoAssignmentStatus': 'accepted',
           'updatedAt': FieldValue.serverTimestamp(),
           'assignedAt': FieldValue.serverTimestamp(),
@@ -2008,7 +1995,10 @@ class AppServices {
     await batch.commit();
   }
 
-  static Future<void> fallbackToGeneralSearch(String bookingId, [String? technicianId]) async {
+  static Future<void> fallbackToGeneralSearch(
+    String bookingId, [
+    String? technicianId,
+  ]) async {
     final batch = FirebaseFirestore.instance.batch();
 
     final updateData = <String, dynamic>{

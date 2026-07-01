@@ -8,11 +8,11 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/bloc/booking_bloc.dart';
+import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/sheets/payment.dart';
 
 import 'package:abo_glumbo_bbk/pages/bookings/booking_details_page.dart';
-import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
 import 'package:abo_glumbo_bbk/sheets/cancel_booking_dialog.dart';
-import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -166,7 +166,8 @@ class ServiceBookingTile extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          if (booking.bookingStatusCode == "C" || booking.bookingStatusCode == "VP")
+                          if (booking.bookingStatusCode == "C" ||
+                              booking.bookingStatusCode == "VP")
                             Text(
                               "${((booking.completionData?.totalCost ?? 0) + booking.service.getDiscountedPrice(booking.effectiveInspectionFee)).toStringAsFixed(1)} ${AppLocalizations.of(context)!.sar}",
                               style: TextStyle(
@@ -177,18 +178,33 @@ class ServiceBookingTile extends StatelessWidget {
                             ),
                           if (booking.isOnHour != null)
                             Padding(
-                              padding: EdgeInsets.only(top: (booking.bookingStatusCode == "C" || booking.bookingStatusCode == "VP") ? 4.0 : 0.0),
+                              padding: EdgeInsets.only(
+                                top:
+                                    (booking.bookingStatusCode == "C" ||
+                                        booking.bookingStatusCode == "VP")
+                                    ? 4.0
+                                    : 0.0,
+                              ),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: booking.isOnHour == true ? Colors.blue.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                                  color: booking.isOnHour == true
+                                      ? Colors.blue.withOpacity(0.1)
+                                      : Colors.orange.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  booking.isOnHour == true ? AppLocalizations.of(context)!.onHour : AppLocalizations.of(context)!.offHour,
+                                  booking.isOnHour == true
+                                      ? AppLocalizations.of(context)!.onHour
+                                      : AppLocalizations.of(context)!.offHour,
                                   style: TextStyle(
                                     fontSize: 10,
-                                    color: booking.isOnHour == true ? Colors.blue : Colors.orange,
+                                    color: booking.isOnHour == true
+                                        ? Colors.blue
+                                        : Colors.orange,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -244,10 +260,7 @@ class ServiceBookingTile extends StatelessWidget {
                             AppLocalizations.of(
                               context,
                             )!.escalateWarrantyConfirmation,
-                            style: TextStyle(
-                              fontSize: 14,
-                              height: 1.5,
-                            ),
+                            style: TextStyle(fontSize: 14, height: 1.5),
                           ),
                           actions: [
                             eButton(
@@ -378,7 +391,8 @@ class ServiceBookingTile extends StatelessWidget {
                   if (booking.bookingStatusCode == "C" ||
                       booking.bookingStatusCode == "VP")
                     const SizedBox.shrink()
-                  else if (booking.bookingStatusCode == "P" || booking.bookingStatusCode == "SR")
+                  else if (booking.bookingStatusCode == "P" ||
+                      booking.bookingStatusCode == "SR")
                     SizedBox(
                       height: 23,
                       child: OutlinedButton(
@@ -511,7 +525,9 @@ class ServiceBookingTile extends StatelessWidget {
   Widget _buildBookingTimestamp(BuildContext context) {
     final locale = AppLocalizations.of(context)?.localeName ?? 'en';
 
-    if ((booking.bookingStatusCode == "P" || booking.bookingStatusCode == "SR") && booking.createdAt != null) {
+    if ((booking.bookingStatusCode == "P" ||
+            booking.bookingStatusCode == "SR") &&
+        booking.createdAt != null) {
       return _timestampText(
         "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), locale)}",
       );
@@ -609,7 +625,8 @@ class ServiceBookingTile extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if ((booking.bookingStatusCode == "C" || booking.bookingStatusCode == "CP") &&
+        if ((booking.bookingStatusCode == "C" ||
+                booking.bookingStatusCode == "CP") &&
             booking.paymentCompleted == false)
           _buildPaymentButton(context),
         if (booking.paymentCompleted == true) _buildReviewButton(context),
@@ -640,33 +657,15 @@ class ServiceBookingTile extends StatelessWidget {
   }
 
   Widget _buildPaymentButton(BuildContext context) {
-    final bool isAppPayment = booking.paymentModeCode == 'C';
-
     return GestureDetector(
       onTap: () async {
-        if (isAppPayment) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PaymentWebView(
-                isFromBooking: true,
-                customerData: booking.customer,
-                service: booking.service,
-                booking: booking,
-                selectedPayment: "Cards",
-              ),
-            ),
-          );
-        } else {
-          final result = await showUploadPaymentProofSheet(
-            context,
-            booking: booking,
-          );
-          if (result == true) {
-            // Refresh the page to show updated status
-            onRefresh.call();
-          }
-        }
+        showPaymentBottomSheet(
+          context,
+          agent: booking.agent ?? UserModel(role: 'technician'),
+          service: booking.service,
+          customerData: booking.customer,
+          booking: booking,
+        );
       },
       child: SizedBox(
         height: 23,
@@ -678,11 +677,7 @@ class ServiceBookingTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           alignment: Alignment.center,
           child: Text(
-            (isAppPayment
-                    ? AppLocalizations.of(context)!.completePayment
-                    : AppLocalizations.of(context)?.paymentPending ??
-                        'Payment Pending')
-                .toUpperCase(),
+            AppLocalizations.of(context)!.completePayment.toUpperCase(),
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 8,
@@ -1022,7 +1017,8 @@ class ServiceBookingTile extends StatelessWidget {
   }
 
   int calculateDaysLeft() {
-    final endDate = booking.warranty?.expiredOn ??
+    final endDate =
+        booking.warranty?.expiredOn ??
         booking.warranty?.createdAt?.add(const Duration(days: 7));
     if (endDate == null) return 0;
     final daysLeft = endDate.difference(DateTime.now()).inDays;
@@ -1218,442 +1214,45 @@ class _WarrantyClaimForm extends StatefulWidget {
 }
 
 class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
   bool _isSubmitting = false;
   String? _errorMessage;
 
-  DateTime get _warrantyExpiry {
-    final warranty = widget.booking.warranty;
-    if (warranty?.expiredOn != null) return warranty!.expiredOn!;
-    return (warranty?.createdAt ?? DateTime.now()).add(const Duration(days: 7));
-  }
-
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final tomorrow = DateTime(now.year, now.month, now.day + 1);
-    final expiry = _warrantyExpiry;
-    // Ensure lastDate is at least tomorrow
-    final lastDate = expiry.isAfter(tomorrow) ? expiry : tomorrow;
-
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? tomorrow,
-      firstDate: tomorrow,
-      lastDate: lastDate,
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-        _errorMessage = null;
-      });
-    }
-  }
-
-  int selectedTimeCategory = -1;
-  int selectedTimeSlot = -1;
-
-  List<Map> timeSlots = [
-    {
-      "label": "Morning",
-      "values": [
-        {"label": "06:00 AM", "time": const TimeOfDay(hour: 6, minute: 0)},
-        {"label": "06:30 AM", "time": const TimeOfDay(hour: 6, minute: 30)},
-        {"label": "07:00 AM", "time": const TimeOfDay(hour: 7, minute: 0)},
-        {"label": "07:30 AM", "time": const TimeOfDay(hour: 7, minute: 30)},
-        {"label": "08:00 AM", "time": const TimeOfDay(hour: 8, minute: 0)},
-        {"label": "08:30 AM", "time": const TimeOfDay(hour: 8, minute: 30)},
-        {"label": "09:00 AM", "time": const TimeOfDay(hour: 9, minute: 0)},
-        {"label": "09:30 AM", "time": const TimeOfDay(hour: 9, minute: 30)},
-        {"label": "10:00 AM", "time": const TimeOfDay(hour: 10, minute: 0)},
-        {"label": "10:30 AM", "time": const TimeOfDay(hour: 10, minute: 30)},
-        {"label": "11:00 AM", "time": const TimeOfDay(hour: 11, minute: 0)},
-        {"label": "11:30 AM", "time": const TimeOfDay(hour: 11, minute: 30)},
-      ],
-    },
-    {
-      "label": "After noon",
-      "values": [
-        {"label": "12:00 PM", "time": const TimeOfDay(hour: 12, minute: 0)},
-        {"label": "12:30 PM", "time": const TimeOfDay(hour: 12, minute: 30)},
-        {"label": "01:00 PM", "time": const TimeOfDay(hour: 13, minute: 0)},
-        {"label": "01:30 PM", "time": const TimeOfDay(hour: 13, minute: 30)},
-        {"label": "02:00 PM", "time": const TimeOfDay(hour: 14, minute: 0)},
-        {"label": "02:30 PM", "time": const TimeOfDay(hour: 14, minute: 30)},
-        {"label": "03:00 PM", "time": const TimeOfDay(hour: 15, minute: 0)},
-        {"label": "03:30 PM", "time": const TimeOfDay(hour: 15, minute: 30)},
-      ],
-    },
-    {
-      "label": "Evening",
-      "values": [
-        {"label": "04:00 PM", "time": const TimeOfDay(hour: 16, minute: 0)},
-        {"label": "04:30 PM", "time": const TimeOfDay(hour: 16, minute: 30)},
-        {"label": "05:00 PM", "time": const TimeOfDay(hour: 17, minute: 0)},
-        {"label": "05:30 PM", "time": const TimeOfDay(hour: 17, minute: 30)},
-        {"label": "06:00 PM", "time": const TimeOfDay(hour: 18, minute: 0)},
-        {"label": "06:30 PM", "time": const TimeOfDay(hour: 18, minute: 30)},
-        {"label": "07:00 PM", "time": const TimeOfDay(hour: 19, minute: 0)},
-        {"label": "07:30 PM", "time": const TimeOfDay(hour: 19, minute: 30)},
-      ],
-    },
-    {
-      "label": "Night",
-      "values": [
-        {"label": "08:00 PM", "time": const TimeOfDay(hour: 20, minute: 0)},
-        {"label": "08:30 PM", "time": const TimeOfDay(hour: 20, minute: 30)},
-        {"label": "09:00 PM", "time": const TimeOfDay(hour: 21, minute: 0)},
-        {"label": "09:30 PM", "time": const TimeOfDay(hour: 21, minute: 30)},
-        {"label": "10:00 PM", "time": const TimeOfDay(hour: 22, minute: 0)},
-      ],
-    },
-  ];
-
-  String _getLocalizedTimeCategory(String label) {
-    if (AppLocalizations.of(context)?.localeName == 'ar') {
-      switch (label) {
-        case "Morning":
-          return "الصباح";
-        case "After noon":
-          return "بعد الظهر";
-        case "Evening":
-          return "المساء";
-        case "Night":
-          return "الليل";
-        default:
-          return label;
-      }
-    } else if (AppLocalizations.of(context)?.localeName == 'ur') {
-      switch (label) {
-        case "Morning":
-          return "صبح";
-        case "After noon":
-          return "دوپہر";
-        case "Evening":
-          return "شام";
-        case "Night":
-          return "رات";
-        default:
-          return label;
-      }
-    }
-    return label;
-  }
-
-  String _getLocalizedTimeSlots(String label) {
-    final languageCode = AppLocalizations.of(context)?.localeName ?? 'en';
-    if (languageCode == 'en') return label.substring(6);
-
-    final isAM = label.contains("AM");
-    if (languageCode == 'ar') {
-      return isAM ? "ص" : "م";
-    } else if (languageCode == 'ur') {
-      return isAM ? "صبح" : "شام";
-    }
-    return label.substring(6);
-  }
-
-  bool _isTimeCategoryDisabled(int index) {
-    if (_selectedDate == null) return false;
-    final now = DateTime.now();
-    if (_selectedDate!.day != now.day ||
-        _selectedDate!.month != now.month ||
-        _selectedDate!.year != now.year) {
-      return false;
-    }
-
-    final currentHour = now.hour;
-    final currentMinute = now.minute;
-
-    switch (index) {
-      case 0:
-        return currentHour > 11 || (currentHour == 11 && currentMinute > 30);
-      case 1:
-        return currentHour > 15 || (currentHour == 15 && currentMinute > 30);
-      case 2:
-        return currentHour > 19 || (currentHour == 19 && currentMinute > 30);
-      case 3:
-        return currentHour > 22 || (currentHour == 22 && currentMinute > 0);
-      default:
-        return false;
-    }
-  }
-
-  bool _isTimeSlotPast(int categoryIndex, int slotIndex) {
-    if (_selectedDate == null) return false;
-    final now = DateTime.now();
-    if (_selectedDate!.day != now.day ||
-        _selectedDate!.month != now.month ||
-        _selectedDate!.year != now.year) {
-      return false;
-    }
-
-    final slot = timeSlots[categoryIndex]["values"][slotIndex];
-    final time = slot["time"] as TimeOfDay;
-
-    final bufferTime = now.add(const Duration(hours: 1));
-    return time.hour < bufferTime.hour ||
-        (time.hour == bufferTime.hour && time.minute <= bufferTime.minute);
-  }
-
-  Widget _buildTimeCategories({StateSetter? setStateDialog}) {
-    return SizedBox(
-      height: 35,
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        scrollDirection: Axis.horizontal,
-        itemCount: timeSlots.length,
-        itemBuilder: (context, index) {
-          final isDisabled = _isTimeCategoryDisabled(index);
-          final isSelected = selectedTimeCategory == index;
-
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: InkWell(
-              onTap: isDisabled
-                  ? null
-                  : () {
-                      if (setStateDialog != null) {
-                        setStateDialog(() {
-                          selectedTimeCategory = index;
-                          selectedTimeSlot = -1;
-                        });
-                      }
-                      setState(() {
-                        selectedTimeCategory = index;
-                        selectedTimeSlot = -1;
-                      });
-                    },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primary : Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: isSelected ? AppColors.primary : Colors.grey[300]!,
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    _getLocalizedTimeCategory(timeSlots[index]["label"]),
-                    style: TextStyle(
-                      color: isSelected
-                          ? Colors.white
-                          : isDisabled
-                          ? Colors.grey
-                          : Colors.black87,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildTimeSlots({
-    StateSetter? setStateDialog,
-    BuildContext? dialogContext,
-  }) {
-    final currentSlots =
-        (timeSlots[selectedTimeCategory]["values"] as List<Map>);
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Wrap(
-        spacing: 10,
-        runSpacing: 10,
-        children: List.generate(currentSlots.length, (i) {
-          final isPast = _isTimeSlotPast(selectedTimeCategory, i);
-          final isSelected = selectedTimeSlot == i;
-
-          return InkWell(
-            onTap: isPast
-                ? null
-                : () {
-                    if (setStateDialog != null) {
-                      setStateDialog(() => selectedTimeSlot = i);
-                    }
-                    setState(() {
-                      selectedTimeSlot = i;
-                      _selectedTime = currentSlots[i]["time"] as TimeOfDay;
-                      _errorMessage = null;
-                    });
-                    if (dialogContext != null) {
-                      Navigator.pop(dialogContext);
-                    }
-                  },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: (MediaQuery.of(context).size.width - 62) / 4,
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? Colors.white
-                    : isPast
-                    ? Colors.grey[100]
-                    : AppColors.bgWhite,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : Colors.grey.shade300,
-                  width: 1.5,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  "${currentSlots[i]["label"].toString().substring(0, 5)} ${_getLocalizedTimeSlots(currentSlots[i]["label"])}",
-                  style: TextStyle(
-                    color: isSelected
-                        ? AppColors.primary
-                        : isPast
-                        ? Colors.grey
-                        : Colors.black87,
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    fontSize: 10,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-
-  void _showTimeSlotPickerDialog() {
-    if (_selectedDate == null) {
-      setState(() {
-        _errorMessage = AppLocalizations.of(context)!.selectDateTime; // Fallback error message
-      });
-      return;
-    }
-    
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return Dialog(
-          insetPadding: const EdgeInsets.all(16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: StatefulBuilder(
-            builder: (context, setStateDialog) {
-              return Container(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)?.time ??
-                                'Available Slots',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.grey.shade100,
-                              ),
-                              child: Icon(
-                                Icons.close_rounded,
-                                size: 20,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    _buildTimeCategories(setStateDialog: setStateDialog),
-                    const SizedBox(height: 16),
-                    Divider(color: Colors.grey.shade300, thickness: 1),
-                    if (selectedTimeCategory != -1)
-                      _buildTimeSlots(
-                        setStateDialog: setStateDialog,
-                        dialogContext: dialogContext,
-                      ),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _pickTime() async {
-    _showTimeSlotPickerDialog();
-  }
-
   Future<void> _submitClaim() async {
-    if (_selectedDate == null || _selectedTime == null) {
-      setState(() {
-        _errorMessage = AppLocalizations.of(context)!.selectDateTime;
-      });
-      return;
-    }
-
+    final localizations = AppLocalizations.of(context)!;
+    final navigator = Navigator.of(context);
+    
     setState(() => _isSubmitting = true);
 
-    final preferredDateTime = DateTime(
-      _selectedDate!.year,
-      _selectedDate!.month,
-      _selectedDate!.day,
-      _selectedTime!.hour,
-      _selectedTime!.minute,
-    );
-
     try {
-      await AppFirestore.bookingsCollectionRef
-          .doc(widget.booking.id)
-          .update({
+      await AppFirestore.bookingsCollectionRef.doc(widget.booking.id).update({
         'warranty.warrantyStatusCode': 'R',
         'warranty.availability': true,
         'warranty.updatedAt': Timestamp.now(),
         'warranty.claimrequested': true,
         'warranty.requestedOn': Timestamp.now(),
-        'warranty.preferredDateTime': Timestamp.fromDate(preferredDateTime),
-        'warranty.assignedTechnicianId': widget.booking.agent?.uid ?? widget.booking.warranty?.assignedTechnicianId,
+        'warranty.assignedTechnicianId':
+            widget.booking.agent?.uid ??
+            widget.booking.warranty?.assignedTechnicianId,
         'updatedAt': Timestamp.now(),
       });
 
-      if (!context.mounted) return;
+      if (!mounted) return;
+      
       showSnackBar(
-        AppLocalizations.of(context)!.repairRequestedSuccessfully,
+        localizations.repairRequestedSuccessfully,
         context,
         backgroundColor: Colors.green,
       );
+      
+      navigator.pop();
       widget.onRefresh.call();
-      Navigator.pop(context);
     } catch (e) {
       log(e.toString());
-      if (!context.mounted) return;
-      Navigator.pop(context);
+      if (!mounted) return;
+      
+      navigator.pop();
       showSnackBar(
-        "${AppLocalizations.of(context)!.error} : $e",
+        "${localizations.error} : $e",
         context,
         backgroundColor: Colors.red,
       );
@@ -1709,165 +1308,6 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
             const Color(0xFFE53935).withOpacity(0.05),
             const Color(0xFFEF5350).withOpacity(0.05),
           ],
-        ),
-        const SizedBox(height: 16),
-
-        // Preferred Date & Time Picker
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade200, width: 1.5),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E88E5).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.calendar_month_rounded,
-                      size: 20,
-                      color: Color(0xFF1565C0),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    localization.selectDateTime,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1565C0),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  // Date picker
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: _pickDate,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _selectedDate != null
-                              ? const Color(0xFFE3F2FD)
-                              : Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _selectedDate != null
-                                ? const Color(0xFF1E88E5)
-                                : Colors.grey.shade300,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.today_rounded,
-                              size: 18,
-                              color: _selectedDate != null
-                                  ? const Color(0xFF1565C0)
-                                  : Colors.grey,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                _selectedDate != null
-                                    ? DateFormat.yMMMd(localization.localeName)
-                                        .format(_selectedDate!)
-                                    : localization.selectDate,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: _selectedDate != null
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                  color: _selectedDate != null
-                                      ? const Color(0xFF1565C0)
-                                      : Colors.grey.shade600,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  // Time picker
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: _pickTime,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _selectedTime != null
-                              ? const Color(0xFFE3F2FD)
-                              : Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _selectedTime != null
-                                ? const Color(0xFF1E88E5)
-                                : Colors.grey.shade300,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.access_time_rounded,
-                              size: 18,
-                              color: _selectedTime != null
-                                  ? const Color(0xFF1565C0)
-                                  : Colors.grey,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                _selectedTime != null && selectedTimeCategory != -1 && selectedTimeSlot != -1
-                                    ? "${timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"].toString().substring(0, 5)} ${_getLocalizedTimeSlots(timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]["label"])}"
-                                    : localization.selectTime,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: _selectedTime != null
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                  color: _selectedTime != null
-                                      ? const Color(0xFF1565C0)
-                                      : Colors.grey.shade600,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
         ),
         const SizedBox(height: 16),
 

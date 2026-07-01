@@ -237,6 +237,54 @@ class _PaymentWebViewState extends State<PaymentWebView> {
 
   bool isPaymentProcessed = false;
 
+  void _handleCancelPayment() {
+    if (isPaymentProcessed) return;
+    isPaymentProcessed = true;
+
+    if (widget.isFromBooking) {
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => PaymentFailedScreen(
+            message: AppLocalizations.of(context)!.paymentWasCancelledByUser,
+            orderId: orderId ?? 'NO ORDER ID',
+            onRetry: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => PaymentWebView(
+                    customerData: widget.customerData,
+                    isFromBooking: widget.isFromBooking,
+                    selectedImage: widget.selectedImage,
+                    selectedVideo: widget.selectedVideo,
+                    selectedDate: widget.selectedDate,
+                    timeSlot: widget.timeSlot,
+                    service: widget.service,
+                    review: widget.review,
+                    booking: widget.booking,
+                    agent: widget.agent,
+                    selectedAddress: widget.selectedAddress,
+                    serviceLocation: widget.serviceLocation,
+                    notesController: widget.notesController,
+                    selectedPayment: widget.selectedPayment,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    } else {
+      Navigator.pop(context);
+      Navigator.pop(context, true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.paymentCancelled),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   Future<NavigationDecision> _handleNavigation(
     String url,
     bool isFromBooking,
@@ -244,54 +292,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     final lowerUrl = url.toLowerCase();
 
     if (lowerUrl.contains('cancel') || lowerUrl.contains('payment/cancelled')) {
-      if (isPaymentProcessed) {
-        return NavigationDecision.prevent;
-      }
-      isPaymentProcessed = true;
-
-      if (widget.isFromBooking) {
-        if (!mounted) return NavigationDecision.prevent;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => PaymentFailedScreen(
-              message: AppLocalizations.of(context)!.paymentWasCancelledByUser,
-              orderId: orderId ?? 'NO ORDER ID',
-              onRetry: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => PaymentWebView(
-                      customerData: widget.customerData,
-                      isFromBooking: widget.isFromBooking,
-                      selectedImage: widget.selectedImage,
-                      selectedVideo: widget.selectedVideo,
-                      selectedDate: widget.selectedDate,
-                      timeSlot: widget.timeSlot,
-                      service: widget.service,
-                      review: widget.review,
-                      booking: widget.booking,
-                      agent: widget.agent,
-                      selectedAddress: widget.selectedAddress,
-                      serviceLocation: widget.serviceLocation,
-                      notesController: widget.notesController,
-                      selectedPayment: widget.selectedPayment,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      } else {
-        Navigator.pop(context);
-        Navigator.pop(context, true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.paymentCancelled),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-
+      _handleCancelPayment();
       return NavigationDecision.prevent;
     } else if (lowerUrl.contains('declined') ||
         lowerUrl.contains('payment/declined')) {
@@ -417,6 +418,10 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           foregroundColor: Colors.white,
           centerTitle: true,
           automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: _handleCancelPayment,
+          ),
         ),
         body: _isLoading
             ? Center(

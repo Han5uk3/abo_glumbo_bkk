@@ -119,11 +119,30 @@ class BookingUtils {
       );
       ServiceModel updatedService = service.copyWith(price: bookingTimePrice);
 
+      Timestamp requestCreatedAt = Timestamp.now();
+      if (requestId != null) {
+        try {
+          final docRef = isRebook 
+              ? AppFirestore.jobRequestsCollectionRef.doc(requestId)
+              : AppFirestore.bookingRequestsCollectionRef.doc(requestId);
+              
+          final requestDoc = await docRef.get();
+          if (requestDoc.exists) {
+            final data = requestDoc.data() as Map<String, dynamic>?;
+            if (data != null && data['createdAt'] != null) {
+              requestCreatedAt = data['createdAt'] as Timestamp;
+            }
+          }
+        } catch (e) {
+          debugPrint("Error fetching request createdAt: $e");
+        }
+      }
+
       BookingModel booking = BookingModel(
         id: bookingId,
         service: updatedService,
         bookingDateTime: Timestamp.fromDate(bookingDate),
-        bookingStatusCode: (requestId != null && !isRebook) ? 'A' : 'P',
+        bookingStatusCode: (agent?.uid?.isNotEmpty == true || (requestId != null && !isRebook)) ? 'A' : 'P',
         notes: notes.trim(),
         issueImage: selectedImageDownloadUrl ?? "",
         issueVideo: selectedVideoDownloadUrl ?? "",
@@ -154,22 +173,22 @@ class BookingUtils {
                         ? "accepted"
                         : null)),
         paymentModeCode: getPaymentModeCode(paymentMode),
-        createdAt: Timestamp.now(),
+        createdAt: requestCreatedAt,
         updatedAt: Timestamp.now(),
         serviceLocation: serviceLocation,
       );
 
-      // If it's a direct assignment (not rebook, not auto-assign), status is A
-      if (!isRebook &&
-          !shouldAutoAssign &&
-          agent?.uid?.isNotEmpty == true) {
+      // If it's a direct assignment or a rebook where technician accepted, status is A
+      if (!shouldAutoAssign && agent?.uid?.isNotEmpty == true) {
         booking.bookingStatusCode = 'A';
         booking.assignedAt = booking.createdAt;
         booking.technicianSelectedAt = Timestamp.now();
+        booking.acceptedAt = Timestamp.now();
       } else if (requestId != null && !isRebook) {
         booking.bookingStatusCode = 'A';
         booking.assignedAt = booking.createdAt;
         booking.technicianSelectedAt = Timestamp.now();
+        booking.acceptedAt = Timestamp.now();
       }
 
       // Add the booking to Firestore

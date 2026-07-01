@@ -1,7 +1,10 @@
 {
   "appName": "ابو گلمبو",
+  "waitingForRequestedTechnician": "درخواست کردہ ٹیکنیشن کے جواب کا انتظار ہے",
+  "lookingForTechnicians": "قریبی ٹیکنیشنز تلاش کیے جا رہے ہیں...",
   "appLoginCaption": "کوالیفائیڈ پیشہ ور افراد کو تلاش کرنے کے لیے آپ کی پسندیدہ ایپ۔",
   "mobileNumber": "موبائل نمبر",
+  "seconds": "سیکنڈ",
   "continueText": "جاری رکھیں",
   "byContinuingYouAgreeToOur": "جاری رکھ کر آپ ہمارے اس سے اتفاق کرتے ہیں",
   "termsOfUseAndPrivacyPolicy": " استعمال کی شرائط اور رازداری کی پالیسی",
@@ -29,7 +32,6 @@
   "resendOTPin": "دوبارہ او ٹی پی بھیجیں",
   "edit": "ترمیم کریں",
   "sText": "سیکنڈ",
-  "seconds": "سیکنڈ",
   "verifiedTrustedAndProfessionalTechnicians": "تصدیق شدہ، قابل اعتماد اور پیشہ ور ٹیکنیشنز",
   "getStarted": "شروع کریں",
   "onboard1": "ابو گلمبو میں خوش آمدید! ہم آپ کے ذہنی سکون کے نئے ساتھی ہیں۔",
@@ -219,6 +221,7 @@
   "rememberMe": "مجھے یاد رکھیں",
   "sar": "سعودی ریال",
   "discount": "رعایت",
+  "off": "رعایت",
   "originalPrice": "اصل قیمت",
   "am": "صبح",
   "pm": "شام",
@@ -684,6 +687,7 @@
   "addMoreFiles": "مزید فائلیں شامل کریں",
   "failedToFetchLocation": "مقام حاصل کرنے میں ناکامی",
   "locationWillBeAutomaticallyDetected": "مقام خود بخود معلوم ہو جائے گا",
+  "uploading": "اپ لوڈ کیا جا رہا ہے...",
   "noBookings": "کوئی بکنگ نہیں",
   "uploadProof": "ثبوت اپ لوڈ کریں",
   "customerAboutUsTitle": "ہمارے بارے میں",
@@ -706,6 +710,9 @@
   "counterOfferFromTechnician": "آپ کی درخواست کے حوالے سے اپ ڈیٹ",
   "technicianProposedNewTime": "ٹیکنیشن نے آپ کی بکنگ کے لیے ایک نیا وقت تجویز کیا ہے۔",
   "acceptOffer": "پیشکش قبول کریں",
+  "suggestAnotherTime": "کوئی دوسرا وقت تجویز کریں",
+  "rescheduleBookingTimeConfirmation": "کیا آپ واقعی بکنگ کا وقت تبدیل کرنا چاہتے ہیں؟ شیڈول فوری طور پر اپ ڈیٹ کر دیا جائے گا۔",
+  "counterOfferResponseSent": "جوابی پیشکش کا جواب کامیابی سے بھیج دیا گیا",
   "rejectOffer": "پیشکش مسترد کریں",
   "proposedTime": "مجوزہ وقت",
   "counterPropose": "جوابی تجویز",
@@ -722,6 +729,7 @@
   "currentTiming": "موجودہ وقت:",
   "pleaseSelectATimeSlot": "براہ کرم وقت کا ایک سلاٹ منتخب کریں",
   "cannotBookForPastTime": "ماضی کے وقت کے لیے بکنگ نہیں کی جا سکتی",
+  "cannotBookDuringOffHours": "آف آورز کے دوران بک نہیں کر سکتے۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔",
   "finalizingBookingInfo": "براہ کرم انتظار کریں جب تک ہم آپ کی بکنگ کو حتمی شکل دے رہے ہیں...",
   "technicianAssignmentNotification": "ٹیکنیشن {name} کامیابی کے ساتھ بک ہو گیا ہے۔",
   "@technicianAssignmentNotification": {
@@ -752,7 +760,6 @@
   "paidOn": "ادائیگی کی تاریخ",
   "pleaseEnterTransactionId": "براہ کرم ٹرانزیکشن آئی ڈی درج کریں",
   "enterTransactionId": "ٹرانزیکشن آئی ڈی درج کریں",
-  "uploading": "اپ لوڈ کیا جا رہا ہے...",
   "errorUploading": "اپ لوڈ کرنے میں غلطی",
   "counterProposalStarted": "جوابی تجویز شروع ہوگئی",
   "counterProposalAccepted": "جوابی تجویز کی تصدیق ہو گئی",
@@ -775,15 +782,14 @@
   "bookingSummary": "بکنگ کا خلاصہ",
   "serviceName": "سروس",
   "bookingType": "بکنگ کی قسم",
+  "discountApplied": "ڈسکاؤنٹ لاگو ہو گیا",
+  "noDiscount": "کوئی ڈسکاؤنٹ نہیں",
   "finalPrice": "حتمی قیمت",
   "technicianAssignment": "ٹیکنیشن کی تعیناتی",
   "autoAssignMessage": "آپ کا منتخب کردہ وقت ہمارے کام کے اوقات سے باہر ہے۔ ہم آپ کی سروس کے وقت سے پہلے ایک دستیاب ٹیکنیشن مقرر کریں گے اور تصدیق ہونے پر آپ کو مطلع کریں گے۔",
   "youSelectedTechnician": "آپ نے ایک ٹیکنیشن منتخب کیا ہے",
   "confirmBooking": "بکنگ کی تصدیق کریں",
-  "off": "رعایت",
   "listeningForSms": "ایس ایم ایس کا انتظار ہے...",
-  "discountApplied": "ڈسکاؤنٹ لاگو ہو گیا",
-  "noDiscount": "کوئی ڈسکاؤنٹ نہیں",
   "noTechniciansMatchFilters": "آپ کے فلٹرز سے کوئی ٹیکنیشن نہیں ملا",
   "tryRemovingFilters": "مزید ٹیکنیشنز دیکھنے کے لیے کچھ فلٹرز ہٹائیں",
   "showAllTechnicians": "تمام ٹیکنیشنز دکھائیں",
@@ -791,14 +797,8 @@
   "technicianTooFarMessage": "یہ ٹیکنیشن آپ کی سروس کی جگہ سے بہت دور ہے اور اسے منتخب نہیں کیا جا سکتا",
   "rebookTechnician": "ٹیکنیشن کو دوبارہ بک کریں",
   "selectService": "سروس منتخب کریں",
-  "reject": "مسترد کریں",
   "rejectionProfessionalMessage": "کیا آپ اس اپوائنٹمنٹ کے لیے دستیاب نہیں ہیں؟ مسترد کرنے کے بجائے، آپ کسٹمر کے لیے زیادہ مناسب وقت تجویز کر سکتے ہیں۔",
   "proposeAlternativeTime": "متبادل وقت تجویز کریں",
-  "waitingForRequestedTechnician": "درخواست کردہ ٹیکنیشن کے جواب کا انتظار ہے",
-  "lookingForTechnicians": "قریبی ٹیکنیشنز تلاش کیے جا رہے ہیں...",
-  "suggestAnotherTime": "کوئی دوسرا وقت تجویز کریں",
-  "rescheduleBookingTimeConfirmation": "کیا آپ واقعی بکنگ کا وقت تبدیل کرنا چاہتے ہیں؟ شیڈول فوری طور پر اپ ڈیٹ کر دیا جائے گا۔",
-  "counterOfferResponseSent": "جوابی پیشکش کا جواب کامیابی سے بھیج دیا گیا",
   "technicianSelected": "ٹیکنیشن منتخب کر لیا گیا",
   "technicianArrived": "ٹیکنیشن پہنچ گیا",
   "paymentRequested": "ادائیگی کی درخواست کی گئی",
@@ -809,6 +809,7 @@
   "inspectionCompleted": "معائنہ مکمل ہو گیا",
   "fullServiceCompleted": "مکمل سروس مکمل ہو گئی",
   "cancelledByAdmin": "ایڈمن کی طرف سے منسوخ",
+  "reject": "مسترد کریں",
   "bookingCancelledByAdmin": "بکنگ ایڈمن کی طرف سے منسوخ کر دی گئی",
   "trustBarWarranty": "وارنٹی",
   "trustBarWarrantyDesc": "۷ دن کی سروس گارنٹی",
@@ -822,7 +823,6 @@
   "problemDescriptionHint": "مثال: اے سی ٹھنڈا نہیں کر رہا...",
   "shareInvoice": "انوائس شیئر کریں",
   "downloadInvoice": "انوائس ڈاؤن لوڈ کریں",
-  "cannotBookDuringOffHours": "آف آورز کے دوران بک نہیں کر سکتے۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔",
   "lookingForAvailableTechniciansNearby": "قریبی دستیاب ٹیکنیشنز تلاش کیے جا رہے ہیں...",
   "noTechniciansAvailableAtTheMoment": "اس وقت آپ کی درخواست کو پورا کرنے کے لیے کوئی ٹیکنیشن دستیاب نہیں ہے۔",
   "searchAgain": "دوبارہ تلاش کریں",
@@ -978,8 +978,15 @@
   "allTechniciansBusy": "تمام ٹیکنیشنز اس وقت مصروف ہیں یا انہوں نے وقت پر قبول نہیں کیا۔",
   "waitingForTechniciansToAccept": "ٹیکنیشنز کے قبول کرنے کا انتظار ہے...",
   "acceptedTechniciansCount": "قبول شدہ ٹیکنیشنز ({count})",
-  "jobsCount": "کام",
+  "@acceptedTechniciansCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "welcome": "خوش آمدید",
+  "jobsCount": "کام",
   "welcomeUser": "خوش آمدید، {username}",
   "@welcomeUser": {
     "placeholders": {
@@ -993,47 +1000,60 @@
   "yearsAgo": "{count} سال پہلے",
   "@yearsAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "yearAgo": "1 سال پہلے",
   "monthsAgo": "{count} مہینے پہلے",
   "@monthsAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "monthAgo": "1 مہینہ پہلے",
   "weeksAgo": "{count} ہفتے پہلے",
   "@weeksAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "weekAgo": "1 ہفتہ پہلے",
   "daysAgo": "{count} دن پہلے",
   "@daysAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "dayAgo": "1 دن پہلے",
   "hoursAgo": "{count} گھنٹے پہلے",
   "@hoursAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "hourAgo": "1 گھنٹہ پہلے",
   "minutesAgo": "{count} منٹ پہلے",
   "@minutesAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "minuteAgo": "1 منٹ پہلے",
   "justNow": "ابھی ابھی",
   "costBreakdown": "لاگت کی تفصیل",
   "paymentProof": "ادائیگی کا ثبوت",
-  "settings": "ترتیبات"
+  "settings": "ترتیبات",
+  "discountAppliesToInspectionFeeOnly": "رعایت صرف معائنہ کی فیس پر لاگو ہوتی ہے۔"
 }

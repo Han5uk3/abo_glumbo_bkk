@@ -119,12 +119,14 @@ class _BookServicePageState extends State<BookServicePage> {
   File? _selectedVideo;
   CustomerModel? customerData;
   Stream<CustomerModel>? _customerStream;
+  UserModel? _activeRebookTechnician;
 
   @override
   void initState() {
     super.initState();
-    if (widget.rebookTechnician != null) {
-      selectedWorker = widget.rebookTechnician!;
+    _activeRebookTechnician = widget.rebookTechnician;
+    if (_activeRebookTechnician != null) {
+      selectedWorker = _activeRebookTechnician!;
     }
     _fetchCoordinates();
     fetchCustomerAddresses();
@@ -1664,9 +1666,9 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildThirdStepContent() {
-    if (widget.rebookTechnician != null && !_rebookFailed) {
+    if (_activeRebookTechnician != null && !_rebookFailed) {
       return RebookWaitWidget(
-        technician: widget.rebookTechnician!,
+        technician: _activeRebookTechnician!,
         service: widget.service,
         selectedAddress: selectedAddress!,
         selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
@@ -1807,11 +1809,13 @@ class _BookServicePageState extends State<BookServicePage> {
                     }
                     saving = false;
                     _rebookFailedAcknowledged = true;
+                    _activeRebookTechnician = null;
                   });
                 }
               } else {
                 setState(() {
                   _rebookFailedAcknowledged = true;
+                  _activeRebookTechnician = null;
                 });
               }
             },
@@ -2360,7 +2364,7 @@ class _BookServicePageState extends State<BookServicePage> {
 
     if (_shouldShowTechnicianSelection() &&
         _bookingRequestId == null &&
-        widget.rebookTechnician == null) {
+        _activeRebookTechnician == null) {
       setState(() => saving = true);
       final requestId = await BookingUtils.saveBookingRequest(
         service: widget.service,
@@ -2400,7 +2404,7 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   Widget _buildThirdStepBottom(BuildContext context) {
-    if (widget.rebookTechnician != null && !_rebookFailed) {
+    if (_activeRebookTechnician != null && !_rebookFailed) {
       // While RebookWaitWidget is active, we don't show a continue button.
       // The widget will call onAccepted which moves to step 3.
       return const SizedBox.shrink();
@@ -2514,7 +2518,7 @@ class _BookServicePageState extends State<BookServicePage> {
 
     final bool isManual =
         isServiceNow ||
-        widget.rebookTechnician != null ||
+        _activeRebookTechnician != null ||
         _shouldShowTechnicianSelection();
 
     if (isManual) {
@@ -2607,7 +2611,7 @@ class _BookServicePageState extends State<BookServicePage> {
         serviceLocation: _matchedServiceZone,
         agent: selectedWorker,
         requestId: _bookingRequestId,
-        rebookTechnicianId: widget.rebookTechnician?.uid,
+        rebookTechnicianId: _activeRebookTechnician?.uid,
       );
 
       setState(() => saving = false);
