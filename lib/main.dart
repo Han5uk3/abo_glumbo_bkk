@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:abo_glumbo_bbk/firebase_options.dart';
 import 'package:abo_glumbo_bbk/pages/splash%20screen/splash_screen.dart';
@@ -186,6 +188,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double bottomPadding = MediaQueryData.fromView(
+      View.of(context),
+    ).padding.bottom;
+    final bool isThickNavBar = bottomPadding > 24.0;
     return MultiBlocProvider(
       providers: providers,
       child: BlocListener<AccountBloc, AccountState>(
@@ -194,6 +200,7 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             return SafeArea(
               top: false,
+              bottom: Platform.isAndroid ? isThickNavBar : false,
               child: MaterialApp(
                 key: ValueKey(state.locale.languageCode),
                 navigatorKey: navigatorKey,
@@ -243,7 +250,9 @@ class MyApp extends StatelessWidget {
                 },
 
                 theme: ThemeData(
-                  fontFamily: state.locale.languageCode == 'ar' ? GoogleFonts.notoKufiArabic().fontFamily : 'DMSans',
+                  fontFamily: state.locale.languageCode == 'ar'
+                      ? GoogleFonts.notoKufiArabic().fontFamily
+                      : 'DMSans',
                   colorScheme: ColorScheme.fromSeed(
                     seedColor: AppColors.primary,
                   ),
@@ -259,10 +268,7 @@ class MyApp extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         );
                       }
-                      return TextStyle(
-                        color: AppColors.grey,
-                        fontSize: 8,
-                      );
+                      return TextStyle(color: AppColors.grey, fontSize: 8);
                     }),
                   ),
                   dialogTheme: DialogThemeData(

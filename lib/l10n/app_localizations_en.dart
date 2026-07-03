@@ -2425,7 +2425,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'This technician is too far from your service location and cannot be selected';
 
   @override
-  String get rebookTechnician => 'Rebook Technician';
+  String get rebookTechnician => 'Rebooking';
 
   @override
   String get selectService => 'Select Service';

@@ -4657,7 +4657,7 @@ abstract class AppLocalizations {
   /// No description provided for @rebookTechnician.
   ///
   /// In en, this message translates to:
-  /// **'Rebook Technician'**
+  /// **'Rebooking'**
   String get rebookTechnician;
 
   /// No description provided for @selectService.
