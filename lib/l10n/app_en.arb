@@ -1,4 +1,4 @@
-﻿{
+{
   "appName": "abo glumbo",
   "waitingForRequestedTechnician": "Waiting for the requested technician to respond",
   "lookingForTechnicians": "Looking for nearby technicians...",
@@ -795,7 +795,7 @@
   "showAllTechnicians": "Show All Technicians",
   "tooFarAway": "Too Far Away",
   "technicianTooFarMessage": "This technician is too far from your service location and cannot be selected",
-  "rebookTechnician": "Rebook Technician",
+  "rebookTechnician": "Rebooking",
   "selectService": "Select Service",
   "rejectionProfessionalMessage": "Are you currently unavailable for this appointment? Instead of rejecting, you can propose a more convenient time for the customer.",
   "proposeAlternativeTime": "Propose Alternative Time",
