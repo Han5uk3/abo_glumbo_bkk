@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:async';
 
 import 'package:abo_glumbo_bbk/common_widgets/customNavigationBar.dart';
@@ -16,11 +15,11 @@ import 'package:abo_glumbo_bbk/sheets/write_review.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/pages/login/widgets/language_selector.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
-import 'package:abo_glumbo_bbk/services/biometric_service.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -86,7 +85,7 @@ class _HomeState extends State<Home> {
       await NotificationServices.initializeNotifications();
       NotificationServices.setupFCMListeners();
       await NotificationServices.checkForInitialMessage();
-      
+
       if (!(_isGuest ?? false) && uid != null && uid.isNotEmpty) {
         _subscribeToAcceptedBookings();
         _subscribeToCompletedBookings(uid);
@@ -96,7 +95,9 @@ class _HomeState extends State<Home> {
 
   void _subscribeToAcceptedBookings() {
     _bookingsSubscription?.cancel();
-    _bookingsSubscription = AppServices.listenToAcceptedBookings().listen((bookings) {
+    _bookingsSubscription = AppServices.listenToAcceptedBookings().listen((
+      bookings,
+    ) {
       for (final booking in bookings) {
         final bookingId = booking.id;
         final technicianName = booking.agent?.name ?? 'Technician';
@@ -104,11 +105,16 @@ class _HomeState extends State<Home> {
         // 1. Technician is on the way (technician clicked start tracking)
         // Triggered when isStartTracking == true (which is booking.isStartTracking)
         if (booking.isStartTracking == true) {
-          if (!NotificationServices.hasTriggeredLocalNotification(bookingId, 'on_the_way')) {
+          if (!NotificationServices.hasTriggeredLocalNotification(
+            bookingId,
+            'on_the_way',
+          )) {
             // Check if recently started to prevent historical alerts on initial load
             bool shouldNotify = false;
             if (booking.trackingStartedAt != null) {
-              final diff = DateTime.now().difference(booking.trackingStartedAt!.toDate());
+              final diff = DateTime.now().difference(
+                booking.trackingStartedAt!.toDate(),
+              );
               if (diff.inMinutes <= 2) {
                 shouldNotify = true;
               }
@@ -121,7 +127,10 @@ class _HomeState extends State<Home> {
                 bookingId: bookingId,
                 technicianName: technicianName,
               );
-              NotificationServices.markLocalNotificationTriggered(bookingId, 'on_the_way');
+              NotificationServices.markLocalNotificationTriggered(
+                bookingId,
+                'on_the_way',
+              );
             }
           }
         }
@@ -129,11 +138,16 @@ class _HomeState extends State<Home> {
         // 2. Technician arrived (when technician clicks on arrived at location button)
         // Triggered when arrivedAt != null
         if (booking.arrivedAt != null) {
-          if (!NotificationServices.hasTriggeredLocalNotification(bookingId, 'arrived')) {
+          if (!NotificationServices.hasTriggeredLocalNotification(
+            bookingId,
+            'arrived',
+          )) {
             // Check if recently arrived to prevent historical alerts on initial load
             bool shouldNotify = false;
             if (booking.arrivedAt != null) {
-              final diff = DateTime.now().difference(booking.arrivedAt!.toDate());
+              final diff = DateTime.now().difference(
+                booking.arrivedAt!.toDate(),
+              );
               if (diff.inMinutes <= 2) {
                 shouldNotify = true;
               }
@@ -146,7 +160,10 @@ class _HomeState extends State<Home> {
                 bookingId: bookingId,
                 technicianName: technicianName,
               );
-              NotificationServices.markLocalNotificationTriggered(bookingId, 'arrived');
+              NotificationServices.markLocalNotificationTriggered(
+                bookingId,
+                'arrived',
+              );
             }
           }
         }
@@ -156,11 +173,14 @@ class _HomeState extends State<Home> {
 
   void _subscribeToCompletedBookings(String uid) {
     _completedBookingsSubscription?.cancel();
-    _completedBookingsSubscription = AppServices.listenToBookings(uid).listen((bookings) {
+    _completedBookingsSubscription = AppServices.listenToBookings(uid).listen((
+      bookings,
+    ) {
       if (mounted) {
         setState(() {
           _completedUnreviewedBookings = bookings.where((b) {
-            return b.bookingStatusCode == 'C' && (b.review == null || b.review?.rating == null);
+            return b.bookingStatusCode == 'C' &&
+                (b.review == null || b.review?.rating == null);
           }).toList();
         });
         _checkAndShowPendingReviews();
@@ -234,7 +254,10 @@ class _HomeState extends State<Home> {
         backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 80), // Elevated margin to avoid overlapping bottom bar
+        margin: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 80,
+        ), // Elevated margin to avoid overlapping bottom bar
         duration: const Duration(seconds: 4),
       ),
     );
@@ -266,7 +289,10 @@ class _HomeState extends State<Home> {
     final cleanPhone = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
     final whatsappUrl = 'https://wa.me/$cleanPhone';
     try {
-      final success = await launchUrlString(whatsappUrl, mode: LaunchMode.externalApplication);
+      final success = await launchUrlString(
+        whatsappUrl,
+        mode: LaunchMode.externalApplication,
+      );
       if (!success) {
         await launchUrlString(whatsappUrl);
       }
@@ -384,7 +410,9 @@ class _HomeState extends State<Home> {
                       Navigator.of(context).pop();
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
                         (route) => false,
                       );
                     },
@@ -418,7 +446,7 @@ class _HomeState extends State<Home> {
                   eButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      exit(0);
+                      SystemNavigator.pop();
                     },
                     context: context,
                     backgroundColor: AppColors.red,
@@ -763,7 +791,7 @@ class _HomeState extends State<Home> {
   }
 
   void _exitApp() {
-    exit(0); // Exit the app completely
+    SystemNavigator.pop(); // Exit the app completely
   }
 
   void _showLogoutConfirmationDialog() {
@@ -775,10 +803,7 @@ class _HomeState extends State<Home> {
           actionsAlignment: MainAxisAlignment.start,
           title: Text(
             AppLocalizations.of(context)?.logout ?? 'Logout',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           content: Text(
             AppLocalizations.of(context)?.areYouSureYouWantToLogout ??
@@ -826,13 +851,13 @@ class _HomeState extends State<Home> {
       } catch (e) {
         debugPrint('❌ Error deleting FCM token: $e');
       }
-      
+
       LocalStoreHelper.clearUID();
-      
+
       if (!keepFirebaseAuth) {
         await FirebaseAuth.instance.signOut();
       }
-      
+
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,
