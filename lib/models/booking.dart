@@ -53,6 +53,7 @@ class BookingModel {
   String? selectedAddressId; // Added selectedAddressId
   WarrantyModel? warranty;
   Timestamp? paymentCompletedAt;
+  Timestamp? paymentVerifiedAt;
   List<String>? paymentProof; // Customer payment completion proof files
   List<String>? technicianPaymentProof; // Technician payment confirmation proof files
   double? paidAmount; // Amount paid for job completion
@@ -95,6 +96,7 @@ class BookingModel {
     this.chatroomId = '',
     this.review,
     this.paymentCompletedAt,
+    this.paymentVerifiedAt,
     this.cancelledWorkers = const [],
     this.isEscalated = false,
     this.escalatedAt,
@@ -151,6 +153,7 @@ class BookingModel {
                 .toList()
           : [],
       paymentCompletedAt = data['paymentCompletedAt'],
+      paymentVerifiedAt = data['paymentVerifiedAt'],
       escalatedAt = data['escalatedAt'],
       chatroomId = data['chatroomId'] ?? '',
       bookingDateTime = data['bookingDateTime'],
@@ -242,6 +245,7 @@ class BookingModel {
       'bookingStatusCode': bookingStatusCode,
       'notes': notes,
       'paymentCompletedAt': paymentCompletedAt,
+      'paymentVerifiedAt': paymentVerifiedAt,
       'cancelledWorkers': cancelledWorkers.map((e) => e.toJson()).toList(),
       'trackingStartedAt': trackingStartedAt,
       'trackingStoppedAt': trackingStoppedAt,

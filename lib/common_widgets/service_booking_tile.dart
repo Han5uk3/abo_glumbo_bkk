@@ -571,10 +571,16 @@ class ServiceBookingTile extends StatelessWidget {
       );
     }
 
-    if (booking.bookingStatusCode == "VP" && booking.paidAt != null) {
-      return _timestampText(
-        "${AppLocalizations.of(context)!.paidOn} : ${formatBookingDateTime(booking.paidAt!.toDate(), locale)}",
-      );
+    if (booking.bookingStatusCode == "VP") {
+      if (booking.paidAt != null) {
+        return _timestampText(
+          "${AppLocalizations.of(context)!.paidOn} : ${formatBookingDateTime(booking.paidAt!.toDate(), locale)}",
+        );
+      } else if (booking.completedAt != null) {
+        return _timestampText(
+          "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(booking.completedAt!.toDate(), locale)}",
+        );
+      }
     }
 
     if (booking.bookingStatusCode == "X" ||

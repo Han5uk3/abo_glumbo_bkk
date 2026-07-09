@@ -308,15 +308,15 @@ Widget buildBookingTimelineCard(
           });
         }
 
-        // Payment status (Legacy verification pending)
-        if (booking.paidAt != null && booking.paymentCompletedAt == null) {
+        // Payment status (Verification pending for outside-app payments)
+        if (booking.bookingStatusCode == 'VP' && booking.paymentCompletedAt != null && booking.paymentVerifiedAt == null) {
           timelineItems.add({
             'title': AppLocalizations.of(context)!.verificationPending,
-            'time': _formatDateLocalized(booking.paidAt!.toDate(), context),
+            'time': _formatDateLocalized(booking.paymentCompletedAt!.toDate(), context),
             'description':
                 AppLocalizations.of(context)!.waitingForTechnicianVerification,
             'status': 'completed',
-            'date': booking.paidAt!.toDate(),
+            'date': booking.paymentCompletedAt!.toDate(),
           });
         }
 
@@ -325,6 +325,7 @@ Widget buildBookingTimelineCard(
           timelineItems.add({
             'title': AppLocalizations.of(context)!.paymentCompleted,
             'time': _formatDateLocalized(
+              booking.paymentVerifiedAt?.toDate() ??
               booking.paymentCompletedAt?.toDate() ?? 
               booking.completedAt?.toDate() ?? 
               DateTime.now(), 
@@ -333,7 +334,8 @@ Widget buildBookingTimelineCard(
             'description':
                 AppLocalizations.of(context)!.paymentSuccessfullyCompleted,
             'status': 'completed',
-            'date': booking.paymentCompletedAt?.toDate() ??
+            'date': booking.paymentVerifiedAt?.toDate() ??
+                booking.paymentCompletedAt?.toDate() ??
                 booking.completedAt?.toDate() ??
                 DateTime.now(),
           });

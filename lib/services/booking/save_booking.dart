@@ -329,7 +329,7 @@ class BookingUtils {
         "paymentCompleted": isOutsideApp ? false : isCompleted,
         "bookingStatusCode": isOutsideApp ? "VP" : "C",
         "paymentModeCode": paymentModeCode,
-        if (!isOutsideApp) "paymentCompletedAt": Timestamp.now(),
+        "paymentCompletedAt": Timestamp.now(),
         "orderId": orderId,
         "transactionId": orderId, // Set transactionId same as orderId
         "updatedAt": Timestamp.now(),

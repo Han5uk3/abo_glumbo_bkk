@@ -81,6 +81,18 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       );
     }
 
+    if (booking.bookingStatusCode == "VP") {
+      if (booking.paidAt != null) {
+        return _timestampText(
+          "${AppLocalizations.of(context)!.paidOn} : ${formatBookingDateTime(booking.paidAt!.toDate(), locale)}",
+        );
+      } else if (booking.completedAt != null) {
+        return _timestampText(
+          "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(booking.completedAt!.toDate(), locale)}",
+        );
+      }
+    }
+
     if (booking.bookingStatusCode == "X" ||
         booking.bookingStatusCode == "XC" ||
         booking.bookingStatusCode == "R") {
@@ -2015,9 +2027,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   }
 
   String formatDateTime(DateTime dateTime, String locale) {
-    final dateFormat = DateFormat.yMMMMd(locale);
-    final timeFormat = DateFormat.jm(locale);
-    return '${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}';
+    return formatBookingDateTime(dateTime, locale);
   }
 
   Future<void> _launchUrl(String url) async {
