@@ -510,7 +510,12 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         final bool hasCompletionData =
             booking.completionData != null ||
             (booking.paymentProof != null && booking.paymentProof!.isNotEmpty);
-        if (booking.bookingStatusCode == 'C' || hasCompletionData) {
+        final bool showCompletionDetails = booking.bookingStatusCode == 'C' ||
+            booking.bookingStatusCode == 'CP' ||
+            booking.bookingStatusCode == 'VP' ||
+            booking.bookingStatusCode.toLowerCase() == 'completed';
+
+        if (showCompletionDetails || hasCompletionData) {
           tabs.add(Tab(text: localization.completionDetails));
           tabViews.add(
             SingleChildScrollView(
@@ -518,7 +523,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (booking.bookingStatusCode == 'C') ...[
+                  if (showCompletionDetails) ...[
                     _buildSectionCard(
                       context: context,
                       hasChat: false,
@@ -540,9 +545,6 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                  ],
-                  if (booking.bookingStatusCode.toLowerCase() == 'completed' ||
-                      booking.bookingStatusCode.toLowerCase() == 'c') ...[
                     _buildCompletionDataCard(context),
                   ],
                 ],

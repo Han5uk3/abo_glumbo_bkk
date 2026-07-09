@@ -16,16 +16,15 @@ import 'package:flutter/material.dart';
 class SearchingTechniciansScreen extends StatefulWidget {
   final String bookingRequestId;
 
-  const SearchingTechniciansScreen({
-    super.key,
-    required this.bookingRequestId,
-  });
+  const SearchingTechniciansScreen({super.key, required this.bookingRequestId});
 
   @override
-  State<SearchingTechniciansScreen> createState() => _SearchingTechniciansScreenState();
+  State<SearchingTechniciansScreen> createState() =>
+      _SearchingTechniciansScreenState();
 }
 
-class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen> with SingleTickerProviderStateMixin {
+class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
+    with SingleTickerProviderStateMixin {
   late String _currentRequestId;
   Timer? _countdownTimer;
   int _secondsRemaining = 120;
@@ -65,37 +64,40 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
     _requestSubscription = AppFirestore.bookingRequestsCollectionRef
         .doc(_currentRequestId)
         .snapshots()
-        .listen((snapshot) {
-      if (!snapshot.exists) {
-        if (mounted) {
-          setState(() {
-            _bookingRequestData = null;
-            _acceptedTechnicians = [];
-            _isLoading = false;
-          });
-        }
-        return;
-      }
+        .listen(
+          (snapshot) {
+            if (!snapshot.exists) {
+              if (mounted) {
+                setState(() {
+                  _bookingRequestData = null;
+                  _acceptedTechnicians = [];
+                  _isLoading = false;
+                });
+              }
+              return;
+            }
 
-      final data = snapshot.data() as Map<String, dynamic>;
-      final createdAt = data['createdAt'] as Timestamp?;
+            final data = snapshot.data() as Map<String, dynamic>;
+            final createdAt = data['createdAt'] as Timestamp?;
 
-      if (mounted) {
-        setState(() {
-          _bookingRequestData = data;
-          _acceptedTechnicians = data['acceptedTechnicians'] ?? [];
-          _isLoading = false;
-        });
-        _calculateRemainingTime(createdAt);
-      }
-    }, onError: (e) {
-      debugPrint("Error listening to booking request: $e");
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    });
+            if (mounted) {
+              setState(() {
+                _bookingRequestData = data;
+                _acceptedTechnicians = data['acceptedTechnicians'] ?? [];
+                _isLoading = false;
+              });
+              _calculateRemainingTime(createdAt);
+            }
+          },
+          onError: (e) {
+            debugPrint("Error listening to booking request: $e");
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
+          },
+        );
   }
 
   void _calculateRemainingTime(Timestamp? createdAt) {
@@ -103,7 +105,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
     if (createdAt == null) return;
 
     final elapsed = TimeService.now.difference(createdAt.toDate()).inSeconds;
-    
+
     if (mounted) {
       setState(() {
         _elapsedSeconds = elapsed;
@@ -145,12 +147,16 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
   Future<void> _searchAgain() async {
     setState(() => _isSearchingAgain = true);
     try {
-      final docSnap = await AppFirestore.bookingRequestsCollectionRef.doc(_currentRequestId).get();
+      final docSnap = await AppFirestore.bookingRequestsCollectionRef
+          .doc(_currentRequestId)
+          .get();
       if (docSnap.exists) {
         final data = docSnap.data() as Map<String, dynamic>;
 
         // Delete old request
-        await AppFirestore.bookingRequestsCollectionRef.doc(_currentRequestId).delete();
+        await AppFirestore.bookingRequestsCollectionRef
+            .doc(_currentRequestId)
+            .delete();
 
         // Create new request
         final newId = AppFirestore.bookingRequestsCollectionRef.doc().id;
@@ -160,7 +166,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
         newData['updatedAt'] = Timestamp.now();
         newData['status'] = 'searching';
         newData['acceptedTechnicians'] = [];
-        
+
         // Exclude the technician who rejected or ignored the rebook
         List<dynamic> rejected = data['rejectedTechnicians'] ?? [];
         if (data['isRebook'] == true && data['rebookTechnicianId'] != null) {
@@ -216,14 +222,22 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
-              locale == 'ar' ? 'لا' : locale == 'ur' ? 'نہیں' : 'No',
+              locale == 'ar'
+                  ? 'لا'
+                  : locale == 'ur'
+                  ? 'نہیں'
+                  : 'No',
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: Text(
-              locale == 'ar' ? 'نعم، إلغاء' : locale == 'ur' ? 'جی ہاں، منسوخ کریں' : 'Yes, Cancel',
+              locale == 'ar'
+                  ? 'نعم، إلغاء'
+                  : locale == 'ur'
+                  ? 'جی ہاں، منسوخ کریں'
+                  : 'Yes, Cancel',
             ),
           ),
         ],
@@ -233,7 +247,9 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
     if (shouldCancel == true) {
       setState(() => _isLoading = true);
       try {
-        await AppFirestore.bookingRequestsCollectionRef.doc(_currentRequestId).delete();
+        await AppFirestore.bookingRequestsCollectionRef
+            .doc(_currentRequestId)
+            .delete();
         LocalStoreHelper.clearBookingRequestId();
         if (mounted) {
           Navigator.pop(context);
@@ -253,7 +269,9 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
     });
 
     try {
-      final docSnap = await AppFirestore.bookingRequestsCollectionRef.doc(_currentRequestId).get();
+      final docSnap = await AppFirestore.bookingRequestsCollectionRef
+          .doc(_currentRequestId)
+          .get();
       if (!docSnap.exists) {
         throw Exception("Booking request no longer exists");
       }
@@ -261,7 +279,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
       final request = docSnap.data() as Map<String, dynamic>;
       final serviceMap = request['service'] as Map<String, dynamic>;
       final service = ServiceModel.fromJson(serviceMap);
-      
+
       final customerMap = request['customer'] as Map<String, dynamic>;
       final customer = CustomerModel.fromJson(customerMap);
 
@@ -304,10 +322,14 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
       };
 
       // Add to bookings collection
-      await AppFirestore.bookingsCollectionRef.doc(_currentRequestId).set(bookingJson);
+      await AppFirestore.bookingsCollectionRef
+          .doc(_currentRequestId)
+          .set(bookingJson);
 
       // Delete from booking_requests
-      await AppFirestore.bookingRequestsCollectionRef.doc(_currentRequestId).delete();
+      await AppFirestore.bookingRequestsCollectionRef
+          .doc(_currentRequestId)
+          .delete();
       LocalStoreHelper.clearBookingRequestId();
 
       AddressModel? selectedAddress;
@@ -330,7 +352,10 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
               service: service,
               worker: agent,
               selectedDate: bookingDateTime.toDate(),
-              selectedTime: {"label": "Confirmed", "time": TimeOfDay.fromDateTime(bookingDateTime.toDate())},
+              selectedTime: {
+                "label": "Confirmed",
+                "time": TimeOfDay.fromDateTime(bookingDateTime.toDate()),
+              },
               address: selectedAddress,
             ),
           ),
@@ -340,9 +365,9 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
     } catch (e) {
       debugPrint("Error confirming selection: $e");
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: ${e.toString()}")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
       }
     } finally {
       if (mounted) {
@@ -379,7 +404,11 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                   shape: BoxShape.circle,
                   color: Colors.amber.shade50,
                 ),
-                child: Icon(Icons.people_alt_rounded, color: Colors.amber.shade700, size: 24),
+                child: Icon(
+                  Icons.people_alt_rounded,
+                  color: Colors.amber.shade700,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -434,7 +463,9 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: remainingSelectionTime <= 30 ? Colors.red : AppColors.primary,
+                  color: remainingSelectionTime <= 30
+                      ? Colors.red
+                      : AppColors.primary,
                 ),
               ),
             ],
@@ -456,8 +487,13 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
     }
 
     final bool showSearchingHeader = _elapsedSeconds < 120;
-    final bool showChooseHeader = _elapsedSeconds >= 120 && _elapsedSeconds < 300 && _acceptedTechnicians.isNotEmpty;
-    final bool showExpiredScreen = _elapsedSeconds >= 300 || (_elapsedSeconds >= 120 && _acceptedTechnicians.isEmpty);
+    final bool showChooseHeader =
+        _elapsedSeconds >= 120 &&
+        _elapsedSeconds < 300 &&
+        _acceptedTechnicians.isNotEmpty;
+    final bool showExpiredScreen =
+        _elapsedSeconds >= 300 ||
+        (_elapsedSeconds >= 120 && _acceptedTechnicians.isEmpty);
 
     final String locale = AppLocalizations.of(context)?.localeName ?? 'en';
 
@@ -485,25 +521,23 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
         centerTitle: true,
       ),
       body: SafeArea(
-        child: _bookingRequestData?['isRebook'] == true 
-          ? _buildRebookBody() 
-          : Column(
-          children: [
-            if (showSearchingHeader) ...[
-              _buildPulsingSearchSection(primaryColor),
-              _buildProgressCircle(),
-            ] else if (showChooseHeader) ...[
-              _buildChooseHeaderSection(),
-            ] else if (showExpiredScreen) ...[
-              _buildExpiredSection(),
-            ],
-            
-            if (!showExpiredScreen)
-              Expanded(
-                child: _buildTechniciansListSection(),
+        child: _bookingRequestData?['isRebook'] == true
+            ? _buildRebookBody()
+            : Column(
+                children: [
+                  if (showSearchingHeader) ...[
+                    _buildPulsingSearchSection(primaryColor),
+                    _buildProgressCircle(),
+                  ] else if (showChooseHeader) ...[
+                    _buildChooseHeaderSection(),
+                  ] else if (showExpiredScreen) ...[
+                    _buildExpiredSection(),
+                  ],
+
+                  if (!showExpiredScreen)
+                    Expanded(child: _buildTechniciansListSection()),
+                ],
               ),
-          ],
-        ),
       ),
     );
   }
@@ -513,7 +547,11 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
       stream: AppFirestore.jobOffersCollectionRef
           .where('requestId', isEqualTo: _currentRequestId)
           .snapshots()
-          .map((snapshot) => snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList()),
+          .map(
+            (snapshot) => snapshot.docs
+                .map((doc) => doc.data() as Map<String, dynamic>)
+                .toList(),
+          ),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(
@@ -562,45 +600,49 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
         }
 
         final status = offers.first['status'];
-        if (status == 'accepted_by_technician' || status == 'declined' || status == 'expired') {
-            if (status == 'declined' || status == 'expired' || _elapsedSeconds >= 120) {
-               return Column(children: [ _buildExpiredSection() ]);
-            }
+        if (status == 'accepted_by_technician' ||
+            status == 'declined' ||
+            status == 'expired') {
+          if (status == 'declined' ||
+              status == 'expired' ||
+              _elapsedSeconds >= 120) {
+            return Column(children: [_buildExpiredSection()]);
+          }
         }
 
         return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Loader(),
-                const SizedBox(height: 16),
-                Text(
-                  AppLocalizations.of(context)?.localeName == 'ar'
-                      ? 'بانتظار الفني المطلوب...'
-                      : AppLocalizations.of(context)?.localeName == 'ur'
-                      ? 'مطلوبہ ٹیکنیشن کا انتظار ہے...'
-                      : 'Waiting for requested technician...',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Loader(),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)?.localeName == 'ar'
+                    ? 'بانتظار الفني المطلوب...'
+                    : AppLocalizations.of(context)?.localeName == 'ur'
+                    ? 'مطلوبہ ٹیکنیشن کا انتظار ہے...'
+                    : 'Waiting for requested technician...',
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 32),
+              CircularProgressIndicator(
+                value: _secondsRemaining / 120,
+                strokeWidth: 6,
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "$_secondsRemaining${AppLocalizations.of(context)!.sText}",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
                 ),
-                const SizedBox(height: 32),
-                CircularProgressIndicator(
-                  value: _secondsRemaining / 120,
-                  strokeWidth: 6,
-                  backgroundColor: Colors.grey[200],
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  "$_secondsRemaining${AppLocalizations.of(context)!.sText}",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ],
-            ),
-          );
+              ),
+            ],
+          ),
+        );
       },
     );
   }
@@ -627,21 +669,23 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             Icon(Icons.event_repeat_rounded, size: 48, color: Colors.blue[700]),
             const SizedBox(height: 16),
             Text(
-              locale == 'ar' ? 'عرض بديل من الفني' : locale == 'ur' ? 'ٹیکنیشن کی طرف سے متبادل پیشکش' : 'Counter-Offer from Technician',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              locale == 'ar'
+                  ? 'عرض بديل من الفني'
+                  : locale == 'ur'
+                  ? 'ٹیکنیشن کی طرف سے متبادل پیشکش'
+                  : 'Counter-Offer from Technician',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              locale == 'ar' ? 'لقد اقترح الفني وقتاً جديداً' : locale == 'ur' ? 'ٹیکنیشن نے نیا وقت تجویز کیا ہے' : 'The technician proposed a new time',
+              locale == 'ar'
+                  ? 'لقد اقترح الفني وقتاً جديداً'
+                  : locale == 'ur'
+                  ? 'ٹیکنیشن نے نیا وقت تجویز کیا ہے'
+                  : 'The technician proposed a new time',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 24),
             Container(
@@ -665,13 +709,15 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      AppFirestore.jobOffersCollectionRef.doc(offer['id']).update({
-                        'status': 'declined',
-                        'updatedAt': FieldValue.serverTimestamp(),
-                      });
+                      AppFirestore.jobOffersCollectionRef
+                          .doc(offer['id'])
+                          .update({
+                            'status': 'declined',
+                            'updatedAt': FieldValue.serverTimestamp(),
+                          });
                       setState(() {
-                         _secondsRemaining = 0;
-                         _elapsedSeconds = 120; // force expired screen
+                        _secondsRemaining = 0;
+                        _elapsedSeconds = 120; // force expired screen
                       });
                     },
                     style: OutlinedButton.styleFrom(
@@ -679,23 +725,35 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                       side: const BorderSide(color: Colors.red),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    child: Text(locale == 'ar' ? 'رفض العرض' : locale == 'ur' ? 'پیشکش مسترد کریں' : 'Reject Offer'),
+                    child: Text(
+                      locale == 'ar'
+                          ? 'رفض العرض'
+                          : locale == 'ur'
+                          ? 'پیشکش مسترد کریں'
+                          : 'Reject Offer',
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      await AppFirestore.jobOffersCollectionRef.doc(offer['id']).update({
-                        'status': 'accepted_by_customer',
-                        'updatedAt': FieldValue.serverTimestamp(),
-                      });
-                      await AppFirestore.bookingRequestsCollectionRef.doc(_currentRequestId).update({
-                         'bookingDateTime': proposedTime,
-                      });
-                      final techData = await AppFirestore.usersCollectionRef.doc(offer['technicianId']).get();
+                      await AppFirestore.jobOffersCollectionRef
+                          .doc(offer['id'])
+                          .update({
+                            'status': 'accepted_by_customer',
+                            'updatedAt': FieldValue.serverTimestamp(),
+                          });
+                      await AppFirestore.bookingRequestsCollectionRef
+                          .doc(_currentRequestId)
+                          .update({'bookingDateTime': proposedTime});
+                      final techData = await AppFirestore.usersCollectionRef
+                          .doc(offer['technicianId'])
+                          .get();
                       if (techData.exists) {
-                         _selectTechnician(techData.data() as Map<String, dynamic>);
+                        _selectTechnician(
+                          techData.data() as Map<String, dynamic>,
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -703,7 +761,14 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       elevation: 0,
                     ),
-                    child: Text(locale == 'ar' ? 'قبول العرض' : locale == 'ur' ? 'پیشکش قبول کریں' : 'Accept Offer', style: const TextStyle(color: Colors.white)),
+                    child: Text(
+                      locale == 'ar'
+                          ? 'قبول العرض'
+                          : locale == 'ur'
+                          ? 'پیشکش قبول کریں'
+                          : 'Accept Offer',
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ],
@@ -739,7 +804,9 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: primaryColor.withOpacity(0.1 + (0.15 * _pulseController.value)),
+                  color: primaryColor.withOpacity(
+                    0.1 + (0.15 * _pulseController.value),
+                  ),
                 ),
                 child: Icon(Icons.radar_rounded, color: primaryColor, size: 28),
               );
@@ -769,10 +836,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                       : locale == 'ur'
                       ? 'براہ کرم انتظار کریں، اہل ٹیکنیشنز کے پاس قبول کرنے کے لیے 120 سیکنڈز ہیں۔'
                       : "Please wait, eligible technicians have 120s to accept.",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
                 ),
               ],
             ),
@@ -806,7 +870,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "${_secondsRemaining}s",
+                "${_secondsRemaining}${AppLocalizations.of(context)!.seconds}",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -814,11 +878,12 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 ),
               ),
               Text(
-                locale == 'ar' ? 'متبقي' : locale == 'ur' ? 'باقی' : "Remaining",
-                style: TextStyle(
-                  fontSize: 9,
-                  color: Colors.grey.shade500,
-                ),
+                locale == 'ar'
+                    ? 'متبقي'
+                    : locale == 'ur'
+                    ? 'باقی'
+                    : "Remaining",
+                style: TextStyle(fontSize: 9, color: Colors.grey.shade500),
               ),
             ],
           ),
@@ -851,7 +916,11 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
               shape: BoxShape.circle,
               color: Colors.red.shade50,
             ),
-            child: Icon(Icons.timer_off_outlined, color: Colors.red.shade600, size: 40),
+            child: Icon(
+              Icons.timer_off_outlined,
+              color: Colors.red.shade600,
+              size: 40,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
@@ -874,7 +943,11 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 ? 'تمام ٹیکنیشنز اس وقت مصروف ہیں یا انہوں نے وقت پر قبول نہیں کیا۔'
                 : "All technicians are currently busy or didn't accept in time.",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, color: Colors.grey.shade600, height: 1.4),
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey.shade600,
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
@@ -882,7 +955,9 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               elevation: 0,
             ),
             child: _isSearchingAgain
@@ -925,10 +1000,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                     : locale == 'ur'
                     ? 'ٹیکنیشنز کے قبول کرنے کا انتظار ہے...'
                     : "Waiting for technicians to accept...",
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
               ),
             ],
           ),
@@ -1021,7 +1093,11 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.star_rounded, color: Colors.amber, size: 16),
+                      const Icon(
+                        Icons.star_rounded,
+                        color: Colors.amber,
+                        size: 16,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         rating.toStringAsFixed(1),
@@ -1064,17 +1140,25 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             ),
             const SizedBox(width: 12),
             ElevatedButton(
-              onPressed: _isConfirmingSelection ? null : () => _selectTechnician(tech),
+              onPressed: _isConfirmingSelection
+                  ? null
+                  : () => _selectTechnician(tech),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 minimumSize: const Size(80, 36),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 elevation: 0,
               ),
               child: _isConfirmingSelection
                   ? const Loader(color: Colors.white, size: 16)
                   : Text(
-                      locale == 'ar' ? 'اختيار' : locale == 'ur' ? 'منتخب کریں' : "Choose",
+                      locale == 'ar'
+                          ? 'اختيار'
+                          : locale == 'ur'
+                          ? 'منتخب کریں'
+                          : "Choose",
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

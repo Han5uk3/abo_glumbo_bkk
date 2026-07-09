@@ -323,11 +323,13 @@ class BookingUtils {
         debugPrint("Error: No booking ID provided for status update");
         return false;
       }
+      final bool isOutsideApp = paymentModeCode == "O";
+
       await AppFirestore.bookingsCollectionRef.doc(id).update({
-        "paymentCompleted": isCompleted,
-        "bookingStatusCode": "C",
+        "paymentCompleted": isOutsideApp ? false : isCompleted,
+        "bookingStatusCode": isOutsideApp ? "VP" : "C",
         "paymentModeCode": paymentModeCode,
-        "paymentCompletedAt": Timestamp.now(),
+        if (!isOutsideApp) "paymentCompletedAt": Timestamp.now(),
         "orderId": orderId,
         "transactionId": orderId, // Set transactionId same as orderId
         "updatedAt": Timestamp.now(),
@@ -335,7 +337,7 @@ class BookingUtils {
             ? "Inside App"
             : "Outside App",
         // Apply warranty for 1 week from completion date if it's full work (mode 1)
-        if (booking?.completionData?.mode == 1) ...{
+        if (booking?.completionData?.mode == 1 && !isOutsideApp) ...{
           'warranty.expiredOn': Timestamp.fromDate(
             DateTime.now().add(const Duration(days: 7)),
           ),

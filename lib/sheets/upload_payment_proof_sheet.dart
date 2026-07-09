@@ -41,14 +41,19 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
       TextEditingController();
   final List<File> _selectedFiles = [];
   bool _isUploading = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  double get _actualPrice {
+    final inspectionFee = widget.booking.effectiveInspectionFee;
+    final discountedInspectionFee = widget.booking.service.getDiscountedPrice(inspectionFee);
+    final serviceCost = widget.booking.completionData?.totalCost ?? 0.0;
+    return serviceCost + discountedInspectionFee;
+  }
 
   @override
   void initState() {
     super.initState();
-    if (widget.booking.completionData != null) {
-      final totalCost = widget.booking.completionData!.totalCost;
-      _amountController.text = totalCost.toStringAsFixed(2);
-    }
+    _amountController.text = _actualPrice.toStringAsFixed(2);
   }
 
   @override
@@ -95,6 +100,9 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
   }
 
   Future<void> _uploadPaymentProof() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
     // Payment proof files are now optional
     /*
     if (_selectedFiles.isEmpty) {
@@ -229,7 +237,9 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
       padding: EdgeInsets.only(
         bottom: safePadding.bottom + viewInsets.bottom + 16,
       ),
-      child: Column(
+      child: Form(
+        key: _formKey,
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -278,9 +288,22 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
                   ),
                 ),
                 SizedBox(height: 8),
-                TextField(
+                TextFormField(
                   controller: _amountController,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return AppLocalizations.of(context)?.pleaseEnterAValidAmount ?? 'Please enter a valid amount';
+                    }
+                    final amount = double.tryParse(value);
+                    if (amount == null) {
+                      return AppLocalizations.of(context)?.pleaseEnterAValidAmount ?? 'Please enter a valid amount';
+                    }
+                    if ((amount - _actualPrice).abs() > 0.01) {
+                      return '${AppLocalizations.of(context)?.pleaseEnterAValidAmount ?? 'Amount must be'} ${_actualPrice.toStringAsFixed(2)}';
+                    }
+                    return null;
+                  },
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(
                       RegExp(r'^\d+\.?\d{0,2}'),
@@ -445,6 +468,7 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

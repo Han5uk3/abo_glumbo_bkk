@@ -159,6 +159,8 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
   }
 
   Widget _buildTitle() {
+    final isPendingVerification = widget.paymentMethod == "O" || widget.paymentMethod == "Outside App" || widget.paymentMethod == "Outside App - Cash";
+
     return SlideTransition(
       position: _slideAnimation,
       child: FadeTransition(
@@ -166,7 +168,9 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
         child: Column(
           children: [
             Text(
-              AppLocalizations.of(context)?.paymentCompleted ?? "Payment Completed",
+              isPendingVerification 
+                ? (AppLocalizations.of(context)?.verificationPending ?? "Payment Verification Pending")
+                : (AppLocalizations.of(context)?.paymentCompleted ?? "Payment Completed"),
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -176,7 +180,9 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
             ),
             const SizedBox(height: 16),
             Text(
-              AppLocalizations.of(context)?.technicianAssignmentNotification(widget.booking?.agent?.name ?? "A technician") ?? "Technician has been booked successfully.",
+              isPendingVerification 
+                ? "Your payment proof has been submitted and is pending verification" 
+                : (AppLocalizations.of(context)?.technicianAssignmentNotification(widget.booking?.agent?.name ?? "A technician") ?? "Technician has been booked successfully."),
               style: const TextStyle(fontSize: 12, color: Colors.white, height: 1.5),
               textAlign: TextAlign.center,
             ),

@@ -263,10 +263,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
           const SizedBox(height: 24),
           Text(
             widget.technician.name ?? "",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Text(
@@ -283,7 +280,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
           ),
           const SizedBox(height: 16),
           Text(
-            "${_timerSeconds}s",
+            "$_timerSeconds${l10n.seconds}",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -318,19 +315,13 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
             const SizedBox(height: 16),
             Text(
               l10n.counterOfferFromTechnician,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
               l10n.technicianProposedNewTime,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 24),
             Container(
@@ -429,10 +420,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
           const SizedBox(height: 24),
           Text(
             widget.technician.name ?? "",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Text(
