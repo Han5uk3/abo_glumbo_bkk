@@ -1285,7 +1285,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get away => 'away';
 
   @override
-  String get yourTechnicianIsOnTheWay => 'Your Technician is on the way';
+  String get yourTechnicianIsOnTheWay => 'Technician is on the way';
 
   @override
   String get serviceProvider => 'Technician';
@@ -2808,4 +2808,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get discountAppliesToInspectionFeeOnly =>
       'Discount applies to the inspection fee only.';
+
+  @override
+  String get escalated => 'Escalated';
+
+  @override
+  String get resolveIssue => 'Resolve Issue';
+
+  @override
+  String get whatWasDoneToResolve => 'What was done to resolve the issue?';
+
+  @override
+  String get resolutionTextRequired => 'Resolution text is required';
 }

@@ -765,7 +765,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
 
           if (distance != null && arrivalTimeFormatted != null) {
             notificationBody =
-                '${locale.yourTechnicianIsOnTheWay} - $distance ${locale.away} ${locale.and} ${locale.arrivalTime} $arrivalTimeFormatted';
+                '${locale.yourTechnicianIsOnTheWay} $distance ${locale.away} ${locale.and} ${locale.arrivalTime} $arrivalTimeFormatted';
           }
         }
       }

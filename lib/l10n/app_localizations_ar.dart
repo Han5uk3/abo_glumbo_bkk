@@ -1265,7 +1265,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get away => 'بعيد';
 
   @override
-  String get yourTechnicianIsOnTheWay => 'فنيك في الطريق';
+  String get yourTechnicianIsOnTheWay => 'الفني في الطريق';
 
   @override
   String get serviceProvider => 'الفني';
@@ -2766,5 +2766,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get discountAppliesToInspectionFeeOnly =>
-      'الخصم يطبق على رسوم الفحص فقط.';
+      'يسري الخصم على رسوم الفحص فقط.';
+
+  @override
+  String get escalated => 'تم التصعيد';
+
+  @override
+  String get resolveIssue => 'حل المشكلة';
+
+  @override
+  String get whatWasDoneToResolve => 'ما الذي تم فعله لحل المشكلة؟';
+
+  @override
+  String get resolutionTextRequired => 'نص الحل مطلوب';
 }

@@ -1055,5 +1055,10 @@
   "costBreakdown": "لاگت کی تفصیل",
   "paymentProof": "ادائیگی کا ثبوت",
   "settings": "ترتیبات",
-  "discountAppliesToInspectionFeeOnly": "رعایت صرف معائنہ کی فیس پر لاگو ہوتی ہے۔"
+  "discountAppliesToInspectionFeeOnly": "ڈسکاؤنٹ صرف معائنہ کی فیس پر لاگو ہوتا ہے۔",
+  "escalated": "مسئلہ بڑھا دیا گیا",
+  "resolveIssue": "مسئلہ حل کریں",
+  "whatWasDoneToResolve": "مسئلے کو حل کرنے کے لیے کیا کیا گیا؟",
+  "resolutionTextRequired": "حل کی تفصیل درکار ہے",
+  "submit": "جمع کرائیں"
 }

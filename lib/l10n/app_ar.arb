@@ -408,7 +408,7 @@
   "servicesFound": "تم العثور على الخدمات",
   "technicianArrivesToLocationIn": "الفني يوصل للموقع في",
   "away": "بعيد",
-  "yourTechnicianIsOnTheWay": "فنيك في الطريق",
+  "yourTechnicianIsOnTheWay": "الفني في الطريق",
   "serviceProvider": "الفني",
   "callServiceProvider": "اتصل بالفني",
   "disable": "تعطيل",
@@ -1055,5 +1055,10 @@
   "costBreakdown": "تفاصيل التكلفة",
   "paymentProof": "إثبات الدفع",
   "settings": "الإعدادات",
-  "discountAppliesToInspectionFeeOnly": "الخصم يطبق على رسوم الفحص فقط."
+  "discountAppliesToInspectionFeeOnly": "يسري الخصم على رسوم الفحص فقط.",
+  "escalated": "تم التصعيد",
+  "resolveIssue": "حل المشكلة",
+  "whatWasDoneToResolve": "ما الذي تم فعله لحل المشكلة؟",
+  "resolutionTextRequired": "نص الحل مطلوب",
+  "submit": "إرسال"
 }

@@ -122,9 +122,34 @@ class ServiceBookingTile extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(
-                              "#${booking.newBookingId ?? booking.id}",
-                              style: TextStyle(fontSize: 9),
+                            Row(
+                              children: [
+                                Text(
+                                  "#${booking.newBookingId ?? booking.id}",
+                                  style: TextStyle(fontSize: 9),
+                                ),
+                                if (booking.isEscalated == true) ...[
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)?.escalated.toUpperCase() ?? 'ESCALATED',
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -979,30 +1004,12 @@ class ServiceBookingTile extends StatelessWidget {
     return '${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}';
   }
 
-  /// Checks if the warranty status hasn't been updated for more than 2 days
-  /// OR if the original technician has rejected the warranty request
   bool _shouldShowComplaintButton() {
     final warranty = booking.warranty;
     if (warranty == null) return false;
 
-    // Only show for specific warranty statuses (Requested or Accepted)
-    if (warranty.warrantyStatusCode != 'R' &&
-        warranty.warrantyStatusCode != 'S') {
-      return false;
-    }
-
-    // Check if the original technician has rejected the warranty request
-    final originalTechnicianId = booking.agent?.uid;
-    if (originalTechnicianId != null &&
-        warranty.rejectedTechnicians != null &&
-        warranty.rejectedTechnicians!.isNotEmpty) {
-      final hasOriginalTechRejected = warranty.rejectedTechnicians!.any(
-        (rejectedTech) => rejectedTech.uid == originalTechnicianId,
-      );
-      if (hasOriginalTechRejected) {
-        return true; // Show button immediately if original tech rejected
-      }
-    }
+    // Do not show if it's already escalated
+    if (booking.isEscalated == true) return false;
 
     // Check if updatedAt exists for time-based condition
     if (warranty.updatedAt == null) return false;
@@ -1012,7 +1019,7 @@ class ServiceBookingTile extends StatelessWidget {
         .difference(warranty.updatedAt!)
         .inDays;
 
-    // Show button if more than 2 days have passed
+    // Show button if more than 2 days have passed without updates
     return daysSinceUpdate > 2;
   }
 
@@ -1224,17 +1231,28 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
     setState(() => _isSubmitting = true);
 
     try {
-      await AppFirestore.bookingsCollectionRef.doc(widget.booking.id).update({
+      final updateData = <String, dynamic>{
         'warranty.warrantyStatusCode': 'R',
         'warranty.availability': true,
         'warranty.updatedAt': Timestamp.now(),
         'warranty.claimrequested': true,
         'warranty.requestedOn': Timestamp.now(),
-        'warranty.assignedTechnicianId':
-            widget.booking.agent?.uid ??
-            widget.booking.warranty?.assignedTechnicianId,
         'updatedAt': Timestamp.now(),
-      });
+      };
+
+      final techId = widget.booking.agent?.uid;
+
+      if (techId != null && techId.isNotEmpty) {
+        updateData['warranty.assignedTechnicianId'] = techId;
+      }
+      
+      if (widget.booking.agent != null) {
+        updateData['warranty.assignedTechnician'] = widget.booking.agent!.toJson();
+      }
+
+      await AppFirestore.bookingsCollectionRef
+          .doc(widget.booking.id)
+          .update(updateData);
 
       if (!mounted) return;
       

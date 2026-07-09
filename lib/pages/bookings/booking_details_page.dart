@@ -339,7 +339,13 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         );
 
         // Tab 2: TECHNICIAN (Conditional)
-        if (booking.agent != null && (booking.agent!.uid ?? "").isNotEmpty) {
+        final bool isActiveWarranty = isWarranty && booking.warranty != null &&
+            ['R', 'A', 'S'].contains(booking.warranty!.warrantyStatusCode);
+        final UserModel? activeAgent = isActiveWarranty && booking.warranty!.assignedTechnician != null
+            ? UserModel.fromJson(booking.warranty!.assignedTechnician!)
+            : booking.agent;
+
+        if (activeAgent != null && (activeAgent.uid ?? "").isNotEmpty) {
           tabs.add(Tab(text: localization.technician));
           tabViews.add(
             SingleChildScrollView(
@@ -358,7 +364,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           CachedNetworkImage(
-                            imageUrl: booking.agent!.profileUrl ?? "",
+                            imageUrl: activeAgent.profileUrl ?? "",
                             imageBuilder: (context, imageProvider) =>
                                 CircleAvatar(
                                   radius: 20,
@@ -368,7 +374,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               radius: 20,
                               backgroundColor: AppColors.blue1.withOpacity(0.1),
                               child: Text(
-                                _getInitials(booking.agent!.name ?? ""),
+                                _getInitials(activeAgent.name ?? ""),
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -380,7 +386,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               radius: 20,
                               backgroundColor: AppColors.blue1.withOpacity(0.1),
                               child: Text(
-                                _getInitials(booking.agent!.name ?? ""),
+                                _getInitials(activeAgent.name ?? ""),
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -391,16 +397,16 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            booking.agent!.name ?? "",
+                            activeAgent.name ?? "",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const Spacer(),
-                          if (booking.bookingStatusCode == 'A')
+                          if (booking.bookingStatusCode == 'A' || (isActiveWarranty && booking.warranty?.warrantyStatusCode == 'S'))
                             GestureDetector(
-                              onTap: () => _openOrCreateChat(context),
+                              onTap: () => _openOrCreateChat(context, activeAgent),
                               child: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
@@ -414,13 +420,13 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                 ),
                               ),
                             ),
-                          if (booking.agent?.phone != null &&
-                              booking.bookingStatusCode == 'A')
+                          if (activeAgent.phone != null &&
+                              (booking.bookingStatusCode == 'A' || (isActiveWarranty && booking.warranty?.warrantyStatusCode == 'S')))
                             Padding(
                               padding: const EdgeInsets.only(left: 8),
                               child: GestureDetector(
                                 onTap: () => WhatsAppUtils.launchWhatsApp(
-                                  booking.agent!.phone!,
+                                  activeAgent.phone!,
                                 ),
                                 child: Container(
                                   padding: const EdgeInsets.all(5),
@@ -436,12 +442,12 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                 ),
                               ),
                             ),
-                          if (booking.bookingStatusCode != 'C')
+                          if (booking.bookingStatusCode != 'C' || (isActiveWarranty && booking.warranty?.warrantyStatusCode != 'E' && booking.warranty?.warrantyStatusCode != 'C'))
                             Padding(
                               padding: const EdgeInsets.only(left: 12),
                               child: GestureDetector(
                                 onTap: () {
-                                  final phone = (booking.agent!.phone ?? "")
+                                  final phone = (activeAgent.phone ?? "")
                                       .replaceAll(RegExp(r'[^\d+]'), '');
                                   _launchUrl('tel:$phone');
                                 },
@@ -461,7 +467,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                             ),
                         ],
                       ),
-                      if (booking.bookingStatusCode == 'C')
+                      if (booking.bookingStatusCode == 'C' && !isActiveWarranty)
                         Padding(
                           padding: const EdgeInsets.only(top: 16),
                           child: SizedBox(
@@ -473,7 +479,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         RebookServiceSelection(
-                                          technician: booking.agent!,
+                                          technician: activeAgent,
                                         ),
                                   ),
                                 );
@@ -950,7 +956,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     );
   }
 
-  Future<void> _openOrCreateChat(BuildContext context) async {
+  Future<void> _openOrCreateChat(BuildContext context, UserModel activeAgent) async {
     final chatService = ChatService();
 
     try {
@@ -984,9 +990,9 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
 
         chatId = await chatService.createChat(
           booking.id,
-          booking.agent!.uid ?? '',
-          booking.agent!.name ?? 'Technician',
-          booking.agent!.profileUrl ?? '',
+          activeAgent.uid ?? '',
+          activeAgent.name ?? 'Technician',
+          activeAgent.profileUrl ?? '',
           booking.customer.name ?? 'Customer',
           '',
           'customer',
@@ -1007,9 +1013,9 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           MaterialPageRoute(
             builder: (context) => ChatScreen(
               chatId: chatId,
-              participantName: widget.booking.agent!.name ?? 'Technician',
-              participantId: widget.booking.agent!.uid ?? '',
-              participantPhoto: widget.booking.agent!.profileUrl ?? '',
+              participantName: activeAgent.name ?? 'Technician',
+              participantId: activeAgent.uid ?? '',
+              participantPhoto: activeAgent.profileUrl ?? '',
               customerName: widget.booking.customer.name ?? 'Customer',
               customerPhoto: '',
               bookingId: widget.booking.id,
@@ -1691,6 +1697,12 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     bool showChatOnHeader = true,
     Widget? trailing,
   }) {
+    final bool isActiveWarranty = isWarranty && booking.warranty != null &&
+        ['R', 'A', 'S'].contains(booking.warranty!.warrantyStatusCode);
+    final UserModel? activeAgent = isActiveWarranty && booking.warranty!.assignedTechnician != null
+        ? UserModel.fromJson(booking.warranty!.assignedTechnician!)
+        : booking.agent;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -1751,7 +1763,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       width: 60,
                       height: 60,
                       child: GestureDetector(
-                        onTap: () => _openOrCreateChat(context),
+                        onTap: () {
+                          if (activeAgent != null) {
+                            _openOrCreateChat(context, activeAgent);
+                          }
+                        },
                         child: Stack(
                           children: [
                             Center(
@@ -1786,7 +1802,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 ),
               ],
               if (showChatOnHeader &&
-                  booking.agent?.phone != null &&
+                  activeAgent?.phone != null &&
                   ((hasChat && booking.bookingStatusCode == 'A') ||
                       (hasChat &&
                           booking.warranty?.warrantyStatusCode == 'S' &&
@@ -1794,7 +1810,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () =>
-                      WhatsAppUtils.launchWhatsApp(booking.agent!.phone!),
+                      WhatsAppUtils.launchWhatsApp(activeAgent!.phone!),
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(

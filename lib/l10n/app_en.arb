@@ -408,7 +408,7 @@
   "servicesFound": "Services found",
   "technicianArrivesToLocationIn": "Technician arrives to location in",
   "away": "away",
-  "yourTechnicianIsOnTheWay": "Your Technician is on the way",
+  "yourTechnicianIsOnTheWay": "Technician is on the way",
   "serviceProvider": "Technician",
   "callServiceProvider": "Call Technician",
   "disable": "Disable",
@@ -1056,5 +1056,10 @@
   "costBreakdown": "Cost Breakdown",
   "paymentProof": "Payment Proof",
   "settings": "Settings",
-  "discountAppliesToInspectionFeeOnly": "Discount applies to the inspection fee only."
+  "discountAppliesToInspectionFeeOnly": "Discount applies to the inspection fee only.",
+  "escalated": "Escalated",
+  "resolveIssue": "Resolve Issue",
+  "whatWasDoneToResolve": "What was done to resolve the issue?",
+  "resolutionTextRequired": "Resolution text is required",
+  "submit": "Submit"
 }
