@@ -1243,8 +1243,10 @@ class _BookServicePageState extends State<BookServicePage> {
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
-                              AppLocalizations.of(context)?.discountAppliesToInspectionFeeOnly ?? 
-                              'Discount applies to the inspection fee only.',
+                              AppLocalizations.of(
+                                    context,
+                                  )?.discountAppliesToInspectionFeeOnly ??
+                                  'Discount applies to the inspection fee only.',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: AppColors.secondary,
@@ -2055,7 +2057,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 label:
                     AppLocalizations.of(context)?.technicianAssignment ??
                     'Technician',
-                value: isAssignmentOnHour
+                value: (isAssignmentOnHour || _activeRebookTechnician != null)
                     ? (selectedWorker.name ??
                           (AppLocalizations.of(
                                 context,
@@ -2063,7 +2065,8 @@ class _BookServicePageState extends State<BookServicePage> {
                               'You selected a technician'))
                     : (AppLocalizations.of(context)?.autoAssignMessage ??
                           'Your selected time is outside our working hours. We will assign an available technician before your service time and notify you once confirmed.'),
-                valueColor: isAssignmentOnHour
+                valueColor:
+                    (isAssignmentOnHour || _activeRebookTechnician != null)
                     ? AppColors.primary
                     : Colors.blue,
               ),
