@@ -68,12 +68,12 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
 
   Future<bool> saveTransaction({String? bookingId}) async {
     final inspectionFee = widget.booking?.completionData?.inspectionFee ?? 0.0;
+    final discountedInspectionFee = widget.service?.getDiscountedPrice(inspectionFee) ?? widget.booking?.service.getDiscountedPrice(inspectionFee) ?? inspectionFee;
     final serviceCost = widget.booking?.completionData?.totalCost ?? 0.0;
     final amount =
         widget.booking?.completionData != null
-            ? (serviceCost + inspectionFee)
-            : double.tryParse(widget.service?.price.toString() ?? '0.00') ??
-                0.00;
+            ? (serviceCost + discountedInspectionFee)
+            : (widget.service?.getDiscountedPrice(widget.service?.price ?? 0.0)?.toDouble() ?? 0.00);
 
     String? invoiceId;
     if (widget.isFromBooking && widget.booking != null && widget.customerData.uid != null) {
@@ -194,10 +194,10 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
           amount: widget.isFromBooking
               ? (widget.booking?.completionData != null
                     ? ((widget.booking!.completionData?.totalCost ?? 0.0) +
-                        (widget.booking!.completionData?.inspectionFee ?? 0.0))
+                        (widget.service?.getDiscountedPrice(widget.booking!.completionData?.inspectionFee ?? 0.0) ?? widget.booking!.service.getDiscountedPrice(widget.booking!.completionData?.inspectionFee ?? 0.0) ?? widget.booking!.completionData?.inspectionFee ?? 0.0))
                     : (widget.service
                                ?.getDiscountedPrice(widget.service?.price ?? 0.0)
-                               .toDouble() ??
+                               ?.toDouble() ??
                           0.00))
               : widget.review?.tipAmount ?? 0.00,
           orderId: widget.orderId,

@@ -111,6 +111,7 @@
   "noServicesInYourWishlist": "No services in your wishlist",
   "failedToSaveBooking": "Failed to save booking",
   "morning": "Morning",
+  "add": "Add",
   "afterNoon": "After noon",
   "evening": "Evening",
   "serviceBookedSuccessfully": "Service booked successfully",
@@ -170,7 +171,6 @@
   "processingPayment": "Processing Payment",
   "amountPaid": "Amount paid",
   "reviewNow": "Review Now",
-  "chooseYourTechnician": "Choose your technician",
   "chooseSource": "Choose Source",
   "noTechniciansFoundMatchingYourSearch": "No technicians found matching your search",
   "searchTechnicians": "Search technicians...",
@@ -1061,5 +1061,5 @@
   "resolveIssue": "Resolve Issue",
   "whatWasDoneToResolve": "What was done to resolve the issue?",
   "resolutionTextRequired": "Resolution text is required",
-  "submit": "Submit"
+  "paymentProofSubmittedPendingVerification": "Your payment proof has been submitted and is pending verification"
 }

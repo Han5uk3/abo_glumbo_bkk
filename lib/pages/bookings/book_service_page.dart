@@ -63,6 +63,7 @@ class _BookServicePageState extends State<BookServicePage> {
   String? addressValidationError;
   bool isValidatingAddress = false;
   MatchedServiceZone? _matchedServiceZone;
+  bool hasSavedAddresses = false;
   Map<String, dynamic> _initialPosition = {
     "lon": 0.0,
     "lat": 0.0,
@@ -164,6 +165,8 @@ class _BookServicePageState extends State<BookServicePage> {
   Future<void> fetchCustomerAddresses() async {
     try {
       selectedAddress = await AppServices.getCustomerSelectedAddress();
+      final addresses = await AppServices.getCustomerAddress();
+      hasSavedAddresses = addresses.isNotEmpty;
       if (selectedAddress != null) {
         _validateSelectedAddress(selectedAddress!);
       }
@@ -378,6 +381,13 @@ class _BookServicePageState extends State<BookServicePage> {
           selectedAddress = selected;
         });
         _validateSelectedAddress(selected);
+      }
+
+      final addresses = await AppServices.getCustomerAddress();
+      if (mounted) {
+        setState(() {
+          hasSavedAddresses = addresses.isNotEmpty;
+        });
       }
     }
   }
@@ -2780,7 +2790,9 @@ class _BookServicePageState extends State<BookServicePage> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                AppLocalizations.of(context)?.change ?? 'Change',
+                (!hasSavedAddresses && selectedAddress == null)
+                    ? AppLocalizations.of(context)!.add
+                    : (AppLocalizations.of(context)?.change ?? 'Change'),
                 style: TextStyle(
                   color: AppColors.primary,
                   fontWeight: FontWeight.bold,

@@ -11,6 +11,7 @@
   "otpAutoVerified": "او ٹی پی خود بخود تصدیق شدہ",
   "somethingWentWrongTryAgain": "کچھ غلط ہو گیا، دوبارہ کوشش کریں",
   "otpSent": "او ٹی پی بھیج دیا گیا",
+  "add": "شامل کریں",
   "highestRating": "سب سے زیادہ ریٹنگ",
   "verifiedAndProfessionalTechnicians": "تصدیق شدہ اور پیشہ ور ٹیکنیشنز",
   "nearest": "قریب ترین",
@@ -1060,5 +1061,5 @@
   "resolveIssue": "مسئلہ حل کریں",
   "whatWasDoneToResolve": "مسئلے کو حل کرنے کے لیے کیا کیا گیا؟",
   "resolutionTextRequired": "حل کی تفصیل درکار ہے",
-  "submit": "جمع کرائیں"
+  "paymentProofSubmittedPendingVerification": "آپ کے ادائیگی کا ثبوت جمع کر دیا گیا ہے اور تصدیق کے زیر التوا ہے"
 }

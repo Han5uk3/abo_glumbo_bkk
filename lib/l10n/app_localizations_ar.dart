@@ -353,6 +353,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get morning => 'صباحًا';
 
   @override
+  String get add => 'إضافة';
+
+  @override
   String get afterNoon => 'بعد الظهر';
 
   @override
@@ -531,9 +534,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reviewNow => 'قيم الآن';
-
-  @override
-  String get chooseYourTechnician => 'اختر الفني';
 
   @override
   String get chooseSource => 'اختر المصدر';
@@ -2694,6 +2694,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get jobsCount => 'مهمة';
 
   @override
+  String get chooseYourTechnician => 'اختر الفني';
+
+  @override
   String welcomeUser(String username) {
     return 'أهلاً بك، $username';
   }
@@ -2779,4 +2782,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get resolutionTextRequired => 'نص الحل مطلوب';
+
+  @override
+  String get paymentProofSubmittedPendingVerification =>
+      'تم تقديم إثبات الدفع الخاص بك وهو قيد التحقق';
 }

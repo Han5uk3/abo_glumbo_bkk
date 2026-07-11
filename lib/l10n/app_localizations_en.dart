@@ -360,6 +360,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get morning => 'Morning';
 
   @override
+  String get add => 'Add';
+
+  @override
   String get afterNoon => 'After noon';
 
   @override
@@ -541,9 +544,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reviewNow => 'Review Now';
-
-  @override
-  String get chooseYourTechnician => 'Choose your technician';
 
   @override
   String get chooseSource => 'Choose Source';
@@ -2735,6 +2735,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobsCount => 'jobs';
 
   @override
+  String get chooseYourTechnician => 'Choose your technician';
+
+  @override
   String welcomeUser(String username) {
     return 'Welcome, $username';
   }
@@ -2820,4 +2823,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resolutionTextRequired => 'Resolution text is required';
+
+  @override
+  String get paymentProofSubmittedPendingVerification =>
+      'Your payment proof has been submitted and is pending verification';
 }

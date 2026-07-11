@@ -20,6 +20,7 @@
   "issueMedia": "مرفقات المشكلة",
   "notes": "ملاحظات",
   "image": "صورة",
+  "add": "إضافة",
   "technicianIsBusy": "الفني مشغول",
   "login": "تسجيل الدخول",
   "bookings": "الحجوزات",
@@ -1060,5 +1061,5 @@
   "resolveIssue": "حل المشكلة",
   "whatWasDoneToResolve": "ما الذي تم فعله لحل المشكلة؟",
   "resolutionTextRequired": "نص الحل مطلوب",
-  "submit": "إرسال"
+  "paymentProofSubmittedPendingVerification": "تم تقديم إثبات الدفع الخاص بك وهو قيد التحقق"
 }

@@ -366,6 +366,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get morning => 'صبح';
 
   @override
+  String get add => 'شامل کریں';
+
+  @override
   String get afterNoon => 'دوپہر';
 
   @override
@@ -547,9 +550,6 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get reviewNow => 'ابھی ریویو دیں';
-
-  @override
-  String get chooseYourTechnician => 'اپنے ٹیکنیشن کا انتخاب کریں';
 
   @override
   String get chooseSource => 'ذریعہ منتخب کریں';
@@ -2755,6 +2755,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get jobsCount => 'کام';
 
   @override
+  String get chooseYourTechnician => 'اپنے ٹیکنیشن کا انتخاب کریں';
+
+  @override
   String welcomeUser(String username) {
     return 'خوش آمدید، $username';
   }
@@ -2840,4 +2843,8 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get resolutionTextRequired => 'حل کی تفصیل درکار ہے';
+
+  @override
+  String get paymentProofSubmittedPendingVerification =>
+      'آپ کے ادائیگی کا ثبوت جمع کر دیا گیا ہے اور تصدیق کے زیر التوا ہے';
 }

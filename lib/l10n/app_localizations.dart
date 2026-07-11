@@ -772,6 +772,12 @@ abstract class AppLocalizations {
   /// **'Morning'**
   String get morning;
 
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
   /// No description provided for @afterNoon.
   ///
   /// In en, this message translates to:
@@ -1125,12 +1131,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Review Now'**
   String get reviewNow;
-
-  /// No description provided for @chooseYourTechnician.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose your technician'**
-  String get chooseYourTechnician;
 
   /// No description provided for @chooseSource.
   ///
@@ -5176,6 +5176,12 @@ abstract class AppLocalizations {
   /// **'jobs'**
   String get jobsCount;
 
+  /// No description provided for @chooseYourTechnician.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your technician'**
+  String get chooseYourTechnician;
+
   /// No description provided for @welcomeUser.
   ///
   /// In en, this message translates to:
@@ -5319,6 +5325,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Resolution text is required'**
   String get resolutionTextRequired;
+
+  /// No description provided for @paymentProofSubmittedPendingVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment proof has been submitted and is pending verification'**
+  String get paymentProofSubmittedPendingVerification;
 }
 
 class _AppLocalizationsDelegate

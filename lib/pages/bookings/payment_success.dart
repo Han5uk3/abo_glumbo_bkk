@@ -178,14 +178,14 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
-            Text(
-              isPendingVerification 
-                ? "Your payment proof has been submitted and is pending verification" 
-                : (AppLocalizations.of(context)?.technicianAssignmentNotification(widget.booking?.agent?.name ?? "A technician") ?? "Technician has been booked successfully."),
-              style: const TextStyle(fontSize: 12, color: Colors.white, height: 1.5),
-              textAlign: TextAlign.center,
-            ),
+            if (isPendingVerification) ...[
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)?.paymentProofSubmittedPendingVerification ?? "Your payment proof has been submitted and is pending verification",
+                style: const TextStyle(fontSize: 12, color: Colors.white, height: 1.5),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
         ),
       ),

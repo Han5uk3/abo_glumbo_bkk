@@ -39,7 +39,6 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
   File? _selectedImage;
   File? _selectedVideo;
 
-
   final ImagePicker _picker = ImagePicker();
   bool isLoadingImage = false;
   bool isLoadingVideo = false;
@@ -74,7 +73,8 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)?.errorOccurred ?? 'An error occurred while picking the image',
+              AppLocalizations.of(context)?.errorOccurred ??
+                  'An error occurred while picking the image',
             ),
             backgroundColor: Colors.red,
           ),
@@ -101,7 +101,8 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)?.errorOccurred ?? 'An error occurred while picking the video',
+              AppLocalizations.of(context)?.errorOccurred ??
+                  'An error occurred while picking the video',
             ),
             backgroundColor: Colors.red,
           ),
@@ -460,7 +461,10 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              AppLocalizations.of(context)?.change ?? 'Change',
+                              savedAddresses.isEmpty
+                                  ? AppLocalizations.of(context)!.add
+                                  : (AppLocalizations.of(context)?.change ??
+                                        'Change'),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 9,
@@ -485,7 +489,8 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                     const SizedBox(height: 2),
 
                     Text(
-                      (selectedAddress.buildingNumber.isNotEmpty || selectedAddress.streetName?.isNotEmpty == true)
+                      (selectedAddress.buildingNumber.isNotEmpty ||
+                              selectedAddress.streetName?.isNotEmpty == true)
                           ? "${selectedAddress.buildingNumber.isNotEmpty ? '${selectedAddress.buildingNumber}, ' : ''}${selectedAddress.streetName ?? ''}"
                           : "Address location",
                       style: TextStyle(
