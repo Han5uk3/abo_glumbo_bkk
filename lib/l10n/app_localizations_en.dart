@@ -2383,7 +2383,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingType => 'Booking Type';
 
   @override
-  String get discountApplied => 'Discount Applied';
+  String discountApplied(num percentageamount) {
+    final intl.NumberFormat percentageamountNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String percentageamountString = percentageamountNumberFormat.format(
+      percentageamount,
+    );
+
+    return '$percentageamountString% discount';
+  }
 
   @override
   String get noDiscount => 'No Discount';

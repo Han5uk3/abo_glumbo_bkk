@@ -783,7 +783,15 @@
   "bookingSummary": "بکنگ کا خلاصہ",
   "serviceName": "سروس",
   "bookingType": "بکنگ کی قسم",
-  "discountApplied": "ڈسکاؤنٹ لاگو ہو گیا",
+  "discountApplied": "{percentageamount}% رعایت",
+  "@discountApplied": {
+    "placeholders": {
+      "percentageamount": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
   "noDiscount": "کوئی ڈسکاؤنٹ نہیں",
   "finalPrice": "حتمی قیمت",
   "technicianAssignment": "ٹیکنیشن کی تعیناتی",

@@ -782,7 +782,15 @@
   "bookingSummary": "Booking Summary",
   "serviceName": "Service",
   "bookingType": "Booking Type",
-  "discountApplied": "Discount Applied",
+  "discountApplied": "{percentageamount}% discount",
+  "@discountApplied": {
+    "placeholders": {
+      "percentageamount": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
   "noDiscount": "No Discount",
   "finalPrice": "Final Price",
   "technicianAssignment": "Technician Assignment",

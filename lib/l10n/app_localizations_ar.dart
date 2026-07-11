@@ -2342,7 +2342,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingType => 'نوع الحجز';
 
   @override
-  String get discountApplied => 'تم تطبيق الخصم';
+  String discountApplied(num percentageamount) {
+    final intl.NumberFormat percentageamountNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String percentageamountString = percentageamountNumberFormat.format(
+      percentageamount,
+    );
+
+    return 'خصم $percentageamountString%';
+  }
 
   @override
   String get noDiscount => 'لا يوجد خصم';

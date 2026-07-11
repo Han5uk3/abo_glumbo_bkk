@@ -3,6 +3,7 @@
 import 'package:abo_glumbo_bbk/common_widgets/cached_video_player.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/sheets/payment.dart';
+import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // ✅ Added
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
@@ -14,7 +15,6 @@ import 'package:abo_glumbo_bbk/models/warranty.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/timeline.dart';
 import 'package:abo_glumbo_bbk/pages/chat/chat.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
-import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
@@ -23,7 +23,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/rebook_service_selection.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart' hide TextDirection;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -351,9 +350,12 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         );
 
         // Tab 2: TECHNICIAN (Conditional)
-        final bool isActiveWarranty = isWarranty && booking.warranty != null &&
+        final bool isActiveWarranty =
+            isWarranty &&
+            booking.warranty != null &&
             ['R', 'A', 'S'].contains(booking.warranty!.warrantyStatusCode);
-        final UserModel? activeAgent = isActiveWarranty && booking.warranty!.assignedTechnician != null
+        final UserModel? activeAgent =
+            isActiveWarranty && booking.warranty!.assignedTechnician != null
             ? UserModel.fromJson(booking.warranty!.assignedTechnician!)
             : booking.agent;
 
@@ -416,9 +418,12 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                             ),
                           ),
                           const Spacer(),
-                          if (booking.bookingStatusCode == 'A' || (isActiveWarranty && booking.warranty?.warrantyStatusCode == 'S'))
+                          if (booking.bookingStatusCode == 'A' ||
+                              (isActiveWarranty &&
+                                  booking.warranty?.warrantyStatusCode == 'S'))
                             GestureDetector(
-                              onTap: () => _openOrCreateChat(context, activeAgent),
+                              onTap: () =>
+                                  _openOrCreateChat(context, activeAgent),
                               child: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
@@ -433,7 +438,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                               ),
                             ),
                           if (activeAgent.phone != null &&
-                              (booking.bookingStatusCode == 'A' || (isActiveWarranty && booking.warranty?.warrantyStatusCode == 'S')))
+                              (booking.bookingStatusCode == 'A' ||
+                                  (isActiveWarranty &&
+                                      booking.warranty?.warrantyStatusCode ==
+                                          'S')))
                             Padding(
                               padding: const EdgeInsets.only(left: 8),
                               child: GestureDetector(
@@ -454,7 +462,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                                 ),
                               ),
                             ),
-                          if (booking.bookingStatusCode != 'C' || (isActiveWarranty && booking.warranty?.warrantyStatusCode != 'E' && booking.warranty?.warrantyStatusCode != 'C'))
+                          if (booking.bookingStatusCode != 'C' ||
+                              (isActiveWarranty &&
+                                  booking.warranty?.warrantyStatusCode != 'E' &&
+                                  booking.warranty?.warrantyStatusCode != 'C'))
                             Padding(
                               padding: const EdgeInsets.only(left: 12),
                               child: GestureDetector(
@@ -528,7 +539,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         final bool hasCompletionData =
             booking.completionData != null ||
             (booking.paymentProof != null && booking.paymentProof!.isNotEmpty);
-        final bool showCompletionDetails = booking.bookingStatusCode == 'C' ||
+        final bool showCompletionDetails =
+            booking.bookingStatusCode == 'C' ||
             booking.bookingStatusCode == 'CP' ||
             booking.bookingStatusCode == 'VP' ||
             booking.bookingStatusCode.toLowerCase() == 'completed';
@@ -550,7 +562,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       children: [
                         _buildInfoRow(
                           localization.mode,
-                          (booking.completionData == null || booking.completionData?.mode == 0)
+                          (booking.completionData == null ||
+                                  booking.completionData?.mode == 0)
                               ? localization.inspectionOnly
                               : localization.fullService,
                         ),
@@ -968,7 +981,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     );
   }
 
-  Future<void> _openOrCreateChat(BuildContext context, UserModel activeAgent) async {
+  Future<void> _openOrCreateChat(
+    BuildContext context,
+    UserModel activeAgent,
+  ) async {
     final chatService = ChatService();
 
     try {
@@ -1167,15 +1183,17 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   }
 
   Widget _buildCompletionDataCard(BuildContext context) {
-    final completionData = booking.completionData ?? CompletionDataModel(
-      fileUrls: [],
-      mode: 0,
-      paymentMethod: booking.paymentModeCode,
-      serviceCost: 0,
-      totalCost: 0,
-      serviceItems: [],
-      inspectionFee: booking.effectiveInspectionFee,
-    );
+    final completionData =
+        booking.completionData ??
+        CompletionDataModel(
+          fileUrls: [],
+          mode: 0,
+          paymentMethod: booking.paymentModeCode,
+          serviceCost: 0,
+          totalCost: 0,
+          serviceItems: [],
+          inspectionFee: booking.effectiveInspectionFee,
+        );
 
     return _buildSectionCard(
       context: context,
@@ -1215,7 +1233,36 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         ],
 
         GestureDetector(
-          onTap: () => InvoiceService.generateAndShowInvoice(context, booking),
+          onTap: () async {
+            bool loaderPopped = false;
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => const PopScope(
+                canPop: false,
+                child: Center(child: Loader(color: AppColors.primary)),
+              ),
+            );
+            try {
+              await InvoiceService.generateAndShowInvoice(
+                context,
+                booking,
+                onReady: () {
+                  if (!loaderPopped && context.mounted) {
+                    Navigator.pop(context);
+                    loaderPopped = true;
+                  }
+                },
+              );
+            } catch (e) {
+              debugPrint('Error showing invoice: $e');
+            } finally {
+              if (!loaderPopped && context.mounted) {
+                Navigator.pop(context);
+                loaderPopped = true;
+              }
+            }
+          },
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -1239,8 +1286,36 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () =>
-                      InvoiceService.generateAndShareInvoice(context, booking),
+                  onTap: () async {
+                    bool loaderPopped = false;
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => const PopScope(
+                        canPop: false,
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                    );
+                    try {
+                      await InvoiceService.generateAndShareInvoice(
+                        context,
+                        booking,
+                        onReady: () {
+                          if (!loaderPopped && context.mounted) {
+                            Navigator.pop(context);
+                            loaderPopped = true;
+                          }
+                        },
+                      );
+                    } catch (e) {
+                      debugPrint('Error sharing invoice: $e');
+                    } finally {
+                      if (!loaderPopped && context.mounted) {
+                        Navigator.pop(context);
+                        loaderPopped = true;
+                      }
+                    }
+                  },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
                     child: Icon(Icons.share_rounded, size: 18),
@@ -1349,18 +1424,55 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
             '${completionData.serviceCost.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
           ),
         ],
-        _buildInfoRow(
-          AppLocalizations.of(context)!.inspectionFee,
-          '${booking.effectiveInspectionFee.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
-        ),
-
-        if (booking.service.discountPercentage != null &&
-            booking.service.discountPercentage! > 0) ...[
-          _buildInfoRow(
-            AppLocalizations.of(context)!.discountAmount,
-            '${(booking.effectiveInspectionFee - booking.service.getDiscountedPrice(booking.effectiveInspectionFee)).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 100,
+                child: Text(
+                  AppLocalizations.of(context)!.inspectionFee,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Row(
+                  children: [
+                    if (booking.service.discountPercentage != null &&
+                        booking.service.discountPercentage! > 0)
+                      Text(
+                        '${booking.effectiveInspectionFee.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                          decoration: TextDecoration.lineThrough,
+                        ),
+                      ),
+                    if (booking.service.discountPercentage != null &&
+                        booking.service.discountPercentage! > 0)
+                      const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${booking.service.getDiscountedPrice(booking.effectiveInspectionFee).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}${booking.service.discountPercentage != null && booking.service.discountPercentage! > 0 ? ' (${AppLocalizations.of(context)!.discountApplied(booking.service.discountPercentage!)})' : ''}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
 
         if (booking.paymentProof != null &&
             booking.paymentProof!.isNotEmpty) ...[
@@ -1709,9 +1821,12 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     bool showChatOnHeader = true,
     Widget? trailing,
   }) {
-    final bool isActiveWarranty = isWarranty && booking.warranty != null &&
+    final bool isActiveWarranty =
+        isWarranty &&
+        booking.warranty != null &&
         ['R', 'A', 'S'].contains(booking.warranty!.warrantyStatusCode);
-    final UserModel? activeAgent = isActiveWarranty && booking.warranty!.assignedTechnician != null
+    final UserModel? activeAgent =
+        isActiveWarranty && booking.warranty!.assignedTechnician != null
         ? UserModel.fromJson(booking.warranty!.assignedTechnician!)
         : booking.agent;
 

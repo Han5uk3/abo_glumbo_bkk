@@ -387,21 +387,17 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                   final isArOrUr = isAr || isUr;
 
                   // Use fallback if specific language content is missing
-                  final title = isArOrUr
-                      ? (notification.titleAr.isNotEmpty
-                            ? notification.titleAr
-                            : notification.titleEn)
-                      : (notification.titleEn.isNotEmpty
-                            ? notification.titleEn
-                            : notification.titleAr);
+                  final title = isAr
+                      ? (notification.titleAr.isNotEmpty ? notification.titleAr : notification.titleEn)
+                      : isUr 
+                          ? (notification.titleUr.isNotEmpty ? notification.titleUr : notification.titleEn)
+                          : (notification.titleEn.isNotEmpty ? notification.titleEn : notification.titleAr);
 
-                  final body = isArOrUr
-                      ? (notification.bodyAr.isNotEmpty
-                            ? notification.bodyAr
-                            : notification.bodyEn)
-                      : (notification.bodyEn.isNotEmpty
-                            ? notification.bodyEn
-                            : notification.bodyAr);
+                  final body = isAr
+                      ? (notification.bodyAr.isNotEmpty ? notification.bodyAr : notification.bodyEn)
+                      : isUr 
+                          ? (notification.bodyUr.isNotEmpty ? notification.bodyUr : notification.bodyEn)
+                          : (notification.bodyEn.isNotEmpty ? notification.bodyEn : notification.bodyAr);
 
                   final relativeTime = _getRelativeTime(
                     notification.createdAt,

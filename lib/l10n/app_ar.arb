@@ -783,7 +783,15 @@
   "bookingSummary": "ملخص الحجز",
   "serviceName": "الخدمة",
   "bookingType": "نوع الحجز",
-  "discountApplied": "تم تطبيق الخصم",
+  "discountApplied": "خصم {percentageamount}%",
+  "@discountApplied": {
+    "placeholders": {
+      "percentageamount": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
   "noDiscount": "لا يوجد خصم",
   "finalPrice": "السعر النهائي",
   "technicianAssignment": "تعيين الفني",

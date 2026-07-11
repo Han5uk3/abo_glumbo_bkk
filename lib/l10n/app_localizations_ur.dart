@@ -2399,7 +2399,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bookingType => 'بکنگ کی قسم';
 
   @override
-  String get discountApplied => 'ڈسکاؤنٹ لاگو ہو گیا';
+  String discountApplied(num percentageamount) {
+    final intl.NumberFormat percentageamountNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String percentageamountString = percentageamountNumberFormat.format(
+      percentageamount,
+    );
+
+    return '$percentageamountString% رعایت';
+  }
 
   @override
   String get noDiscount => 'کوئی ڈسکاؤنٹ نہیں';

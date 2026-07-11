@@ -4579,8 +4579,8 @@ abstract class AppLocalizations {
   /// No description provided for @discountApplied.
   ///
   /// In en, this message translates to:
-  /// **'Discount Applied'**
-  String get discountApplied;
+  /// **'{percentageamount}% discount'**
+  String discountApplied(num percentageamount);
 
   /// No description provided for @noDiscount.
   ///
