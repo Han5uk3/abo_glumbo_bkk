@@ -285,6 +285,9 @@ class MyApp extends StatelessWidget {
                     iconTheme: const IconThemeData(color: Colors.white),
                     titleSpacing: 0,
                     titleTextStyle: TextStyle(
+                      fontFamily: state.locale.languageCode == 'ar'
+                          ? GoogleFonts.notoKufiArabic().fontFamily
+                          : 'DMSans',
                       color: Colors.white,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

@@ -191,10 +191,7 @@ class _BookingsPageState extends State<BookingsPage> {
               child: Text(
                 AppLocalizations.of(context)!.noBookings,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 18,
-                ),
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 18),
               ),
             ),
           ),

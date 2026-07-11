@@ -117,11 +117,13 @@ class TermsAndConditionsPage extends StatelessWidget {
           ),
         ),
         SizedBox(height: 3),
-        RichText(
-          text: TextSpan(
+        Text.rich(
+          TextSpan(
             style: TextStyle(color: Colors.black, fontSize: 14),
             children: [
-              TextSpan(text: part1),
+              TextSpan(
+                text: part1,
+              ),
               TextSpan(
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
