@@ -336,13 +336,6 @@ class BookingUtils {
         "completionData.paymentMethod": paymentModeCode == "C"
             ? "Inside App"
             : "Outside App",
-        // Apply warranty for 1 week from completion date if it's full work (mode 1)
-        if (booking?.completionData?.mode == 1 && !isOutsideApp) ...{
-          'warranty.expiredOn': Timestamp.fromDate(
-            DateTime.now().add(const Duration(days: 7)),
-          ),
-          'warranty.updatedAt': FieldValue.serverTimestamp(),
-        },
       });
       return true;
     } catch (e) {
