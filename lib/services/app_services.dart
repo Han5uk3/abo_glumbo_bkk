@@ -107,18 +107,6 @@ class AppServices {
       debugPrint('✅ FCM token updated successfully in Firestore');
     } catch (e) {
       debugPrint('❌ Error updating FCM token: $e');
-
-      // Try to create the document if it doesn't exist
-      try {
-        String currentUid = LocalStoreHelper.getUID() ?? '';
-        await AppFirestore.customersCollectionRef.doc(currentUid).set({
-          'fcmToken': token,
-          'fcmTokenUpdatedAt': Timestamp.now(),
-        }, SetOptions(merge: true));
-        debugPrint('✅ FCM token set successfully with merge option');
-      } catch (setError) {
-        debugPrint('❌ Error setting FCM token with merge: $setError');
-      }
     }
   }
 
