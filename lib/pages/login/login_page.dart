@@ -360,64 +360,67 @@ class _LoginPageState extends State<LoginPage> {
         border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('🇸🇦', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: 8),
-              Directionality(
-                textDirection: TextDirection.ltr,
-                child: Text(
-                  "+966",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Colors.black,
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('🇸🇦', style: TextStyle(fontSize: 20)),
+                const SizedBox(width: 8),
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Text(
+                    "+966",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Container(
-                height: 24,
-                width: 1,
-                color: Colors.black.withOpacity(0.1),
-              ),
-              const SizedBox(width: 12),
-            ],
-          ),
-          Expanded(
-            child: TextFormField(
-              controller: _phoneController,
-              textInputAction: TextInputAction.done,
-              keyboardType: TextInputType.number,
-              textAlignVertical: TextAlignVertical.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-                hintText: '5XXXXXXXX',
-                hintStyle: TextStyle(
-                  color: Colors.black.withOpacity(0.3),
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
+                const SizedBox(width: 12),
+                Container(
+                  height: 24,
+                  width: 1,
+                  color: Colors.black.withOpacity(0.1),
                 ),
-              ),
-              onFieldSubmitted: (_) {
-                if (!_isLoading) {
-                  _onLoginPressed();
-                }
-              },
+                const SizedBox(width: 12),
+              ],
             ),
-          ),
-        ],
+            Expanded(
+              child: TextFormField(
+                controller: _phoneController,
+                textInputAction: TextInputAction.done,
+                keyboardType: TextInputType.number,
+                textAlignVertical: TextAlignVertical.center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
+                  hintText: '5XXXXXXXX',
+                  hintStyle: TextStyle(
+                    color: Colors.black.withOpacity(0.3),
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                onFieldSubmitted: (_) {
+                  if (!_isLoading) {
+                    _onLoginPressed();
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
