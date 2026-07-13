@@ -1017,12 +1017,13 @@ class ServiceBookingTile extends StatelessWidget {
     // Do not show if it's already escalated
     if (booking.isEscalated == true) return false;
 
-    // Check if updatedAt exists for time-based condition
-    if (warranty.updatedAt == null) return false;
+    // Check if there is a relevant date to calculate from
+    final lastActivityDate = warranty.updatedAt ?? warranty.requestedOn ?? warranty.createdAt;
+    if (lastActivityDate == null) return false;
 
     // Calculate the difference in days
     final daysSinceUpdate = DateTime.now()
-        .difference(warranty.updatedAt!)
+        .difference(lastActivityDate)
         .inDays;
 
     // Show button if more than 2 days have passed without updates
@@ -1238,8 +1239,9 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
 
     try {
       final updateData = <String, dynamic>{
-        'warranty.warrantyStatusCode': 'R',
-        'warranty.availability': true,
+        'warranty.warrantyStatusCode': 'S',
+        'warranty.availability': false,
+        'warranty.acceptedAt': Timestamp.now(),
         'warranty.updatedAt': Timestamp.now(),
         'warranty.claimrequested': true,
         'warranty.requestedOn': Timestamp.now(),
