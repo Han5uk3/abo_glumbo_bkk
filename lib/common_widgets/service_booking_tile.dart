@@ -194,7 +194,7 @@ class ServiceBookingTile extends StatelessWidget {
                           if (booking.bookingStatusCode == "C" ||
                               booking.bookingStatusCode == "VP")
                             Text(
-                              "${((booking.completionData?.totalCost ?? 0) + booking.service.getDiscountedPrice(booking.effectiveInspectionFee)).toStringAsFixed(1)} ${AppLocalizations.of(context)!.sar}",
+                              "${((booking.completionData?.totalCost ?? 0) + booking.service.getDiscountedPrice(booking.effectiveInspectionFee)).toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}",
                               style: TextStyle(
                                 color: AppColors.green1,
                                 fontWeight: FontWeight.bold,
