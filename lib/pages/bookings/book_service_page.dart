@@ -2545,6 +2545,12 @@ class _BookServicePageState extends State<BookServicePage> {
 
           if (docSnap.exists) {
             final requestData = docSnap.data() as Map<String, dynamic>;
+            
+            // Remove fields specific to the booking request so they don't violate bookings collection schema/rules
+            requestData.remove('status');
+            requestData.remove('acceptedTechnicians');
+            requestData.remove('rejectedTechnicians');
+
             final bookingJson = {
               ...requestData,
               'agent': selectedWorker.toJson(),
