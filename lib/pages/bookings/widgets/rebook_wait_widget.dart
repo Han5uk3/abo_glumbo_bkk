@@ -29,7 +29,7 @@ class RebookWaitWidget extends StatefulWidget {
   final File? issueVideoFile;
   final Function(UserModel, DateTime?) onAccepted;
   final Function(String) onBroadcastIdCreated;
-  final Function() onFailed;
+  final Function({bool customerCancelled}) onFailed;
 
   const RebookWaitWidget({
     super.key,
@@ -171,7 +171,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
       }
     } catch (e) {
       debugPrint("Error starting rebook flow: $e");
-      widget.onFailed();
+      widget.onFailed(customerCancelled: false);
     }
   }
 
@@ -188,7 +188,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
       } else {
         _timer?.cancel();
         if (!_hasResponded) {
-          widget.onFailed();
+          widget.onFailed(customerCancelled: false);
         }
       }
     });
@@ -207,7 +207,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
             widget.onAccepted(widget.technician, null);
           } else if (status == 'declined' || status == 'expired') {
             _hasResponded = true;
-            widget.onFailed();
+            widget.onFailed(customerCancelled: false);
           }
           // 'counter_offered' will be handled by UI
         });
@@ -353,7 +353,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
                         offerId: offer['id'],
                         status: 'declined',
                       );
-                      widget.onFailed();
+                      widget.onFailed(customerCancelled: true);
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.red,
@@ -436,7 +436,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
           ElevatedButton(
             onPressed: () {
               _hasResponded = true;
-              widget.onFailed();
+              widget.onFailed(customerCancelled: false);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,

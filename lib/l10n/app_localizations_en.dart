@@ -2850,6 +2850,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.';
 
   @override
+  String get customerCancelledTitle => 'Customer Cancelled';
+
+  @override
+  String get customerCancelledDesc =>
+      'You have cancelled the rebooking request. Please proceed with another option.';
+
+  @override
   String get searchAvailableTechnicians => 'Search Available Technicians';
 
   @override

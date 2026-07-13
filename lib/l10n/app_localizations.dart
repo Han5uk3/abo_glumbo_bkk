@@ -5356,6 +5356,18 @@ abstract class AppLocalizations {
   /// **'The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.'**
   String get technicianCancelledDesc;
 
+  /// No description provided for @customerCancelledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Cancelled'**
+  String get customerCancelledTitle;
+
+  /// No description provided for @customerCancelledDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You have cancelled the rebooking request. Please proceed with another option.'**
+  String get customerCancelledDesc;
+
   /// No description provided for @searchAvailableTechnicians.
   ///
   /// In en, this message translates to:

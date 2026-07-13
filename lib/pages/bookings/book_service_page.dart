@@ -54,6 +54,7 @@ class _BookServicePageState extends State<BookServicePage> {
   bool saving = false;
   bool _rebookFailed = false;
   bool _rebookFailedAcknowledged = false;
+  bool _customerCancelledRebook = false;
   String? _bookingRequestId;
   AddressModel? selectedAddress;
   final _formKey = GlobalKey<FormState>();
@@ -1679,9 +1680,10 @@ class _BookServicePageState extends State<BookServicePage> {
             _bookingRequestId = id;
           });
         },
-        onFailed: () {
+        onFailed: ({bool customerCancelled = false}) {
           setState(() {
             _rebookFailed = true;
+            _customerCancelledRebook = customerCancelled;
           });
         },
       );
@@ -1741,7 +1743,9 @@ class _BookServicePageState extends State<BookServicePage> {
           ),
           const SizedBox(height: 16),
           Text(
-            AppLocalizations.of(context)?.technicianCancelledTitle ?? "Technician Cancelled",
+            _customerCancelledRebook 
+                ? (AppLocalizations.of(context)?.customerCancelledTitle ?? "Customer Cancelled")
+                : (AppLocalizations.of(context)?.technicianCancelledTitle ?? "Technician Cancelled"),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -1750,7 +1754,9 @@ class _BookServicePageState extends State<BookServicePage> {
           ),
           const SizedBox(height: 8),
           Text(
-            AppLocalizations.of(context)?.technicianCancelledDesc ?? "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.",
+            _customerCancelledRebook
+                ? (AppLocalizations.of(context)?.customerCancelledDesc ?? "You have cancelled the rebooking request. Please proceed with another option.")
+                : (AppLocalizations.of(context)?.technicianCancelledDesc ?? "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option."),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,

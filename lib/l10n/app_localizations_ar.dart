@@ -2809,6 +2809,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'لقد اعتذر الفني المطلوب عن طلب إعادة الجدولة الخاص بك. يرجى اختيار خيار آخر.';
 
   @override
+  String get customerCancelledTitle => 'ألغى العميل';
+
+  @override
+  String get customerCancelledDesc =>
+      'لقد قمت بإلغاء طلب إعادة الجدولة. يرجى اختيار خيار آخر.';
+
+  @override
   String get searchAvailableTechnicians => 'البحث عن فنيين متاحين';
 
   @override

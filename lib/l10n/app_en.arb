@@ -1074,6 +1074,8 @@
   "bookForLater": "Book for Later",
   "technicianCancelledTitle": "Technician Cancelled",
   "technicianCancelledDesc": "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.",
+  "customerCancelledTitle": "Customer Cancelled",
+  "customerCancelledDesc": "You have cancelled the rebooking request. Please proceed with another option.",
   "searchAvailableTechnicians": "Search Available Technicians",
   "proceedToAutoAssignment": "Proceed to Auto-Assignment",
   "liveTechnicianBroadcast": "Live Technician Broadcast",

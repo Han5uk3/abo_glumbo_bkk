@@ -1074,6 +1074,8 @@
   "bookForLater": "احجز لوقت لاحق",
   "technicianCancelledTitle": "اعتذر الفني",
   "technicianCancelledDesc": "لقد اعتذر الفني المطلوب عن طلب إعادة الجدولة الخاص بك. يرجى اختيار خيار آخر.",
+  "customerCancelledTitle": "ألغى العميل",
+  "customerCancelledDesc": "لقد قمت بإلغاء طلب إعادة الجدولة. يرجى اختيار خيار آخر.",
   "searchAvailableTechnicians": "البحث عن فنيين متاحين",
   "proceedToAutoAssignment": "المتابعة للتعيين التلقائي",
   "liveTechnicianBroadcast": "البحث عن الفنيين المتاحين",

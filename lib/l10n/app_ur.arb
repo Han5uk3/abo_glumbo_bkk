@@ -1074,6 +1074,8 @@
   "bookForLater": "بعد کے لیے بک کریں",
   "technicianCancelledTitle": "ٹیکنیشن نے معذرت کر لی",
   "technicianCancelledDesc": "مطلوبہ ٹیکنیشن نے آپ کی دوبارہ شیڈولنگ کی درخواست سے معذرت کر لی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔",
+  "customerCancelledTitle": "صارف نے منسوخ کر دیا",
+  "customerCancelledDesc": "آپ نے دوبارہ شیڈولنگ کی درخواست منسوخ کر دی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔",
   "searchAvailableTechnicians": "دستیاب ٹیکنیشنز تلاش کریں",
   "proceedToAutoAssignment": "خودکار تفویض کے لیے آگے بڑھیں",
   "liveTechnicianBroadcast": "دستیاب ٹیکنیشن کی تلاش",

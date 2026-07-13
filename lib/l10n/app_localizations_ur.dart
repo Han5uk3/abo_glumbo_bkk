@@ -2870,6 +2870,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'مطلوبہ ٹیکنیشن نے آپ کی دوبارہ شیڈولنگ کی درخواست سے معذرت کر لی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔';
 
   @override
+  String get customerCancelledTitle => 'صارف نے منسوخ کر دیا';
+
+  @override
+  String get customerCancelledDesc =>
+      'آپ نے دوبارہ شیڈولنگ کی درخواست منسوخ کر دی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔';
+
+  @override
   String get searchAvailableTechnicians => 'دستیاب ٹیکنیشنز تلاش کریں';
 
   @override
