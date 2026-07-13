@@ -14,6 +14,7 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/models/invoice.dart';
 import 'package:http/http.dart' as http;
+import 'package:arabic_reshaper/arabic_reshaper.dart';
 
 class InvoiceService {
   static Future<pw.Document?> _buildInvoiceDocument(
@@ -59,6 +60,11 @@ class InvoiceService {
 
     final theme = pw.ThemeData.withFont(base: ttf, bold: ttfBold);
 
+    String reshape(String text) {
+      if (text.isEmpty) return text;
+      return ArabicReshaper.instance.reshape(text);
+    }
+
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -77,20 +83,20 @@ class InvoiceService {
                     pw.Container(width: 80, height: 80, child: pw.Image(logo)),
                   pw.SizedBox(height: 10),
                   pw.Text(
-                    "Abo Glumbo",
+                    reshape("Abo Glumbo"),
                     style: pw.TextStyle(
                       fontSize: 20,
                       fontWeight: pw.FontWeight.bold,
                     ),
                   ),
-                  pw.Text(loc.invoiceTitle),
+                  pw.Text(reshape(loc.invoiceTitle)),
                 ],
               ),
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
                   pw.Text(
-                    loc.invoiceWord,
+                    reshape(loc.invoiceWord),
                     style: pw.TextStyle(
                       fontSize: 30,
                       fontWeight: pw.FontWeight.bold,
@@ -99,14 +105,14 @@ class InvoiceService {
                   ),
                   pw.SizedBox(height: 10),
                   pw.Text(
-                    loc.invoiceNumber(
+                    reshape(loc.invoiceNumber(
                       booking.newBookingId ??
                           booking.id.substring(0, 8).toUpperCase(),
-                    ),
+                    )),
                   ),
-                  pw.Text(loc.dateString(dateFormat.format(DateTime.now()))),
+                  pw.Text(reshape(loc.dateString(dateFormat.format(DateTime.now())))),
                   pw.Text(
-                    loc.statusPaid,
+                    reshape(loc.statusPaid),
                     style: pw.TextStyle(
                       color: PdfColors.green,
                       fontWeight: pw.FontWeight.bold,
@@ -160,35 +166,35 @@ class InvoiceService {
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       pw.Text(
-                        loc.billTo,
+                        reshape(loc.billTo),
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                       ),
                       pw.Text(
-                        booking.customer.name ??
+                        reshape(booking.customer.name ??
                             ((loc.localeName == 'ar')
                                 ? 'عميلنا العزيز'
                                 : (loc.localeName == 'ur')
                                 ? 'معزز صارف'
-                                : 'Valued Customer'),
+                                : 'Valued Customer')),
                       ),
-                      pw.Text(booking.customer.phone ?? ""),
-                      pw.Text(booking.customer.email ?? ""),
+                      pw.Text(reshape(booking.customer.phone ?? "")),
+                      pw.Text(reshape(booking.customer.email ?? "")),
                       pw.Text(
-                        "${address.buildingNumber}${address.streetName != null ? ', ${address.streetName}' : ''}",
+                        reshape("${address.buildingNumber}${address.streetName != null ? ', ${address.streetName}' : ''}"),
                       ),
                       if (address.fullName.isNotEmpty &&
                           address.fullName != booking.customer.name)
-                        pw.Text(address.fullName),
+                        pw.Text(reshape(address.fullName)),
                       if (booking.customer.districtName != null ||
                           booking.customer.cityName != null)
                         pw.Text(
-                          "${booking.customer.districtName ?? ''}${booking.customer.districtName != null && booking.customer.cityName != null ? ', ' : ''}${booking.customer.cityName ?? ''}",
+                          reshape("${booking.customer.districtName ?? ''}${booking.customer.districtName != null && booking.customer.cityName != null ? ', ' : ''}${booking.customer.cityName ?? ''}"),
                         ),
                       if (booking.serviceLocation != null)
                         pw.Text(
-                          booking.serviceLocation!.localizedName(
+                          reshape(booking.serviceLocation!.localizedName(
                             loc.localeName,
-                          ),
+                          )),
                         ),
                     ],
                   ),
@@ -198,37 +204,37 @@ class InvoiceService {
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       pw.Text(
-                        loc.bookingDetailsInvoice,
+                        reshape(loc.bookingDetailsInvoice),
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                       ),
                       pw.Text(
-                        loc.serviceLabel(
+                        reshape(loc.serviceLabel(
                           booking.service.nameLocalized(
                                 languageCode: loc.localeName,
                               ) ??
                               "",
-                        ),
+                        )),
                       ),
                       if (booking.agent?.name != null)
-                        pw.Text(loc.technicianLabel(booking.agent!.name!)),
+                        pw.Text(reshape(loc.technicianLabel(booking.agent!.name!))),
                       if (booking.agent?.phone != null)
-                        pw.Text(loc.techPhoneLabel(booking.agent!.phone!)),
-                      pw.Text(loc.completedAtLabel(completedAtStr)),
-                      pw.Text(loc.warrantyLabel(warrantyDuration)),
+                        pw.Text(reshape(loc.techPhoneLabel(booking.agent!.phone!))),
+                      pw.Text(reshape(loc.completedAtLabel(completedAtStr))),
+                      pw.Text(reshape(loc.warrantyLabel(warrantyDuration))),
                       pw.Text(
-                        loc.paymentModeLabel(
+                        reshape(loc.paymentModeLabel(
                           (booking.paymentModeCode.toUpperCase() == 'C' ||
                                   booking.paymentModeCode.toUpperCase() == 'A')
                               ? (loc.insideApp)
                               : (loc.outsideApp),
-                        ),
+                        )),
                       ),
                       if (booking.orderId != null ||
                           booking.transactionId != null)
                         pw.Text(
-                          loc.transactionIdLabel(
+                          reshape(loc.transactionIdLabel(
                             booking.orderId ?? booking.transactionId ?? '',
-                          ),
+                          )),
                         ),
                     ],
                   ),
@@ -252,37 +258,37 @@ class InvoiceService {
               2: pw.Alignment.centerRight,
               3: pw.Alignment.centerRight,
             },
-            headers: (loc.localeName == 'ar')
+            headers: ((loc.localeName == 'ar')
                 ? ['الوصف', 'الكمية', 'سعر الوحدة', 'المبلغ']
                 : (loc.localeName == 'ur')
                 ? ['تفصیل', 'مقدار', 'فی اکائی قیمت', 'رقم']
-                : ['Description', 'Quantity', 'Unit Price', 'Amount'],
+                : ['Description', 'Quantity', 'Unit Price', 'Amount']).map((h) => reshape(h)).toList(),
             data: [
               ...data.serviceItems.map(
                 (item) => [
-                  item.name,
-                  item.quantity.toStringAsFixed(0),
-                  "${item.price.toStringAsFixed(2)} ${loc.sar}",
-                  "${(item.quantity * item.price).toStringAsFixed(2)} ${loc.sar}",
+                  reshape(item.name),
+                  reshape(item.quantity.toStringAsFixed(0)),
+                  reshape("${item.price.toStringAsFixed(2)} ${loc.sar}"),
+                  reshape("${(item.quantity * item.price).toStringAsFixed(2)} ${loc.sar}"),
                 ],
               ),
               if (data.serviceItems.isEmpty && data.serviceCost > 0)
                 [
-                  (loc.localeName == 'ar')
+                  reshape((loc.localeName == 'ar')
                       ? 'تكلفة الخدمة'
                       : (loc.localeName == 'ur')
                       ? 'سروس کی قیمت'
-                      : 'Service Cost',
-                  '1',
-                  "${data.serviceCost.toStringAsFixed(2)} ${loc.sar}",
-                  "${data.serviceCost.toStringAsFixed(2)} ${loc.sar}",
+                      : 'Service Cost'),
+                  reshape('1'),
+                  reshape("${data.serviceCost.toStringAsFixed(2)} ${loc.sar}"),
+                  reshape("${data.serviceCost.toStringAsFixed(2)} ${loc.sar}"),
                 ],
               if (data.inspectionFee > 0)
                 [
-                  loc.inspectionFee,
-                  '1',
-                  "${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}",
-                  "${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}",
+                  reshape(loc.inspectionFee),
+                  reshape('1'),
+                  reshape("${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}"),
+                  reshape("${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}"),
                 ],
             ],
           ),
@@ -298,9 +304,9 @@ class InvoiceService {
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Text(loc.subtotal),
+                        pw.Text(reshape(loc.subtotal)),
                         pw.Text(
-                          "${data.serviceCost.toStringAsFixed(2)} ${loc.sar}",
+                          reshape("${data.serviceCost.toStringAsFixed(2)} ${loc.sar}"),
                         ),
                       ],
                     ),
@@ -308,9 +314,9 @@ class InvoiceService {
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text(loc.inspectionFee),
+                          pw.Text(reshape(loc.inspectionFee)),
                           pw.Text(
-                            "${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}",
+                            reshape("${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}"),
                           ),
                         ],
                       ),
@@ -319,14 +325,14 @@ class InvoiceService {
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
                           pw.Text(
-                            (loc.localeName == 'ar')
+                            reshape((loc.localeName == 'ar')
                                 ? 'الخصم (${booking.service.discountPercentage}%)'
                                 : (loc.localeName == 'ur')
                                 ? 'رعایت (${booking.service.discountPercentage}%)'
-                                : 'Discount (${booking.service.discountPercentage}%)',
+                                : 'Discount (${booking.service.discountPercentage}%)'),
                           ),
                           pw.Text(
-                            '- ${(data.inspectionFee - booking.service.getDiscountedPrice(data.inspectionFee)).toStringAsFixed(2)} ${loc.sar}',
+                            reshape('- ${(data.inspectionFee - booking.service.getDiscountedPrice(data.inspectionFee)).toStringAsFixed(2)} ${loc.sar}'),
                             style: pw.TextStyle(color: PdfColors.red),
                           ),
                         ],
@@ -335,7 +341,7 @@ class InvoiceService {
                       pw.Padding(
                         padding: const pw.EdgeInsets.only(top: 4, bottom: 4),
                         child: pw.Text(
-                          loc.discountAppliesToInspectionFeeOnly,
+                          reshape(loc.discountAppliesToInspectionFeeOnly),
                           style: pw.TextStyle(
                             fontSize: 10,
                             color: PdfColors.grey,
@@ -347,14 +353,14 @@ class InvoiceService {
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
                         pw.Text(
-                          loc.totalLabel,
+                          reshape(loc.totalLabel),
                           style: pw.TextStyle(
                             fontSize: 16,
                             fontWeight: pw.FontWeight.bold,
                           ),
                         ),
                         pw.Text(
-                          "${(data.totalCost + booking.service.getDiscountedPrice(data.inspectionFee)).toStringAsFixed(2)} ${loc.sar}",
+                          reshape("${(data.totalCost + booking.service.getDiscountedPrice(data.inspectionFee)).toStringAsFixed(2)} ${loc.sar}"),
                           style: pw.TextStyle(
                             fontSize: 16,
                             fontWeight: pw.FontWeight.bold,
@@ -373,11 +379,11 @@ class InvoiceService {
           pw.SizedBox(height: 60),
           pw.Center(
             child: pw.Text(
-              (loc.localeName == 'ar')
+              reshape((loc.localeName == 'ar')
                   ? 'شكرا لاختيارك أبو جلمبو'
                   : (loc.localeName == 'ur')
                   ? 'ابو جلمبو کا انتخاب کرنے کا شکریہ'
-                  : 'Thank you for choosing Abo Glumbo',
+                  : 'Thank you for choosing Abo Glumbo'),
               style: pw.TextStyle(color: PdfColors.grey),
             ),
           ),

@@ -1209,125 +1209,128 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           const SizedBox(height: 12),
           if (booking.paymentCompleted ||
               booking.bookingStatusCode == 'VP' ||
-            (booking.bookingStatusCode == 'C' &&
-                !booking.paymentCompleted)) ...[
-          if (booking.paymentCompleted && booking.orderId?.isNotEmpty == true)
-            _buildInfoRow(
-              AppLocalizations.of(context)!.transactionId,
-              booking.orderId ?? "",
-            ),
-
-          _buildInfoRow(
-            AppLocalizations.of(context)!.invoiceType,
-            completionData.mode == 0
-                ? AppLocalizations.of(context)!.inspection
-                : AppLocalizations.of(context)!.fullService,
-          ),
-          if (booking.paymentCompleted || booking.paymentModeCode.isNotEmpty)
-            _buildInfoRow(
-              AppLocalizations.of(context)!.paymentMode,
-              (booking.paymentModeCode.toLowerCase() == 'c' ||
-                      booking.paymentModeCode.toLowerCase() == 'a')
-                  ? AppLocalizations.of(context)!.insideApp
-                  : AppLocalizations.of(context)!.outsideApp,
-            ),
-        ],
-
-        GestureDetector(
-          onTap: () async {
-            bool loaderPopped = false;
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => const PopScope(
-                canPop: false,
-                child: Center(child: Loader(color: AppColors.primary)),
+              (booking.bookingStatusCode == 'C' &&
+                  !booking.paymentCompleted)) ...[
+            if (booking.paymentCompleted && booking.orderId?.isNotEmpty == true)
+              _buildInfoRow(
+                AppLocalizations.of(context)!.transactionId,
+                booking.orderId ?? "",
               ),
-            );
-            try {
-              await InvoiceService.generateAndShowInvoice(
-                context,
-                booking,
-                onReady: () {
-                  if (!loaderPopped && context.mounted) {
-                    Navigator.pop(context);
-                    loaderPopped = true;
-                  }
-                },
-              );
-            } catch (e) {
-              debugPrint('Error showing invoice: $e');
-            } finally {
-              if (!loaderPopped && context.mounted) {
-                Navigator.pop(context);
-                loaderPopped = true;
-              }
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
+
+            _buildInfoRow(
+              AppLocalizations.of(context)!.invoiceType,
+              completionData.mode == 0
+                  ? AppLocalizations.of(context)!.inspection
+                  : AppLocalizations.of(context)!.fullService,
             ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.picture_as_pdf_rounded,
-                  size: 20,
-                  color: Colors.red.shade400,
+            if (booking.paymentCompleted || booking.paymentModeCode.isNotEmpty)
+              _buildInfoRow(
+                AppLocalizations.of(context)!.paymentMode,
+                (booking.paymentModeCode.toLowerCase() == 'c' ||
+                        booking.paymentModeCode.toLowerCase() == 'a')
+                    ? AppLocalizations.of(context)!.insideApp
+                    : AppLocalizations.of(context)!.outsideApp,
+              ),
+          ],
+
+          GestureDetector(
+            onTap: () async {
+              bool loaderPopped = false;
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => const PopScope(
+                  canPop: false,
+                  child: Center(child: Loader(color: AppColors.primary)),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    widget.booking.newBookingId ?? "",
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    bool loaderPopped = false;
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => const PopScope(
-                        canPop: false,
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                    );
-                    try {
-                      await InvoiceService.generateAndShareInvoice(
-                        context,
-                        booking,
-                        onReady: () {
-                          if (!loaderPopped && context.mounted) {
-                            Navigator.pop(context);
-                            loaderPopped = true;
-                          }
-                        },
-                      );
-                    } catch (e) {
-                      debugPrint('Error sharing invoice: $e');
-                    } finally {
-                      if (!loaderPopped && context.mounted) {
-                        Navigator.pop(context);
-                        loaderPopped = true;
-                      }
+              );
+              try {
+                await InvoiceService.generateAndShowInvoice(
+                  context,
+                  booking,
+                  onReady: () {
+                    if (!loaderPopped && context.mounted) {
+                      Navigator.pop(context);
+                      loaderPopped = true;
                     }
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Icon(Icons.share_rounded, size: 18),
+                );
+              } catch (e) {
+                debugPrint('Error showing invoice: $e');
+              } finally {
+                if (!loaderPopped && context.mounted) {
+                  Navigator.pop(context);
+                  loaderPopped = true;
+                }
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.picture_as_pdf_rounded,
+                    size: 20,
+                    color: Colors.red.shade400,
                   ),
-                ),
-                const Icon(Icons.open_in_new, size: 16),
-              ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      widget.booking.newBookingId ?? "",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      bool loaderPopped = false;
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => const PopScope(
+                          canPop: false,
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                      );
+                      try {
+                        await InvoiceService.generateAndShareInvoice(
+                          context,
+                          booking,
+                          onReady: () {
+                            if (!loaderPopped && context.mounted) {
+                              Navigator.pop(context);
+                              loaderPopped = true;
+                            }
+                          },
+                        );
+                      } catch (e) {
+                        debugPrint('Error sharing invoice: $e');
+                      } finally {
+                        if (!loaderPopped && context.mounted) {
+                          Navigator.pop(context);
+                          loaderPopped = true;
+                        }
+                      }
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Icon(Icons.share_rounded, size: 18),
+                    ),
+                  ),
+                  const Icon(Icons.open_in_new, size: 16),
+                ],
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
+          const SizedBox(height: 16),
         ],
         if (completionData.fileUrls.isNotEmpty) ...[
           Text(
@@ -2266,8 +2269,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
 
     final bool isPendingPayment =
         (booking.bookingStatusCode == 'C' ||
-            booking.bookingStatusCode == 'CP' ||
-            booking.bookingStatusCode == 'VP') &&
+            booking.bookingStatusCode == 'CP') &&
         !booking.paymentCompleted;
 
     if (!isPendingPayment) return null;
