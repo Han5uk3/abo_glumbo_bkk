@@ -5397,6 +5397,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter the problem description'**
   String get pleaseEnterProblemDescription;
+
+  /// No description provided for @timeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeout'**
+  String get timeout;
+
+  /// No description provided for @bookingRequestTimedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'The booking request timed out. Please request again.'**
+  String get bookingRequestTimedOut;
 }
 
 class _AppLocalizationsDelegate

@@ -139,9 +139,112 @@ class _BookServicePageState extends State<BookServicePage> {
 
   @override
   void dispose() {
+    _requestExpiryTimer?.cancel();
     selectedIndexNotifier.dispose();
     notesController.dispose();
     super.dispose();
+  }
+
+  Timer? _requestExpiryTimer;
+
+  void _startExpiryTimer() {
+    _requestExpiryTimer?.cancel();
+    _requestExpiryTimer = Timer(
+      const Duration(minutes: 5),
+      _handleRequestExpiry,
+    );
+  }
+
+  void _handleRequestExpiry() async {
+    final String? reqId = _bookingRequestId;
+    if (reqId == null) return;
+
+    if (mounted && (currentStep == 2 || currentStep == 3)) {
+      setState(() {
+        currentStep = 1;
+        _bookingRequestId = null;
+        selectedWorker = UserModel(uid: "", role: "agent");
+      });
+
+      try {
+        await AppFirestore.bookingRequestsCollectionRef.doc(reqId).delete();
+        await AppFirestore.jobRequestsCollectionRef.doc(reqId).delete();
+      } catch (e) {
+        debugPrint("Error deleting expired request: $e");
+      }
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 10,
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.timer_off_rounded,
+                    color: Colors.red.shade600,
+                    size: 40,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  AppLocalizations.of(context)?.timeout ?? "Timeout",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  AppLocalizations.of(context)?.bookingRequestTimedOut ?? "The booking request timed out. Please request again.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.5,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)?.ok ?? 'OK',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   double _toRadians(double degree) {
@@ -419,6 +522,7 @@ class _BookServicePageState extends State<BookServicePage> {
                     AppFirestore.bookingRequestsCollectionRef
                         .doc(_bookingRequestId!)
                         .delete();
+                    _requestExpiryTimer?.cancel();
                     setState(() {
                       _bookingRequestId = null;
                       selectedWorker = UserModel(uid: "", role: "agent");
@@ -882,7 +986,8 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   String _getOffHoursTitle() {
-    return AppLocalizations.of(context)?.offHoursBookingAlert ?? "Off-Hours Booking Alert";
+    return AppLocalizations.of(context)?.offHoursBookingAlert ??
+        "Off-Hours Booking Alert";
   }
 
   String _getOffHoursMessage() {
@@ -1681,6 +1786,16 @@ class _BookServicePageState extends State<BookServicePage> {
           });
         },
         onFailed: ({bool customerCancelled = false}) {
+          if (_bookingRequestId != null) {
+            AppFirestore.bookingRequestsCollectionRef
+                .doc(_bookingRequestId!)
+                .delete();
+            AppFirestore.jobRequestsCollectionRef
+                .doc(_bookingRequestId!)
+                .delete();
+            _bookingRequestId = null;
+            _requestExpiryTimer?.cancel();
+          }
           setState(() {
             _rebookFailed = true;
             _customerCancelledRebook = customerCancelled;
@@ -1711,7 +1826,6 @@ class _BookServicePageState extends State<BookServicePage> {
 
   Widget _buildRebookFailedContent() {
     final bool shouldSearch = _shouldShowTechnicianSelection();
-    final String locale = AppLocalizations.of(context)?.localeName ?? 'en';
 
     return Container(
       margin: const EdgeInsets.all(24),
@@ -1743,9 +1857,11 @@ class _BookServicePageState extends State<BookServicePage> {
           ),
           const SizedBox(height: 16),
           Text(
-            _customerCancelledRebook 
-                ? (AppLocalizations.of(context)?.customerCancelledTitle ?? "Customer Cancelled")
-                : (AppLocalizations.of(context)?.technicianCancelledTitle ?? "Technician Cancelled"),
+            _customerCancelledRebook
+                ? (AppLocalizations.of(context)?.customerCancelledTitle ??
+                      "Customer Cancelled")
+                : (AppLocalizations.of(context)?.technicianCancelledTitle ??
+                      "Technician Cancelled"),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -1755,8 +1871,10 @@ class _BookServicePageState extends State<BookServicePage> {
           const SizedBox(height: 8),
           Text(
             _customerCancelledRebook
-                ? (AppLocalizations.of(context)?.customerCancelledDesc ?? "You have cancelled the rebooking request. Please proceed with another option.")
-                : (AppLocalizations.of(context)?.technicianCancelledDesc ?? "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option."),
+                ? (AppLocalizations.of(context)?.customerCancelledDesc ??
+                      "You have cancelled the rebooking request. Please proceed with another option.")
+                : (AppLocalizations.of(context)?.technicianCancelledDesc ??
+                      "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option."),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
@@ -1793,6 +1911,9 @@ class _BookServicePageState extends State<BookServicePage> {
                   setState(() {
                     if (requestId != null) {
                       _bookingRequestId = requestId;
+                      if (_shouldShowTechnicianSelection()) {
+                        _startExpiryTimer();
+                      }
                     }
                     saving = false;
                     _rebookFailedAcknowledged = true;
@@ -1819,8 +1940,14 @@ class _BookServicePageState extends State<BookServicePage> {
                 ? const Loader(color: Colors.white)
                 : Text(
                     shouldSearch
-                        ? (AppLocalizations.of(context)?.searchAvailableTechnicians ?? "Search Available Technicians")
-                        : (AppLocalizations.of(context)?.proceedToAutoAssignment ?? "Proceed to Auto-Assignment"),
+                        ? (AppLocalizations.of(
+                                context,
+                              )?.searchAvailableTechnicians ??
+                              "Search Available Technicians")
+                        : (AppLocalizations.of(
+                                context,
+                              )?.proceedToAutoAssignment ??
+                              "Proceed to Auto-Assignment"),
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -1872,8 +1999,10 @@ class _BookServicePageState extends State<BookServicePage> {
             const SizedBox(height: 24),
             Text(
               isToday
-                  ? (AppLocalizations.of(context)?.liveTechnicianBroadcast ?? 'Live Technician Broadcast')
-                  : (AppLocalizations.of(context)?.autoAssignmentSchedule ?? 'Auto-Assignment Schedule'),
+                  ? (AppLocalizations.of(context)?.liveTechnicianBroadcast ??
+                        'Live Technician Broadcast')
+                  : (AppLocalizations.of(context)?.autoAssignmentSchedule ??
+                        'Auto-Assignment Schedule'),
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
@@ -2303,7 +2432,8 @@ class _BookServicePageState extends State<BookServicePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            AppLocalizations.of(context)?.pleaseEnterProblemDescription ?? 'Please enter the problem description',
+            AppLocalizations.of(context)?.pleaseEnterProblemDescription ??
+                'Please enter the problem description',
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.red,
@@ -2349,6 +2479,9 @@ class _BookServicePageState extends State<BookServicePage> {
           saving = false;
           currentStep = 2;
         });
+        if (_shouldShowTechnicianSelection()) {
+          _startExpiryTimer();
+        }
       } else if (mounted) {
         setState(() => saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -2495,6 +2628,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 .doc(_bookingRequestId!)
                 .delete();
 
+            _requestExpiryTimer?.cancel();
             LocalStoreHelper.clearBookingRequestId();
 
             // Notify tech

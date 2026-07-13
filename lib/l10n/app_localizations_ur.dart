@@ -2891,4 +2891,11 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get pleaseEnterProblemDescription =>
       'براہ کرم مسئلے کی تفصیل درج کریں';
+
+  @override
+  String get timeout => 'وقت ختم ہو گیا';
+
+  @override
+  String get bookingRequestTimedOut =>
+      'بکنگ کی درخواست کا وقت ختم ہو گیا۔ براہ کرم دوبارہ درخواست کریں۔';
 }

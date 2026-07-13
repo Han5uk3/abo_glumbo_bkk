@@ -1080,5 +1080,7 @@
   "proceedToAutoAssignment": "Proceed to Auto-Assignment",
   "liveTechnicianBroadcast": "Live Technician Broadcast",
   "autoAssignmentSchedule": "Auto-Assignment Schedule",
-  "pleaseEnterProblemDescription": "Please enter the problem description"
+  "pleaseEnterProblemDescription": "Please enter the problem description",
+  "timeout": "Timeout",
+  "bookingRequestTimedOut": "The booking request timed out. Please request again."
 }

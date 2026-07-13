@@ -1080,5 +1080,7 @@
   "proceedToAutoAssignment": "المتابعة للتعيين التلقائي",
   "liveTechnicianBroadcast": "البحث عن الفنيين المتاحين",
   "autoAssignmentSchedule": "تعيين تلقائي للفني",
-  "pleaseEnterProblemDescription": "يرجى إدخال وصف المشكلة"
+  "pleaseEnterProblemDescription": "يرجى إدخال وصف المشكلة",
+  "timeout": "انتهى الوقت",
+  "bookingRequestTimedOut": "انتهت صلاحية طلب الحجز. يرجى الطلب مرة أخرى."
 }

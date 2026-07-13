@@ -2871,4 +2871,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pleaseEnterProblemDescription =>
       'Please enter the problem description';
+
+  @override
+  String get timeout => 'Timeout';
+
+  @override
+  String get bookingRequestTimedOut =>
+      'The booking request timed out. Please request again.';
 }

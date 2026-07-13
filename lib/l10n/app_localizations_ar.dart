@@ -2829,4 +2829,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pleaseEnterProblemDescription => 'يرجى إدخال وصف المشكلة';
+
+  @override
+  String get timeout => 'انتهى الوقت';
+
+  @override
+  String get bookingRequestTimedOut =>
+      'انتهت صلاحية طلب الحجز. يرجى الطلب مرة أخرى.';
 }

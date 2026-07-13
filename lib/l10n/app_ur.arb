@@ -1080,5 +1080,7 @@
   "proceedToAutoAssignment": "خودکار تفویض کے لیے آگے بڑھیں",
   "liveTechnicianBroadcast": "دستیاب ٹیکنیشن کی تلاش",
   "autoAssignmentSchedule": "ٹیکنیشن کا خودکار تعین",
-  "pleaseEnterProblemDescription": "براہ کرم مسئلے کی تفصیل درج کریں"
+  "pleaseEnterProblemDescription": "براہ کرم مسئلے کی تفصیل درج کریں",
+  "timeout": "وقت ختم ہو گیا",
+  "bookingRequestTimedOut": "بکنگ کی درخواست کا وقت ختم ہو گیا۔ براہ کرم دوبارہ درخواست کریں۔"
 }
