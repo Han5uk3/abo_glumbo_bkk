@@ -1201,13 +1201,14 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       title: AppLocalizations.of(context)!.completionDetails,
       icon: Icons.check_circle,
       children: [
-        Text(
-          AppLocalizations.of(context)!.invoiceWord,
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 12),
-        if (booking.paymentCompleted ||
-            booking.bookingStatusCode == 'VP' ||
+        if (booking.bookingStatusCode == 'C' || isWarranty) ...[
+          Text(
+            AppLocalizations.of(context)!.invoiceWord,
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 12),
+          if (booking.paymentCompleted ||
+              booking.bookingStatusCode == 'VP' ||
             (booking.bookingStatusCode == 'C' &&
                 !booking.paymentCompleted)) ...[
           if (booking.paymentCompleted && booking.orderId?.isNotEmpty == true)
@@ -1327,6 +1328,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           ),
         ),
         const SizedBox(height: 16),
+        ],
         if (completionData.fileUrls.isNotEmpty) ...[
           Text(
             AppLocalizations.of(context)!.uploadFilesTitle,
