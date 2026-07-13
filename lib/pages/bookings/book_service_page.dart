@@ -2067,18 +2067,11 @@ class _BookServicePageState extends State<BookServicePage> {
                 label:
                     AppLocalizations.of(context)?.technicianAssignment ??
                     'Technician',
-                value: (isAssignmentOnHour || _activeRebookTechnician != null)
-                    ? (selectedWorker.name ??
-                          (AppLocalizations.of(
-                                context,
-                              )?.youSelectedTechnician ??
-                              'You selected a technician'))
-                    : (AppLocalizations.of(context)?.autoAssignMessage ??
-                          'Your selected time is outside our working hours. We will assign an available technician before your service time and notify you once confirmed.'),
-                valueColor:
-                    (isAssignmentOnHour || _activeRebookTechnician != null)
-                    ? AppColors.primary
-                    : Colors.blue,
+                value:
+                    selectedWorker.name ??
+                    (AppLocalizations.of(context)?.youSelectedTechnician ??
+                        'You selected a technician'),
+                valueColor: AppColors.primary,
               ),
             ],
           ),
@@ -2545,7 +2538,7 @@ class _BookServicePageState extends State<BookServicePage> {
 
           if (docSnap.exists) {
             final requestData = docSnap.data() as Map<String, dynamic>;
-            
+
             // Remove fields specific to the booking request so they don't violate bookings collection schema/rules
             requestData.remove('status');
             requestData.remove('acceptedTechnicians');
