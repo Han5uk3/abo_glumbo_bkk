@@ -5331,6 +5331,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your payment proof has been submitted and is pending verification'**
   String get paymentProofSubmittedPendingVerification;
+
+  /// No description provided for @offHoursBookingAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Off-Hours Booking Alert'**
+  String get offHoursBookingAlert;
+
+  /// No description provided for @bookForLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Book for Later'**
+  String get bookForLater;
+
+  /// No description provided for @technicianCancelledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Technician Cancelled'**
+  String get technicianCancelledTitle;
+
+  /// No description provided for @technicianCancelledDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.'**
+  String get technicianCancelledDesc;
+
+  /// No description provided for @searchAvailableTechnicians.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Available Technicians'**
+  String get searchAvailableTechnicians;
+
+  /// No description provided for @proceedToAutoAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed to Auto-Assignment'**
+  String get proceedToAutoAssignment;
+
+  /// No description provided for @liveTechnicianBroadcast.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Technician Broadcast'**
+  String get liveTechnicianBroadcast;
+
+  /// No description provided for @autoAssignmentSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Assignment Schedule'**
+  String get autoAssignmentSchedule;
+
+  /// No description provided for @pleaseEnterProblemDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the problem description'**
+  String get pleaseEnterProblemDescription;
 }
 
 class _AppLocalizationsDelegate

@@ -2835,4 +2835,33 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get paymentProofSubmittedPendingVerification =>
       'Your payment proof has been submitted and is pending verification';
+
+  @override
+  String get offHoursBookingAlert => 'Off-Hours Booking Alert';
+
+  @override
+  String get bookForLater => 'Book for Later';
+
+  @override
+  String get technicianCancelledTitle => 'Technician Cancelled';
+
+  @override
+  String get technicianCancelledDesc =>
+      'The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.';
+
+  @override
+  String get searchAvailableTechnicians => 'Search Available Technicians';
+
+  @override
+  String get proceedToAutoAssignment => 'Proceed to Auto-Assignment';
+
+  @override
+  String get liveTechnicianBroadcast => 'Live Technician Broadcast';
+
+  @override
+  String get autoAssignmentSchedule => 'Auto-Assignment Schedule';
+
+  @override
+  String get pleaseEnterProblemDescription =>
+      'Please enter the problem description';
 }

@@ -2286,7 +2286,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get cannotBookDuringOffHours =>
-      'آف آورز کے دوران بک نہیں کر سکتے۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔';
+      'کام کے اوقات کے علاوہ بکنگ نہیں کی جا سکتی۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔';
 
   @override
   String get finalizingBookingInfo =>
@@ -2855,4 +2855,33 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get paymentProofSubmittedPendingVerification =>
       'آپ کے ادائیگی کا ثبوت جمع کر دیا گیا ہے اور تصدیق کے زیر التوا ہے';
+
+  @override
+  String get offHoursBookingAlert => 'آف آورز بکنگ الرٹ';
+
+  @override
+  String get bookForLater => 'بعد کے لیے بک کریں';
+
+  @override
+  String get technicianCancelledTitle => 'ٹیکنیشن نے معذرت کر لی';
+
+  @override
+  String get technicianCancelledDesc =>
+      'مطلوبہ ٹیکنیشن نے آپ کی دوبارہ شیڈولنگ کی درخواست سے معذرت کر لی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔';
+
+  @override
+  String get searchAvailableTechnicians => 'دستیاب ٹیکنیشنز تلاش کریں';
+
+  @override
+  String get proceedToAutoAssignment => 'خودکار تفویض کے لیے آگے بڑھیں';
+
+  @override
+  String get liveTechnicianBroadcast => 'دستیاب ٹیکنیشن کی تلاش';
+
+  @override
+  String get autoAssignmentSchedule => 'ٹیکنیشن کا خودکار تعین';
+
+  @override
+  String get pleaseEnterProblemDescription =>
+      'براہ کرم مسئلے کی تفصیل درج کریں';
 }

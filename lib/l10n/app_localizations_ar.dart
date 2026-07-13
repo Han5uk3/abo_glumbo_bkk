@@ -2231,7 +2231,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cannotBookDuringOffHours =>
-      'لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة أثناء ساعات العمل.';
+      'لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة مرة أخرى خلال ساعات العمل.';
 
   @override
   String get finalizingBookingInfo =>
@@ -2794,4 +2794,32 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get paymentProofSubmittedPendingVerification =>
       'تم تقديم إثبات الدفع الخاص بك وهو قيد التحقق';
+
+  @override
+  String get offHoursBookingAlert => 'تنبيه الحجز خارج ساعات العمل';
+
+  @override
+  String get bookForLater => 'احجز لوقت لاحق';
+
+  @override
+  String get technicianCancelledTitle => 'اعتذر الفني';
+
+  @override
+  String get technicianCancelledDesc =>
+      'لقد اعتذر الفني المطلوب عن طلب إعادة الجدولة الخاص بك. يرجى اختيار خيار آخر.';
+
+  @override
+  String get searchAvailableTechnicians => 'البحث عن فنيين متاحين';
+
+  @override
+  String get proceedToAutoAssignment => 'المتابعة للتعيين التلقائي';
+
+  @override
+  String get liveTechnicianBroadcast => 'البحث عن الفنيين المتاحين';
+
+  @override
+  String get autoAssignmentSchedule => 'تعيين تلقائي للفني';
+
+  @override
+  String get pleaseEnterProblemDescription => 'يرجى إدخال وصف المشكلة';
 }

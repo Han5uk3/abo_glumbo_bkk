@@ -881,43 +881,20 @@ class _BookServicePageState extends State<BookServicePage> {
   }
 
   String _getOffHoursTitle() {
-    final locale = AppLocalizations.of(context)?.localeName;
-    if (locale == 'ar') {
-      return "تنبيه الحجز خارج ساعات العمل";
-    } else if (locale == 'ur') {
-      return "آف آورز بکنگ الرٹ";
-    } else {
-      return "Off-Hours Booking Alert";
-    }
+    return AppLocalizations.of(context)?.offHoursBookingAlert ?? "Off-Hours Booking Alert";
   }
 
   String _getOffHoursMessage() {
     return AppLocalizations.of(context)?.cannotBookDuringOffHours ??
-        (AppLocalizations.of(context)?.localeName == 'ar'
-            ? "لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة مرة أخرى خلال ساعات العمل."
-            : AppLocalizations.of(context)?.localeName == 'ur'
-            ? "کام کے اوقات کے علاوہ بکنگ نہیں کی جا سکتی۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔"
-            : "Cannot book during off hours. Please try again during working hours.");
+        "Cannot book during off hours. Please try again during working hours.";
   }
 
   String _getBookForLaterText() {
-    final locale = AppLocalizations.of(context)?.localeName;
-    if (locale == 'ar') {
-      return "احجز لوقت لاحق";
-    } else if (locale == 'ur') {
-      return "بعد کے لیے بک کریں";
-    } else {
-      return "Book for Later";
-    }
+    return AppLocalizations.of(context)?.bookForLater ?? "Book for Later";
   }
 
   String _getCancelText() {
-    return AppLocalizations.of(context)?.cancel ??
-        (AppLocalizations.of(context)?.localeName == 'ar'
-            ? "إلغاء"
-            : AppLocalizations.of(context)?.localeName == 'ur'
-            ? "منسوخ کریں"
-            : "Cancel");
+    return AppLocalizations.of(context)?.cancel ?? "Cancel";
   }
 
   void _showOffHoursDialog() {
@@ -1764,11 +1741,7 @@ class _BookServicePageState extends State<BookServicePage> {
           ),
           const SizedBox(height: 16),
           Text(
-            locale == 'ar'
-                ? 'اعتذر الفني'
-                : locale == 'ur'
-                ? 'ٹیکنیشن نے معذرت کر لی'
-                : "Technician Cancelled",
+            AppLocalizations.of(context)?.technicianCancelledTitle ?? "Technician Cancelled",
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -1777,11 +1750,7 @@ class _BookServicePageState extends State<BookServicePage> {
           ),
           const SizedBox(height: 8),
           Text(
-            locale == 'ar'
-                ? 'لقد اعتذر الفني المطلوب عن طلب إعادة الجدولة الخاص بك. يرجى اختيار خيار آخر.'
-                : locale == 'ur'
-                ? 'مطلوبہ ٹیکنیشن نے آپ کی دوبارہ شیڈولنگ کی درخواست سے معذرت کر لی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔'
-                : "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.",
+            AppLocalizations.of(context)?.technicianCancelledDesc ?? "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
@@ -1828,6 +1797,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 setState(() {
                   _rebookFailedAcknowledged = true;
                   _activeRebookTechnician = null;
+                  currentStep = 3;
                 });
               }
             },
@@ -1843,16 +1813,8 @@ class _BookServicePageState extends State<BookServicePage> {
                 ? const Loader(color: Colors.white)
                 : Text(
                     shouldSearch
-                        ? (locale == 'ar'
-                              ? 'البحث عن فنيين متاحين'
-                              : locale == 'ur'
-                              ? 'دستیاب ٹیکنیشنز تلاش کریں'
-                              : "Search Available Technicians")
-                        : (locale == 'ar'
-                              ? 'المتابعة للتعيين التلقائي'
-                              : locale == 'ur'
-                              ? 'خودکار تفویض کے لیے آگے بڑھیں'
-                              : "Proceed to Auto-Assignment"),
+                        ? (AppLocalizations.of(context)?.searchAvailableTechnicians ?? "Search Available Technicians")
+                        : (AppLocalizations.of(context)?.proceedToAutoAssignment ?? "Proceed to Auto-Assignment"),
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -1904,16 +1866,8 @@ class _BookServicePageState extends State<BookServicePage> {
             const SizedBox(height: 24),
             Text(
               isToday
-                  ? (AppLocalizations.of(context)?.localeName == 'ar'
-                        ? 'البحث عن الفنيين المتاحين'
-                        : AppLocalizations.of(context)?.localeName == 'ur'
-                        ? 'دستیاب ٹیکنیشن کی تلاش'
-                        : 'Live Technician Broadcast')
-                  : (AppLocalizations.of(context)?.localeName == 'ar'
-                        ? 'تعيين تلقائي للفني'
-                        : AppLocalizations.of(context)?.localeName == 'ur'
-                        ? 'ٹیکنیشن کا خودکار تعین'
-                        : 'Auto-Assignment Schedule'),
+                  ? (AppLocalizations.of(context)?.liveTechnicianBroadcast ?? 'Live Technician Broadcast')
+                  : (AppLocalizations.of(context)?.autoAssignmentSchedule ?? 'Auto-Assignment Schedule'),
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
@@ -2343,11 +2297,7 @@ class _BookServicePageState extends State<BookServicePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            AppLocalizations.of(context)?.localeName == 'ar'
-                ? 'يرجى إدخال وصف المشكلة'
-                : AppLocalizations.of(context)?.localeName == 'ur'
-                ? 'براہ کرم مسئلے کی تفصیل درج کریں'
-                : 'Please enter the problem description',
+            AppLocalizations.of(context)?.pleaseEnterProblemDescription ?? 'Please enter the problem description',
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.red,
@@ -2447,29 +2397,7 @@ class _BookServicePageState extends State<BookServicePage> {
     }
 
     // Off-hour: proceed to review directly
-    return Row(
-      children: [
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () => setState(() => currentStep = 3),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              minimumSize: const Size(0, 54),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              AppLocalizations.of(context)?.continueText ?? 'Continue',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+    return const SizedBox.shrink();
   }
 
   Widget _buildReviewStepBottom(BuildContext context) {

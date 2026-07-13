@@ -730,7 +730,7 @@
   "currentTiming": "التوقيت الحالي:",
   "pleaseSelectATimeSlot": "يرجى اختيار الموعد المتاح",
   "cannotBookForPastTime": "لا يمكن حجز موعد في الماضي",
-  "cannotBookDuringOffHours": "لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة أثناء ساعات العمل.",
+  "cannotBookDuringOffHours": "لا يمكن الحجز خارج ساعات العمل. يرجى المحاولة مرة أخرى خلال ساعات العمل.",
   "finalizingBookingInfo": "يرجى الانتظار بينما نقوم بإنهاء إجراءات الحجز...",
   "technicianAssignmentNotification": "تم حجز الفني {name} بنجاح.",
   "@technicianAssignmentNotification": {
@@ -1069,5 +1069,14 @@
   "resolveIssue": "حل المشكلة",
   "whatWasDoneToResolve": "ما الذي تم فعله لحل المشكلة؟",
   "resolutionTextRequired": "نص الحل مطلوب",
-  "paymentProofSubmittedPendingVerification": "تم تقديم إثبات الدفع الخاص بك وهو قيد التحقق"
+  "paymentProofSubmittedPendingVerification": "تم تقديم إثبات الدفع الخاص بك وهو قيد التحقق",
+  "offHoursBookingAlert": "تنبيه الحجز خارج ساعات العمل",
+  "bookForLater": "احجز لوقت لاحق",
+  "technicianCancelledTitle": "اعتذر الفني",
+  "technicianCancelledDesc": "لقد اعتذر الفني المطلوب عن طلب إعادة الجدولة الخاص بك. يرجى اختيار خيار آخر.",
+  "searchAvailableTechnicians": "البحث عن فنيين متاحين",
+  "proceedToAutoAssignment": "المتابعة للتعيين التلقائي",
+  "liveTechnicianBroadcast": "البحث عن الفنيين المتاحين",
+  "autoAssignmentSchedule": "تعيين تلقائي للفني",
+  "pleaseEnterProblemDescription": "يرجى إدخال وصف المشكلة"
 }

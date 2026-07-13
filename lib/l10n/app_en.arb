@@ -1069,5 +1069,14 @@
   "resolveIssue": "Resolve Issue",
   "whatWasDoneToResolve": "What was done to resolve the issue?",
   "resolutionTextRequired": "Resolution text is required",
-  "paymentProofSubmittedPendingVerification": "Your payment proof has been submitted and is pending verification"
+  "paymentProofSubmittedPendingVerification": "Your payment proof has been submitted and is pending verification",
+  "offHoursBookingAlert": "Off-Hours Booking Alert",
+  "bookForLater": "Book for Later",
+  "technicianCancelledTitle": "Technician Cancelled",
+  "technicianCancelledDesc": "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.",
+  "searchAvailableTechnicians": "Search Available Technicians",
+  "proceedToAutoAssignment": "Proceed to Auto-Assignment",
+  "liveTechnicianBroadcast": "Live Technician Broadcast",
+  "autoAssignmentSchedule": "Auto-Assignment Schedule",
+  "pleaseEnterProblemDescription": "Please enter the problem description"
 }

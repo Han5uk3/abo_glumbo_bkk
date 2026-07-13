@@ -730,7 +730,7 @@
   "currentTiming": "موجودہ وقت:",
   "pleaseSelectATimeSlot": "براہ کرم وقت کا ایک سلاٹ منتخب کریں",
   "cannotBookForPastTime": "ماضی کے وقت کے لیے بکنگ نہیں کی جا سکتی",
-  "cannotBookDuringOffHours": "آف آورز کے دوران بک نہیں کر سکتے۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔",
+  "cannotBookDuringOffHours": "کام کے اوقات کے علاوہ بکنگ نہیں کی جا سکتی۔ براہ کرم کام کے اوقات میں دوبارہ کوشش کریں۔",
   "finalizingBookingInfo": "براہ کرم انتظار کریں جب تک ہم آپ کی بکنگ کو حتمی شکل دے رہے ہیں...",
   "technicianAssignmentNotification": "ٹیکنیشن {name} کامیابی کے ساتھ بک ہو گیا ہے۔",
   "@technicianAssignmentNotification": {
@@ -1069,5 +1069,14 @@
   "resolveIssue": "مسئلہ حل کریں",
   "whatWasDoneToResolve": "مسئلے کو حل کرنے کے لیے کیا کیا گیا؟",
   "resolutionTextRequired": "حل کی تفصیل درکار ہے",
-  "paymentProofSubmittedPendingVerification": "آپ کے ادائیگی کا ثبوت جمع کر دیا گیا ہے اور تصدیق کے زیر التوا ہے"
+  "paymentProofSubmittedPendingVerification": "آپ کے ادائیگی کا ثبوت جمع کر دیا گیا ہے اور تصدیق کے زیر التوا ہے",
+  "offHoursBookingAlert": "آف آورز بکنگ الرٹ",
+  "bookForLater": "بعد کے لیے بک کریں",
+  "technicianCancelledTitle": "ٹیکنیشن نے معذرت کر لی",
+  "technicianCancelledDesc": "مطلوبہ ٹیکنیشن نے آپ کی دوبارہ شیڈولنگ کی درخواست سے معذرت کر لی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔",
+  "searchAvailableTechnicians": "دستیاب ٹیکنیشنز تلاش کریں",
+  "proceedToAutoAssignment": "خودکار تفویض کے لیے آگے بڑھیں",
+  "liveTechnicianBroadcast": "دستیاب ٹیکنیشن کی تلاش",
+  "autoAssignmentSchedule": "ٹیکنیشن کا خودکار تعین",
+  "pleaseEnterProblemDescription": "براہ کرم مسئلے کی تفصیل درج کریں"
 }
