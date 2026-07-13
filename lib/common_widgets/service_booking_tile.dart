@@ -1239,7 +1239,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
 
     try {
       final updateData = <String, dynamic>{
-        'warranty.warrantyStatusCode': 'S',
+        'warranty.warrantyStatusCode': 'R',
         'warranty.availability': false,
         'warranty.acceptedAt': Timestamp.now(),
         'warranty.updatedAt': Timestamp.now(),

@@ -377,38 +377,51 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          CachedNetworkImage(
-                            imageUrl: activeAgent.profileUrl ?? "",
-                            imageBuilder: (context, imageProvider) =>
-                                CircleAvatar(
+                          (activeAgent.profileUrl != null && activeAgent.profileUrl!.isNotEmpty)
+                              ? CachedNetworkImage(
+                                  imageUrl: activeAgent.profileUrl!,
+                                  imageBuilder: (context, imageProvider) =>
+                                      CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage: imageProvider,
+                                      ),
+                                  placeholder: (context, url) => CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: AppColors.blue1.withOpacity(0.1),
+                                    child: Text(
+                                      _getInitials(activeAgent.name ?? ""),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) => CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: AppColors.blue1.withOpacity(0.1),
+                                    child: Text(
+                                      _getInitials(activeAgent.name ?? ""),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : CircleAvatar(
                                   radius: 20,
-                                  backgroundImage: imageProvider,
+                                  backgroundColor: AppColors.blue1.withOpacity(0.1),
+                                  child: Text(
+                                    _getInitials(activeAgent.name ?? ""),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
                                 ),
-                            placeholder: (context, url) => CircleAvatar(
-                              radius: 20,
-                              backgroundColor: AppColors.blue1.withOpacity(0.1),
-                              child: Text(
-                                _getInitials(activeAgent.name ?? ""),
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => CircleAvatar(
-                              radius: 20,
-                              backgroundColor: AppColors.blue1.withOpacity(0.1),
-                              child: Text(
-                                _getInitials(activeAgent.name ?? ""),
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ),
-                          ),
                           const SizedBox(width: 8),
                           Text(
                             activeAgent.name ?? "",
