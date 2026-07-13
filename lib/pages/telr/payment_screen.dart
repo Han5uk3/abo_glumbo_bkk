@@ -123,10 +123,10 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         : inspectionFee;
 
     double totalServiceCost = widget.booking?.completionData?.totalCost ?? 0.0;
-    double finalAmount = widget.booking?.completionData != null
-        ? (totalServiceCost + discountedInspectionFee)
-        : widget.isFromBooking
-        ? discountedInspectionFee
+    double finalAmount = widget.isFromBooking
+        ? (widget.booking?.completionData != null
+            ? (totalServiceCost + discountedInspectionFee)
+            : discountedInspectionFee)
         : widget.review?.tipAmount ?? 0.0;
 
     orderId = generateOrderId(widget.customerData.uid ?? '', finalAmount);

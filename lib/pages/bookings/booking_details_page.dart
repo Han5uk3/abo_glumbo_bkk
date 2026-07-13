@@ -584,8 +584,11 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           );
         }
 
+        final bool hasTip = booking.review?.isTipPaid == true && booking.review?.tipAmount != null && booking.review!.tipAmount! > 0;
+        final bool hasActualReview = booking.review != null && (booking.review!.rating != null || booking.review!.review.isNotEmpty);
+
         // Tab 4: REVIEW (Conditional)
-        if (booking.review != null) {
+        if (hasActualReview || hasTip) {
           tabs.add(Tab(text: localization.review));
           tabViews.add(
             SingleChildScrollView(
@@ -593,130 +596,212 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: double.maxFinite,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey.shade100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.blue1.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.grey.shade100),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.04),
-                                    blurRadius: 16,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              padding: const EdgeInsets.all(8),
-                              child: Icon(
-                                Icons.star_outline,
-                                size: 16,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              AppLocalizations.of(context)!.review,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Divider(color: Colors.grey.shade300, thickness: 1),
-
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        booking.review!.rating!.toStringAsFixed(
-                                          1,
-                                        ),
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      SizedBox(width: 8),
-                                      Row(
-                                        children: List.generate(5, (index) {
-                                          final rating =
-                                              (booking.review!.rating ?? 0.0)
-                                                  .toDouble();
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                              right: 2,
-                                            ),
-                                            child: Icon(
-                                              index < rating.floor()
-                                                  ? Icons.star
-                                                  : index < rating
-                                                  ? Icons.star_half
-                                                  : Icons.star_border,
-                                              color: const Color(0xFFFBBF24),
-                                              size: 16,
-                                            ),
-                                          );
-                                        }),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        _formatTimeAgo(
-                                          booking.review!.createdAt!.toDate(),
-                                        ),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(
-                                    color: Colors.grey.shade300,
-                                    thickness: 1,
-                                  ),
-                                  Text(
-                                    booking.review!.review,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey.shade700,
+                  if (hasActualReview)
+                    Container(
+                      width: double.maxFinite,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey.shade100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: AppColors.blue1.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.grey.shade100),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.04),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 4),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                                padding: const EdgeInsets.all(8),
+                                child: Icon(
+                                  Icons.star_outline,
+                                  size: 16,
+                                  color: AppColors.primary,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              SizedBox(width: 8),
+                              Text(
+                                AppLocalizations.of(context)!.review,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Divider(color: Colors.grey.shade300, thickness: 1),
+
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (booking.review!.rating != null) // Avoid null error if rating is null
+                                    Row(
+                                      children: [
+                                        Text(
+                                          booking.review!.rating!.toStringAsFixed(
+                                            1,
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Row(
+                                          children: List.generate(5, (index) {
+                                            final rating =
+                                                (booking.review!.rating ?? 0.0)
+                                                    .toDouble();
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 2,
+                                              ),
+                                              child: Icon(
+                                                index < rating.floor()
+                                                    ? Icons.star
+                                                    : index < rating
+                                                    ? Icons.star_half
+                                                    : Icons.star_border,
+                                                color: const Color(0xFFFBBF24),
+                                                size: 16,
+                                              ),
+                                            );
+                                          }),
+                                        ),
+                                        Spacer(),
+                                        if (booking.review!.createdAt != null)
+                                        Text(
+                                          _formatTimeAgo(
+                                            booking.review!.createdAt!.toDate(),
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    if (booking.review!.rating != null)
+                                      Divider(
+                                        color: Colors.grey.shade300,
+                                        thickness: 1,
+                                      ),
+                                    Text(
+                                      booking.review!.review,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  if (hasActualReview && hasTip)
+                    const SizedBox(height: 16),
+                  if (hasTip)
+                    Container(
+                      width: double.maxFinite,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey.shade100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: AppColors.green.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.grey.shade100),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.04),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                padding: const EdgeInsets.all(8),
+                                child: Icon(
+                                  Icons.volunteer_activism_outlined,
+                                  size: 16,
+                                  color: AppColors.green,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                AppLocalizations.of(context)!.tipAmount,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Divider(color: Colors.grey.shade300, thickness: 1),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.tip,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                '${booking.review!.tipAmount!.toStringAsFixed(2)} ${AppLocalizations.of(context)!.sar}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.green,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),
