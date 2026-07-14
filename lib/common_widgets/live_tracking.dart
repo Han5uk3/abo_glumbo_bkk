@@ -123,7 +123,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
   Future<void> _setCustomMarkerIcons() async {
     try {
-      _scooterIcon = await _getResizedMarker('assets/images/scooter.png', 200);
+      _scooterIcon = await _getResizedMarker('assets/images/vann.png', 200);
       _customerIcon = BitmapDescriptor.defaultMarkerWithHue(
         BitmapDescriptor.hueGreen,
       );
