@@ -159,18 +159,22 @@ class ChatService {
         });
         debugPrint('[log] ✅ Current user chat entry created');
 
-        // Create userChats for other user
-        await _rtdb.child('userChats/$otherUserId/$chatId').set({
-          'participantId': currentUserId,
-          'participantName': currentUserName,
-          'participantPhoto': currentUserPhoto,
-          'participantType': currentUserType,
-          'bookingId': bookingId,
-          'lastMessage': '',
-          'lastMessageTime': ServerValue.timestamp,
-          'unreadCount': 0,
-        });
-        debugPrint('[log] ✅ Other user chat entry created');
+        // Create userChats for other user (Best effort, might fail due to permissions)
+        try {
+          await _rtdb.child('userChats/$otherUserId/$chatId').set({
+            'participantId': currentUserId,
+            'participantName': currentUserName,
+            'participantPhoto': currentUserPhoto,
+            'participantType': currentUserType,
+            'bookingId': bookingId,
+            'lastMessage': '',
+            'lastMessageTime': ServerValue.timestamp,
+            'unreadCount': 0,
+          });
+          debugPrint('[log] ✅ Other user chat entry created');
+        } catch (e) {
+          debugPrint('[log] ⚠️ Could not create other user chat entry (likely permission denied): $e');
+        }
 
         // Update booking with chatRoomId
         await _firestore.collection('bookings').doc(bookingId).update({
@@ -270,7 +274,17 @@ class ChatService {
             });
             debugPrint('[log] ✅ Other user chat entry recreated');
           } else {
-            rethrow;
+            debugPrint('[log] ⚠️ Error checking other user chat entry (likely permission denied): $e');
+            // Try best-effort update if read was denied but write might be allowed
+            try {
+              await _rtdb.child('userChats/$otherUserId/$chatId').update({
+                'participantId': currentUserId,
+                'participantName': currentUserName,
+                'participantPhoto': currentUserPhoto,
+                'participantType': currentUserType,
+                'bookingId': bookingId,
+              });
+            } catch (_) {}
           }
         }
       }
