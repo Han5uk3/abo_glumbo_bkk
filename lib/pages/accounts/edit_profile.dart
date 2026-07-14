@@ -80,7 +80,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }
       nameController.text = widget.customer!.name ?? '';
       emailController.text = widget.customer!.email ?? '';
-      phoneController.text = widget.customer!.phone ?? '';
+      String phoneNum = widget.customer!.phone ?? '';
+      if (phoneNum.startsWith('+966')) {
+        phoneController.text = '0${phoneNum.substring(4)}';
+      } else {
+        phoneController.text = phoneNum;
+      }
     } catch (e) {
       _showSnackBar(
         AppLocalizations.of(context)?.errorFillingProfile ??

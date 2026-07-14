@@ -51,7 +51,16 @@ class _LoginPageState extends State<LoginPage> {
     isUserLogout = LocalStoreHelper.getLogoutStatus();
     _isRememberMeChecked = LocalStoreHelper.getRememberMe();
     if (_isRememberMeChecked) {
-      _phoneController.text = LocalStoreHelper.getPhoneNumber() ?? '';
+      String savedPhone = LocalStoreHelper.getPhoneNumber() ?? '';
+      if (savedPhone.startsWith('+966')) {
+        savedPhone = savedPhone.substring(4);
+      } else if (savedPhone.startsWith('966')) {
+        savedPhone = savedPhone.substring(3);
+      }
+      if (savedPhone.startsWith('0')) {
+        savedPhone = savedPhone.substring(1);
+      }
+      _phoneController.text = savedPhone;
     } else {
       _phoneController.clear();
     }
