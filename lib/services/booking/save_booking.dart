@@ -448,13 +448,16 @@ class BookingUtils {
         timeSlot["time"].minute,
       );
 
+      final bookingId = AppFirestore.bookingRequestsCollectionRef.doc().id;
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      
       String? selectedImageDownloadUrl;
       String? selectedVideoDownloadUrl;
 
       try {
         if (selectedImage != null) {
           String fileName =
-              'users/${customerData.uid}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+              'issueMedia/${bookingId}_image_$timestamp.jpg';
           final storageRef = FirebaseStorage.instance.ref().child(fileName);
           final uploadTask = storageRef.putFile(selectedImage);
           final snapshot = await uploadTask;
@@ -462,7 +465,7 @@ class BookingUtils {
         }
         if (selectedVideo != null) {
           String fileName =
-              'users/${customerData.uid}/${DateTime.now().millisecondsSinceEpoch}.mp4';
+              'issueMedia/${bookingId}_video_$timestamp.mp4';
           final storageRef = FirebaseStorage.instance.ref().child(fileName);
           final uploadTask = storageRef.putFile(
             selectedVideo,
@@ -474,8 +477,6 @@ class BookingUtils {
       } catch (e) {
         debugPrint("Error uploading files: $e");
       }
-
-      final bookingId = AppFirestore.bookingRequestsCollectionRef.doc().id;
 
       final updatedCustomerData = CustomerModel(
         role: "customer",

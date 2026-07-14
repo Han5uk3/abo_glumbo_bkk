@@ -647,74 +647,18 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     required LatLng customerLatLng,
     required LatLng agentLatLng,
   }) async {
-    log("[LOG] _moveCameraToBounds() called");
+    log("[LOG] _moveCameraToBounds() called - centering on agent");
 
     if (_mapController == null) return;
 
-    final distanceBetween = _calculateStraightDistanceKm(
-      customerLatLng,
-      agentLatLng,
-    );
-
-    log(
-      '[LOG] Distance between delivery address and agent: ${distanceBetween.toStringAsFixed(2)} km',
-    );
-    log(
-      '[LOG] Delivery Address: ${customerLatLng.latitude}, ${customerLatLng.longitude}',
-    );
-    log('[LOG] Agent: ${agentLatLng.latitude}, ${agentLatLng.longitude}');
-
     try {
-      if (distanceBetween > 50.0) {
-        final swLat = math.min(customerLatLng.latitude, agentLatLng.latitude);
-        final swLng = math.min(customerLatLng.longitude, agentLatLng.longitude);
-        final neLat = math.max(customerLatLng.latitude, agentLatLng.latitude);
-        final neLng = math.max(customerLatLng.longitude, agentLatLng.longitude);
+      final double currentZoom = await _mapController!.getZoomLevel();
 
-        final latPadding = (neLat - swLat) * 0.1;
-        final lngPadding = (neLng - swLng) * 0.1;
-
-        final bounds = LatLngBounds(
-          southwest: LatLng(swLat - latPadding, swLng - lngPadding),
-          northeast: LatLng(neLat + latPadding, neLng + lngPadding),
-        );
-
-        log('[LOG] Using bounds approach for long distance');
-
-        await _mapController!.animateCamera(
-          CameraUpdate.newLatLngBounds(bounds, 50),
-        );
-      } else {
-        final centerLat = (customerLatLng.latitude + agentLatLng.latitude) / 2;
-        final centerLng =
-            (customerLatLng.longitude + agentLatLng.longitude) / 2;
-        final center = LatLng(centerLat, centerLng);
-
-        double zoom;
-        if (distanceBetween < 0.5) {
-          zoom = 17.0;
-        } else if (distanceBetween < 1.0) {
-          zoom = 16.0;
-        } else if (distanceBetween < 3.0) {
-          zoom = 15.0;
-        } else if (distanceBetween < 8.0) {
-          zoom = 13.0;
-        } else if (distanceBetween < 15.0) {
-          zoom = 12.0;
-        } else if (distanceBetween < 25.0) {
-          zoom = 11.0;
-        } else {
-          zoom = 10.0;
-        }
-
-        log('[LOG] Using center approach with zoom: $zoom');
-
-        await _mapController!.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(target: center, zoom: zoom),
-          ),
-        );
-      }
+      await _mapController!.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: agentLatLng, zoom: currentZoom),
+        ),
+      );
     } catch (e) {
       log('[LOG] Failed to animate camera: $e');
     }

@@ -459,7 +459,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
               Text(
-                "${remainingSelectionTime}${AppLocalizations.of(context)!.sText}",
+                "$remainingSelectionTime${AppLocalizations.of(context)!.sText}",
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -870,7 +870,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "${_secondsRemaining}${AppLocalizations.of(context)!.seconds}",
+                "$_secondsRemaining${AppLocalizations.of(context)!.seconds}",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

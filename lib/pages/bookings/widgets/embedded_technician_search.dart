@@ -7,7 +7,6 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class EmbeddedTechnicianSearch extends StatefulWidget {
@@ -333,7 +332,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
               Text(
-                "${remainingSelectionTime}${AppLocalizations.of(context)!.sText}",
+                "$remainingSelectionTime${AppLocalizations.of(context)!.sText}",
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -387,7 +386,6 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
   }
 
   Widget _buildPulsingSearchSection(Color primaryColor) {
-    final String locale = AppLocalizations.of(context)?.localeName ?? 'en';
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       padding: const EdgeInsets.all(16),
@@ -469,7 +467,7 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
               Text(
-                "${_secondsRemaining}${AppLocalizations.of(context)!.sText}",
+                "$_secondsRemaining${AppLocalizations.of(context)!.sText}",
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -486,7 +484,6 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
   }
 
   Widget _buildExpiredSection() {
-    final String locale = AppLocalizations.of(context)?.localeName ?? 'en';
     return Container(
       margin: const EdgeInsets.all(24),
       padding: const EdgeInsets.all(20),
@@ -721,7 +718,6 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
   }
 
   Widget _buildTechniciansListSection() {
-    final String locale = AppLocalizations.of(context)?.localeName ?? 'en';
     if (_acceptedTechnicians.isEmpty) {
       if (_secondsRemaining > 0) {
         return Center(
@@ -796,7 +792,6 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
   }
 
   Widget _buildTechnicianCard(Map<String, dynamic> tech) {
-    final String locale = AppLocalizations.of(context)?.localeName ?? 'en';
     final profileUrl = tech['profileUrl'] as String?;
     final rating = (tech['rating'] as num?)?.toDouble() ?? 5.0;
     final completedJobs = (tech['completedJobs'] as num?)?.toInt() ?? 0;

@@ -1,7 +1,4 @@
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-
-import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 
 /// Utility class for using the local DM Sans font
 /// This replaces the usage of TextStyle to avoid network issues
@@ -29,9 +26,6 @@ class DMSansFont {
     TextDecorationStyle? decorationStyle,
     double? decorationThickness,
   }) {
-    final String language = LocalStoreHelper.getUserlanguage();
-    final String? fontFamily = language == 'ar' ? TextStyle().fontFamily : _defaultFontFamily;
-
     return TextStyle(
       color: color,
       fontSize: fontSize,

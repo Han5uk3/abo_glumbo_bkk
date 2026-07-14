@@ -433,7 +433,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                           const Spacer(),
                           if (booking.bookingStatusCode == 'A' ||
                               (isActiveWarranty &&
-                                  booking.warranty?.warrantyStatusCode == 'S'))
+                                  (booking.warranty?.warrantyStatusCode == 'S' ||
+                                      booking.warranty?.warrantyStatusCode == 'R')))
                             GestureDetector(
                               onTap: () =>
                                   _openOrCreateChat(context, activeAgent),
@@ -453,8 +454,8 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                           if (activeAgent.phone != null &&
                               (booking.bookingStatusCode == 'A' ||
                                   (isActiveWarranty &&
-                                      booking.warranty?.warrantyStatusCode ==
-                                          'S')))
+                                      (booking.warranty?.warrantyStatusCode == 'S' ||
+                                          booking.warranty?.warrantyStatusCode == 'R'))))
                             Padding(
                               padding: const EdgeInsets.only(left: 8),
                               child: GestureDetector(
@@ -597,7 +598,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
           );
         }
 
-        final bool hasTip = booking.review?.isTipPaid == true && booking.review?.tipAmount != null && booking.review!.tipAmount! > 0;
+        final bool hasTip = booking.review?.tipAmount != null && booking.review!.tipAmount! > 0;
         final bool hasActualReview = booking.review != null && (booking.review!.rating != null || booking.review!.review.isNotEmpty);
 
         // Tab 4: REVIEW (Conditional)
@@ -1195,7 +1196,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               AppLocalizations.of(context)?.localeName ?? '',
             ),
           ),
-        if (booking.warranty!.warrantyStatusCode == 'S' &&
+        if ((booking.warranty!.warrantyStatusCode == 'S' || booking.warranty!.warrantyStatusCode == 'R') &&
             booking.warranty!.acceptedAt != null) ...[
           _buildInfoRow(
             AppLocalizations.of(context)!.acceptedOn,
@@ -1980,7 +1981,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
               if (showChatOnHeader &&
                   ((hasChat && booking.bookingStatusCode == 'A') ||
                       (hasChat &&
-                          booking.warranty?.warrantyStatusCode == 'S' &&
+                          (booking.warranty?.warrantyStatusCode == 'S' || booking.warranty?.warrantyStatusCode == 'R') &&
                           isWarranty))) ...[
                 const Spacer(),
                 StreamBuilder<int>(
@@ -2035,7 +2036,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                   activeAgent?.phone != null &&
                   ((hasChat && booking.bookingStatusCode == 'A') ||
                       (hasChat &&
-                          booking.warranty?.warrantyStatusCode == 'S' &&
+                          (booking.warranty?.warrantyStatusCode == 'S' || booking.warranty?.warrantyStatusCode == 'R') &&
                           isWarranty))) ...[
                 const SizedBox(width: 8),
                 GestureDetector(

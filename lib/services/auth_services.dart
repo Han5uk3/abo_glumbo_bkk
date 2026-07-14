@@ -15,7 +15,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -91,7 +90,9 @@ class AuthServices {
 
     try {
       if (Platform.isIOS) {
-        debugPrint('🍎 [CUSTOMER AUTH] Explicitly setting appVerificationDisabledForTesting to false to clear cache');
+        debugPrint(
+          '🍎 [CUSTOMER AUTH] Explicitly setting appVerificationDisabledForTesting to false to clear cache',
+        );
         await FirebaseAuth.instance.setSettings(
           appVerificationDisabledForTesting: false,
           userAccessGroup: null,

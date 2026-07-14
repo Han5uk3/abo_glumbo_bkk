@@ -220,7 +220,8 @@ class InvoiceService {
                       if (booking.agent?.phone != null)
                         pw.Text(reshape(loc.techPhoneLabel(booking.agent!.phone!))),
                       pw.Text(reshape(loc.completedAtLabel(completedAtStr))),
-                      pw.Text(reshape(loc.warrantyLabel(warrantyDuration))),
+                      if (data.mode == 1)
+                        pw.Text(reshape(loc.warrantyLabel(warrantyDuration))),
                       pw.Text(
                         reshape(loc.paymentModeLabel(
                           (booking.paymentModeCode.toUpperCase() == 'C' ||

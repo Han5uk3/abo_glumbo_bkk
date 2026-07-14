@@ -10,7 +10,6 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class TrackingData extends StatelessWidget {
   final String? timeTakenToArrive;
@@ -389,7 +388,10 @@ class TrackingData extends StatelessWidget {
                 const SizedBox(width: 8),
                 InkWell(
                   onTap: () {
-                    final cleanPhone = worker!.phone!.replaceAll(RegExp(r'[^\d+]'), '');
+                    final cleanPhone = worker!.phone!.replaceAll(
+                      RegExp(r'[^\d+]'),
+                      '',
+                    );
                     launchUrl(
                       Uri.parse('tel:$cleanPhone'),
                       mode: LaunchMode.externalApplication,

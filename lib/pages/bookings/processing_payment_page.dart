@@ -68,16 +68,24 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
 
   Future<bool> saveTransaction({String? bookingId}) async {
     final inspectionFee = widget.booking?.completionData?.inspectionFee ?? 0.0;
-    final discountedInspectionFee = widget.service?.getDiscountedPrice(inspectionFee) ?? widget.booking?.service.getDiscountedPrice(inspectionFee) ?? inspectionFee;
+    final discountedInspectionFee =
+        widget.service?.getDiscountedPrice(inspectionFee) ??
+        widget.booking?.service.getDiscountedPrice(inspectionFee) ??
+        inspectionFee;
     final serviceCost = widget.booking?.completionData?.totalCost ?? 0.0;
-    final amount =
-        widget.booking?.completionData != null
-            ? (serviceCost + discountedInspectionFee)
-            : (widget.service?.getDiscountedPrice(widget.service?.price ?? 0.0)?.toDouble() ?? 0.00);
+    final amount = widget.booking?.completionData != null
+        ? (serviceCost + discountedInspectionFee)
+        : (widget.service
+                  ?.getDiscountedPrice(widget.service?.price ?? 0.0)
+                  .toDouble() ??
+              0.00);
 
     String? invoiceId;
-    if (widget.isFromBooking && widget.booking != null && widget.customerData.uid != null) {
-      invoiceId = '${widget.booking!.newBookingId ?? widget.booking!.id}_${widget.customerData.uid}';
+    if (widget.isFromBooking &&
+        widget.booking != null &&
+        widget.customerData.uid != null) {
+      invoiceId =
+          '${widget.booking!.newBookingId ?? widget.booking!.id}_${widget.customerData.uid}';
     }
 
     TransactionModel transaction = TransactionModel(
@@ -93,15 +101,14 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
       invoiceId: invoiceId,
     );
     bool saved = await BookingUtils.saveTransaction(transaction: transaction);
-    
+
     // Only generate invoice if it's from a booking payment (not a standalone tip)
     if (saved && invoiceId != null && widget.booking != null) {
       await InvoiceService.generateAndUploadInvoice(context, widget.booking!);
     }
-    
+
     return saved;
   }
-
 
   Future<bool> saveBooking() async {
     return await BookingUtils.updateBookingStatus(
@@ -161,10 +168,11 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
       // Inspection fees (mode 0) are NOT included in payout tracking
       if (widget.booking?.completionData?.mode == 1) {
         try {
-          final inspectionFee = widget.booking?.completionData?.inspectionFee ?? 0.0;
+          final inspectionFee =
+              widget.booking?.completionData?.inspectionFee ?? 0.0;
           final serviceCost = widget.booking?.completionData?.totalCost ?? 0.0;
           final amount = serviceCost + inspectionFee;
-          
+
           await UnifiedPayoutServices.recordInAppServicePayment(
             workerId: widget.booking?.agent?.uid ?? '',
             amount: amount,
@@ -194,10 +202,19 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
           amount: widget.isFromBooking
               ? (widget.booking?.completionData != null
                     ? ((widget.booking!.completionData?.totalCost ?? 0.0) +
-                        (widget.service?.getDiscountedPrice(widget.booking!.completionData?.inspectionFee ?? 0.0) ?? widget.booking!.service.getDiscountedPrice(widget.booking!.completionData?.inspectionFee ?? 0.0) ?? widget.booking!.completionData?.inspectionFee ?? 0.0))
+                          (widget.service?.getDiscountedPrice(
+                                widget.booking!.completionData?.inspectionFee ??
+                                    0.0,
+                              ) ??
+                              widget.booking!.service.getDiscountedPrice(
+                                widget.booking!.completionData?.inspectionFee ??
+                                    0.0,
+                              ) ??
+                              widget.booking!.completionData?.inspectionFee ??
+                              0.0))
                     : (widget.service
-                               ?.getDiscountedPrice(widget.service?.price ?? 0.0)
-                               ?.toDouble() ??
+                              ?.getDiscountedPrice(widget.service?.price ?? 0.0)
+                              .toDouble() ??
                           0.00))
               : widget.review?.tipAmount ?? 0.00,
           orderId: widget.orderId,

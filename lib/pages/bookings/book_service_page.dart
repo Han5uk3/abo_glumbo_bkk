@@ -15,6 +15,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/bloc/address_bloc.dart';
 import 'package:abo_glumbo_bbk/services/address_services.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -211,7 +212,8 @@ class _BookServicePageState extends State<BookServicePage> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  AppLocalizations.of(context)?.bookingRequestTimedOut ?? "The booking request timed out. Please request again.",
+                  AppLocalizations.of(context)?.bookingRequestTimedOut ??
+                      "The booking request timed out. Please request again.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -2610,6 +2612,34 @@ class _BookServicePageState extends State<BookServicePage> {
             requestData.remove('status');
             requestData.remove('acceptedTechnicians');
             requestData.remove('rejectedTechnicians');
+
+            try {
+              if (_selectedImage != null) {
+                String fileName =
+                    'users/${customerData!.uid}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+                final storageRef = FirebaseStorage.instance.ref().child(
+                  fileName,
+                );
+                final uploadTask = storageRef.putFile(_selectedImage!);
+                final snapshot = await uploadTask;
+                requestData['issueImage'] = await snapshot.ref.getDownloadURL();
+              }
+              if (_selectedVideo != null) {
+                String fileName =
+                    'users/${customerData!.uid}/${DateTime.now().millisecondsSinceEpoch}.mp4';
+                final storageRef = FirebaseStorage.instance.ref().child(
+                  fileName,
+                );
+                final uploadTask = storageRef.putFile(
+                  _selectedVideo!,
+                  SettableMetadata(contentType: 'video/mp4'),
+                );
+                final snapshot = await uploadTask;
+                requestData['issueVideo'] = await snapshot.ref.getDownloadURL();
+              }
+            } catch (e) {
+              debugPrint("Error uploading permanent media for booking: $e");
+            }
 
             final bookingJson = {
               ...requestData,

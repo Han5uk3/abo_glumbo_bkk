@@ -177,16 +177,20 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
     String? issueImageUrl;
     String? issueVideoUrl;
 
+    // 4. Create Job Request ID
+    final requestId = AppFirestore.jobRequestsCollectionRef.doc().id;
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+
     try {
       if (widget.issueImageFile != null) {
-        String fileName = 'users/${customerData?.uid}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+        String fileName = 'issueMedia/${requestId}_image_$timestamp.jpg';
         final storageRef = FirebaseStorage.instance.ref().child(fileName);
         final uploadTask = storageRef.putFile(widget.issueImageFile!);
         final snapshot = await uploadTask;
         issueImageUrl = await snapshot.ref.getDownloadURL();
       }
       if (widget.issueVideoFile != null) {
-        String fileName = 'users/${customerData?.uid}/${DateTime.now().millisecondsSinceEpoch}.mp4';
+        String fileName = 'issueMedia/${requestId}_video_$timestamp.mp4';
         final storageRef = FirebaseStorage.instance.ref().child(fileName);
         final uploadTask = storageRef.putFile(
           widget.issueVideoFile!,
@@ -198,9 +202,6 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
     } catch (e) {
       debugPrint("Error uploading files in WorkerList: $e");
     }
-
-    // 4. Create Job Request
-    final requestId = AppFirestore.jobRequestsCollectionRef.doc().id;
     final now = Timestamp.now();
     final expiresAt = Timestamp.fromDate(TimeService.now.add(const Duration(seconds: 120)));
 
