@@ -65,6 +65,19 @@ class InvoiceService {
       return ArabicReshaper.instance.reshape(text);
     }
 
+    pw.Widget buildDirectionalText(String text, {pw.TextStyle? style}) {
+      if (text.isEmpty) return pw.Text(text, style: style);
+      final reshaped = reshape(text);
+      final hasArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+      if (hasArabic && !isArabic) {
+        return pw.Directionality(
+          textDirection: pw.TextDirection.rtl,
+          child: pw.Text(reshaped, style: style),
+        );
+      }
+      return pw.Text(reshaped, style: style);
+    }
+
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -169,32 +182,32 @@ class InvoiceService {
                         reshape(loc.billTo),
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                       ),
-                      pw.Text(
-                        reshape(booking.customer.name ??
+                      buildDirectionalText(
+                        booking.customer.name ??
                             ((loc.localeName == 'ar')
                                 ? 'عميلنا العزيز'
                                 : (loc.localeName == 'ur')
                                 ? 'معزز صارف'
-                                : 'Valued Customer')),
+                                : 'Valued Customer'),
                       ),
                       pw.Text(reshape(booking.customer.phone ?? "")),
                       pw.Text(reshape(booking.customer.email ?? "")),
-                      pw.Text(
-                        reshape("${address.buildingNumber}${address.streetName != null ? ', ${address.streetName}' : ''}"),
+                      buildDirectionalText(
+                        "${address.buildingNumber}${address.streetName != null ? ', ${address.streetName}' : ''}",
                       ),
                       if (address.fullName.isNotEmpty &&
                           address.fullName != booking.customer.name)
-                        pw.Text(reshape(address.fullName)),
+                        buildDirectionalText(address.fullName),
                       if (booking.customer.districtName != null ||
                           booking.customer.cityName != null)
-                        pw.Text(
-                          reshape("${booking.customer.districtName ?? ''}${booking.customer.districtName != null && booking.customer.cityName != null ? ', ' : ''}${booking.customer.cityName ?? ''}"),
+                        buildDirectionalText(
+                          "${booking.customer.districtName ?? ''}${booking.customer.districtName != null && booking.customer.cityName != null ? ', ' : ''}${booking.customer.cityName ?? ''}",
                         ),
                       if (booking.serviceLocation != null)
-                        pw.Text(
-                          reshape(booking.serviceLocation!.localizedName(
+                        buildDirectionalText(
+                          booking.serviceLocation!.localizedName(
                             loc.localeName,
-                          )),
+                          ),
                         ),
                     ],
                   ),
@@ -216,7 +229,7 @@ class InvoiceService {
                         )),
                       ),
                       if (booking.agent?.name != null)
-                        pw.Text(reshape(loc.technicianLabel(booking.agent!.name!))),
+                        buildDirectionalText(loc.technicianLabel(booking.agent!.name!)),
                       if (booking.agent?.phone != null)
                         pw.Text(reshape(loc.techPhoneLabel(booking.agent!.phone!))),
                       pw.Text(reshape(loc.completedAtLabel(completedAtStr))),
@@ -399,19 +412,7 @@ class InvoiceService {
     material_widgets.BuildContext context,
     BookingModel booking,
   ) async {
-    // If we already have the URL cached, download the bytes.
-    if (booking.invoicePdfUrl != null && booking.invoicePdfUrl!.isNotEmpty) {
-      try {
-        final response = await http.get(Uri.parse(booking.invoicePdfUrl!));
-        if (response.statusCode == 200) {
-          return response.bodyBytes;
-        }
-      } catch (e) {
-        debugPrint('Error downloading existing invoice: $e');
-      }
-    }
-
-    // Fallback: generate it locally
+    // Always generate locally to ensure the invoice matches the current app language exactly.
     final pdf = await _buildInvoiceDocument(context, booking);
     if (pdf == null) return null;
     return await pdf.save();

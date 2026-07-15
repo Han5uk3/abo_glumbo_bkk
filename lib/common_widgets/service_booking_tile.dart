@@ -1248,14 +1248,19 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
         'updatedAt': Timestamp.now(),
       };
 
-      final techId = widget.booking.agent?.uid;
+      final techId = widget.booking.agent?.uid ?? widget.booking.warranty?.assignedTechnicianId;
 
       if (techId != null && techId.isNotEmpty) {
         updateData['warranty.assignedTechnicianId'] = techId;
-      }
-      
-      if (widget.booking.agent != null) {
-        updateData['warranty.assignedTechnician'] = widget.booking.agent!.toJson();
+        
+        final techDoc = await AppFirestore.usersCollectionRef.doc(techId).get();
+        if (techDoc.exists) {
+          updateData['warranty.assignedTechnician'] = techDoc.data();
+        } else if (widget.booking.warranty?.assignedTechnician != null) {
+          updateData['warranty.assignedTechnician'] = widget.booking.warranty!.assignedTechnician;
+        } else if (widget.booking.agent != null) {
+          updateData['warranty.assignedTechnician'] = widget.booking.agent!.toJson();
+        }
       }
 
       await AppFirestore.bookingsCollectionRef
