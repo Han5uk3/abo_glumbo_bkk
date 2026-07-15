@@ -434,6 +434,8 @@ class BookingUtils {
     required String notes,
     File? selectedImage,
     File? selectedVideo,
+    String? existingImageUrl,
+    String? existingVideoUrl,
     required Map timeSlot,
     AddressModel? selectedAddress,
     MatchedServiceZone? serviceLocation,
@@ -451,8 +453,8 @@ class BookingUtils {
       final bookingId = AppFirestore.bookingRequestsCollectionRef.doc().id;
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       
-      String? selectedImageDownloadUrl;
-      String? selectedVideoDownloadUrl;
+      String? selectedImageDownloadUrl = existingImageUrl;
+      String? selectedVideoDownloadUrl = existingVideoUrl;
 
       try {
         if (selectedImage != null) {

@@ -33,10 +33,12 @@ import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
 class BookServicePage extends StatefulWidget {
   final ServiceModel service;
   final UserModel? rebookTechnician;
+  final Map<String, dynamic>? bookingRequestData;
   const BookServicePage({
     super.key,
     required this.service,
     this.rebookTechnician,
+    this.bookingRequestData,
   });
 
   @override
@@ -120,6 +122,8 @@ class _BookServicePageState extends State<BookServicePage> {
 
   File? _selectedImage;
   File? _selectedVideo;
+  String? _existingImageUrl;
+  String? _existingVideoUrl;
   CustomerModel? customerData;
   Stream<CustomerModel>? _customerStream;
   UserModel? _activeRebookTechnician;
@@ -131,6 +135,41 @@ class _BookServicePageState extends State<BookServicePage> {
     if (_activeRebookTechnician != null) {
       selectedWorker = _activeRebookTechnician!;
     }
+
+    if (widget.bookingRequestData != null) {
+      final data = widget.bookingRequestData!;
+      notesController.text = data['notes'] ?? '';
+      _existingImageUrl = data['selectedImageDownloadUrl'];
+      _existingVideoUrl = data['selectedVideoDownloadUrl'];
+      isServiceNow = data['timeSlot']?['label'] == 'Now';
+      if (data['selectedDate'] != null) {
+        selectedDate = (data['selectedDate'] as Timestamp).toDate();
+      }
+      if (data['selectedAddress'] != null) {
+        selectedAddress = AddressModel.fromJson(data['selectedAddress']);
+      }
+      if (data['serviceLocation'] != null) {
+        _matchedServiceZone = MatchedServiceZone.fromJson(
+          data['serviceLocation'],
+        );
+      }
+      if (!isServiceNow && data['timeSlot'] != null) {
+        // Need to match the time slot
+        final ts = data['timeSlot'];
+        String label = ts['label'] ?? '';
+        for (int c = 0; c < timeSlots.length; c++) {
+          final vals = timeSlots[c]['values'] as List<Map>;
+          for (int s = 0; s < vals.length; s++) {
+            if (vals[s]['label'] == label) {
+              selectedTimeCategory = c;
+              selectedTimeSlot = s;
+              break;
+            }
+          }
+        }
+      }
+    }
+
     _fetchCoordinates();
     fetchCustomerAddresses();
     _customerStream = AppServices.listenToCustomerData(
@@ -168,10 +207,11 @@ class _BookServicePageState extends State<BookServicePage> {
       });
 
       try {
-        await AppFirestore.bookingRequestsCollectionRef.doc(reqId).delete();
-        await AppFirestore.jobRequestsCollectionRef.doc(reqId).delete();
+        await AppFirestore.bookingRequestsCollectionRef.doc(reqId).update({
+          'status': 'closed',
+        });
       } catch (e) {
-        debugPrint("Error deleting expired request: $e");
+        debugPrint("Error updating expired request: $e");
       }
 
       showDialog(
@@ -506,66 +546,244 @@ class _BookServicePageState extends State<BookServicePage> {
         if (snapshot.hasData) {
           customerData = snapshot.data;
         }
-        return Scaffold(
-          backgroundColor: AppColors.bgBlueTint,
-          appBar: AppBar(
-            backgroundColor: AppColors.bgBlueTint,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.black,
-                size: 20,
-              ),
-              onPressed: () {
-                if (currentStep > 0) {
-                  if (currentStep == 2 && _bookingRequestId != null) {
-                    // Cancel search if backing out of step 2
-                    AppFirestore.bookingRequestsCollectionRef
-                        .doc(_bookingRequestId!)
-                        .delete();
-                    _requestExpiryTimer?.cancel();
-                    setState(() {
-                      _bookingRequestId = null;
-                      selectedWorker = UserModel(uid: "", role: "agent");
-                    });
-                  } else if (currentStep == 3 && _bookingRequestId != null) {
-                    // If going back to step 2 from step 3, keep the request so they can change worker
-                    setState(() {
-                      selectedWorker = UserModel(uid: "", role: "agent");
-                    });
-                  }
-                  setState(() => currentStep--);
-                } else {
-                  Navigator.pop(context);
+        return WillPopScope(
+          onWillPop: () async {
+            if (currentStep > 0) {
+              if (currentStep == 2 && _bookingRequestId != null) {
+                // Check if search is active or technicians accepted
+                final docSnap = await AppFirestore.bookingRequestsCollectionRef
+                    .doc(_bookingRequestId!)
+                    .get();
+                bool hasTechnicians = false;
+                if (docSnap.exists) {
+                  final data = docSnap.data() as Map<String, dynamic>;
+                  final accepted =
+                      data['acceptedTechnicians'] as List<dynamic>? ?? [];
+                  hasTechnicians = accepted.isNotEmpty;
                 }
-              },
-            ),
-            title: Text(
-              _getTitle(context),
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+
+                final String locale =
+                    AppLocalizations.of(context)?.localeName ?? 'en';
+                final shouldCancel = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    title: Text(
+                      locale == 'ar'
+                          ? 'إلغاء طلب الحجز؟'
+                          : locale == 'ur'
+                          ? 'بکنگ کی درخواست منسوخ کریں؟'
+                          : 'Cancel Booking Request?',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    content: Text(
+                      hasTechnicians
+                          ? (locale == 'ar'
+                                ? 'إذا عدت، ستفقد الفنيين المقبولين وسيتعين عليك البحث مرة أخرى. هل أنت متأكد؟'
+                                : locale == 'ur'
+                                ? 'اگر آپ واپس جاتے ہیں، تو آپ کو قبول شدہ ٹیکنیشنز سے محروم ہونا پڑے گا اور دوبارہ تلاش کرنا پڑے گا۔ کیا آپ کو یقین ہے؟'
+                                : 'If you go back, you will lose the accepted technicians and have to search again. Are you sure?')
+                          : (locale == 'ar'
+                                ? 'إذا عدت، سيتوقف البحث عن فنيين. هل أنت متأكد؟'
+                                : locale == 'ur'
+                                ? 'اگر آپ واپس جاتے ہیں تو ٹیکنیشنز کی تلاش رک جائے گی۔ کیا آپ کو یقین ہے؟'
+                                : 'If you go back, the searching will be stopped. Are you sure?'),
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text(
+                          locale == 'ar'
+                              ? 'لا'
+                              : locale == 'ur'
+                              ? 'نہیں'
+                              : 'No',
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.red,
+                        ),
+                        child: Text(
+                          locale == 'ar'
+                              ? 'نعم، إلغاء'
+                              : locale == 'ur'
+                              ? 'جی ہاں، منسوخ کریں'
+                              : 'Yes, Cancel',
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (shouldCancel != true) {
+                  return false;
+                }
+
+                await AppFirestore.bookingRequestsCollectionRef
+                    .doc(_bookingRequestId!)
+                    .update({'status': 'closed'});
+
+                _requestExpiryTimer?.cancel();
+                setState(() {
+                  _bookingRequestId = null;
+                  selectedWorker = UserModel(uid: "", role: "agent");
+                  currentStep--;
+                });
+                return false;
+              } else if (currentStep == 3 && _bookingRequestId != null) {
+                // If going back to step 2 from step 3, keep the request so they can change worker
+                setState(() {
+                  selectedWorker = UserModel(uid: "", role: "agent");
+                });
+              }
+              setState(() => currentStep--);
+              return false;
+            }
+            return true;
+          },
+          child: Scaffold(
+            backgroundColor: AppColors.bgBlueTint,
+            appBar: AppBar(
+              backgroundColor: AppColors.bgBlueTint,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                onPressed: () async {
+                  if (currentStep > 0) {
+                    if (currentStep == 2 && _bookingRequestId != null) {
+                      // Check if search is active or technicians accepted
+                      final docSnap = await AppFirestore
+                          .bookingRequestsCollectionRef
+                          .doc(_bookingRequestId!)
+                          .get();
+                      bool hasTechnicians = false;
+                      if (docSnap.exists) {
+                        final data = docSnap.data() as Map<String, dynamic>;
+                        final accepted =
+                            data['acceptedTechnicians'] as List<dynamic>? ?? [];
+                        hasTechnicians = accepted.isNotEmpty;
+                      }
+
+                      final String locale =
+                          AppLocalizations.of(context)?.localeName ?? 'en';
+                      final shouldCancel = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: Text(
+                            locale == 'ar'
+                                ? 'إلغاء طلب الحجز؟'
+                                : locale == 'ur'
+                                ? 'بکنگ کی درخواست منسوخ کریں؟'
+                                : 'Cancel Booking Request?',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          content: Text(
+                            hasTechnicians
+                                ? (locale == 'ar'
+                                      ? 'إذا عدت، ستفقد الفنيين المقبولين وسيتعين عليك البحث مرة أخرى. هل أنت متأكد؟'
+                                      : locale == 'ur'
+                                      ? 'اگر آپ واپس جاتے ہیں، تو آپ کو قبول شدہ ٹیکنیشنز سے محروم ہونا پڑے گا اور دوبارہ تلاش کرنا پڑے گا۔ کیا آپ کو یقین ہے؟'
+                                      : 'If you go back, you will lose the accepted technicians and have to search again. Are you sure?')
+                                : (locale == 'ar'
+                                      ? 'إذا عدت، سيتوقف البحث عن فنيين. هل أنت متأكد؟'
+                                      : locale == 'ur'
+                                      ? 'اگر آپ واپس جاتے ہیں تو ٹیکنیشنز کی تلاش رک جائے گی۔ کیا آپ کو یقین ہے؟'
+                                      : 'If you go back, the searching will be stopped. Are you sure?'),
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: Text(
+                                locale == 'ar'
+                                    ? 'لا'
+                                    : locale == 'ur'
+                                    ? 'نہیں'
+                                    : 'No',
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.red,
+                              ),
+                              child: Text(
+                                locale == 'ar'
+                                    ? 'نعم، إلغاء'
+                                    : locale == 'ur'
+                                    ? 'جی ہاں، منسوخ کریں'
+                                    : 'Yes, Cancel',
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (shouldCancel != true) {
+                        return;
+                      }
+
+                      await AppFirestore.bookingRequestsCollectionRef
+                          .doc(_bookingRequestId!)
+                          .update({'status': 'closed'});
+
+                      _requestExpiryTimer?.cancel();
+                      setState(() {
+                        _bookingRequestId = null;
+                        selectedWorker = UserModel(uid: "", role: "agent");
+                        currentStep--;
+                      });
+                      return;
+                    } else if (currentStep == 3 && _bookingRequestId != null) {
+                      // If going back to step 2 from step 3, keep the request so they can change worker
+                      setState(() {
+                        selectedWorker = UserModel(uid: "", role: "agent");
+                      });
+                    }
+                    setState(() => currentStep--);
+                  } else {
+                    Navigator.pop(context);
+                  }
+                },
               ),
-            ),
-            centerTitle: true,
-          ),
-          body: Column(
-            children: [
-              _buildStepProgressBar(),
-              Expanded(
-                child: currentStep == 0
-                    ? _buildFirstStepContent()
-                    : currentStep == 1
-                    ? _buildSecondStepContent()
-                    : currentStep == 2
-                    ? _buildThirdStepContent()
-                    : _buildReviewStepContent(),
+              title: Text(
+                _getTitle(context),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ],
+              centerTitle: true,
+            ),
+            body: Column(
+              children: [
+                _buildStepProgressBar(),
+                Expanded(
+                  child: currentStep == 0
+                      ? _buildFirstStepContent()
+                      : currentStep == 1
+                      ? _buildSecondStepContent()
+                      : currentStep == 2
+                      ? _buildThirdStepContent()
+                      : _buildReviewStepContent(),
+                ),
+              ],
+            ),
+            bottomNavigationBar: _buildBottomBar(context),
           ),
-          bottomNavigationBar: _buildBottomBar(context),
         );
       },
     );
@@ -1605,7 +1823,7 @@ class _BookServicePageState extends State<BookServicePage> {
                             selectedTimeCategory = -1;
                             selectedTimeSlot = -1;
                           });
-                          this.setState(() {
+                          setState(() {
                             selectedDate = selectedDay;
                             selectedTimeCategory = -1;
                             selectedTimeSlot = -1;
@@ -1751,10 +1969,14 @@ class _BookServicePageState extends State<BookServicePage> {
               showAddressPicker: false,
               initialImage: _selectedImage,
               initialVideo: _selectedVideo,
+              initialImageUrl: _existingImageUrl,
+              initialVideoUrl: _existingVideoUrl,
               onImageSelected: (value) =>
                   setState(() => _selectedImage = value),
               onVideoSelected: (value) =>
                   setState(() => _selectedVideo = value),
+              onImageRemoved: () => setState(() => _existingImageUrl = null),
+              onVideoRemoved: () => setState(() => _existingVideoUrl = null),
             ),
           ),
         ],
@@ -1899,6 +2121,8 @@ class _BookServicePageState extends State<BookServicePage> {
                   notes: notesController.text,
                   selectedImage: _selectedImage,
                   selectedVideo: _selectedVideo,
+                  existingImageUrl: _existingImageUrl,
+                  existingVideoUrl: _existingVideoUrl,
                   timeSlot: isServiceNow
                       ? {"label": "Now", "time": TimeOfDay.now()}
                       : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
@@ -2468,6 +2692,8 @@ class _BookServicePageState extends State<BookServicePage> {
         notes: notesController.text,
         selectedImage: _selectedImage,
         selectedVideo: _selectedVideo,
+        existingImageUrl: _existingImageUrl,
+        existingVideoUrl: _existingVideoUrl,
         timeSlot: isServiceNow
             ? {"label": "Now", "time": TimeOfDay.now()}
             : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],

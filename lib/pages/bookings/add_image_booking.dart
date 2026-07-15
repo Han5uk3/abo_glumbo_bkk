@@ -16,19 +16,27 @@ import 'package:image_picker/image_picker.dart';
 class AddIssueImageAndVideo extends StatefulWidget {
   final ValueChanged<File?>? onImageSelected;
   final ValueChanged<File?>? onVideoSelected;
+  final VoidCallback? onImageRemoved;
+  final VoidCallback? onVideoRemoved;
   final ValueChanged<AddressModel?>? isAddressSelected;
   final bool showAddressPicker;
   final File? initialImage;
   final File? initialVideo;
+  final String? initialImageUrl;
+  final String? initialVideoUrl;
 
   const AddIssueImageAndVideo({
     super.key,
     this.onImageSelected,
     this.onVideoSelected,
+    this.onImageRemoved,
+    this.onVideoRemoved,
     this.isAddressSelected,
     this.showAddressPicker = true,
     this.initialImage,
     this.initialVideo,
+    this.initialImageUrl,
+    this.initialVideoUrl,
   });
 
   @override
@@ -38,6 +46,8 @@ class AddIssueImageAndVideo extends StatefulWidget {
 class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
   File? _selectedImage;
   File? _selectedVideo;
+  String? _networkImageUrl;
+  String? _networkVideoUrl;
 
   final ImagePicker _picker = ImagePicker();
   bool isLoadingImage = false;
@@ -111,16 +121,26 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
     }
   }
 
+
+
   void _removeImage() {
     setState(() {
       _selectedImage = null;
+      _networkImageUrl = null;
     });
+    if (widget.onImageRemoved != null) {
+      widget.onImageRemoved!();
+    }
   }
 
   void _removeVideo() {
     setState(() {
       _selectedVideo = null;
+      _networkVideoUrl = null;
     });
+    if (widget.onVideoRemoved != null) {
+      widget.onVideoRemoved!();
+    }
   }
 
   Future<void> _fetchCoordinatesAndGetCustomerAddress() async {
@@ -181,6 +201,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
   Widget _addMediaWidget({
     required bool isImage,
     required File? file,
+    String? networkUrl,
     required void Function() onPick,
     required void Function() onRemove,
   }) {
@@ -205,7 +226,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
           width: (MediaQuery.of(context).size.width - 52) * 0.5,
           height: 100,
           child: Center(
-            child: file == null
+            child: (file == null && networkUrl == null)
                 ? isImage
                       ? Center(
                           child: Icon(
@@ -229,7 +250,9 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: isImage
-                              ? Image.file(file, fit: BoxFit.cover)
+                              ? (file != null 
+                                  ? Image.file(file, fit: BoxFit.cover)
+                                  : Image.network(networkUrl!, fit: BoxFit.cover))
                               : Container(
                                   color: Colors.black,
                                   child: const Center(
@@ -272,6 +295,8 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
     super.initState();
     _selectedImage = widget.initialImage;
     _selectedVideo = widget.initialVideo;
+    _networkImageUrl = widget.initialImageUrl;
+    _networkVideoUrl = widget.initialVideoUrl;
     context.read<AddressBloc>().add(LoadAddresses());
     _fetchCoordinatesAndGetCustomerAddress();
   }
@@ -347,12 +372,14 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
             children: [
               _addMediaWidget(
                 file: _selectedImage,
+                networkUrl: _networkImageUrl,
                 isImage: true,
                 onPick: () => _showMediaSourcePicker(isVideo: false),
                 onRemove: _removeImage,
               ),
               _addMediaWidget(
                 file: _selectedVideo,
+                networkUrl: _networkVideoUrl,
                 isImage: false,
                 onPick: () => _showMediaSourcePicker(isVideo: true),
                 onRemove: _removeVideo,

@@ -12,6 +12,7 @@ import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:abo_glumbo_bbk/pages/bookings/book_service_page.dart';
 
 class SearchingTechniciansScreen extends StatefulWidget {
   final String bookingRequestId;
@@ -139,9 +140,34 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
     });
   }
 
-  void _stopBroadcast() {
+  void _stopBroadcast() async {
     _countdownTimer?.cancel();
-    // Do not delete request automatically here so customer can choose to search again.
+    
+    // Automatically kill request and navigate back to booking form after 5 minutes
+    if (mounted && _bookingRequestData != null) {
+      try {
+        await AppFirestore.bookingRequestsCollectionRef
+            .doc(_currentRequestId)
+            .update({'status': 'closed'});
+        LocalStoreHelper.clearBookingRequestId();
+        
+        final serviceData = _bookingRequestData!['service'] as Map<String, dynamic>;
+        final service = ServiceModel.fromJson(serviceData);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BookServicePage(
+              service: service,
+              bookingRequestData: _bookingRequestData,
+            ),
+          ),
+        );
+      } catch (e) {
+        debugPrint("Error auto-cancelling expired request: $e");
+      }
+    } else if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   Future<void> _searchAgain() async {
@@ -198,6 +224,8 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
 
   Future<void> _cancelBooking() async {
     final String locale = AppLocalizations.of(context)?.localeName ?? 'en';
+    final bool hasTechnicians = _acceptedTechnicians.isNotEmpty;
+
     final shouldCancel = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -211,33 +239,31 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         content: Text(
-          locale == 'ar'
-              ? 'هل أنت متأكد أنك تريد الإلغاء؟ سيؤدي هذا إلى إيقاف البحث عن فنيين.'
-              : locale == 'ur'
-              ? 'کیا آپ واقعی منسوخ کرنا چاہتے ہیں؟ اس سے ٹیکنیشنز کی تلاش رک جائے گی۔'
-              : 'Are you sure you want to cancel? This will stop searching for technicians.',
+          hasTechnicians
+              ? (locale == 'ar'
+                  ? 'إذا عدت، ستفقد الفنيين المقبولين وسيتعين عليك البحث مرة أخرى. هل أنت متأكد؟'
+                  : locale == 'ur'
+                  ? 'اگر آپ واپس جاتے ہیں، تو آپ کو قبول شدہ ٹیکنیشنز سے محروم ہونا پڑے گا اور دوبارہ تلاش کرنا پڑے گا۔ کیا آپ کو یقین ہے؟'
+                  : 'If you go back, you will lose the accepted technicians and have to search again. Are you sure?')
+              : (locale == 'ar'
+                  ? 'إذا عدت، سيتوقف البحث عن فنيين. هل أنت متأكد؟'
+                  : locale == 'ur'
+                  ? 'اگر آپ واپس جاتے ہیں تو ٹیکنیشنز کی تلاش رک جائے گی۔ کیا آپ کو یقین ہے؟'
+                  : 'If you go back, the searching will be stopped. Are you sure?'),
           style: TextStyle(fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
-              locale == 'ar'
-                  ? 'لا'
-                  : locale == 'ur'
-                  ? 'نہیں'
-                  : 'No',
+              locale == 'ar' ? 'لا' : locale == 'ur' ? 'نہیں' : 'No',
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: Text(
-              locale == 'ar'
-                  ? 'نعم، إلغاء'
-                  : locale == 'ur'
-                  ? 'جی ہاں، منسوخ کریں'
-                  : 'Yes, Cancel',
+              locale == 'ar' ? 'نعم، إلغاء' : locale == 'ur' ? 'جی ہاں، منسوخ کریں' : 'Yes, Cancel',
             ),
           ),
         ],
@@ -249,9 +275,22 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
       try {
         await AppFirestore.bookingRequestsCollectionRef
             .doc(_currentRequestId)
-            .delete();
+            .update({'status': 'closed'});
         LocalStoreHelper.clearBookingRequestId();
-        if (mounted) {
+
+        if (mounted && _bookingRequestData != null) {
+          final serviceData = _bookingRequestData!['service'] as Map<String, dynamic>;
+          final service = ServiceModel.fromJson(serviceData);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookServicePage(
+                service: service,
+                bookingRequestData: _bookingRequestData,
+              ),
+            ),
+          );
+        } else if (mounted) {
           Navigator.pop(context);
         }
       } catch (e) {
@@ -497,47 +536,53 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
 
     final String locale = AppLocalizations.of(context)?.localeName ?? 'en';
 
-    return Scaffold(
-      backgroundColor: AppColors.bgBlueTint,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close_rounded, color: Colors.black),
-          onPressed: _cancelBooking,
-        ),
-        title: Text(
-          locale == 'ar'
-              ? 'البحث عن فنيين'
-              : locale == 'ur'
-              ? 'ٹیکنیشنز کی تلاش'
-              : "Searching for Technicians",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async {
+        await _cancelBooking();
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.bgBlueTint,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.close_rounded, color: Colors.black),
+            onPressed: _cancelBooking,
           ),
+          title: Text(
+            locale == 'ar'
+                ? 'البحث عن فنيين'
+                : locale == 'ur'
+                ? 'ٹیکنیشنز کی تلاش'
+                : "Searching for Technicians",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: _bookingRequestData?['isRebook'] == true
-            ? _buildRebookBody()
-            : Column(
-                children: [
-                  if (showSearchingHeader) ...[
-                    _buildPulsingSearchSection(primaryColor),
-                    _buildProgressCircle(),
-                  ] else if (showChooseHeader) ...[
-                    _buildChooseHeaderSection(),
-                  ] else if (showExpiredScreen) ...[
-                    _buildExpiredSection(),
-                  ],
+        body: SafeArea(
+          child: _bookingRequestData?['isRebook'] == true
+              ? _buildRebookBody()
+              : Column(
+                  children: [
+                    if (showSearchingHeader) ...[
+                      _buildPulsingSearchSection(primaryColor),
+                      _buildProgressCircle(),
+                    ] else if (showChooseHeader) ...[
+                      _buildChooseHeaderSection(),
+                    ] else if (showExpiredScreen) ...[
+                      _buildExpiredSection(),
+                    ],
 
-                  if (!showExpiredScreen)
-                    Expanded(child: _buildTechniciansListSection()),
-                ],
-              ),
+                    if (!showExpiredScreen)
+                      Expanded(child: _buildTechniciansListSection()),
+                  ],
+                ),
+        ),
       ),
     );
   }
