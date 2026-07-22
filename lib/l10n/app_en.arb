@@ -1065,7 +1065,7 @@
   "paymentProof": "Payment Proof",
   "settings": "Settings",
   "discountAppliesToInspectionFeeOnly": "Discount applies to the inspection fee only.",
-  "escalated": "Escalated",
+  "escalated": "Pending Admin Review",
   "resolveIssue": "Resolve Issue",
   "whatWasDoneToResolve": "What was done to resolve the issue?",
   "resolutionTextRequired": "Resolution text is required",

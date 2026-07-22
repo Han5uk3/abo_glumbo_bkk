@@ -2821,7 +2821,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Discount applies to the inspection fee only.';
 
   @override
-  String get escalated => 'Escalated';
+  String get escalated => 'Pending Admin Review';
 
   @override
   String get resolveIssue => 'Resolve Issue';

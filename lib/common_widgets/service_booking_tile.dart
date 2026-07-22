@@ -140,7 +140,10 @@ class ServiceBookingTile extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
-                                      AppLocalizations.of(context)?.escalated.toUpperCase() ?? 'ESCALATED',
+                                      AppLocalizations.of(
+                                            context,
+                                          )?.escalated.toUpperCase() ??
+                                          'ESCALATED',
                                       style: TextStyle(
                                         fontSize: 8,
                                         fontWeight: FontWeight.bold,
@@ -1019,17 +1022,26 @@ class ServiceBookingTile extends StatelessWidget {
     // Do not show if it's already escalated
     if (booking.isEscalated == true) return false;
 
+    // Show if the warranty booking is rejected (by admin)
+    if (warranty.warrantyStatusCode == 'X') return true;
+
+    // Show if the assigned technician rejects the warranty booking (technician cancelled)
+    if (warranty.rejectedTechnicians != null &&
+        warranty.rejectedTechnicians!.isNotEmpty &&
+        warranty.assignedTechnician == null) {
+      return true;
+    }
+
     // Check if there is a relevant date to calculate from
-    final lastActivityDate = warranty.updatedAt ?? warranty.requestedOn ?? warranty.createdAt;
+    final lastActivityDate =
+        warranty.updatedAt ?? warranty.requestedOn ?? warranty.createdAt;
     if (lastActivityDate == null) return false;
 
     // Calculate the difference in days
-    final daysSinceUpdate = DateTime.now()
-        .difference(lastActivityDate)
-        .inDays;
+    final daysSinceUpdate = DateTime.now().difference(lastActivityDate).inDays;
 
-    // Show button if more than 2 days have passed without updates
-    return daysSinceUpdate > 2;
+    // Show button if more than 1 days have passed without updates
+    return daysSinceUpdate > 1;
   }
 
   int calculateDaysLeft() {
@@ -1236,7 +1248,7 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
   Future<void> _submitClaim() async {
     final localizations = AppLocalizations.of(context)!;
     final navigator = Navigator.of(context);
-    
+
     setState(() => _isSubmitting = true);
 
     try {
@@ -1250,18 +1262,22 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
         'updatedAt': Timestamp.now(),
       };
 
-      final techId = widget.booking.agent?.uid ?? widget.booking.warranty?.assignedTechnicianId;
+      final techId =
+          widget.booking.agent?.uid ??
+          widget.booking.warranty?.assignedTechnicianId;
 
       if (techId != null && techId.isNotEmpty) {
         updateData['warranty.assignedTechnicianId'] = techId;
-        
+
         final techDoc = await AppFirestore.usersCollectionRef.doc(techId).get();
         if (techDoc.exists) {
           updateData['warranty.assignedTechnician'] = techDoc.data();
         } else if (widget.booking.warranty?.assignedTechnician != null) {
-          updateData['warranty.assignedTechnician'] = widget.booking.warranty!.assignedTechnician;
+          updateData['warranty.assignedTechnician'] =
+              widget.booking.warranty!.assignedTechnician;
         } else if (widget.booking.agent != null) {
-          updateData['warranty.assignedTechnician'] = widget.booking.agent!.toJson();
+          updateData['warranty.assignedTechnician'] = widget.booking.agent!
+              .toJson();
         }
       }
 
@@ -1270,19 +1286,19 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
           .update(updateData);
 
       if (!mounted) return;
-      
+
       showSnackBar(
         localizations.repairRequestedSuccessfully,
         context,
         backgroundColor: Colors.green,
       );
-      
+
       navigator.pop();
       widget.onRefresh.call();
     } catch (e) {
       log(e.toString());
       if (!mounted) return;
-      
+
       navigator.pop();
       showSnackBar(
         "${localizations.error} : $e",
