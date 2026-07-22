@@ -13,7 +13,6 @@ import 'package:flutter/widgets.dart' as material_widgets;
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/models/invoice.dart';
-import 'package:http/http.dart' as http;
 import 'package:arabic_reshaper/arabic_reshaper.dart';
 
 class InvoiceService {

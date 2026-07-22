@@ -2116,7 +2116,7 @@ class _BookServicePageState extends State<BookServicePage> {
                   selectedDate: isServiceNow
                       ? _getMiddleEastNow()
                       : selectedDate!,
-                  paymentMode: "Outside App", // Default for now
+                  paymentMode: "Outside App",
                   customerData: customerData!,
                   notes: notesController.text,
                   selectedImage: _selectedImage,
