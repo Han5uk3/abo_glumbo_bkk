@@ -102,10 +102,7 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
     );
     bool saved = await BookingUtils.saveTransaction(transaction: transaction);
 
-    // Only generate invoice if it's from a booking payment (not a standalone tip)
-    if (saved && invoiceId != null && widget.booking != null) {
-      await InvoiceService.generateAndUploadInvoice(context, widget.booking!);
-    }
+
 
     return saved;
   }

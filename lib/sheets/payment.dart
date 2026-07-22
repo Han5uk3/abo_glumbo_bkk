@@ -788,9 +788,6 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
       invoiceId: invoiceId,
     );
     bool isSaved = await BookingUtils.saveTransaction(transaction: transaction);
-    if (isSaved) {
-      await InvoiceService.generateAndUploadInvoice(context, widget.booking);
-    }
     return isSaved;
   }
 

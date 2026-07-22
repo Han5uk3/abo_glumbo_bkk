@@ -2738,33 +2738,31 @@ class _BookServicePageState extends State<BookServicePage> {
       if (selectedWorker.uid == null || selectedWorker.uid!.isEmpty) {
         return const SizedBox.shrink();
       }
-      return Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () => setState(() => currentStep = 3),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                minimumSize: const Size(0, 54),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () => setState(() => currentStep = 3),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              minimumSize: const Size(0, 54),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(
-                AppLocalizations.of(context)?.continueText ?? 'Continue',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+            ),
+            child: Text(
+              AppLocalizations.of(context)?.continueText ?? 'Continue',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-        ],
-      );
-    }
-
-    // Off-hour: proceed to review directly
-    return const SizedBox.shrink();
+        ),
+      ],
+    );
   }
 
   Widget _buildReviewStepBottom(BuildContext context) {

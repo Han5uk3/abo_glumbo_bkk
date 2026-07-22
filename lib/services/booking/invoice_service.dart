@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -11,8 +9,7 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter/widgets.dart' as material_widgets;
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/helpers/collections.dart';
-import 'package:abo_glumbo_bbk/models/invoice.dart';
+
 import 'package:arabic_reshaper/arabic_reshaper.dart';
 
 class InvoiceService {
@@ -417,57 +414,7 @@ class InvoiceService {
     return await pdf.save();
   }
 
-  static Future<bool> generateAndUploadInvoice(
-    material_widgets.BuildContext context,
-    BookingModel booking,
-  ) async {
-    try {
-      final invoiceId =
-          '${booking.newBookingId ?? booking.id}_${booking.customer.uid}';
 
-      final pdf = await _buildInvoiceDocument(context, booking);
-      if (pdf == null) return false;
-
-      final bytes = await pdf.save();
-
-      // Upload to Firebase Storage
-      final storageRef = FirebaseStorage.instance.ref(
-        'invoices/$invoiceId.pdf',
-      );
-      await storageRef.putData(
-        bytes,
-        SettableMetadata(contentType: 'application/pdf'),
-      );
-      final downloadUrl = await storageRef.getDownloadURL();
-
-      // Save to invoices collection
-      final invoiceModel = InvoiceModel(
-        id: invoiceId,
-        invoiceUrl: downloadUrl,
-        createdAt: Timestamp.now(),
-        bookingId: booking.id,
-        newBookingId: booking.newBookingId,
-        userId: booking.customer.uid ?? '',
-        technicianId: booking.agent?.uid,
-      );
-
-      await FirebaseFirestore.instance
-          .collection('invoices')
-          .doc(invoiceId)
-          .set(invoiceModel.toMap());
-
-      // Update booking
-      await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
-        'invoiceId': invoiceId,
-        'invoicePdfUrl': downloadUrl,
-      });
-
-      return true;
-    } catch (e) {
-      debugPrint('Error generating and uploading invoice: $e');
-      return false;
-    }
-  }
 
   static Future<void> generateAndShowInvoice(
     material_widgets.BuildContext context,
