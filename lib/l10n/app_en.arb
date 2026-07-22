@@ -1082,5 +1082,16 @@
   "autoAssignmentSchedule": "Auto-Assignment Schedule",
   "pleaseEnterProblemDescription": "Please enter the problem description",
   "timeout": "Timeout",
-  "bookingRequestTimedOut": "The booking request timed out. Please request again."
+  "bookingRequestTimedOut": "The booking request timed out. Please request again.",
+  "technicianTrackingNotification": "The technician is on the way, {distance} away, and arrival time is {time}",
+  "@technicianTrackingNotification": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  }
 }

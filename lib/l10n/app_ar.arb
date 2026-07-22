@@ -1081,6 +1081,7 @@
   "liveTechnicianBroadcast": "البحث عن الفنيين المتاحين",
   "autoAssignmentSchedule": "تعيين تلقائي للفني",
   "pleaseEnterProblemDescription": "يرجى إدخال وصف المشكلة",
-  "timeout": "انتهى الوقت",
-  "bookingRequestTimedOut": "انتهت صلاحية طلب الحجز. يرجى الطلب مرة أخرى."
+  "timeout": "مهلة",
+  "bookingRequestTimedOut": "انتهت مهلة طلب الحجز. يرجى الطلب مرة أخرى.",
+  "technicianTrackingNotification": "الفني في الطريق، يبعد {distance}، ووقت الوصول {time}"
 }

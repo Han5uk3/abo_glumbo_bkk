@@ -1014,6 +1014,8 @@ class ServiceBookingTile extends StatelessWidget {
     final warranty = booking.warranty;
     if (warranty == null) return false;
 
+    if (warranty.warrantyStatusCode == 'C') return false;
+
     // Do not show if it's already escalated
     if (booking.isEscalated == true) return false;
 

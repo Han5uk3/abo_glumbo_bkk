@@ -233,8 +233,9 @@ class InvoiceService {
                         pw.Text(reshape(loc.warrantyLabel(warrantyDuration))),
                       pw.Text(
                         reshape(loc.paymentModeLabel(
-                          (booking.paymentModeCode.toUpperCase() == 'C' ||
-                                  booking.paymentModeCode.toUpperCase() == 'A')
+                          (booking.orderId != null && booking.orderId!.isNotEmpty) ||
+                                  (booking.paymentModeCode.toUpperCase() == 'C' ||
+                                      booking.paymentModeCode.toUpperCase() == 'A')
                               ? (loc.insideApp)
                               : (loc.outsideApp),
                         )),

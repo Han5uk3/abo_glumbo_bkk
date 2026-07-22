@@ -2831,9 +2831,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseEnterProblemDescription => 'يرجى إدخال وصف المشكلة';
 
   @override
-  String get timeout => 'انتهى الوقت';
+  String get timeout => 'مهلة';
 
   @override
   String get bookingRequestTimedOut =>
-      'انتهت صلاحية طلب الحجز. يرجى الطلب مرة أخرى.';
+      'انتهت مهلة طلب الحجز. يرجى الطلب مرة أخرى.';
+
+  @override
+  String technicianTrackingNotification(String distance, String time) {
+    return 'الفني في الطريق، يبعد $distance، ووقت الوصول $time';
+  }
 }

@@ -1082,5 +1082,6 @@
   "autoAssignmentSchedule": "ٹیکنیشن کا خودکار تعین",
   "pleaseEnterProblemDescription": "براہ کرم مسئلے کی تفصیل درج کریں",
   "timeout": "وقت ختم ہو گیا",
-  "bookingRequestTimedOut": "بکنگ کی درخواست کا وقت ختم ہو گیا۔ براہ کرم دوبارہ درخواست کریں۔"
+  "bookingRequestTimedOut": "بکنگ کی درخواست کا وقت ختم ہو گیا۔ براہ کرم دوبارہ درخواست کریں۔",
+  "technicianTrackingNotification": "ٹیکنیشن راستے میں ہے، {distance} دور، اور پہنچنے کا وقت ہے {time}"
 }

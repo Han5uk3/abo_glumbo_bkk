@@ -213,7 +213,12 @@ class _HomeState extends State<Home> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _showReviewSheet(bookingToReview!);
+        // Ensure we are only showing the review sheet if the user is on the main tabs
+        // and not currently inside a pushed sub-route (e.g. booking flow, booking completed screen)
+        final isCurrentRoute = ModalRoute.of(context)?.isCurrent ?? true;
+        if (isCurrentRoute) {
+          _showReviewSheet(bookingToReview!);
+        }
       }
     });
   }

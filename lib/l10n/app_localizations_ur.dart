@@ -2898,4 +2898,9 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get bookingRequestTimedOut =>
       'بکنگ کی درخواست کا وقت ختم ہو گیا۔ براہ کرم دوبارہ درخواست کریں۔';
+
+  @override
+  String technicianTrackingNotification(String distance, String time) {
+    return 'ٹیکنیشن راستے میں ہے، $distance دور، اور پہنچنے کا وقت ہے $time';
+  }
 }

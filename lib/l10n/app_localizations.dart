@@ -5409,6 +5409,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The booking request timed out. Please request again.'**
   String get bookingRequestTimedOut;
+
+  /// No description provided for @technicianTrackingNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'The technician is on the way, {distance} away, and arrival time is {time}'**
+  String technicianTrackingNotification(String distance, String time);
 }
 
 class _AppLocalizationsDelegate

@@ -764,8 +764,16 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
           final distance = firstBookingEta['distance'] as String?;
 
           if (distance != null && arrivalTimeFormatted != null) {
-            notificationBody =
-                '${locale.yourTechnicianIsOnTheWay} $distance ${locale.away} ${locale.and} ${locale.arrivalTime} $arrivalTimeFormatted';
+            // Replace english 'km' with localized km if present
+            final String distanceWithUnit = distance.replaceAll(
+              RegExp(r'km', caseSensitive: false),
+              locale.km,
+            );
+
+            notificationBody = locale.technicianTrackingNotification(
+              distanceWithUnit,
+              arrivalTimeFormatted,
+            );
           }
         }
       }

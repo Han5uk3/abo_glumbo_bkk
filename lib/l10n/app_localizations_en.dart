@@ -2878,4 +2878,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get bookingRequestTimedOut =>
       'The booking request timed out. Please request again.';
+
+  @override
+  String technicianTrackingNotification(String distance, String time) {
+    return 'The technician is on the way, $distance away, and arrival time is $time';
+  }
 }
