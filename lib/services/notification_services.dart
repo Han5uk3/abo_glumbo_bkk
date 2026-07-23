@@ -815,20 +815,16 @@ class NotificationServices {
   }
 
   /// Cache of triggered local notifications to prevent spamming
-  /// Structure: { bookingId: { 'on_the_way': true, '10_minutes': true, ... } }
-  static final Map<String, Map<String, bool>> _triggeredLocalNotifications = {};
-
   /// Check if a local notification has already been triggered for a booking
   static bool hasTriggeredLocalNotification(String bookingId, String type) {
-    return _triggeredLocalNotifications[bookingId]?[type] ?? false;
+    final key = 'notif_${bookingId}_$type';
+    return MyApp.box.get(key, defaultValue: false) ?? false;
   }
 
   /// Mark a local notification as triggered for a booking
   static void markLocalNotificationTriggered(String bookingId, String type) {
-    if (!_triggeredLocalNotifications.containsKey(bookingId)) {
-      _triggeredLocalNotifications[bookingId] = {};
-    }
-    _triggeredLocalNotifications[bookingId]![type] = true;
+    final key = 'notif_${bookingId}_$type';
+    MyApp.box.put(key, true);
     debugPrint(
       '🔔 Marked tracking notification $type as triggered for $bookingId',
     );
@@ -836,7 +832,10 @@ class NotificationServices {
 
   /// Clear the local notification triggers for a booking (e.g. when tracking stops/resets)
   static void clearLocalNotificationTriggers(String bookingId) {
-    _triggeredLocalNotifications.remove(bookingId);
+    MyApp.box.delete('notif_${bookingId}_on_the_way');
+    MyApp.box.delete('notif_${bookingId}_10_minutes');
+    MyApp.box.delete('notif_${bookingId}_nearby');
+    MyApp.box.delete('notif_${bookingId}_arrived');
     debugPrint('🗑️ Cleared tracking notification flags for $bookingId');
   }
 

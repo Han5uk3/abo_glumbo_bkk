@@ -200,11 +200,12 @@ class _BookingsPageState extends State<BookingsPage> {
 
       return SliverList.builder(
         itemCount: filteredBookings.length,
-        itemBuilder: (context, index) {
+        itemBuilder: (itemContext, index) {
           final booking = filteredBookings[index];
           return ServiceBookingTile(
             booking: booking,
             onRefresh: () {
+              if (!context.mounted) return;
               context.read<BookingBloc>().add(
                 RefreshBookingsEvent(LocalStoreHelper.getUID() ?? ''),
               );
@@ -215,6 +216,7 @@ class _BookingsPageState extends State<BookingsPage> {
                 booking: booking,
               );
               if (reload == true) {
+                if (!context.mounted) return;
                 context.read<BookingBloc>().add(
                   RefreshBookingsEvent(LocalStoreHelper.getUID() ?? ''),
                 );

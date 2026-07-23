@@ -1299,12 +1299,12 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
       log(e.toString());
       if (!mounted) return;
 
-      navigator.pop();
       showSnackBar(
         "${localizations.error} : $e",
         context,
         backgroundColor: Colors.red,
       );
+      navigator.pop();
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

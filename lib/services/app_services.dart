@@ -1373,6 +1373,8 @@ class AppServices {
       await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
         'warranty.availability': true,
         'warranty.warrantyStatusCode': 'R',
+        'warranty.assignedTechnicianId': booking.agent!.uid,
+        'warranty.assignedTechnician': booking.agent,
         'warranty.requestedOn': FieldValue.serverTimestamp(),
         'warranty.updatedAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),

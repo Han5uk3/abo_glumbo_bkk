@@ -135,38 +135,7 @@ class _HomeState extends State<Home> {
           }
         }
 
-        // 2. Technician arrived (when technician clicks on arrived at location button)
-        // Triggered when arrivedAt != null
-        if (booking.arrivedAt != null) {
-          if (!NotificationServices.hasTriggeredLocalNotification(
-            bookingId,
-            'arrived',
-          )) {
-            // Check if recently arrived to prevent historical alerts on initial load
-            bool shouldNotify = false;
-            if (booking.arrivedAt != null) {
-              final diff = DateTime.now().difference(
-                booking.arrivedAt!.toDate(),
-              );
-              if (diff.inMinutes <= 2) {
-                shouldNotify = true;
-              }
-            } else {
-              shouldNotify = true;
-            }
-            if (shouldNotify) {
-              NotificationServices.showLocalLiveTrackingNotification(
-                type: 'arrived',
-                bookingId: bookingId,
-                technicianName: technicianName,
-              );
-              NotificationServices.markLocalNotificationTriggered(
-                bookingId,
-                'arrived',
-              );
-            }
-          }
-        }
+
       }
     });
   }
@@ -249,6 +218,14 @@ class _HomeState extends State<Home> {
     }
   }
 
+  @override
+  void dispose() {
+    _bookingsSubscription?.cancel();
+    _completedBookingsSubscription?.cancel();
+    super.dispose();
+  }
+
+
   void _showLaterSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -279,12 +256,7 @@ class _HomeState extends State<Home> {
     return 'You can review this booking anytime from your Bookings page.';
   }
 
-  @override
-  void dispose() {
-    _bookingsSubscription?.cancel();
-    _completedBookingsSubscription?.cancel();
-    super.dispose();
-  }
+
 
   static Future<void> launchEmail(String email) async {
     await launchUrlString("mailto:$email");
