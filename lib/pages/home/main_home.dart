@@ -98,45 +98,8 @@ class _HomeState extends State<Home> {
     _bookingsSubscription = AppServices.listenToAcceptedBookings().listen((
       bookings,
     ) {
-      for (final booking in bookings) {
-        final bookingId = booking.id;
-        final technicianName = booking.agent?.name ?? 'Technician';
-
-        // 1. Technician is on the way (technician clicked start tracking)
-        // Triggered when isStartTracking == true (which is booking.isStartTracking)
-        if (booking.isStartTracking == true) {
-          if (!NotificationServices.hasTriggeredLocalNotification(
-            bookingId,
-            'on_the_way',
-          )) {
-            // Check if recently started to prevent historical alerts on initial load
-            bool shouldNotify = false;
-            if (booking.trackingStartedAt != null) {
-              final diff = DateTime.now().difference(
-                booking.trackingStartedAt!.toDate(),
-              );
-              if (diff.inMinutes <= 2) {
-                shouldNotify = true;
-              }
-            } else {
-              shouldNotify = true;
-            }
-            if (shouldNotify) {
-              NotificationServices.showLocalLiveTrackingNotification(
-                type: 'on_the_way',
-                bookingId: bookingId,
-                technicianName: technicianName,
-              );
-              NotificationServices.markLocalNotificationTriggered(
-                bookingId,
-                'on_the_way',
-              );
-            }
-          }
-        }
-
-
-      }
+      // Local tracking notifications (e.g., 'on_the_way') have been removed
+      // to avoid duplicates with backend push notifications.
     });
   }
 
