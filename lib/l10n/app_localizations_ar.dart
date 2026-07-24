@@ -2783,6 +2783,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get escalated => 'تم التصعيد';
 
   @override
+  String get resolved => 'تم الحل';
+
+  @override
   String get resolveIssue => 'حل المشكلة';
 
   @override

@@ -122,37 +122,9 @@ class ServiceBookingTile extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "#${booking.newBookingId ?? booking.id}",
-                                  style: TextStyle(fontSize: 9),
-                                ),
-                                if (booking.isEscalated == true) ...[
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      AppLocalizations.of(
-                                            context,
-                                          )?.escalated.toUpperCase() ??
-                                          'ESCALATED',
-                                      style: TextStyle(
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ],
+                            Text(
+                              "#${booking.newBookingId ?? booking.id}",
+                              style: TextStyle(fontSize: 9),
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -250,9 +222,20 @@ class ServiceBookingTile extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
+
+            // Wrap(
+            //   alignment: WrapAlignment.start,
+            //   children: [
+            if (customerSelectedAddress != null)
+              _buildInfoRow(
+                localization.location,
+                "${customerSelectedAddress.buildingNumber.isNotEmpty ? '${customerSelectedAddress.buildingNumber}, ' : ''}${customerSelectedAddress.streetName ?? 'N/A'}",
+                icon: const Icon(Icons.location_on_outlined),
+              ),
+
             if (isWarranty && _shouldShowComplaintButton())
               Padding(
-                padding: const EdgeInsets.only(top: 12),
+                padding: const EdgeInsets.only(top: 12, bottom: 12),
                 child: GestureDetector(
                   onTap: () async {
                     // Show confirmation dialog
@@ -295,9 +278,9 @@ class ServiceBookingTile extends StatelessWidget {
                               onPressed: () =>
                                   Navigator.of(dialogContext).pop(false),
                               context: context,
-                              backgroundColor: Colors.grey,
+                              backgroundColor: Colors.white,
                               text: AppLocalizations.of(context)!.cancel,
-                              textColor: Colors.white,
+                              textColor: Colors.black,
                             ),
 
                             eButton(
@@ -381,18 +364,79 @@ class ServiceBookingTile extends StatelessWidget {
                     ),
                   ),
                 ),
+              )
+            else if (isWarranty && booking.isEscalated == true)
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 12),
+                child: Container(
+                  padding: const EdgeInsets.only(top: 12, bottom: 12),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.red),
+                  ),
+                  child: Center(
+                    child: Text(
+                      AppLocalizations.of(context)!.escalated,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            else if (isWarranty &&
+                booking.resolvedAt != null &&
+                booking.resolutionText != null &&
+                booking.resolutionText!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 12),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.green.withOpacity(0.5)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.green,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            AppLocalizations.of(context)?.resolved ??
+                                'Resolved',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        booking.resolutionText!,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black87,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-
-            // Wrap(
-            //   alignment: WrapAlignment.start,
-            //   children: [
-            if (customerSelectedAddress != null)
-              _buildInfoRow(
-                localization.location,
-                "${customerSelectedAddress.buildingNumber.isNotEmpty ? '${customerSelectedAddress.buildingNumber}, ' : ''}${customerSelectedAddress.streetName ?? 'N/A'}",
-                icon: const Icon(Icons.location_on_outlined),
-              ),
-
             //   ],
             // ),
             Divider(thickness: 0.5, color: Color(0xffCAC4D0)),
@@ -1017,18 +1061,42 @@ class ServiceBookingTile extends StatelessWidget {
     final warranty = booking.warranty;
     if (warranty == null) return false;
 
+    // Do not show for completed warranties
     if (warranty.warrantyStatusCode == 'C') return false;
+
+    // Do not show for expired warranties
+    if (calculateDaysLeft() <= 0) return false;
 
     // Do not show if it's already escalated
     if (booking.isEscalated == true) return false;
 
+    // Do not show for 1 day after admin resolves it
+    if (booking.resolvedAt != null) {
+      final daysSinceResolved = DateTime.now()
+          .difference(booking.resolvedAt!.toDate())
+          .inDays;
+      if (daysSinceResolved <= 1) return false;
+    }
+
     // Show if the warranty booking is rejected (by admin)
     if (warranty.warrantyStatusCode == 'X') return true;
 
+    final isAssignedTechnicianEmpty =
+        warranty.assignedTechnician == null ||
+        warranty.assignedTechnician!.isEmpty;
+    final isAssignedTechnicianIdEmpty =
+        warranty.assignedTechnicianId == null ||
+        warranty.assignedTechnicianId!.isEmpty;
+
+    final hasRejections =
+        (warranty.rejectedTechnicians != null &&
+            warranty.rejectedTechnicians!.isNotEmpty) ||
+        warranty.rejectedAt != null;
+
     // Show if the assigned technician rejects the warranty booking (technician cancelled)
-    if (warranty.rejectedTechnicians != null &&
-        warranty.rejectedTechnicians!.isNotEmpty &&
-        warranty.assignedTechnician == null) {
+    if (hasRejections &&
+        isAssignedTechnicianEmpty &&
+        isAssignedTechnicianIdEmpty) {
       return true;
     }
 

@@ -61,6 +61,8 @@ class BookingModel {
   Timestamp? counterProposalAcceptedAt;
   Timestamp? counterProposalStartedAt;
   CounterOfferModel? activeCounterOffer;
+  String? resolutionText;
+  Timestamp? resolvedAt;
   String? rebookTechnicianId; // ✅ Added
   String? invoiceId;
   String? invoicePdfUrl;
@@ -100,8 +102,10 @@ class BookingModel {
     this.cancelledWorkers = const [],
     this.isEscalated = false,
     this.escalatedAt,
+    this.resolutionText,
+    this.resolvedAt,
+    this.completionData,
     this.agent,
-    this.completionData, // Add this
     this.trackingStartedAt,
     this.trackingStoppedAt,
     this.createdAt,
@@ -155,6 +159,8 @@ class BookingModel {
       paymentCompletedAt = data['paymentCompletedAt'],
       paymentVerifiedAt = data['paymentVerifiedAt'],
       escalatedAt = data['escalatedAt'],
+      resolutionText = data['resolutionText'],
+      resolvedAt = data['resolvedAt'],
       chatroomId = data['chatroomId'] ?? '',
       bookingDateTime = data['bookingDateTime'],
       bookingStatusCode = data['bookingStatusCode'] ?? '',

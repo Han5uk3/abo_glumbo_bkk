@@ -149,23 +149,11 @@ class InvoiceService {
                     ),
             );
 
-            final daysDiff =
-                booking.warranty?.expiredOn != null &&
-                    (booking.warranty?.createdAt != null ||
-                        booking.completedAt != null)
-                ? booking.warranty!.expiredOn!
-                      .difference(
-                        booking.warranty!.createdAt ??
-                            booking.completedAt!.toDate(),
-                      )
-                      .inDays
-                : 7;
-
             final warrantyDuration = (loc.localeName == 'ar')
-                ? "$daysDiff أيام"
+                ? "7 أيام (من تاريخ اكتمال الخدمة)"
                 : (loc.localeName == 'ur')
-                ? "$daysDiff دن"
-                : "$daysDiff Days";
+                ? "7 دن (سروس مکمل ہونے کی تاریخ سے)"
+                : "7 Days (from service completion)";
 
             return pw.Row(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -227,7 +215,10 @@ class InvoiceService {
                       if (booking.agent?.name != null)
                         buildDirectionalText(loc.technicianLabel(booking.agent!.name!)),
                       if (booking.agent?.phone != null)
-                        pw.Text(reshape(loc.techPhoneLabel(booking.agent!.phone!))),
+                        pw.Directionality(
+                          textDirection: pw.TextDirection.ltr,
+                          child: pw.Text(reshape(loc.techPhoneLabel(booking.agent!.phone!))),
+                        ),
                       pw.Text(reshape(loc.completedAtLabel(completedAtStr))),
                       if (data.mode == 1)
                         pw.Text(reshape(loc.warrantyLabel(warrantyDuration))),

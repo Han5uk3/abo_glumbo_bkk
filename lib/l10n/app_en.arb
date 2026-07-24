@@ -1066,6 +1066,7 @@
   "settings": "Settings",
   "discountAppliesToInspectionFeeOnly": "Discount applies to the inspection fee only.",
   "escalated": "Pending Admin Review",
+  "resolved":"Resolved",
   "resolveIssue": "Resolve Issue",
   "whatWasDoneToResolve": "What was done to resolve the issue?",
   "resolutionTextRequired": "Resolution text is required",

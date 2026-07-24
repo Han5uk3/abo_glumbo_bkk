@@ -5308,6 +5308,12 @@ abstract class AppLocalizations {
   /// **'Pending Admin Review'**
   String get escalated;
 
+  /// No description provided for @resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get resolved;
+
   /// No description provided for @resolveIssue.
   ///
   /// In en, this message translates to:

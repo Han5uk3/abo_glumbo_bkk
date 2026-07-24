@@ -188,7 +188,7 @@ class WorkerCard extends StatelessWidget {
                   // Rating
                   _InfoRow(
                     icon: '⭐',
-                    text: '$rating ($reviewCount ${locale.reviews})',
+                    text: '${reviewCount > 0 ? (rating / reviewCount).toStringAsFixed(1) : "0.0"} (${reviewCount} ${locale.reviews})',
                   ),
 
                   const SizedBox(height: 6),
