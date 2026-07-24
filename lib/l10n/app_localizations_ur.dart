@@ -2844,7 +2844,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get escalated => 'مسئلہ بڑھا دیا گیا';
 
   @override
-  String get resolved => 'Resolved';
+  String get resolved => 'تم الحل';
 
   @override
   String get resolveIssue => 'مسئلہ حل کریں';
