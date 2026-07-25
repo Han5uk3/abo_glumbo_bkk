@@ -579,7 +579,13 @@ class _HomePageState extends State<HomePage>
 
         final data = snapshot.data!.data() as Map<String, dynamic>;
         final createdAt = data['createdAt'] as Timestamp?;
+        final status = data['status'] as String?;
         if (createdAt == null) return const SizedBox.shrink();
+
+        if (status == 'closed' || status == 'completed' || status == 'cancelled') {
+          LocalStoreHelper.clearBookingRequestId();
+          return const SizedBox.shrink();
+        }
 
         final elapsedSeconds = DateTime.now()
             .difference(createdAt.toDate())

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'dart:math' show sin, cos, sqrt, atan2, pi;
+import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -567,6 +568,7 @@ class _BookServicePageState extends State<BookServicePage> {
                 final shouldCancel = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
+                    backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -592,29 +594,34 @@ class _BookServicePageState extends State<BookServicePage> {
                                 : 'If you go back, the searching will be stopped. Are you sure?'),
                       style: TextStyle(fontSize: 14),
                     ),
+                    actionsAlignment: MainAxisAlignment.start,
                     actions: [
-                      TextButton(
+                      eButton(
+                        context: context,
                         onPressed: () => Navigator.pop(context, false),
-                        child: Text(
+                        text: 
+                   
                           locale == 'ar'
                               ? 'لا'
                               : locale == 'ur'
                               ? 'نہیں'
                               : 'No',
-                        ),
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black
                       ),
-                      TextButton(
+                   
+                      eButton(
+                        context: context,
                         onPressed: () => Navigator.pop(context, true),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.red,
-                        ),
-                        child: Text(
+                        text: 
                           locale == 'ar'
                               ? 'نعم، إلغاء'
                               : locale == 'ur'
                               ? 'جی ہاں، منسوخ کریں'
                               : 'Yes, Cancel',
-                        ),
+                      
+backgroundColor: Colors.red,
+                        textColor: Colors.white,
                       ),
                     ],
                   ),
@@ -628,6 +635,7 @@ class _BookServicePageState extends State<BookServicePage> {
                     .doc(_bookingRequestId!)
                     .update({'status': 'closed'});
 
+                LocalStoreHelper.clearBookingRequestId();
                 _requestExpiryTimer?.cancel();
                 setState(() {
                   _bookingRequestId = null;
