@@ -108,7 +108,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
                             child: !isSelected
                                 ? const SizedBox.shrink()
                                 : Padding(
-                                    padding: const EdgeInsets.only(left: 8),
+                                    padding: EdgeInsetsDirectional.only(
+                                      start: 8,
+                                    ),
                                     child: Text(
                                       item.label,
                                       style: const TextStyle(

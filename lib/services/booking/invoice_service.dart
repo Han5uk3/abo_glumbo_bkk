@@ -131,9 +131,9 @@ class InvoiceService {
               ),
             ],
           ),
-          pw.SizedBox(height: 40),
+      
 
-          pw.SizedBox(height: 40),
+          pw.SizedBox(height: 20),
 
           // Get the address used for this booking from the customer data inside the booking
           () {
@@ -378,7 +378,7 @@ class InvoiceService {
             ],
           ),
 
-          pw.SizedBox(height: 60),
+          pw.SizedBox(height: 20),
           pw.Center(
             child: pw.Text(
               reshape((loc.localeName == 'ar')
