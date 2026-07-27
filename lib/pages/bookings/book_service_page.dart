@@ -615,10 +615,10 @@ class _BookServicePageState extends State<BookServicePage> {
                         onPressed: () => Navigator.pop(context, true),
                         text: 
                           locale == 'ar'
-                              ? 'نعم، إلغاء'
+                            ? 'نعم'
                               : locale == 'ur'
-                              ? 'جی ہاں، منسوخ کریں'
-                              : 'Yes, Cancel',
+                            ? 'جی ہاں'
+                            : 'yes',
                       
 backgroundColor: Colors.red,
                         textColor: Colors.white,
@@ -631,9 +631,21 @@ backgroundColor: Colors.red,
                   return false;
                 }
 
-                await AppFirestore.bookingRequestsCollectionRef
-                    .doc(_bookingRequestId!)
-                    .update({'status': 'closed'});
+                // Delete job offers
+                final offers = await AppFirestore.jobOffersCollectionRef
+                    .where('requestId', isEqualTo: _bookingRequestId!)
+                    .get();
+                final batch = FirebaseFirestore.instance.batch();
+                for (var doc in offers.docs) {
+                  batch.delete(doc.reference);
+                }
+                // Delete booking request
+                batch.delete(
+                  AppFirestore.bookingRequestsCollectionRef.doc(
+                    _bookingRequestId!,
+                  ),
+                );
+                await batch.commit();
 
                 LocalStoreHelper.clearBookingRequestId();
                 _requestExpiryTimer?.cancel();
@@ -743,9 +755,21 @@ backgroundColor: Colors.red,
                         return;
                       }
 
-                      await AppFirestore.bookingRequestsCollectionRef
-                          .doc(_bookingRequestId!)
-                          .update({'status': 'closed'});
+                      // Delete job offers
+                      final offers = await AppFirestore.jobOffersCollectionRef
+                          .where('requestId', isEqualTo: _bookingRequestId!)
+                          .get();
+                      final batch = FirebaseFirestore.instance.batch();
+                      for (var doc in offers.docs) {
+                        batch.delete(doc.reference);
+                      }
+                      // Delete booking request
+                      batch.delete(
+                        AppFirestore.bookingRequestsCollectionRef.doc(
+                          _bookingRequestId!,
+                        ),
+                      );
+                      await batch.commit();
 
                       _requestExpiryTimer?.cancel();
                       setState(() {
@@ -2019,10 +2043,8 @@ backgroundColor: Colors.red,
         },
         onFailed: ({bool customerCancelled = false}) {
           if (_bookingRequestId != null) {
+            AppServices.deleteJobRequest(_bookingRequestId!);
             AppFirestore.bookingRequestsCollectionRef
-                .doc(_bookingRequestId!)
-                .delete();
-            AppFirestore.jobRequestsCollectionRef
                 .doc(_bookingRequestId!)
                 .delete();
             _bookingRequestId = null;

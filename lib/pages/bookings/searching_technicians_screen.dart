@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -229,6 +230,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
     final shouldCancel = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           locale == 'ar'
@@ -252,19 +254,28 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                   : 'If you go back, the searching will be stopped. Are you sure?'),
           style: TextStyle(fontSize: 14),
         ),
+        actionsAlignment: MainAxisAlignment.start,
         actions: [
-          TextButton(
+          eButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(
-              locale == 'ar' ? 'لا' : locale == 'ur' ? 'نہیں' : 'No',
-            ),
+            context: context,
+            backgroundColor: Colors.white,
+            text: locale == 'ar'
+                ? 'لا'
+                : locale == 'ur'
+                ? 'نہیں'
+                : 'No',
           ),
-          TextButton(
+          eButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(
-              locale == 'ar' ? 'نعم، إلغاء' : locale == 'ur' ? 'جی ہاں، منسوخ کریں' : 'Yes, Cancel',
-            ),
+            context: context,
+            backgroundColor: Colors.red,
+            text: locale == 'ar'
+                ? 'نعم'
+                : locale == 'ur'
+                ? 'جی ہاں'
+                : 'Yes',
+            textColor: Colors.white
           ),
         ],
       ),
@@ -273,9 +284,20 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
     if (shouldCancel == true) {
       setState(() => _isLoading = true);
       try {
-        await AppFirestore.bookingRequestsCollectionRef
-            .doc(_currentRequestId)
-            .update({'status': 'closed'});
+        // Delete job offers
+        final offers = await AppFirestore.jobOffersCollectionRef
+            .where('requestId', isEqualTo: _currentRequestId)
+            .get();
+        final batch = FirebaseFirestore.instance.batch();
+        for (var doc in offers.docs) {
+          batch.delete(doc.reference);
+        }
+        // Delete booking request
+        batch.delete(
+          AppFirestore.bookingRequestsCollectionRef.doc(_currentRequestId),
+        );
+        await batch.commit();
+
         LocalStoreHelper.clearBookingRequestId();
 
         if (mounted && _bookingRequestData != null) {
@@ -939,6 +961,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
 
   Widget _buildExpiredSection() {
     final String locale = AppLocalizations.of(context)?.localeName ?? 'en';
+    final bool isRebook = _bookingRequestData?['isRebook'] == true;
     return Container(
       margin: const EdgeInsets.all(24),
       padding: const EdgeInsets.all(20),
@@ -969,11 +992,15 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
           ),
           const SizedBox(height: 16),
           Text(
-            locale == 'ar'
-                ? 'لم يقبل أي فني'
-                : locale == 'ur'
-                ? 'کسی ٹیکنیشن نے قبول نہیں کیا'
-                : "No Technicians Accepted",
+            isRebook
+                ? (locale == 'ar'
+                      ? 'انتهت مهلة الاستجابة'
+                      : "Response Time Expired")
+                : (locale == 'ar'
+                      ? 'لم يقبل أي فني'
+                      : locale == 'ur'
+                      ? 'کسی ٹیکنیشن نے قبول نہیں کیا'
+                      : "No Technicians Accepted"),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -982,11 +1009,17 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
           ),
           const SizedBox(height: 8),
           Text(
-            locale == 'ar'
-                ? 'جميع الفنيين مشغولون حالياً أو لم يقبلوا في الوقت المحدد.'
-                : locale == 'ur'
-                ? 'تمام ٹیکنیشنز اس وقت مصروف ہیں یا انہوں نے وقت پر قبول نہیں کیا۔'
-                : "All technicians are currently busy or didn't accept in time.",
+            isRebook
+                ? (locale == 'ar'
+                      ? 'انتهت مهلة انتظار رد الفني. يرجى اختيار فني آخر.'
+                      : locale == 'ur'
+                      ? 'ٹیکنیشن نے مقررہ وقت کے اندر جواب نہیں دیا۔ براہِ کرم کسی دوسرے ٹیکنیشن کا انتخاب کریں۔'
+                      : "The technician didn't respond within the allotted time. Please choose another technician.")
+                : (locale == 'ar'
+                      ? 'جميع الفنيين مشغولون حالياً أو لم يقبلوا في الوقت المحدد.'
+                      : locale == 'ur'
+                      ? 'تمام ٹیکنیشنز اس وقت مصروف ہیں یا انہوں نے وقت پر قبول نہیں کیا۔'
+                      : "All technicians are currently busy or didn't accept in time."),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
