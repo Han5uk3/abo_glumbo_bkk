@@ -2646,7 +2646,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thankYouInvoice => 'Thank you for choosing Abo Glumbo!';
 
   @override
-  String get biometricError => 'âŒ Biometric error';
+  String get biometricError => 'Biometric error';
 
   @override
   String get unknownError => 'Unknown error';

@@ -384,7 +384,7 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                   }
 
                   final notification = displayedNotifications[index];
-                  final isArOrUr = isAr || isUr;
+              
 
                   // Use fallback if specific language content is missing
                   final title = isAr

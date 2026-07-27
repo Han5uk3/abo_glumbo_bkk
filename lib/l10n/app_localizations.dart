@@ -5011,7 +5011,7 @@ abstract class AppLocalizations {
   /// No description provided for @biometricError.
   ///
   /// In en, this message translates to:
-  /// **'âŒ Biometric error'**
+  /// **'Biometric error'**
   String get biometricError;
 
   /// No description provided for @unknownError.

@@ -960,7 +960,7 @@
   },
   "totalLabel": "Total:",
   "thankYouInvoice": "Thank you for choosing Abo Glumbo!",
-  "biometricError": "âŒ Biometric error",
+  "biometricError": "Biometric error",
   "unknownError": "Unknown error",
   "errorDuringLogin": "Error during login",
   "backToLogin": "Back to Login",
