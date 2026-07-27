@@ -10,14 +10,63 @@ import 'package:intl/intl.dart';
 import 'package:flutter/widgets.dart' as material_widgets;
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 
-import 'package:arabic_reshaper/arabic_reshaper.dart';
+import 'package:bidi/bidi.dart' as bidi;
 
 class InvoiceService {
-  static Future<pw.Document?> _buildInvoiceDocument(
-    material_widgets.BuildContext context,
+  /// Scripts that must be laid out right-to-left: Arabic, Arabic Supplement
+  /// (the extra Urdu/Persian letters) and both Arabic presentation form blocks.
+  static final RegExp _rtlScript = RegExp(r'[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]');
+
+  /// A run of Latin letters, digits and the separators that hold them together.
+  static final RegExp _ltrRun = RegExp(
+    r'[+#]?[0-9A-Za-z][0-9A-Za-z \u00A0.,:;+\-/\\#@%_]*[0-9A-Za-z%]|[0-9A-Za-z]',
+  );
+
+  /// Keeps a Latin/number run together and left-to-right, by fencing it between
+  /// two LRMs. That matters twice over:
+  ///
+  ///  * package:bidi does not apply rule W4 to the hyphen-minus, so `2026-07-28`
+  ///    would otherwise be split at the hyphens and reordered to `28-07-2026`.
+  ///  * rule W2 turns a European number into an *Arabic* number when the nearest
+  ///    preceding strong type is an Arabic letter, which pulls the `2` out of
+  ///    `اشفابدران, 2WX5+FW` and drops it on the far side of the Arabic word. The
+  ///    fence puts a strong L in front of the digit, so it stays European.
+  ///
+  /// LRM is consumed by the bidi pass, and Noto Naskh Arabic carries a glyph for
+  /// it, so it never reaches the page as a box either way.
+  static final String _lrm = String.fromCharCode(0x200E);
+
+  static String _isolateLtrRuns(String value) =>
+      value.replaceAllMapped(_ltrRun, (match) => '$_lrm${match[0]}$_lrm');
+
+  /// Reorders [value] into visual order and shapes the Arabic, using the same
+  /// bidi implementation package:pdf calls internally, so the result can be
+  /// drawn left to right verbatim.
+  ///
+  /// The leading LRM forces the paragraph direction to left-to-right. Rule P2
+  /// would otherwise derive it from the first strong character, so a geocoded
+  /// address such as `اشفابدران, Amman, Jordan, 2WX5+FW` would lay out
+  /// right-to-left inside an English invoice. Runs of Arabic are still reversed
+  /// and shaped within themselves; only the direction of the line as a whole is
+  /// pinned. Text that is entirely Arabic comes out the same either way.
+  static String _visualOrderLtr(String value) {
+    final buffer = StringBuffer();
+    for (final paragraph in bidi.BidiString.fromLogical(
+      _lrm + value,
+    ).paragraphs) {
+      final endsWithNewLine = paragraph.separator == 10;
+      final end = paragraph.bidiText.length - (endsWithNewLine ? 1 : 0);
+      buffer.write(String.fromCharCodes(paragraph.bidiText, 0, end));
+      if (endsWithNewLine) buffer.writeln();
+    }
+    return buffer.toString();
+  }
+
+  @material_widgets.visibleForTesting
+  static Future<pw.Document> buildInvoiceDocument(
+    AppLocalizations loc,
     BookingModel booking,
   ) async {
-    final loc = AppLocalizations.of(context)!;
     final pdf = pw.Document();
 
     // Load logo if exists
@@ -50,36 +99,84 @@ class InvoiceService {
               ? 'دستیاب نہیں'
               : 'N/A');
 
-    final isArabic = loc.localeName == 'ar' || loc.localeName == 'ur';
-    final ttf = await PdfGoogleFonts.cairoRegular();
-    final ttfBold = await PdfGoogleFonts.cairoBold();
+    final isRtl = loc.localeName == 'ar' || loc.localeName == 'ur';
+
+    // Noto Naskh Arabic is used for every locale on purpose. package:pdf shapes
+    // Arabic by rewriting text into the Arabic presentation forms blocks, so the
+    // font has to carry glyphs for those codepoints. Cairo only covers part of
+    // Presentation Forms-B and none of Forms-A, which is where the Urdu letters
+    // (ٹ ڈ ڑ ں ہ ھ ے ک گ پ) live - they came out as .notdef boxes.
+    final ttf = await PdfGoogleFonts.notoNaskhArabicRegular();
+    final ttfBold = await PdfGoogleFonts.notoNaskhArabicBold();
 
     final theme = pw.ThemeData.withFont(base: ttf, bold: ttfBold);
 
-    String reshape(String text) {
-      if (text.isEmpty) return text;
-      return ArabicReshaper.instance.reshape(text);
-    }
+    // package:pdf reshapes *and* reorders Arabic itself (through package:bidi)
+    // as soon as the resolved direction is RTL, so a string only ever needs the
+    // correct direction wrapped around it - never a second reshaping pass.
+    // Reshaping ahead of time produced disjointed glyphs and made package:bidi
+    // throw on some strings.
+    pw.Widget text(
+      String value, {
+      pw.TextStyle? style,
+      pw.TextAlign? textAlign,
+    }) {
+      final wantsRtl = _rtlScript.hasMatch(value);
 
-    pw.Widget buildDirectionalText(String text, {pw.TextStyle? style}) {
-      if (text.isEmpty) return pw.Text(text, style: style);
-      final reshaped = reshape(text);
-      final hasArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(text);
-      if (hasArabic && !isArabic) {
-        return pw.Directionality(
-          textDirection: pw.TextDirection.rtl,
-          child: pw.Text(reshaped, style: style),
+      // Arabic inside an English invoice. Handing it to package:pdf's RTL pass
+      // lays the whole line out right-to-left, and because that pass reverses
+      // words across the entire string before the line breaking runs, a wrapped
+      // line comes out scrambled on top of that. Reorder it here against a
+      // left-to-right paragraph and draw the result verbatim instead. Only
+      // reachable on an LTR invoice, so ar/ur are unaffected.
+      if (wantsRtl && !isRtl) {
+        return pw.Text(
+          _visualOrderLtr(_isolateLtrRuns(value)),
+          style: style,
+          textAlign: textAlign,
         );
       }
-      return pw.Text(reshaped, style: style);
+
+      final child = pw.Text(
+        wantsRtl ? _isolateLtrRuns(value) : value,
+        style: style,
+        textAlign: textAlign,
+      );
+      if (wantsRtl == isRtl) return child;
+      return pw.Directionality(
+        textDirection: wantsRtl ? pw.TextDirection.rtl : pw.TextDirection.ltr,
+        child: child,
+      );
     }
+
+    // pw.Table always lays its columns out left to right, so an RTL invoice
+    // needs the columns (and their alignments) mirrored by hand.
+    List<T> ordered<T>(List<T> columns) =>
+        isRtl ? columns.reversed.toList() : columns;
+
+    // Column order after `ordered`, left to right on the page:
+    //   ltr: description, quantity, unit price, amount
+    //   rtl: amount, unit price, quantity, description
+    final cellAlignments = isRtl
+        ? const <int, pw.Alignment>{
+            0: pw.Alignment.centerLeft,
+            1: pw.Alignment.centerLeft,
+            2: pw.Alignment.center,
+            3: pw.Alignment.centerRight,
+          }
+        : const <int, pw.Alignment>{
+            0: pw.Alignment.centerLeft,
+            1: pw.Alignment.center,
+            2: pw.Alignment.centerRight,
+            3: pw.Alignment.centerRight,
+          };
 
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
         theme: theme,
-        textDirection: isArabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
+        textDirection: isRtl ? pw.TextDirection.rtl : pw.TextDirection.ltr,
         build: (context) => [
           // Header
           pw.Row(
@@ -91,21 +188,21 @@ class InvoiceService {
                   if (logo != null)
                     pw.Container(width: 80, height: 80, child: pw.Image(logo)),
                   pw.SizedBox(height: 10),
-                  pw.Text(
-                    reshape("Abo Glumbo"),
+                  text(
+                    "Abo Glumbo",
                     style: pw.TextStyle(
                       fontSize: 20,
                       fontWeight: pw.FontWeight.bold,
                     ),
                   ),
-                  pw.Text(reshape(loc.invoiceTitle)),
+                  text(loc.invoiceTitle),
                 ],
               ),
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
-                  pw.Text(
-                    reshape(loc.invoiceWord),
+                  text(
+                    loc.invoiceWord,
                     style: pw.TextStyle(
                       fontSize: 30,
                       fontWeight: pw.FontWeight.bold,
@@ -113,15 +210,15 @@ class InvoiceService {
                     ),
                   ),
                   pw.SizedBox(height: 10),
-                  pw.Text(
-                    reshape(loc.invoiceNumber(
+                  text(
+                    loc.invoiceNumber(
                       booking.newBookingId ??
                           booking.id.substring(0, 8).toUpperCase(),
-                    )),
+                    ),
                   ),
-                  pw.Text(reshape(loc.dateString(dateFormat.format(DateTime.now())))),
-                  pw.Text(
-                    reshape(loc.statusPaid),
+                  text(loc.dateString(dateFormat.format(DateTime.now()))),
+                  text(
+                    loc.statusPaid,
                     style: pw.TextStyle(
                       color: PdfColors.green,
                       fontWeight: pw.FontWeight.bold,
@@ -131,7 +228,6 @@ class InvoiceService {
               ),
             ],
           ),
-      
 
           pw.SizedBox(height: 20),
 
@@ -162,11 +258,11 @@ class InvoiceService {
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text(
-                        reshape(loc.billTo),
+                      text(
+                        loc.billTo,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                       ),
-                      buildDirectionalText(
+                      text(
                         booking.customer.name ??
                             ((loc.localeName == 'ar')
                                 ? 'عميلنا العزيز'
@@ -174,21 +270,21 @@ class InvoiceService {
                                 ? 'معزز صارف'
                                 : 'Valued Customer'),
                       ),
-                      pw.Text(reshape(booking.customer.phone ?? "")),
-                      pw.Text(reshape(booking.customer.email ?? "")),
-                      buildDirectionalText(
+                      text(booking.customer.phone ?? ""),
+                      text(booking.customer.email ?? ""),
+                      text(
                         "${address.buildingNumber}${address.streetName != null ? ', ${address.streetName}' : ''}",
                       ),
                       if (address.fullName.isNotEmpty &&
                           address.fullName != booking.customer.name)
-                        buildDirectionalText(address.fullName),
+                        text(address.fullName),
                       if (booking.customer.districtName != null ||
                           booking.customer.cityName != null)
-                        buildDirectionalText(
+                        text(
                           "${booking.customer.districtName ?? ''}${booking.customer.districtName != null && booking.customer.cityName != null ? ', ' : ''}${booking.customer.cityName ?? ''}",
                         ),
                       if (booking.serviceLocation != null)
-                        buildDirectionalText(
+                        text(
                           booking.serviceLocation!.localizedName(
                             loc.localeName,
                           ),
@@ -196,47 +292,50 @@ class InvoiceService {
                     ],
                   ),
                 ),
+                // A long service address runs right up to the other column,
+                // which reads as touching once the layout mirrors for ar/ur.
+                pw.SizedBox(width: 24),
                 pw.Expanded(
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text(
-                        reshape(loc.bookingDetailsInvoice),
+                      text(
+                        loc.bookingDetailsInvoice,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                       ),
-                      pw.Text(
-                        reshape(loc.serviceLabel(
+                      text(
+                        loc.serviceLabel(
                           booking.service.nameLocalized(
                                 languageCode: loc.localeName,
                               ) ??
                               "",
-                        )),
+                        ),
                       ),
                       if (booking.agent?.name != null)
-                        buildDirectionalText(loc.technicianLabel(booking.agent!.name!)),
+                        text(loc.technicianLabel(booking.agent!.name!)),
                       if (booking.agent?.phone != null)
-                        pw.Directionality(
-                          textDirection: pw.TextDirection.ltr,
-                          child: pw.Text(reshape(loc.techPhoneLabel(booking.agent!.phone!))),
-                        ),
-                      pw.Text(reshape(loc.completedAtLabel(completedAtStr))),
+                        text(loc.techPhoneLabel(booking.agent!.phone!)),
+                      text(loc.completedAtLabel(completedAtStr)),
                       if (data.mode == 1)
-                        pw.Text(reshape(loc.warrantyLabel(warrantyDuration))),
-                      pw.Text(
-                        reshape(loc.paymentModeLabel(
-                          (booking.orderId != null && booking.orderId!.isNotEmpty) ||
-                                  (booking.paymentModeCode.toUpperCase() == 'C' ||
-                                      booking.paymentModeCode.toUpperCase() == 'A')
+                        text(loc.warrantyLabel(warrantyDuration)),
+                      text(
+                        loc.paymentModeLabel(
+                          (booking.orderId != null &&
+                                      booking.orderId!.isNotEmpty) ||
+                                  (booking.paymentModeCode.toUpperCase() ==
+                                          'C' ||
+                                      booking.paymentModeCode.toUpperCase() ==
+                                          'A')
                               ? (loc.insideApp)
                               : (loc.outsideApp),
-                        )),
+                        ),
                       ),
                       if (booking.orderId != null ||
                           booking.transactionId != null)
-                        pw.Text(
-                          reshape(loc.transactionIdLabel(
+                        text(
+                          loc.transactionIdLabel(
                             booking.orderId ?? booking.transactionId ?? '',
-                          )),
+                          ),
                         ),
                     ],
                   ),
@@ -247,51 +346,52 @@ class InvoiceService {
           pw.SizedBox(height: 40),
 
           // Items Table
-          pw.Table.fromTextArray(
+          pw.TableHelper.fromTextArray(
             headerStyle: pw.TextStyle(
               fontWeight: pw.FontWeight.bold,
               color: PdfColors.white,
             ),
             headerDecoration: const pw.BoxDecoration(color: PdfColors.blue),
             cellHeight: 30,
-            cellAlignments: {
-              0: pw.Alignment.centerLeft,
-              1: pw.Alignment.center,
-              2: pw.Alignment.centerRight,
-              3: pw.Alignment.centerRight,
-            },
-            headers: ((loc.localeName == 'ar')
-                ? ['الوصف', 'الكمية', 'سعر الوحدة', 'المبلغ']
-                : (loc.localeName == 'ur')
-                ? ['تفصیل', 'مقدار', 'فی اکائی قیمت', 'رقم']
-                : ['Description', 'Quantity', 'Unit Price', 'Amount']).map((h) => reshape(h)).toList(),
+            cellAlignments: cellAlignments,
+            headers: ordered(
+              (loc.localeName == 'ar')
+                  ? ['الوصف', 'الكمية', 'سعر الوحدة', 'المبلغ']
+                  : (loc.localeName == 'ur')
+                  ? ['تفصیل', 'مقدار', 'فی اکائی قیمت', 'رقم']
+                  : ['Description', 'Quantity', 'Unit Price', 'Amount'],
+            ),
             data: [
               ...data.serviceItems.map(
-                (item) => [
-                  reshape(item.name),
-                  reshape(item.quantity.toStringAsFixed(0)),
-                  reshape("${item.price.toStringAsFixed(2)} ${loc.sar}"),
-                  reshape("${(item.quantity * item.price).toStringAsFixed(2)} ${loc.sar}"),
-                ],
+                (item) => ordered([
+                  text(item.name),
+                  text(item.quantity.toStringAsFixed(0)),
+                  text("${item.price.toStringAsFixed(2)} ${loc.sar}"),
+                  text(
+                    "${(item.quantity * item.price).toStringAsFixed(2)} ${loc.sar}",
+                  ),
+                ]),
               ),
               if (data.serviceItems.isEmpty && data.serviceCost > 0)
-                [
-                  reshape((loc.localeName == 'ar')
-                      ? 'تكلفة الخدمة'
-                      : (loc.localeName == 'ur')
-                      ? 'سروس کی قیمت'
-                      : 'Service Cost'),
-                  reshape('1'),
-                  reshape("${data.serviceCost.toStringAsFixed(2)} ${loc.sar}"),
-                  reshape("${data.serviceCost.toStringAsFixed(2)} ${loc.sar}"),
-                ],
+                ordered([
+                  text(
+                    (loc.localeName == 'ar')
+                        ? 'تكلفة الخدمة'
+                        : (loc.localeName == 'ur')
+                        ? 'سروس کی قیمت'
+                        : 'Service Cost',
+                  ),
+                  text('1'),
+                  text("${data.serviceCost.toStringAsFixed(2)} ${loc.sar}"),
+                  text("${data.serviceCost.toStringAsFixed(2)} ${loc.sar}"),
+                ]),
               if (data.inspectionFee > 0)
-                [
-                  reshape(loc.inspectionFee),
-                  reshape('1'),
-                  reshape("${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}"),
-                  reshape("${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}"),
-                ],
+                ordered([
+                  text(loc.inspectionFee),
+                  text('1'),
+                  text("${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}"),
+                  text("${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}"),
+                ]),
             ],
           ),
           pw.SizedBox(height: 20),
@@ -306,9 +406,9 @@ class InvoiceService {
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Text(reshape(loc.subtotal)),
-                        pw.Text(
-                          reshape("${data.serviceCost.toStringAsFixed(2)} ${loc.sar}"),
+                        text(loc.subtotal),
+                        text(
+                          "${data.serviceCost.toStringAsFixed(2)} ${loc.sar}",
                         ),
                       ],
                     ),
@@ -316,9 +416,9 @@ class InvoiceService {
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text(reshape(loc.inspectionFee)),
-                          pw.Text(
-                            reshape("${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}"),
+                          text(loc.inspectionFee),
+                          text(
+                            "${data.inspectionFee.toStringAsFixed(2)} ${loc.sar}",
                           ),
                         ],
                       ),
@@ -326,15 +426,15 @@ class InvoiceService {
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text(
-                            reshape((loc.localeName == 'ar')
+                          text(
+                            (loc.localeName == 'ar')
                                 ? 'الخصم (${booking.service.discountPercentage}%)'
                                 : (loc.localeName == 'ur')
                                 ? 'رعایت (${booking.service.discountPercentage}%)'
-                                : 'Discount (${booking.service.discountPercentage}%)'),
+                                : 'Discount (${booking.service.discountPercentage}%)',
                           ),
-                          pw.Text(
-                            reshape('- ${(data.inspectionFee - booking.service.getDiscountedPrice(data.inspectionFee)).toStringAsFixed(2)} ${loc.sar}'),
+                          text(
+                            '- ${(data.inspectionFee - booking.service.getDiscountedPrice(data.inspectionFee)).toStringAsFixed(2)} ${loc.sar}',
                             style: pw.TextStyle(color: PdfColors.red),
                           ),
                         ],
@@ -342,8 +442,8 @@ class InvoiceService {
                     if ((booking.service.discountPercentage ?? 0) > 0)
                       pw.Padding(
                         padding: const pw.EdgeInsets.only(top: 4, bottom: 4),
-                        child: pw.Text(
-                          reshape(loc.discountAppliesToInspectionFeeOnly),
+                        child: text(
+                          loc.discountAppliesToInspectionFeeOnly,
                           style: pw.TextStyle(
                             fontSize: 10,
                             color: PdfColors.grey,
@@ -354,15 +454,15 @@ class InvoiceService {
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Text(
-                          reshape(loc.totalLabel),
+                        text(
+                          loc.totalLabel,
                           style: pw.TextStyle(
                             fontSize: 16,
                             fontWeight: pw.FontWeight.bold,
                           ),
                         ),
-                        pw.Text(
-                          reshape("${(data.totalCost + booking.service.getDiscountedPrice(data.inspectionFee)).toStringAsFixed(2)} ${loc.sar}"),
+                        text(
+                          "${(data.totalCost + booking.service.getDiscountedPrice(data.inspectionFee)).toStringAsFixed(2)} ${loc.sar}",
                           style: pw.TextStyle(
                             fontSize: 16,
                             fontWeight: pw.FontWeight.bold,
@@ -380,12 +480,12 @@ class InvoiceService {
 
           pw.SizedBox(height: 20),
           pw.Center(
-            child: pw.Text(
-              reshape((loc.localeName == 'ar')
+            child: text(
+              (loc.localeName == 'ar')
                   ? 'شكرا لاختيارك أبو جلمبو'
                   : (loc.localeName == 'ur')
                   ? 'ابو جلمبو کا انتخاب کرنے کا شکریہ'
-                  : 'Thank you for choosing Abo Glumbo'),
+                  : 'Thank you for choosing Abo Glumbo',
               style: pw.TextStyle(color: PdfColors.grey),
             ),
           ),
@@ -400,13 +500,12 @@ class InvoiceService {
     material_widgets.BuildContext context,
     BookingModel booking,
   ) async {
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return null;
     // Always generate locally to ensure the invoice matches the current app language exactly.
-    final pdf = await _buildInvoiceDocument(context, booking);
-    if (pdf == null) return null;
+    final pdf = await buildInvoiceDocument(loc, booking);
     return await pdf.save();
   }
-
-
 
   static Future<void> generateAndShowInvoice(
     material_widgets.BuildContext context,
