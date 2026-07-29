@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -393,35 +395,68 @@ class ChatService {
     }
   }
 
+  /// How often the presence flag is refreshed while the chat is on screen.
+  /// Must stay well below CHAT_PRESENCE_TTL_MS in functions/index.js so a live
+  /// viewer is never mistaken for a stale one.
+  static const Duration _presenceHeartbeat = Duration(seconds: 15);
+
+  Timer? _presenceTimer;
+
+  /// Marks this user as actively viewing [chatId], which is the only thing that
+  /// stops the backend from pushing them the message.
+  ///
+  /// The flag is a heartbeat rather than a plain `true`: it expires on its own,
+  /// so a flag left behind by a suspended, killed or disconnected app degrades
+  /// into "not viewing" and the push goes out instead of being silently lost.
   Future<void> setActiveChat(String chatId) async {
     final String uid = currentUserId;
     if (uid.isEmpty || chatId.isEmpty) return;
 
-    // Use the 'chats' root which we know is working for markAsRead
-    final String path = 'chats/$chatId/presence/$uid';
-    debugPrint('🚀 Presence start: path=$path');
+    final ref = _rtdb.child('chats/$chatId/presence/$uid');
+    debugPrint('🚀 Presence start: path=chats/$chatId/presence/$uid');
 
+    // Register the disconnect hook before the first write, so a drop between
+    // the two can't leave the flag behind.
     try {
-      await _rtdb.child(path).set(true);
-      debugPrint('✅ Presence set success');
-      
-      try {
-        await _rtdb.child(path).onDisconnect().remove();
-        debugPrint('✅ OnDisconnect register success');
-      } catch (e) {
-        debugPrint('⚠️ OnDisconnect failed: $e');
-      }
+      await ref.onDisconnect().remove();
     } catch (e) {
-      debugPrint('❌ Presence set failed even on working root: $e');
+      debugPrint('⚠️ OnDisconnect register failed: $e');
+    }
+
+    await _writePresence(ref);
+
+    _presenceTimer?.cancel();
+    _presenceTimer = Timer.periodic(_presenceHeartbeat, (_) {
+      _writePresence(ref);
+    });
+  }
+
+  Future<void> _writePresence(DatabaseReference ref) async {
+    try {
+      await ref.set({'active': true, 'updatedAt': ServerValue.timestamp});
+    } catch (e) {
+      // Fail open: without a heartbeat the backend sends the push, which is the
+      // safe direction to fail in.
+      debugPrint('⚠️ Presence write failed: $e');
     }
   }
 
   Future<void> clearActiveChat(String chatId) async {
     final String uid = currentUserId;
+
+    _presenceTimer?.cancel();
+    _presenceTimer = null;
+
     if (uid.isEmpty || chatId.isEmpty) return;
 
+    final ref = _rtdb.child('chats/$chatId/presence/$uid');
     try {
-      await _rtdb.child('chats/$chatId/presence/$uid').remove();
+      await ref.onDisconnect().cancel();
+    } catch (e) {
+      debugPrint('⚠️ Failed to cancel presence onDisconnect: $e');
+    }
+    try {
+      await ref.remove();
     } catch (e) {
       debugPrint('⚠️ Failed to clear presence: $e');
     }

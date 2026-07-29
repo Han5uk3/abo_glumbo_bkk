@@ -57,7 +57,13 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        
+
+        <!-- Fallback channel for pushes that arrive while the app is in the
+             background or terminated, so they are never silently dropped. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="abo_glumbo_channel" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${GOOGLE_MAPS_API_KEY}"/>
