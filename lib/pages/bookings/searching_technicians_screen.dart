@@ -8,6 +8,7 @@ import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/services/time_service.dart';
@@ -284,19 +285,12 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
     if (shouldCancel == true) {
       setState(() => _isLoading = true);
       try {
-        // Delete job offers
-        final offers = await AppFirestore.jobOffersCollectionRef
-            .where('requestId', isEqualTo: _currentRequestId)
-            .get();
-        final batch = FirebaseFirestore.instance.batch();
-        for (var doc in offers.docs) {
-          batch.delete(doc.reference);
-        }
-        // Delete booking request
-        batch.delete(
-          AppFirestore.bookingRequestsCollectionRef.doc(_currentRequestId),
-        );
-        await batch.commit();
+        // Removes the offers *and* the request document from whichever
+        // collection holds it. This screen also hosts rebook-originated
+        // searches, whose request lives in `job_requests`; deleting only
+        // `booking_request` left those alive on the admin dashboard after the
+        // customer had already cancelled.
+        await AppServices.cancelTechnicianSearch(_currentRequestId);
 
         LocalStoreHelper.clearBookingRequestId();
 
@@ -382,15 +376,20 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
         'serviceLocation': serviceLocation,
       };
 
-      // Add to bookings collection
-      await AppFirestore.bookingsCollectionRef
-          .doc(_currentRequestId)
-          .set(bookingJson);
+      // Create the booking and retire the request as one atomic unit. Doing these
+      // as two separate writes could leave a live `booking_request` alongside a
+      // confirmed booking if the app died in between, which would keep the request
+      // visible to admins and let the cleanup paths fight over it.
+      final batch = FirebaseFirestore.instance.batch();
+      batch.set(
+        AppFirestore.bookingsCollectionRef.doc(_currentRequestId),
+        bookingJson,
+      );
+      batch.delete(
+        AppFirestore.bookingRequestsCollectionRef.doc(_currentRequestId),
+      );
+      await batch.commit();
 
-      // Delete from booking_requests
-      await AppFirestore.bookingRequestsCollectionRef
-          .doc(_currentRequestId)
-          .delete();
       LocalStoreHelper.clearBookingRequestId();
 
       AddressModel? selectedAddress;
@@ -412,10 +411,15 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             builder: (context) => BookingCompletedPage(
               service: service,
               worker: agent,
-              selectedDate: bookingDateTime.toDate(),
+              // BookingCompletedPage renders these directly, and every other
+              // caller hands it a KSA wall clock, so convert the stored instant
+              // rather than passing device-local time.
+              selectedDate: KsaTime.fromInstant(bookingDateTime.toDate()),
               selectedTime: {
                 "label": "Confirmed",
-                "time": TimeOfDay.fromDateTime(bookingDateTime.toDate()),
+                "time": TimeOfDay.fromDateTime(
+                  KsaTime.fromInstant(bookingDateTime.toDate()),
+                ),
               },
               address: selectedAddress,
             ),
@@ -716,6 +720,8 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
 
   Widget _buildCounterOfferUI(Map<String, dynamic> offer) {
     final proposedTime = offer['proposedTime'] as Timestamp;
+    // The technician proposed a Saudi wall-clock time; show it as they meant it.
+    final proposedKsa = KsaTime.fromInstant(proposedTime.toDate());
     final l10n = AppLocalizations.of(context)!;
     final locale = l10n.localeName;
 
@@ -762,7 +768,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                "${proposedTime.toDate().day}/${proposedTime.toDate().month}/${proposedTime.toDate().year} ${TimeOfDay.fromDateTime(proposedTime.toDate()).format(context)}",
+                "${proposedKsa.day}/${proposedKsa.month}/${proposedKsa.year} ${TimeOfDay.fromDateTime(proposedKsa).format(context)}",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

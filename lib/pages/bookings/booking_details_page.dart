@@ -59,9 +59,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   Widget _buildBookingTimestamp(BuildContext context, BookingModel booking) {
     final locale = AppLocalizations.of(context)?.localeName ?? 'en';
 
-    if ((booking.bookingStatusCode == "P" ||
-            booking.bookingStatusCode == "SR") &&
-        booking.createdAt != null) {
+    if (booking.bookingStatusCode == "P" && booking.createdAt != null) {
       return _timestampText(
         "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), locale)}",
       );
@@ -2325,8 +2323,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   void _checkRebookTimeout(BookingModel booking) {
     if (_isCheckingTimeout) return;
     if (booking.rebookTechnicianId != null &&
-        (booking.bookingStatusCode == 'P' ||
-            booking.bookingStatusCode == 'SR')) {
+        booking.bookingStatusCode == 'P') {
       _isCheckingTimeout = true;
       AppFirestore.jobOffersCollectionRef
           .where('bookingId', isEqualTo: booking.id)

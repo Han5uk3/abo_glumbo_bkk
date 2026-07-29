@@ -23,7 +23,12 @@ class UserModel {
   String? docUrl;
   String? profileUrl;
   String? fcmToken;
+  /// Running **sum** of every review score this technician has received.
+  /// Not a displayable rating on its own — use [averageRating].
   double? rating;
+
+  /// Number of jobs that have been rated. Denominator for [averageRating].
+  int? reviewCount;
   String? availableBalance;
   String? paidAmounts;
   List<String>? certifications;
@@ -40,6 +45,19 @@ class UserModel {
   String? sponsorWorkPermitUrl;
   String? chamberOfCommerceApprovalUrl;
 
+
+  /// The technician's displayable star rating, 0.0 when they have no reviews yet.
+  ///
+  /// `rating` holds the running SUM of review scores and `reviewCount` the number
+  /// of rated jobs; both are maintained transactionally by the
+  /// `updateTechnicianRatingOnReview` Cloud Function. Always display through this
+  /// getter rather than reading `rating` directly, otherwise the raw sum leaks
+  /// into the UI as an absurd star value.
+  double get averageRating {
+    final count = reviewCount ?? 0;
+    if (count <= 0) return 0.0;
+    return (rating ?? 0.0) / count;
+  }
 
   UserModel({
     required this.role,
@@ -62,6 +80,7 @@ class UserModel {
     this.profileUrl,
     this.fcmToken,
     this.rating,
+    this.reviewCount,
     this.isOnline,
     this.payoutAccounts,
     this.availableBalance,
@@ -100,6 +119,7 @@ class UserModel {
     String? profileUrl,
     String? fcmToken,
     double? rating,
+    int? reviewCount,
     List<PayoutAccountModel>? payoutAccounts,
     String? availableBalance,
     String? paidAmounts,
@@ -137,6 +157,7 @@ class UserModel {
       profileUrl: profileUrl ?? this.profileUrl,
       fcmToken: fcmToken ?? this.fcmToken,
       rating: rating ?? this.rating,
+      reviewCount: reviewCount ?? this.reviewCount,
       availableBalance: availableBalance ?? this.availableBalance,
       paidAmounts: paidAmounts ?? this.paidAmounts,
       payoutAccounts: payoutAccounts ?? this.payoutAccounts,
@@ -188,6 +209,9 @@ class UserModel {
       fcmToken: json['fcmToken'],
       rating: json['rating'] != null
           ? (json['rating'] as num).toDouble()
+          : null,
+      reviewCount: json['reviewCount'] != null
+          ? (json['reviewCount'] as num).toInt()
           : null,
       payoutAccounts: json['payoutAccounts'] != null
           ? List<PayoutAccountModel>.from(

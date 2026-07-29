@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/services/chat_services.dart';
@@ -382,9 +383,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   }
 
   Widget _buildDateSeparator(int timestamp, AppLocalizations localization) {
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+    // Day boundaries follow the Saudi calendar, so a message sent at 01:00 KSA
+    // is filed under the KSA day for everyone reading the thread — and the
+    // "Today" label agrees with the dates shown on the separators around it.
+    final date = KsaTime.fromInstant(
+      DateTime.fromMillisecondsSinceEpoch(timestamp),
+    );
+    final today = KsaTime.today;
     final yesterday = today.subtract(const Duration(days: 1));
     final messageDate = DateTime(date.year, date.month, date.day);
 
@@ -559,8 +564,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   String _formatTime(int timestamp) {
     if (timestamp == 0) return '';
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    final now = DateTime.now();
+    // Compare and render on the Saudi calendar, so "today" means today in KSA
+    // and the clock matches every other time in the app.
+    final dateTime = KsaTime.fromInstant(
+      DateTime.fromMillisecondsSinceEpoch(timestamp),
+    );
+    final now = KsaTime.now;
     if (dateTime.day == now.day &&
         dateTime.month == now.month &&
         dateTime.year == now.year) {

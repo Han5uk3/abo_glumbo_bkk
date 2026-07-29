@@ -70,9 +70,7 @@ class _WriteReviewBottomSheetWidgetState
     final l10n = AppLocalizations.of(context);
     String? errorMessage;
 
-    if (_reviewController.text.trim().isEmpty) {
-      errorMessage = l10n?.pleaseWriteAReview ?? 'Please write a review';
-    } else if (_selectedTip > 0 && _tipPaymentMethod.isEmpty) {
+    if (_selectedTip > 0 && _tipPaymentMethod.isEmpty) {
       errorMessage =
           l10n?.pleaseSelectPaymentMethod ??
           'Please select a payment method for your tip';

@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 
 import 'categories.dart';
 
@@ -441,8 +442,12 @@ class ServiceModel {
         (rating != null && rating! > 0);
   }
 
+  /// Reference clock for work-hour evaluation. Callers normally pass an explicit
+  /// KSA wall-clock value; when they don't we fall back to the current KSA wall
+  /// clock rather than device-local time, so `workStartTime`/`workEndTime` are
+  /// always compared against Saudi hours. See [KsaTime].
   DateTime _getMiddleEastNow({DateTime? time}) {
-    return time ?? DateTime.now();
+    return time ?? KsaTime.now;
   }
 
   bool isOnWorkHour({DateTime? currentTime}) {

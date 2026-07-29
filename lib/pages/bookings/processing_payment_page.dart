@@ -12,7 +12,6 @@ import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
 import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
-import 'package:abo_glumbo_bbk/services/booking/invoice_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -161,30 +160,12 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
       await saveBooking();
       await saveTransaction();
 
-      // Only track full service (mode 1) in-app payments for wallet
-      // Inspection fees (mode 0) are NOT included in payout tracking
-      if (widget.booking?.completionData?.mode == 1) {
-        try {
-          final inspectionFee =
-              widget.booking?.completionData?.inspectionFee ?? 0.0;
-          final serviceCost = widget.booking?.completionData?.totalCost ?? 0.0;
-          final amount = serviceCost + inspectionFee;
-
-          await UnifiedPayoutServices.recordInAppServicePayment(
-            workerId: widget.booking?.agent?.uid ?? '',
-            amount: amount,
-          );
-          debugPrint(
-            '✅ Unified wallet updated with in-app service payment: $amount',
-          );
-        } catch (e) {
-          debugPrint('❌ Error updating unified wallet: $e');
-        }
-      } else {
-        debugPrint(
-          'ℹ️ Skipping wallet update: inspection only (mode ${widget.booking?.completionData?.mode})',
-        );
-      }
+      // The technician's unified wallet is credited server-side by the
+      // `creditTechnicianWalletOnPaymentCompletion` Cloud Function. Crediting it
+      // from here as well double-counted every in-app payment against the Cloud
+      // Function that was already doing it, and on a different basis
+      // (serviceCost + inspectionFee here vs totalCost everywhere else, so the
+      // manual wallet re-sync then disagreed with both).
     } else if (!widget.isFromBooking) {
       await saveReview();
     }

@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'dart:developer';
 
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
@@ -463,8 +464,7 @@ class ServiceBookingTile extends StatelessWidget {
                   if (booking.bookingStatusCode == "C" ||
                       booking.bookingStatusCode == "VP")
                     const SizedBox.shrink()
-                  else if (booking.bookingStatusCode == "P" ||
-                      booking.bookingStatusCode == "SR")
+                  else if (booking.bookingStatusCode == "P")
                     SizedBox(
                       height: 23,
                       child: OutlinedButton(
@@ -597,9 +597,7 @@ class ServiceBookingTile extends StatelessWidget {
   Widget _buildBookingTimestamp(BuildContext context) {
     final locale = AppLocalizations.of(context)?.localeName ?? 'en';
 
-    if ((booking.bookingStatusCode == "P" ||
-            booking.bookingStatusCode == "SR") &&
-        booking.createdAt != null) {
+    if (booking.bookingStatusCode == "P" && booking.createdAt != null) {
       return _timestampText(
         "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), locale)}",
       );
@@ -1051,7 +1049,9 @@ class ServiceBookingTile extends StatelessWidget {
     );
   }
 
-  String formatDateTime(DateTime dateTime, String locale) {
+  /// Renders in Saudi time; [instant] is an absolute instant. See [KsaTime].
+  String formatDateTime(DateTime instant, String locale) {
+    final dateTime = KsaTime.fromInstant(instant);
     final dateFormat = DateFormat.yMMMMd(locale); // e.g., ١٩ يونيو، ٢٠٢٥
     final timeFormat = DateFormat.jm(locale); // e.g., ٢:٣٠ م or 2:30 PM
     return '${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}';

@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 
 class WorkerCard extends StatelessWidget {
   final UserModel worker;
+
+  /// Running **sum** of review scores, not a star value. Divided by
+  /// [reviewCount] for display — see [WorkerWithStats.averageRating].
   final double rating;
   final int reviewCount;
   final ServiceModel service;

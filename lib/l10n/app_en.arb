@@ -526,7 +526,7 @@
       }
     }
   },
-  "inspectionFeeNote": "Inspection fee: {fee} SAR â€” paid only after the technician arrives and inspects the issue.",
+  "inspectionFeeNote": "Inspection fee: {fee} SAR , paid only after the technician arrives and inspects the issue.",
   "@inspectionFeeNote": {
     "description": "Message explaining the inspection fee amount and payment terms",
     "placeholders": {
@@ -1067,6 +1067,10 @@
   "discountAppliesToInspectionFeeOnly": "Discount applies to the inspection fee only.",
   "escalated": "Pending Admin Review",
   "resolved":"Resolved",
+  "complaintSubmitted": "Complaint Submitted",
+  "youSubmittedAComplaint": "You submitted a complaint about this warranty request",
+  "complaintResolvedByAdmin": "Complaint Resolved by Admin",
+  "adminResolvedYourComplaint": "Admin resolved your complaint",
   "resolveIssue": "Resolve Issue",
   "whatWasDoneToResolve": "What was done to resolve the issue?",
   "resolutionTextRequired": "Resolution text is required",
@@ -1074,9 +1078,9 @@
   "offHoursBookingAlert": "Off-Hours Booking Alert",
   "bookForLater": "Book for Later",
   "technicianCancelledTitle": "Technician Cancelled",
-  "technicianCancelledDesc": "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.",
+  "technicianCancelledDesc": "The technician cancelled or could not accept your request. Please proceed with another option.",
   "customerCancelledTitle": "Customer Cancelled",
-  "customerCancelledDesc": "You have cancelled the rebooking request. Please proceed with another option.",
+  "customerCancelledDesc": "You cancelled the search for a technician. Please proceed with another option.",
   "searchAvailableTechnicians": "Search Available Technicians",
   "proceedToAutoAssignment": "Proceed to Auto-Assignment",
   "liveTechnicianBroadcast": "Live Technician Broadcast",

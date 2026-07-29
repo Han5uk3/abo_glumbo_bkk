@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
@@ -70,6 +71,43 @@ Widget buildBookingTimelineCard(
             )!.customerRequestedRepairUnderWarranty,
             'status': 'completed',
             'date': booking.warranty!.requestedOn!,
+          });
+        }
+
+        // Customer raised a complaint about the claim. `escalatedAt` survives
+        // the admin's resolution (which only flips `isEscalated` back to
+        // false), so the complaint stays on the timeline as a historical
+        // event either way.
+        if (booking.escalatedAt != null) {
+          timelineItems.add({
+            'title': AppLocalizations.of(context)!.complaintSubmitted,
+            'time': _formatDateLocalized(
+              booking.escalatedAt!.toDate(),
+              context,
+            ),
+            'description': AppLocalizations.of(
+              context,
+            )!.youSubmittedAComplaint,
+            'status': 'cancelled',
+            'date': booking.escalatedAt!.toDate(),
+          });
+        }
+
+        // Admin closed the complaint out. The description is the admin's own
+        // resolution note when there is one.
+        if (booking.resolvedAt != null) {
+          final resolution = booking.resolutionText?.trim() ?? '';
+          timelineItems.add({
+            'title': AppLocalizations.of(context)!.complaintResolvedByAdmin,
+            'time': _formatDateLocalized(
+              booking.resolvedAt!.toDate(),
+              context,
+            ),
+            'description': resolution.isNotEmpty
+                ? resolution
+                : AppLocalizations.of(context)!.adminResolvedYourComplaint,
+            'status': 'completed',
+            'date': booking.resolvedAt!.toDate(),
           });
         }
 
@@ -647,7 +685,9 @@ String _formatDateLocalized(DateTime date, BuildContext context) {
   return formatDateLocalized(date, context);
 }
 
-String formatDateLocalized(DateTime date, BuildContext context) {
+/// Renders in Saudi time; [instant] is an absolute instant. See [KsaTime].
+String formatDateLocalized(DateTime instant, BuildContext context) {
+  final date = KsaTime.fromInstant(instant);
   final locale = Localizations.localeOf(context).languageCode;
   String formatted;
   if (locale == 'ar') {

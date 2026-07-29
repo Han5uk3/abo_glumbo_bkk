@@ -2847,6 +2847,19 @@ class AppLocalizationsUr extends AppLocalizations {
   String get resolved => 'تم الحل';
 
   @override
+  String get complaintSubmitted => 'شکایت جمع کرائی گئی';
+
+  @override
+  String get youSubmittedAComplaint =>
+      'آپ نے اس وارنٹی درخواست کے بارے میں شکایت درج کی';
+
+  @override
+  String get complaintResolvedByAdmin => 'شکایت ایڈمن کی طرف سے حل کر دی گئی';
+
+  @override
+  String get adminResolvedYourComplaint => 'ایڈمن نے آپ کی شکایت حل کر دی';
+
+  @override
   String get resolveIssue => 'مسئلہ حل کریں';
 
   @override
@@ -2870,14 +2883,14 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get technicianCancelledDesc =>
-      'مطلوبہ ٹیکنیشن نے آپ کی دوبارہ شیڈولنگ کی درخواست سے معذرت کر لی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔';
+      'ٹیکنیشن نے معذرت کر لی یا آپ کی درخواست قبول نہیں کر سکا۔ براہ کرم دوسرا آپشن منتخب کریں۔';
 
   @override
   String get customerCancelledTitle => 'صارف نے منسوخ کر دیا';
 
   @override
   String get customerCancelledDesc =>
-      'آپ نے دوبارہ شیڈولنگ کی درخواست منسوخ کر دی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔';
+      'آپ نے ٹیکنیشن کی تلاش منسوخ کر دی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔';
 
   @override
   String get searchAvailableTechnicians => 'دستیاب ٹیکنیشنز تلاش کریں';

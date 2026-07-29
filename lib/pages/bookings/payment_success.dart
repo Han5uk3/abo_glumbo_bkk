@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'dart:developer';
 import 'package:flutter/services.dart';
 
@@ -222,8 +223,11 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
                     'dd MMM yyyy, hh:mm a',
                     LocalStoreHelper.getUserlanguage(),
                   ).format(
-                    (widget.booking?.bookingDateTime.toDate() ??
-                        widget.bookingDate)!,
+                    // Stored instant — render it on the Saudi clock.
+                    KsaTime.fromInstant(
+                      (widget.booking?.bookingDateTime.toDate() ??
+                          widget.bookingDate)!,
+                    ),
                   ),
                 ),
                 const Padding(

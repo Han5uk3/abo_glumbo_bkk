@@ -100,7 +100,13 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
       );
 
       _busyAgentsSubscription = AppFirestore.bookingsCollectionRef
-          .where('bookingDateTime', isEqualTo: Timestamp.fromDate(bookingDate))
+          // `bookingDate` is a KSA wall clock from the slot picker; bookings store
+          // the absolute instant, so it has to be converted or this equality
+          // match silently finds nothing on a device outside KSA.
+          .where(
+            'bookingDateTime',
+            isEqualTo: Timestamp.fromDate(KsaTime.toInstant(bookingDate)),
+          )
           .snapshots()
           .listen((snapshot) {
         final busyIds = <String>{};
@@ -216,13 +222,18 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
       createdAt: now,
       expiresAt: expiresAt,
       isOnHour: widget.isOnHour,
+      // The date and slot are KSA wall-clock values chosen by the customer.
+      // Every other writer converts before storing, and the Cloud Functions
+      // compare this against instants from `bookings`, so it must convert too.
       bookingDateTime: Timestamp.fromDate(
-        DateTime(
-          widget.selectedDate.year,
-          widget.selectedDate.month,
-          widget.selectedDate.day,
-          (widget.timeSlot['time'] as TimeOfDay).hour,
-          (widget.timeSlot['time'] as TimeOfDay).minute,
+        KsaTime.toInstant(
+          DateTime(
+            widget.selectedDate.year,
+            widget.selectedDate.month,
+            widget.selectedDate.day,
+            (widget.timeSlot['time'] as TimeOfDay).hour,
+            (widget.timeSlot['time'] as TimeOfDay).minute,
+          ),
         ),
       ),
       status: 'pending',
@@ -319,7 +330,9 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
           _isBroadcasting = false;
         });
       }
-      AppServices.deleteJobRequest(_requestId!);
+      // Same teardown every other cancel path uses, so an abandoned search
+      // cannot survive in either request collection and keep showing to admins.
+      AppServices.cancelTechnicianSearch(_requestId!);
       _requestId = null; // Prevent duplicate deletions
     }
   }
@@ -402,7 +415,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
     // Sort based on active filter priorities
     filtered.sort((a, b) {
       if (_filterByRating) {
-        int ratingCompare = b.rating.compareTo(a.rating);
+        int ratingCompare = b.averageRating.compareTo(a.averageRating);
         if (ratingCompare != 0) return ratingCompare;
       }
 
@@ -1034,7 +1047,13 @@ class _WorkerListViewState extends State<_WorkerListView>
       );
 
       _bookingsSubscription = AppFirestore.bookingsCollectionRef
-          .where('bookingDateTime', isEqualTo: Timestamp.fromDate(bookingDate))
+          // `bookingDate` is a KSA wall clock from the slot picker; bookings store
+          // the absolute instant, so it has to be converted or this equality
+          // match silently finds nothing on a device outside KSA.
+          .where(
+            'bookingDateTime',
+            isEqualTo: Timestamp.fromDate(KsaTime.toInstant(bookingDate)),
+          )
           .snapshots()
           .listen(
             (snapshot) {

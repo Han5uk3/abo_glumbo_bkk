@@ -1631,7 +1631,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String inspectionFeeNote(String fee) {
-    return 'Inspection fee: $fee SAR â€” paid only after the technician arrives and inspects the issue.';
+    return 'Inspection fee: $fee SAR , paid only after the technician arrives and inspects the issue.';
   }
 
   @override
@@ -2827,6 +2827,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resolved => 'Resolved';
 
   @override
+  String get complaintSubmitted => 'Complaint Submitted';
+
+  @override
+  String get youSubmittedAComplaint =>
+      'You submitted a complaint about this warranty request';
+
+  @override
+  String get complaintResolvedByAdmin => 'Complaint Resolved by Admin';
+
+  @override
+  String get adminResolvedYourComplaint => 'Admin resolved your complaint';
+
+  @override
   String get resolveIssue => 'Resolve Issue';
 
   @override
@@ -2850,14 +2863,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get technicianCancelledDesc =>
-      'The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.';
+      'The technician cancelled or could not accept your request. Please proceed with another option.';
 
   @override
   String get customerCancelledTitle => 'Customer Cancelled';
 
   @override
   String get customerCancelledDesc =>
-      'You have cancelled the rebooking request. Please proceed with another option.';
+      'You cancelled the search for a technician. Please proceed with another option.';
 
   @override
   String get searchAvailableTechnicians => 'Search Available Technicians';

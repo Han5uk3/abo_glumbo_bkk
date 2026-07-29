@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:flutter/material.dart';
@@ -215,7 +216,8 @@ class _BookingSuccessPageState extends State<BookingSuccessPage>
                 label: AppLocalizations.of(context)!.date,
                 value: DateFormat.yMMMMd(
                   AppLocalizations.of(context)?.localeName ?? 'en',
-                ).format(DateTime.now()),
+                  // The Saudi moment of booking, not the device clock.
+                ).format(KsaTime.now),
               ),
               const SizedBox(height: 16),
               _buildDetailRow(
@@ -223,7 +225,7 @@ class _BookingSuccessPageState extends State<BookingSuccessPage>
                 label: AppLocalizations.of(context)!.time,
                 value: DateFormat.jm(
                   AppLocalizations.of(context)?.localeName ?? 'en',
-                ).format(DateTime.now()),
+                ).format(KsaTime.now),
               ),
               if (widget.isFromCashOnDelivery) ...[
                 const SizedBox(height: 16),

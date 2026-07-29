@@ -30,6 +30,7 @@ import 'package:abo_glumbo_bbk/pages/bookings/widgets/rebook_wait_widget.dart';
 
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/services/booking/booking_complete.dart';
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 
 class BookServicePage extends StatefulWidget {
   final ServiceModel service;
@@ -46,6 +47,11 @@ class BookServicePage extends StatefulWidget {
   State<BookServicePage> createState() => _BookServicePageState();
 }
 
+/// Which party ended a technician search. Drives the wording on the cancelled
+/// screen — the customer should never be told the technician cancelled when they
+/// cancelled it themselves.
+enum _SearchCancelledBy { technician, customer }
+
 class _BookServicePageState extends State<BookServicePage> {
   final ValueNotifier<int?> selectedIndexNotifier = ValueNotifier<int?>(null);
   UserModel selectedWorker = UserModel(uid: "", role: "agent");
@@ -56,9 +62,37 @@ class _BookServicePageState extends State<BookServicePage> {
   DateTime? selectedDate;
   DateTime? _counterProposedTime;
   bool saving = false;
-  bool _rebookFailed = false;
-  bool _rebookFailedAcknowledged = false;
-  bool _customerCancelledRebook = false;
+
+  /// Who ended the technician search, or null while one is running, has
+  /// succeeded, or the customer has moved on from a cancelled one. Shared by the
+  /// rebook wait and the broadcast search so the cancelled screen and the
+  /// Continue button behave identically in both flows.
+  ///
+  /// While this is set, no technician is bound to the booking, so it must not be
+  /// possible to continue to review and confirm.
+  _SearchCancelledBy? _searchCancelledBy;
+
+  bool get _searchCancelled => _searchCancelledBy != null;
+
+  /// Clears the cancelled state so a fresh search starts clean.
+  ///
+  /// Must be called wherever a new search begins or the customer leaves the
+  /// cancelled screen. The expiry path is the reason this exists: it closes the
+  /// request (which the search widget reports as an ending) *and* shows its own
+  /// timeout dialog before dropping back to step 1 — without this reset the
+  /// stale flag would then hide the Continue button on the next search.
+  void _resetSearchCancelled() {
+    _searchCancelledBy = null;
+  }
+
+  /// True for the duration of a customer-initiated "cancel and go back" from
+  /// the search step. The delete this triggers is also what the search
+  /// widget's own listener treats as an ending, so without this guard its
+  /// onSearchEnded/onFailed callback fires for the very deletion this flow
+  /// just performed and flashes the cancelled screen for a frame before
+  /// `currentStep` moves off step 2.
+  bool _isLeavingSearchStep = false;
+
   String? _bookingRequestId;
   AddressModel? selectedAddress;
   final _formKey = GlobalKey<FormState>();
@@ -205,6 +239,7 @@ class _BookServicePageState extends State<BookServicePage> {
         currentStep = 1;
         _bookingRequestId = null;
         selectedWorker = UserModel(uid: "", role: "agent");
+        _resetSearchCancelled();
       });
 
       try {
@@ -435,8 +470,12 @@ class _BookServicePageState extends State<BookServicePage> {
     }
   }
 
+  /// Current KSA wall-clock time. Every time-of-day decision on this page
+  /// (off-hour gating, past-slot checks, pricing band) must go through this so a
+  /// device whose clock is set to another timezone still books against Saudi
+  /// working hours. See [KsaTime].
   DateTime _getMiddleEastNow() {
-    return DateTime.now();
+    return KsaTime.now;
   }
 
   bool _isTimeSlotPast(int categoryIndex, int slotIndex) {
@@ -631,21 +670,12 @@ backgroundColor: Colors.red,
                   return false;
                 }
 
-                // Delete job offers
-                final offers = await AppFirestore.jobOffersCollectionRef
-                    .where('requestId', isEqualTo: _bookingRequestId!)
-                    .get();
-                final batch = FirebaseFirestore.instance.batch();
-                for (var doc in offers.docs) {
-                  batch.delete(doc.reference);
-                }
-                // Delete booking request
-                batch.delete(
-                  AppFirestore.bookingRequestsCollectionRef.doc(
-                    _bookingRequestId!,
-                  ),
-                );
-                await batch.commit();
+                // Tear the search down in whichever collection holds it. A
+                // rebook request lives in `job_requests`, and deleting only
+                // `booking_request` left it live on the admin dashboard after
+                // the customer had cancelled.
+                _isLeavingSearchStep = true;
+                await AppServices.cancelTechnicianSearch(_bookingRequestId!);
 
                 LocalStoreHelper.clearBookingRequestId();
                 _requestExpiryTimer?.cancel();
@@ -653,6 +683,7 @@ backgroundColor: Colors.red,
                   _bookingRequestId = null;
                   selectedWorker = UserModel(uid: "", role: "agent");
                   currentStep--;
+                  _isLeavingSearchStep = false;
                 });
                 return false;
               } else if (currentStep == 3 && _bookingRequestId != null) {
@@ -755,27 +786,20 @@ backgroundColor: Colors.red,
                         return;
                       }
 
-                      // Delete job offers
-                      final offers = await AppFirestore.jobOffersCollectionRef
-                          .where('requestId', isEqualTo: _bookingRequestId!)
-                          .get();
-                      final batch = FirebaseFirestore.instance.batch();
-                      for (var doc in offers.docs) {
-                        batch.delete(doc.reference);
-                      }
-                      // Delete booking request
-                      batch.delete(
-                        AppFirestore.bookingRequestsCollectionRef.doc(
-                          _bookingRequestId!,
-                        ),
-                      );
-                      await batch.commit();
+                      _isLeavingSearchStep = true;
+                      // Tear the search down in whichever collection holds it. A
+                      // rebook request lives in `job_requests`, and deleting only
+                      // `booking_request` left it live on the admin dashboard
+                      // after the customer had cancelled.
+                      await AppServices.cancelTechnicianSearch(_bookingRequestId!);
 
+                      LocalStoreHelper.clearBookingRequestId();
                       _requestExpiryTimer?.cancel();
                       setState(() {
                         _bookingRequestId = null;
                         selectedWorker = UserModel(uid: "", role: "agent");
                         currentStep--;
+                        _isLeavingSearchStep = false;
                       });
                       return;
                     } else if (currentStep == 3 && _bookingRequestId != null) {
@@ -1845,8 +1869,11 @@ backgroundColor: Colors.red,
                       ),
                       selectedDayPredicate: (day) =>
                           isSameDay(day, selectedDate),
-                      focusedDay: selectedDate ?? DateTime.now(),
-                      firstDay: DateTime.now(),
+                      // Bounded by the Saudi calendar, not the device's. On a
+                      // phone behind KSA the local date can still be "yesterday"
+                      // there, which offered a day that is already in the past.
+                      focusedDay: selectedDate ?? KsaTime.today,
+                      firstDay: KsaTime.today,
                       lastDay: DateTime.utc(2050, 01, 16),
                       onDaySelected: (selectedDay, focusedDay) {
                         if (!isSameDay(selectedDate, selectedDay)) {
@@ -2017,14 +2044,14 @@ backgroundColor: Colors.red,
   }
 
   Widget _buildThirdStepContent() {
-    if (_activeRebookTechnician != null && !_rebookFailed) {
+    if (_activeRebookTechnician != null && _searchCancelledBy == null) {
       return RebookWaitWidget(
         technician: _activeRebookTechnician!,
         service: widget.service,
         selectedAddress: selectedAddress!,
         selectedDate: isServiceNow ? _getMiddleEastNow() : selectedDate!,
         timeSlot: isServiceNow
-            ? {"label": "Now", "time": TimeOfDay.now()}
+            ? {"label": "Now", "time": TimeOfDay.fromDateTime(KsaTime.now)}
             : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
         notes: notesController.text,
         issueImageFile: _selectedImage,
@@ -2032,7 +2059,15 @@ backgroundColor: Colors.red,
         onAccepted: (worker, newTime) {
           setState(() {
             selectedWorker = worker;
-            _counterProposedTime = newTime;
+            // The technician's counter-proposal arrives as an absolute instant
+            // (`Timestamp.toDate()`), but every other time in this wizard —
+            // `selectedDate`, the slot grid, `_getMiddleEastNow()` — is a KSA
+            // wall clock, and that is what `saveBooking` converts on the way out.
+            // Storing the raw instant meant it was converted a second time, so a
+            // counter-offer accepted outside KSA was saved at the wrong time.
+            _counterProposedTime = newTime == null
+                ? null
+                : KsaTime.fromInstant(newTime);
             currentStep = 3;
           });
         },
@@ -2042,23 +2077,26 @@ backgroundColor: Colors.red,
           });
         },
         onFailed: ({bool customerCancelled = false}) {
+          if (_isLeavingSearchStep) return;
           if (_bookingRequestId != null) {
-            AppServices.deleteJobRequest(_bookingRequestId!);
-            AppFirestore.bookingRequestsCollectionRef
-                .doc(_bookingRequestId!)
-                .delete();
+            AppServices.cancelTechnicianSearch(_bookingRequestId!);
             _bookingRequestId = null;
             _requestExpiryTimer?.cancel();
           }
           setState(() {
-            _rebookFailed = true;
-            _customerCancelledRebook = customerCancelled;
+            _searchCancelledBy = customerCancelled
+                ? _SearchCancelledBy.customer
+                : _SearchCancelledBy.technician;
+            // The rebook technician is no longer attached to this booking. Left
+            // in place they would be carried into the review step and confirmed
+            // as the agent even though they never accepted.
+            selectedWorker = UserModel(uid: "", role: "agent");
           });
         },
       );
     }
-    if (_rebookFailed && !_rebookFailedAcknowledged) {
-      return _buildRebookFailedContent();
+    if (_searchCancelled) {
+      return _buildSearchCancelledContent();
     }
     if (!_shouldShowTechnicianSelection()) {
       return _buildAutoAssignContent();
@@ -2075,10 +2113,27 @@ backgroundColor: Colors.red,
           selectedWorker = worker;
         });
       },
+      onSearchEnded: ({bool customerCancelled = false}) {
+        if (!mounted || _isLeavingSearchStep) return;
+        setState(() {
+          _searchCancelledBy = customerCancelled
+              ? _SearchCancelledBy.customer
+              : _SearchCancelledBy.technician;
+          selectedWorker = UserModel(uid: "", role: "agent");
+          // The request document is gone, so the id no longer refers to
+          // anything. Clearing it makes the next Continue create a fresh
+          // request rather than reuse a dead one.
+          _bookingRequestId = null;
+          _requestExpiryTimer?.cancel();
+        });
+      },
     );
   }
 
-  Widget _buildRebookFailedContent() {
+  /// Shown when a technician search ends without a technician, in either the
+  /// rebook or the broadcast flow. The copy is attributed to whoever actually
+  /// ended it.
+  Widget _buildSearchCancelledContent() {
     final bool shouldSearch = _shouldShowTechnicianSelection();
 
     return Container(
@@ -2111,7 +2166,7 @@ backgroundColor: Colors.red,
           ),
           const SizedBox(height: 16),
           Text(
-            _customerCancelledRebook
+            _searchCancelledBy == _SearchCancelledBy.customer
                 ? (AppLocalizations.of(context)?.customerCancelledTitle ??
                       "Customer Cancelled")
                 : (AppLocalizations.of(context)?.technicianCancelledTitle ??
@@ -2124,11 +2179,11 @@ backgroundColor: Colors.red,
           ),
           const SizedBox(height: 8),
           Text(
-            _customerCancelledRebook
+            _searchCancelledBy == _SearchCancelledBy.customer
                 ? (AppLocalizations.of(context)?.customerCancelledDesc ??
-                      "You have cancelled the rebooking request. Please proceed with another option.")
+                      "You cancelled the search for a technician. Please proceed with another option.")
                 : (AppLocalizations.of(context)?.technicianCancelledDesc ??
-                      "The requested technician cancelled or could not accept your rebooking request. Please proceed with another option."),
+                      "The technician cancelled or could not accept your request. Please proceed with another option."),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
@@ -2154,7 +2209,7 @@ backgroundColor: Colors.red,
                   existingImageUrl: _existingImageUrl,
                   existingVideoUrl: _existingVideoUrl,
                   timeSlot: isServiceNow
-                      ? {"label": "Now", "time": TimeOfDay.now()}
+                      ? {"label": "Now", "time": TimeOfDay.fromDateTime(KsaTime.now)}
                       : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
                   selectedAddress: selectedAddress,
                   serviceLocation: _matchedServiceZone,
@@ -2172,13 +2227,13 @@ backgroundColor: Colors.red,
                       }
                     }
                     saving = false;
-                    _rebookFailedAcknowledged = true;
+                    _resetSearchCancelled();
                     _activeRebookTechnician = null;
                   });
                 }
               } else {
                 setState(() {
-                  _rebookFailedAcknowledged = true;
+                  _resetSearchCancelled();
                   _activeRebookTechnician = null;
                   currentStep = 3;
                 });
@@ -2516,12 +2571,17 @@ backgroundColor: Colors.red,
   /// Determines whether to show the technician selection screen (true)
   /// or use auto-assign (false).
   ///
-  /// Rules:
-  /// - Service Now + On Hour → technician selection
-  /// - Service Now + Off Hours → blocked (handled in _onContinueFromFirstStep)
-  /// - Service Later + Current Off Hours → auto-assign
-  /// - Service Later + Current On Hour + Today → technician selection
-  /// - Service Later + Current On Hour + Future Date → auto-assign
+  /// The deciding factor is the **current** KSA clock at the moment of booking,
+  /// never the requested date. Rules:
+  /// - Service Now   + currently On Hour  → technician selection (live broadcast)
+  /// - Service Now   + currently Off Hour → blocked (handled in _onContinueFromFirstStep)
+  /// - Service Later + currently On Hour  → technician selection, whatever the
+  ///   requested date is (today or any future date)
+  /// - Service Later + currently Off Hour → auto-assign
+  ///
+  /// In other words: any "service for later" booking placed during off hours goes
+  /// to auto-assignment, and any booking placed during working hours lets the
+  /// customer pick from technicians who respond.
   bool _shouldShowTechnicianSelection() {
     if (isServiceNow && !_isCurrentTimeOffHour()) {
       return true;
@@ -2535,7 +2595,7 @@ backgroundColor: Colors.red,
   }
 
   bool _isCurrentTimeOffHour() {
-    return !widget.service.isOnWorkHour(currentTime: DateTime.now());
+    return !widget.service.isOnWorkHour(currentTime: _getMiddleEastNow());
   }
 
   bool _isInspectionFeeOnHour() {
@@ -2725,7 +2785,7 @@ backgroundColor: Colors.red,
         existingImageUrl: _existingImageUrl,
         existingVideoUrl: _existingVideoUrl,
         timeSlot: isServiceNow
-            ? {"label": "Now", "time": TimeOfDay.now()}
+            ? {"label": "Now", "time": TimeOfDay.fromDateTime(KsaTime.now)}
             : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
         selectedAddress: selectedAddress,
         serviceLocation: _matchedServiceZone,
@@ -2736,6 +2796,8 @@ backgroundColor: Colors.red,
           _bookingRequestId = requestId;
           saving = false;
           currentStep = 2;
+          // A new search is starting, so any earlier cancellation is history.
+          _resetSearchCancelled();
         });
         if (_shouldShowTechnicianSelection()) {
           _startExpiryTimer();
@@ -2757,9 +2819,18 @@ backgroundColor: Colors.red,
   }
 
   Widget _buildThirdStepBottom(BuildContext context) {
-    if (_activeRebookTechnician != null && !_rebookFailed) {
+    if (_activeRebookTechnician != null && _searchCancelledBy == null) {
       // While RebookWaitWidget is active, we don't show a continue button.
       // The widget will call onAccepted which moves to step 3.
+      return const SizedBox.shrink();
+    }
+
+    // A cancelled search leaves no technician bound to the booking, and every
+    // search-based flow requires one before it can be confirmed. The cancelled
+    // screen carries its own action ("Search Available Technicians" /
+    // "Proceed to Auto-Assignment"), so offering Continue alongside it would let
+    // the customer walk a technician-less booking into the review step.
+    if (_searchCancelled) {
       return const SizedBox.shrink();
     }
 
@@ -2904,13 +2975,18 @@ backgroundColor: Colors.red,
               'paymentCompleted': false,
             };
 
-            await AppFirestore.bookingsCollectionRef
-                .doc(_bookingRequestId!)
-                .set(bookingJson);
-
-            await AppFirestore.bookingRequestsCollectionRef
-                .doc(_bookingRequestId!)
-                .delete();
+            // Create the booking and retire the request atomically, so a crash
+            // between the two writes can never leave a live `booking_request`
+            // sitting next to an already-confirmed booking.
+            final conversionBatch = FirebaseFirestore.instance.batch();
+            conversionBatch.set(
+              AppFirestore.bookingsCollectionRef.doc(_bookingRequestId!),
+              bookingJson,
+            );
+            conversionBatch.delete(
+              AppFirestore.bookingRequestsCollectionRef.doc(_bookingRequestId!),
+            );
+            await conversionBatch.commit();
 
             _requestExpiryTimer?.cancel();
             LocalStoreHelper.clearBookingRequestId();
@@ -2937,7 +3013,7 @@ backgroundColor: Colors.red,
                     worker: selectedWorker,
                     selectedDate: bookingDate,
                     selectedTime: isServiceNow
-                        ? {"label": "Now", "time": TimeOfDay.now()}
+                        ? {"label": "Now", "time": TimeOfDay.fromDateTime(KsaTime.now)}
                         : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
                     address: selectedAddress,
                   ),
@@ -2969,7 +3045,7 @@ backgroundColor: Colors.red,
                 "time": TimeOfDay.fromDateTime(bookingDate),
               }
             : (isServiceNow
-                  ? {"label": "Now", "time": TimeOfDay.now()}
+                  ? {"label": "Now", "time": TimeOfDay.fromDateTime(KsaTime.now)}
                   : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]),
         selectedAddress: selectedAddress,
         serviceLocation: _matchedServiceZone,
@@ -2996,7 +3072,7 @@ backgroundColor: Colors.red,
                       "time": TimeOfDay.fromDateTime(bookingDate),
                     }
                   : (isServiceNow
-                        ? {"label": "Now", "time": TimeOfDay.now()}
+                        ? {"label": "Now", "time": TimeOfDay.fromDateTime(KsaTime.now)}
                         : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot]),
               address: selectedAddress,
             ),

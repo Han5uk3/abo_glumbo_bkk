@@ -952,48 +952,32 @@ class AppServices {
         });
   }
 
+  /// Streams a technician's rating aggregates straight from their `users` document.
+  ///
+  /// Returns `{'rating': <running SUM of scores>, 'count': <number of rated jobs>}`
+  /// — the same shape and semantics as the stored fields, which the
+  /// `updateTechnicianRatingOnReview` Cloud Function maintains transactionally.
+  ///
+  /// This replaces a per-worker live query over the whole `bookings` collection.
+  /// That version also returned the **average** under the `'rating'` key while
+  /// every consumer divided it by `'count'` a second time, so displayed ratings
+  /// were the average divided by the review count. Returning the sum here makes
+  /// `rating / count` correct at the call sites and matches
+  /// [UserModel.averageRating].
   static Stream<Map<String, dynamic>> getWorkerRating(String workerId) {
-    return AppFirestore.bookingsCollectionRef
-        .where('agent.uid', isEqualTo: workerId)
-        .where('bookingStatusCode', isEqualTo: 'C')
-        .where('review.rating', isNull: false)
-        .snapshots()
-        .map((snapshot) {
-          // ✅ FIXED: Extract the nested 'review' field from each booking document
-          List<ReviewModel> reviewList = snapshot.docs
-              .map((doc) {
-                final data = doc.data() as Map<String, dynamic>;
-                // Access the nested 'review' map
-                final reviewData = data['review'] as Map<String, dynamic>?;
-
-                if (reviewData != null) {
-                  return ReviewModel.fromMap(reviewData);
-                }
-                return null;
-              })
-              .where((review) => review != null)
-              .cast<ReviewModel>()
-              .toList();
-
-          double rating = 0;
-
-          // Filter out null ratings before processing
-          final validRatings = reviewList
-              .where((review) => review.rating != null)
-              .map((review) => review.rating!)
-              .toList();
-
-          if (validRatings.isNotEmpty) {
-            final totalRating = validRatings.reduce((a, b) => a + b);
-
-            rating = totalRating / (validRatings.length);
-          }
-
-          return {
-            'count': validRatings.length,
-            'rating': double.tryParse(rating.toStringAsFixed(2)),
-          };
-        });
+    if (workerId.isEmpty) {
+      return Stream.value({'count': 0, 'rating': 0.0});
+    }
+    return AppFirestore.usersCollectionRef.doc(workerId).snapshots().map((doc) {
+      if (!doc.exists) return {'count': 0, 'rating': 0.0};
+      final data = doc.data() as Map<String, dynamic>?;
+      final num? sum = data?['rating'] as num?;
+      final num? count = data?['reviewCount'] as num?;
+      return {
+        'count': count?.toInt() ?? 0,
+        'rating': sum?.toDouble() ?? 0.0,
+      };
+    });
   }
 
   static Stream<int> getCompletedJobsByWorkerId(String workerId) {
@@ -1683,11 +1667,20 @@ class AppServices {
     }
   }
 
-  static Future<void> deleteJobRequest(String requestId) async {
+  /// Tears down a technician search completely, whichever flow created it.
+  ///
+  /// A search lives in `job_requests` when it is a rebook and in
+  /// `booking_request` when it is a broadcast, and the caller does not always
+  /// know which — the wizard holds both kinds of id in the same field. Deleting
+  /// only one of them is why a cancelled rebook kept showing on the admin
+  /// dashboard as a view-only pending item: the offers went, the `job_requests`
+  /// doc stayed. Both are removed here, along with every offer for the request,
+  /// so cancelling is complete regardless of the originating flow.
+  ///
+  /// Safe to call more than once and safe to call for an id that only exists in
+  /// one of the two collections — deleting a missing document is a no-op.
+  static Future<void> cancelTechnicianSearch(String requestId) async {
     try {
-      debugPrint('🗑️ Deleting Job Request and Offers for: $requestId');
-
-      // 1. Delete associated Job Offers
       final offers = await AppFirestore.jobOffersCollectionRef
           .where('requestId', isEqualTo: requestId)
           .get();
@@ -1696,15 +1689,13 @@ class AppServices {
       for (var doc in offers.docs) {
         batch.delete(doc.reference);
       }
-
-      // 2. Delete the Job Request itself
       batch.delete(AppFirestore.jobRequestsCollectionRef.doc(requestId));
+      batch.delete(AppFirestore.bookingRequestsCollectionRef.doc(requestId));
 
       await batch.commit();
-
-      debugPrint('✅ Successfully deleted Job Request and Offers');
+      debugPrint('✅ Cancelled technician search $requestId');
     } catch (e) {
-      debugPrint('❌ Error deleting job request: $e');
+      debugPrint('❌ Error cancelling technician search: $e');
     }
   }
 
@@ -1883,6 +1874,8 @@ class AppServices {
 
 class WorkerWithStats {
   final UserModel worker;
+
+  /// Running **sum** of review scores. Use [averageRating] to display or sort.
   final double rating;
   final int completedJobs;
   final int reviewCount;
@@ -1893,4 +1886,7 @@ class WorkerWithStats {
     required this.completedJobs,
     required this.reviewCount,
   });
+
+  /// Displayable star rating, 0.0 when the technician has no reviews yet.
+  double get averageRating => reviewCount > 0 ? rating / reviewCount : 0.0;
 }

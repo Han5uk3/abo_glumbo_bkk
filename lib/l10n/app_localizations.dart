@@ -3205,7 +3205,7 @@ abstract class AppLocalizations {
   /// Message explaining the inspection fee amount and payment terms
   ///
   /// In en, this message translates to:
-  /// **'Inspection fee: {fee} SAR â€” paid only after the technician arrives and inspects the issue.'**
+  /// **'Inspection fee: {fee} SAR , paid only after the technician arrives and inspects the issue.'**
   String inspectionFeeNote(String fee);
 
   /// No description provided for @pleaseSelectAllLocationFields.
@@ -5314,6 +5314,30 @@ abstract class AppLocalizations {
   /// **'Resolved'**
   String get resolved;
 
+  /// No description provided for @complaintSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint Submitted'**
+  String get complaintSubmitted;
+
+  /// No description provided for @youSubmittedAComplaint.
+  ///
+  /// In en, this message translates to:
+  /// **'You submitted a complaint about this warranty request'**
+  String get youSubmittedAComplaint;
+
+  /// No description provided for @complaintResolvedByAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint Resolved by Admin'**
+  String get complaintResolvedByAdmin;
+
+  /// No description provided for @adminResolvedYourComplaint.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin resolved your complaint'**
+  String get adminResolvedYourComplaint;
+
   /// No description provided for @resolveIssue.
   ///
   /// In en, this message translates to:
@@ -5359,7 +5383,7 @@ abstract class AppLocalizations {
   /// No description provided for @technicianCancelledDesc.
   ///
   /// In en, this message translates to:
-  /// **'The requested technician cancelled or could not accept your rebooking request. Please proceed with another option.'**
+  /// **'The technician cancelled or could not accept your request. Please proceed with another option.'**
   String get technicianCancelledDesc;
 
   /// No description provided for @customerCancelledTitle.
@@ -5371,7 +5395,7 @@ abstract class AppLocalizations {
   /// No description provided for @customerCancelledDesc.
   ///
   /// In en, this message translates to:
-  /// **'You have cancelled the rebooking request. Please proceed with another option.'**
+  /// **'You cancelled the search for a technician. Please proceed with another option.'**
   String get customerCancelledDesc;
 
   /// No description provided for @searchAvailableTechnicians.

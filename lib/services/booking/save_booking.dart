@@ -15,6 +15,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 
 class BookingUtils {
   static String getPaymentModeCode(String paymentMode) {
@@ -141,7 +142,7 @@ class BookingUtils {
       BookingModel booking = BookingModel(
         id: bookingId,
         service: updatedService,
-        bookingDateTime: Timestamp.fromDate(bookingDate),
+        bookingDateTime: Timestamp.fromDate(KsaTime.toInstant(bookingDate)),
         bookingStatusCode: (agent?.uid?.isNotEmpty == true || (requestId != null && !isRebook)) ? 'A' : 'P',
         notes: notes.trim(),
         issueImage: selectedImageDownloadUrl ?? "",
@@ -152,19 +153,21 @@ class BookingUtils {
         isOnHour: isOnHour,
         assignmentScheduledTime: shouldAutoAssign
             ? Timestamp.fromDate(
-                bookingDate
-                        .subtract(const Duration(hours: 2))
-                        .isBefore(DateTime.now())
-                    ? DateTime.now().subtract(
-                        const Duration(minutes: 5),
-                      ) // Set 5 mins back to ensure it triggers
-                    : bookingDate.subtract(const Duration(hours: 2)),
+                KsaTime.toInstant(
+                  bookingDate
+                          .subtract(const Duration(hours: 2))
+                          .isBefore(KsaTime.now)
+                      ? KsaTime.now.subtract(
+                          const Duration(minutes: 5),
+                        ) // Set 5 mins back to ensure it triggers
+                      : bookingDate.subtract(const Duration(hours: 2)),
+                ),
               )
             : null,
         autoAssignmentStatus: shouldAutoAssign
             ? (bookingDate
                       .subtract(const Duration(hours: 2))
-                      .isBefore(DateTime.now())
+                      .isBefore(KsaTime.now)
                   ? "ready_to_assign"
                   : null)
             : (isRebook && requestId == null
@@ -275,14 +278,14 @@ class BookingUtils {
           .doc(booking.id)
           .update(updateData);
 
-      final userDoc = AppFirestore.usersCollectionRef.doc(booking.agent?.uid);
-      final userSnapshot = await userDoc.get();
-      if (userSnapshot.exists) {
-        final userData = userSnapshot.data() as Map<String, dynamic>;
-        final oldRating = userData["rating"] ?? 0;
-        final newRating = oldRating + review?.rating?.toDouble();
-        await userDoc.update({"rating": newRating});
-      }
+      // NOTE: the technician's rating aggregates are intentionally NOT updated here.
+      // The `updateTechnicianRatingOnReview` Cloud Function owns `users.rating`
+      // (running SUM of scores) and `users.reviewCount` (number of rated jobs), and
+      // maintains them in a transaction that also handles edited and removed reviews.
+      // The client used to add to `rating` without touching `reviewCount`, which
+      // double-counted every review against the Cloud Function and made the derived
+      // average (rating / reviewCount) drift upward. Displayed ratings must be read
+      // via `UserModel.averageRating`.
 
       // Update unified wallet with tip amount
       if ((review?.tipAmount ?? 0) > 0 &&
@@ -509,7 +512,7 @@ class BookingUtils {
       final Map<String, dynamic> requestData = {
         'id': bookingId,
         'service': updatedService.toJson(),
-        'bookingDateTime': Timestamp.fromDate(bookingDate),
+        'bookingDateTime': Timestamp.fromDate(KsaTime.toInstant(bookingDate)),
         'notes': notes.trim(),
         'issueImage': selectedImageDownloadUrl ?? "",
         'issueVideo': selectedVideoDownloadUrl ?? "",
@@ -614,7 +617,7 @@ class BookingUtils {
       BookingModel booking = BookingModel(
         id: bookingId,
         service: updatedService,
-        bookingDateTime: Timestamp.fromDate(bookingDate),
+        bookingDateTime: Timestamp.fromDate(KsaTime.toInstant(bookingDate)),
         bookingStatusCode: 'P',
         notes: notes.trim(),
         issueImage: selectedImageDownloadUrl ?? "",
@@ -635,11 +638,12 @@ class BookingUtils {
       await AppFirestore.bookingsCollectionRef.doc(bookingId).set(booking.toJson());
 
       // Save to auto-assignment_requests
-      final bool isInstant = bookingDate.difference(DateTime.now()).inMinutes <= 180;
+      final bool isInstant =
+          bookingDate.difference(KsaTime.now).inMinutes <= 180;
       final Map<String, dynamic> autoReqData = {
         'id': bookingId,
         'service': updatedService.toJson(),
-        'bookingDateTime': Timestamp.fromDate(bookingDate),
+        'bookingDateTime': Timestamp.fromDate(KsaTime.toInstant(bookingDate)),
         'notes': notes.trim(),
         'issueImage': selectedImageDownloadUrl ?? "",
         'issueVideo': selectedVideoDownloadUrl ?? "",

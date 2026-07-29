@@ -1073,9 +1073,9 @@
   "offHoursBookingAlert": "آف آورز بکنگ الرٹ",
   "bookForLater": "بعد کے لیے بک کریں",
   "technicianCancelledTitle": "ٹیکنیشن نے معذرت کر لی",
-  "technicianCancelledDesc": "مطلوبہ ٹیکنیشن نے آپ کی دوبارہ شیڈولنگ کی درخواست سے معذرت کر لی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔",
+  "technicianCancelledDesc": "ٹیکنیشن نے معذرت کر لی یا آپ کی درخواست قبول نہیں کر سکا۔ براہ کرم دوسرا آپشن منتخب کریں۔",
   "customerCancelledTitle": "صارف نے منسوخ کر دیا",
-  "customerCancelledDesc": "آپ نے دوبارہ شیڈولنگ کی درخواست منسوخ کر دی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔",
+  "customerCancelledDesc": "آپ نے ٹیکنیشن کی تلاش منسوخ کر دی ہے۔ براہ کرم دوسرا آپشن منتخب کریں۔",
   "searchAvailableTechnicians": "دستیاب ٹیکنیشنز تلاش کریں",
   "proceedToAutoAssignment": "خودکار تفویض کے لیے آگے بڑھیں",
   "liveTechnicianBroadcast": "دستیاب ٹیکنیشن کی تلاش",
@@ -1083,6 +1083,10 @@
   "pleaseEnterProblemDescription": "براہ کرم مسئلے کی تفصیل درج کریں",
   "timeout": "وقت ختم ہو گیا",
   "resolved": "تم الحل",
+  "complaintSubmitted": "شکایت جمع کرائی گئی",
+  "youSubmittedAComplaint": "آپ نے اس وارنٹی درخواست کے بارے میں شکایت درج کی",
+  "complaintResolvedByAdmin": "شکایت ایڈمن کی طرف سے حل کر دی گئی",
+  "adminResolvedYourComplaint": "ایڈمن نے آپ کی شکایت حل کر دی",
   "bookingRequestTimedOut": "بکنگ کی درخواست کا وقت ختم ہو گیا۔ براہ کرم دوبارہ درخواست کریں۔",
   "technicianTrackingNotification": "ٹیکنیشن راستے میں ہے، {distance} دور، اور پہنچنے کا وقت ہے {time}"
 }

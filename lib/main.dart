@@ -191,7 +191,7 @@ class MyApp extends StatelessWidget {
     final double bottomPadding = MediaQueryData.fromView(
       View.of(context),
     ).padding.bottom;
-    final bool isThickNavBar = bottomPadding > 12.0;
+    final bool isThickNavBar = bottomPadding >= 24.0;
     return MultiBlocProvider(
       providers: providers,
       child: BlocListener<AccountBloc, AccountState>(

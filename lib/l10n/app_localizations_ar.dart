@@ -2786,6 +2786,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get resolved => 'تم الحل';
 
   @override
+  String get complaintSubmitted => 'تم تقديم الشكوى';
+
+  @override
+  String get youSubmittedAComplaint => 'لقد قدمت شكوى بخصوص طلب الضمان هذا';
+
+  @override
+  String get complaintResolvedByAdmin => 'تم حل الشكوى من قبل الإدارة';
+
+  @override
+  String get adminResolvedYourComplaint => 'قامت الإدارة بحل شكواك';
+
+  @override
   String get resolveIssue => 'حل المشكلة';
 
   @override
@@ -2809,14 +2821,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get technicianCancelledDesc =>
-      'لقد اعتذر الفني المطلوب عن طلب إعادة الجدولة الخاص بك. يرجى اختيار خيار آخر.';
+      'اعتذر الفني أو لم يتمكن من قبول طلبك. يرجى اختيار خيار آخر.';
 
   @override
   String get customerCancelledTitle => 'ألغى العميل';
 
   @override
   String get customerCancelledDesc =>
-      'لقد قمت بإلغاء طلب إعادة الجدولة. يرجى اختيار خيار آخر.';
+      'لقد قمت بإلغاء البحث عن فني. يرجى اختيار خيار آخر.';
 
   @override
   String get searchAvailableTechnicians => 'البحث عن فنيين متاحين';

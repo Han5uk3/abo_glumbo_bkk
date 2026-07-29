@@ -1,4 +1,5 @@
 
+import 'package:abo_glumbo_bbk/services/time_service.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -92,7 +93,7 @@ class InvoiceService {
 
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
     final completedAtStr = booking.completedAt != null
-        ? dateFormat.format(booking.completedAt!.toDate())
+        ? dateFormat.format(KsaTime.fromInstant(booking.completedAt!.toDate()))
         : ((loc.localeName == 'ar')
               ? 'غير متوفر'
               : (loc.localeName == 'ur')
@@ -216,7 +217,7 @@ class InvoiceService {
                           booking.id.substring(0, 8).toUpperCase(),
                     ),
                   ),
-                  text(loc.dateString(dateFormat.format(DateTime.now()))),
+                  text(loc.dateString(dateFormat.format(KsaTime.now))),
                   text(
                     loc.statusPaid,
                     style: pw.TextStyle(

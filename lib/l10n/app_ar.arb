@@ -1073,9 +1073,9 @@
   "offHoursBookingAlert": "تنبيه الحجز خارج ساعات العمل",
   "bookForLater": "احجز لوقت لاحق",
   "technicianCancelledTitle": "اعتذر الفني",
-  "technicianCancelledDesc": "لقد اعتذر الفني المطلوب عن طلب إعادة الجدولة الخاص بك. يرجى اختيار خيار آخر.",
+  "technicianCancelledDesc": "اعتذر الفني أو لم يتمكن من قبول طلبك. يرجى اختيار خيار آخر.",
   "customerCancelledTitle": "ألغى العميل",
-  "customerCancelledDesc": "لقد قمت بإلغاء طلب إعادة الجدولة. يرجى اختيار خيار آخر.",
+  "customerCancelledDesc": "لقد قمت بإلغاء البحث عن فني. يرجى اختيار خيار آخر.",
   "searchAvailableTechnicians": "البحث عن فنيين متاحين",
   "proceedToAutoAssignment": "المتابعة للتعيين التلقائي",
   "liveTechnicianBroadcast": "البحث عن الفنيين المتاحين",
@@ -1083,6 +1083,10 @@
   "pleaseEnterProblemDescription": "يرجى إدخال وصف المشكلة",
   "timeout": "مهلة",
   "resolved": "تم الحل",
+  "complaintSubmitted": "تم تقديم الشكوى",
+  "youSubmittedAComplaint": "لقد قدمت شكوى بخصوص طلب الضمان هذا",
+  "complaintResolvedByAdmin": "تم حل الشكوى من قبل الإدارة",
+  "adminResolvedYourComplaint": "قامت الإدارة بحل شكواك",
   "bookingRequestTimedOut": "انتهت مهلة طلب الحجز. يرجى الطلب مرة أخرى.",
   "technicianTrackingNotification": "الفني في الطريق، يبعد {distance}، ووقت الوصول {time}"
 }

@@ -13,10 +13,17 @@ class EmbeddedTechnicianSearch extends StatefulWidget {
   final String bookingRequestId;
   final Function(UserModel) onTechnicianSelected;
 
+  /// Called when the search ends with nobody assigned, so the wizard can show the
+  /// cancelled screen and withdraw its Continue button. `customerCancelled`
+  /// distinguishes the customer walking away from the request being closed or
+  /// withdrawn on the technician side.
+  final void Function({bool customerCancelled})? onSearchEnded;
+
   const EmbeddedTechnicianSearch({
     super.key,
     required this.bookingRequestId,
     required this.onTechnicianSelected,
+    this.onSearchEnded,
   });
 
   @override
@@ -79,6 +86,9 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                   _acceptedTechnicians = [];
                   _isLoading = false;
                 });
+                // The request is gone — either the customer cancelled it or it
+                // was cleaned up. Either way there is no search left to show.
+                _notifySearchEnded();
               }
               return;
             }
@@ -92,6 +102,18 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
                 _acceptedTechnicians = data['acceptedTechnicians'] ?? [];
                 _isLoading = false;
               });
+
+              if (data['status'] == 'closed') {
+                // Closed, but deliberately *not* reported as a cancellation: the
+                // wizard's own expiry timer owns the timed-out case and shows a
+                // timeout dialog before stepping back, and the
+                // `cleanupStaleBookingRequests` cron closes abandoned requests
+                // server-side. Reporting it here would stack a "Technician
+                // Cancelled" screen on top of that. Only stop the countdown.
+                _stopBroadcast();
+                return;
+              }
+
               _calculateRemainingTime(createdAt);
             }
           },
@@ -147,6 +169,23 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
 
   void _stopBroadcast() {
     _countdownTimer?.cancel();
+  }
+
+  /// Guards [_notifySearchEnded] so the parent is told once, not once per
+  /// snapshot — the request listener re-fires for the same terminal state.
+  bool _searchEndReported = false;
+
+  void _notifySearchEnded({bool customerCancelled = false}) {
+    // "Search again" deletes the request and recreates it under a fresh id, so
+    // the document briefly disappears. That is a restart, not an ending.
+    if (_isSearchingAgain) return;
+    // Likewise, a request that disappears after the customer picked somebody is
+    // the successful hand-off to the review step, not a cancellation.
+    if (_selectedTechnicianUid != null) return;
+    if (_searchEndReported) return;
+    _searchEndReported = true;
+    _countdownTimer?.cancel();
+    widget.onSearchEnded?.call(customerCancelled: customerCancelled);
   }
 
   Future<void> _searchAgain() async {

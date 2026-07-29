@@ -18,6 +18,16 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+/// Why a rebook request could not be sent to the requested technician.
+enum _RebookBlockReason {
+  /// Approved to work, but not currently accepting jobs.
+  offline,
+
+  /// Not approved to work at all right now — unverified, blocked, or the account
+  /// no longer exists.
+  unavailable,
+}
+
 class RebookWaitWidget extends StatefulWidget {
   final UserModel technician;
   final ServiceModel service;
@@ -59,6 +69,10 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
   bool _isInitializing = true;
   bool _hasResponded = false;
 
+  /// Why the requested technician cannot be asked at all. Null means the request
+  /// was broadcast normally and we are waiting for their answer.
+  _RebookBlockReason? _blockReason;
+
   @override
   void initState() {
     super.initState();
@@ -84,15 +98,52 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
 
   void _cleanupRequest() {
     if (_requestId != null && !_hasResponded) {
-      AppServices.deleteJobRequest(_requestId!);
+      AppServices.cancelTechnicianSearch(_requestId!);
     }
+  }
+
+  /// Re-reads the technician from Firestore before broadcasting.
+  ///
+  /// The [UserModel] handed to this widget was loaded on an earlier screen and can
+  /// be minutes stale by the time the customer reaches this step, so availability
+  /// is confirmed against live data. A rebook is only offered to a technician who
+  /// is still approved to work (`isVerified`, not blocked) *and* currently online;
+  /// anything else short-circuits to an explanatory screen instead of creating a
+  /// request that can never be answered.
+  Future<_RebookBlockReason?> _resolveBlockReason() async {
+    UserModel technician = widget.technician;
+
+    final uid = technician.uid;
+    if (uid == null || uid.isEmpty) return _RebookBlockReason.unavailable;
+
+    try {
+      final doc = await AppFirestore.usersCollectionRef.doc(uid).get();
+      if (!doc.exists) return _RebookBlockReason.unavailable;
+      technician = UserModel.fromDocumentSnapshot(doc);
+    } catch (e) {
+      // Fall back to the model we were given rather than blocking on a transient
+      // network error — the offer simply expires if they really are unavailable.
+      debugPrint('Could not refresh technician before rebook: $e');
+    }
+
+    // Same gate the Cloud Functions apply to every automated assignment path, so a
+    // technician who could not be broadcast a normal job is not rebookable either.
+    if (technician.isVerified != true) {
+      return _RebookBlockReason.unavailable;
+    }
+    if (technician.isOnline != true) {
+      return _RebookBlockReason.offline;
+    }
+    return null;
   }
 
   Future<void> _startFlow() async {
     try {
-      if (widget.technician.isOnline != true) {
+      final blockReason = await _resolveBlockReason();
+      if (blockReason != null) {
         if (mounted) {
           setState(() {
+            _blockReason = blockReason;
             _isInitializing = false;
           });
         }
@@ -143,12 +194,14 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
         expiresAt: expiresAt,
         isOnHour: true, // Rebooking is always treated as intentional wait
         bookingDateTime: Timestamp.fromDate(
-          DateTime(
-            widget.selectedDate.year,
-            widget.selectedDate.month,
-            widget.selectedDate.day,
-            (widget.timeSlot['time'] as TimeOfDay).hour,
-            (widget.timeSlot['time'] as TimeOfDay).minute,
+          KsaTime.toInstant(
+            DateTime(
+              widget.selectedDate.year,
+              widget.selectedDate.month,
+              widget.selectedDate.day,
+              (widget.timeSlot['time'] as TimeOfDay).hour,
+              (widget.timeSlot['time'] as TimeOfDay).minute,
+            ),
           ),
         ),
         status: 'pending',
@@ -219,8 +272,12 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
       return const Center(child: Loader());
     }
 
-    if (widget.technician.isOnline != true) {
-      return _buildOfflineUI();
+    if (_blockReason != null) {
+      return _buildUnavailableUI(_blockReason!);
+    }
+
+    if (_requestId == null) {
+      return _buildUnavailableUI(_RebookBlockReason.unavailable);
     }
 
     return StreamBuilder<List<Map<String, dynamic>>>(
@@ -333,7 +390,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
               child: Text(
                 DateFormat.yMMMMd(
                   locale,
-                ).add_jm().format(proposedTime.toDate()),
+                ).add_jm().format(KsaTime.fromInstant(proposedTime.toDate())),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -397,9 +454,27 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
     );
   }
 
-  Widget _buildOfflineUI() {
+  /// Shown when the requested technician cannot be asked at all. The customer is
+  /// told why, then continues into the normal assignment flow.
+  Widget _buildUnavailableUI(_RebookBlockReason reason) {
     final l10n = AppLocalizations.of(context)!;
     final locale = l10n.localeName;
+
+    final String message;
+    if (reason == _RebookBlockReason.offline) {
+      message = locale == 'ar'
+          ? 'الفني غير متصل حالياً'
+          : locale == 'ur'
+          ? 'ٹیکنیشن اس وقت آف لائن ہے'
+          : "Technician is currently offline";
+    } else {
+      message = locale == 'ar'
+          ? 'هذا الفني غير متاح للحجز حالياً'
+          : locale == 'ur'
+          ? 'یہ ٹیکنیشن اس وقت بکنگ کے لیے دستیاب نہیں ہے'
+          : "This technician is not available for booking right now";
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -424,11 +499,7 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
           ),
           const SizedBox(height: 12),
           Text(
-            locale == 'ar'
-                ? 'الفني غير متصل حالياً'
-                : locale == 'ur'
-                ? 'ٹیکنیشن اس وقت آف لائن ہے'
-                : "Technician is currently offline",
+            message,
             style: TextStyle(fontSize: 16, color: Colors.red[600]),
             textAlign: TextAlign.center,
           ),
