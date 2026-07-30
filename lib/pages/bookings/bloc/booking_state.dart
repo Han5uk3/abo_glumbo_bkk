@@ -102,11 +102,21 @@ class BookingsLoaded extends BookingState {
             .where((e) => e.bookingStatusCode == 'R')
             .toList();
       case BookingStatusType.onWarranty:
-        return allBookings.where((e) {
+        final onWarranty = allBookings.where((e) {
           final completed = e.bookingStatusCode == 'C' && e.paymentCompleted;
           final warranty = e.warranty != null;
           return completed && warranty;
         }).toList();
+        // Sort by warranty requestedOn in descending order (newest first)
+        onWarranty.sort((a, b) {
+          final aRequested = a.warranty?.requestedOn;
+          final bRequested = b.warranty?.requestedOn;
+          if (aRequested == null && bRequested == null) return 0;
+          if (aRequested == null) return 1;
+          if (bRequested == null) return -1;
+          return bRequested.compareTo(aRequested);
+        });
+        return onWarranty;
       case BookingStatusType.verificationPending:
         return allBookings.where((e) => e.bookingStatusCode == 'VP').toList();
     }

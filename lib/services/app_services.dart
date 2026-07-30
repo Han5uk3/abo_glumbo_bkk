@@ -1440,6 +1440,24 @@ class AppServices {
     await batch.commit();
   }
 
+  static Future<void> markAllFirestoreNotificationsAsRead() async {
+    String userId = LocalStoreHelper.getUID() ?? '';
+    if (userId.isEmpty) return;
+
+    final collection = AppFirestore.customersCollectionRef
+        .doc(userId)
+        .collection('notifications');
+
+    final snapshot = await collection.where('read', isEqualTo: false).get();
+    if (snapshot.docs.isEmpty) return;
+
+    final batch = FirebaseFirestore.instance.batch();
+    for (var doc in snapshot.docs) {
+      batch.update(doc.reference, {'read': true});
+    }
+    await batch.commit();
+  }
+
   static Stream<int> getUnreadNotificationsCountStream() {
     String userId = LocalStoreHelper.getUID() ?? '';
     if (userId.isEmpty) return Stream.value(0);

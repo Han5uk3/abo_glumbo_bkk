@@ -168,6 +168,41 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
             ),
             shape: Border.all(style: BorderStyle.none),
             actions: [
+              if (_cachedNotifications.any((n) => !n.read))
+                IconButton(
+                  iconSize: 16,
+                  icon: const Icon(
+                    Icons.done_all_rounded,
+                    color: Colors.black,
+                  ),
+                  tooltip: isAr
+                      ? 'تحديد الكل كمقروء'
+                      : isUr
+                      ? 'سب کو پڑھا ہوا نشان زد کریں'
+                      : 'Mark All Read',
+                  onPressed: () async {
+                    await AppServices.markAllFirestoreNotificationsAsRead();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.green,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          content: Text(
+                            isAr
+                                ? 'تم تحديد جميع الإشعارات كمقروءة'
+                                : isUr
+                                ? 'تمام اطلاعات پڑھی ہوئی نشان زد کر دی گئیں'
+                                : 'All notifications marked as read',
+                          ),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
+                ),
               if (_cachedNotifications.isNotEmpty)
                 IconButton(
                   iconSize: 16,

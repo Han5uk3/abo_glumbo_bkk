@@ -49,6 +49,31 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   bool get isWarranty => widget.isWarranty;
   VoidCallback? get onRefresh => widget.onRefresh;
 
+  /// Resolves who the "Technician" tab should represent right now.
+  ///
+  /// Falling back to `booking.agent` unconditionally whenever the warranty's
+  /// own `assignedTechnician` snapshot is missing used to conflate two very
+  /// different situations: a plain (non-warranty) booking, and an active
+  /// claim that currently has **nobody** assigned — e.g. the technician just
+  /// rejected the claim (`RejectWarranty` clears `assignedTechnician` /
+  /// `assignedTechnicianId` but leaves the status at 'R' while admin picks a
+  /// replacement). In that gap this used to keep showing the rejecting
+  /// technician's name/chat/phone as if they were still on the job. Once the
+  /// claim itself is no longer active, there is no gap to worry about and the
+  /// original completing agent is exactly who should show.
+  UserModel? _resolveActiveAgent(BookingModel booking, bool isActiveWarranty) {
+    if (!isActiveWarranty) return booking.agent;
+
+    final assignedTechnician = booking.warranty!.assignedTechnician;
+    if (assignedTechnician != null) {
+      return UserModel.fromJson(assignedTechnician);
+    }
+
+    final hasAssignee =
+        (booking.warranty!.assignedTechnicianId ?? '').isNotEmpty;
+    return hasAssignee ? booking.agent : null;
+  }
+
   Widget _buildTimestampText(BuildContext context, BookingModel booking) {
     if (widget.isWarranty) {
       return _buildWarrantyTimestamp(context, booking);
@@ -352,10 +377,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
             isWarranty &&
             booking.warranty != null &&
             ['R', 'A', 'S'].contains(booking.warranty!.warrantyStatusCode);
-        final UserModel? activeAgent =
-            isActiveWarranty && booking.warranty!.assignedTechnician != null
-            ? UserModel.fromJson(booking.warranty!.assignedTechnician!)
-            : booking.agent;
+        final UserModel? activeAgent = _resolveActiveAgent(
+          booking,
+          isActiveWarranty,
+        );
 
         if (activeAgent != null && (activeAgent.uid ?? "").isNotEmpty) {
           tabs.add(Tab(text: localization.technician));
@@ -1927,10 +1952,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         isWarranty &&
         booking.warranty != null &&
         ['R', 'A', 'S'].contains(booking.warranty!.warrantyStatusCode);
-    final UserModel? activeAgent =
-        isActiveWarranty && booking.warranty!.assignedTechnician != null
-        ? UserModel.fromJson(booking.warranty!.assignedTechnician!)
-        : booking.agent;
+    final UserModel? activeAgent = _resolveActiveAgent(
+      booking,
+      isActiveWarranty,
+    );
 
     return Container(
       width: double.infinity,

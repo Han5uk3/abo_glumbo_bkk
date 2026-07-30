@@ -687,6 +687,19 @@ backgroundColor: Colors.red,
                 });
                 return false;
               } else if (currentStep == 3 && _bookingRequestId != null) {
+                if (_activeRebookTechnician != null) {
+                  // The rebook flow targets one specific technician: unlike
+                  // broadcast, going back to step 2 always spins up a brand
+                  // new request there (there's no accepted-technicians list
+                  // to reselect from). Without cancelling this one first, the
+                  // just-accepted request/offer is orphaned — abandoned but
+                  // never expiring, since an accepted offer is deliberately
+                  // exempt from expiry everywhere it's read — and lingers on
+                  // the technician's Pending tab forever.
+                  final staleRequestId = _bookingRequestId!;
+                  _bookingRequestId = null;
+                  AppServices.cancelTechnicianSearch(staleRequestId);
+                }
                 // If going back to step 2 from step 3, keep the request so they can change worker
                 setState(() {
                   selectedWorker = UserModel(uid: "", role: "agent");
@@ -803,6 +816,16 @@ backgroundColor: Colors.red,
                       });
                       return;
                     } else if (currentStep == 3 && _bookingRequestId != null) {
+                      if (_activeRebookTechnician != null) {
+                        // See the matching branch in onWillPop above: a fresh
+                        // RebookWaitWidget is about to be created for step 2,
+                        // so the just-accepted request must be torn down
+                        // first or it's orphaned on the technician's side
+                        // forever.
+                        final staleRequestId = _bookingRequestId!;
+                        _bookingRequestId = null;
+                        AppServices.cancelTechnicianSearch(staleRequestId);
+                      }
                       // If going back to step 2 from step 3, keep the request so they can change worker
                       setState(() {
                         selectedWorker = UserModel(uid: "", role: "agent");
@@ -2991,16 +3014,26 @@ backgroundColor: Colors.red,
             _requestExpiryTimer?.cancel();
             LocalStoreHelper.clearBookingRequestId();
 
-            // Notify tech
-            await AppServices.recordTechnicianNotification(
-              technicianId: selectedWorker.uid!,
-              titleEn: 'Job Confirmed',
-              titleAr: 'تم تأكيد الطلب',
-              bodyEn: 'You have been assigned to a booking.',
-              bodyAr: 'لقد تم تعيينك في حجز جديد.',
-              type: 'booking_confirmed',
-              data: {'bookingId': _bookingRequestId},
-            );
+            // Best-effort: the booking is already confirmed at this point (the
+            // batch above committed), so a failed push notification must never
+            // be allowed to fail the booking itself — it used to fall through
+            // to the "no worker selected" fallback below, which then failed
+            // (the request doc this just deleted no longer exists for it to
+            // read) and showed "Failed to complete booking" over a booking
+            // that had, in fact, already succeeded.
+            try {
+              await AppServices.recordTechnicianNotification(
+                technicianId: selectedWorker.uid!,
+                titleEn: 'Job Confirmed',
+                titleAr: 'تم تأكيد الطلب',
+                bodyEn: 'You have been assigned to a booking.',
+                bodyAr: 'لقد تم تعيينك في حجز جديد.',
+                type: 'booking_confirmed',
+                data: {'bookingId': _bookingRequestId},
+              );
+            } catch (e) {
+              debugPrint("Error notifying technician of confirmed booking: $e");
+            }
 
             setState(() => saving = false);
 
@@ -3023,8 +3056,53 @@ backgroundColor: Colors.red,
             }
             return;
           }
+
+          // The request doc is already gone even though this is the first time
+          // this handler has tried to convert it. Most likely a previous tap
+          // already converted it successfully (or something else deleted it) —
+          // check `bookings` directly instead of blindly falling through to the
+          // fallback save below, which would either fail (showing a false
+          // failure over a successful booking) or create a second, duplicate
+          // booking.
+          final existingBooking = await AppFirestore.bookingsCollectionRef
+              .doc(_bookingRequestId!)
+              .get();
+          setState(() => saving = false);
+          if (existingBooking.exists) {
+            if (mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BookingCompletedPage(
+                    service: widget.service,
+                    worker: selectedWorker,
+                    selectedDate: bookingDate,
+                    selectedTime: isServiceNow
+                        ? {"label": "Now", "time": TimeOfDay.fromDateTime(KsaTime.now)}
+                        : timeSlots[selectedTimeCategory]["values"][selectedTimeSlot],
+                    address: selectedAddress,
+                  ),
+                ),
+                (route) => false,
+              );
+            }
+          } else if (mounted) {
+            _showSnackBar(
+              AppLocalizations.of(context)?.failedToCompleteBooking ??
+                  "Failed to complete booking",
+            );
+          }
+          return;
         } catch (e) {
           debugPrint("Error confirming booking request: $e");
+          setState(() => saving = false);
+          if (mounted) {
+            _showSnackBar(
+              AppLocalizations.of(context)?.failedToCompleteBooking ??
+                  "Failed to complete booking",
+            );
+          }
+          return;
         }
       }
 
