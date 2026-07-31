@@ -201,49 +201,59 @@ class BookingUtils {
         'rebookTechnicianId': rebookTechnicianId,
       });
 
-      // If this was from a broadcast request, clean up
+      // If this was from a broadcast request, clean up. The booking above is
+      // already committed at this point, so none of this must be allowed to
+      // turn a successful booking into a reported failure — a stray
+      // 'finalized' update or a failed notification used to fall through to
+      // the outer catch and return null, showing "Failed to complete
+      // booking" over one that had, in fact, already succeeded. Any leftover
+      // job_requests doc is swept up by the cleanupStaleJobRequests cron.
       if (requestId != null) {
-        final batch = FirebaseFirestore.instance.batch();
+        try {
+          final batch = FirebaseFirestore.instance.batch();
 
-        // 1. Update request status
-        batch.update(AppFirestore.jobRequestsCollectionRef.doc(requestId), {
-          'status': 'finalized',
-          'bookingId': bookingId,
-        });
+          // 1. Update request status
+          batch.update(AppFirestore.jobRequestsCollectionRef.doc(requestId), {
+            'status': 'finalized',
+            'bookingId': bookingId,
+          });
 
-        // 2. Mark all offers for this request as closed
-        final offers = await AppFirestore.jobOffersCollectionRef
-            .where('requestId', isEqualTo: requestId)
-            .get();
-        for (var doc in offers.docs) {
-          batch.update(doc.reference, {'status': 'closed'});
-        }
+          // 2. Mark all offers for this request as closed
+          final offers = await AppFirestore.jobOffersCollectionRef
+              .where('requestId', isEqualTo: requestId)
+              .get();
+          for (var doc in offers.docs) {
+            batch.update(doc.reference, {'status': 'closed'});
+          }
 
-        await batch.commit();
+          await batch.commit();
 
-        // 3. Notify the selected technician
-        if (agent != null && agent.uid != null) {
-          await AppServices.recordTechnicianNotification(
-            technicianId: agent.uid!,
-            titleEn: 'Job Confirmed',
-            titleAr: 'تم تأكيد الطلب',
-            bodyEn: 'You have been assigned to a booking.',
-            bodyAr: 'لقد تم تعيينك في حجز جديد.',
-            type: 'booking_confirmed',
-            data: {'bookingId': bookingId},
-          );
+          // 3. Notify the selected technician
+          if (agent != null && agent.uid != null) {
+            await AppServices.recordTechnicianNotification(
+              technicianId: agent.uid!,
+              titleEn: 'Job Confirmed',
+              titleAr: 'تم تأكيد الطلب',
+              bodyEn: 'You have been assigned to a booking.',
+              bodyAr: 'لقد تم تعيينك في حجز جديد.',
+              type: 'booking_confirmed',
+              data: {'bookingId': bookingId},
+            );
 
-          // 4. Notify the customer
-          await AppServices.recordCustomerNotification(
-            customerId: customerData.uid ?? "",
-            titleEn: 'Technician Booked',
-            titleAr: 'تم حجز فني',
-            bodyEn:
-                'Technician ${agent.name ?? "A technician"} has been booked successfully.',
-            bodyAr: 'تم حجز الفني ${agent.name ?? "فني"} بنجاح.',
-            type: 'technician_assigned',
-            data: {'bookingId': bookingId},
-          );
+            // 4. Notify the customer
+            await AppServices.recordCustomerNotification(
+              customerId: customerData.uid ?? "",
+              titleEn: 'Technician Booked',
+              titleAr: 'تم حجز فني',
+              bodyEn:
+                  'Technician ${agent.name ?? "A technician"} has been booked successfully.',
+              bodyAr: 'تم حجز الفني ${agent.name ?? "فني"} بنجاح.',
+              type: 'technician_assigned',
+              data: {'bookingId': bookingId},
+            );
+          }
+        } catch (e) {
+          debugPrint("Error finalizing broadcast request cleanup: $e");
         }
       }
 
@@ -634,10 +644,6 @@ class BookingUtils {
         cancelledWorkerUids: cancelledWorkerUids,
       );
 
-      // Save to standard bookings
-      await AppFirestore.bookingsCollectionRef.doc(bookingId).set(booking.toJson());
-
-      // Save to auto-assignment_requests
       final bool isInstant =
           bookingDate.difference(KsaTime.now).inMinutes <= 180;
       final Map<String, dynamic> autoReqData = {
@@ -664,7 +670,21 @@ class BookingUtils {
         autoReqData['cancelledWorkerUids'] = cancelledWorkerUids;
       }
 
-      await AppFirestore.autoAssignmentRequestsCollectionRef.doc(bookingId).set(autoReqData);
+      // Save to `bookings` and `auto-assignment_requests` atomically. These
+      // used to be two sequential writes: if the second ever failed after the
+      // first had already committed, the customer was shown "Failed to
+      // complete booking" over a booking that, in fact, existed — but was
+      // silently orphaned forever, since `processAutoAssignments` only ever
+      // reads from `auto-assignment_requests`, never from `bookings`
+      // directly. A batch makes both writes succeed or fail together, so a
+      // reported failure is now always a real one.
+      final batch = FirebaseFirestore.instance.batch();
+      batch.set(AppFirestore.bookingsCollectionRef.doc(bookingId), booking.toJson());
+      batch.set(
+        AppFirestore.autoAssignmentRequestsCollectionRef.doc(bookingId),
+        autoReqData,
+      );
+      await batch.commit();
       return bookingId;
     } catch (e) {
       debugPrint("Error saving auto assignment request: $e");

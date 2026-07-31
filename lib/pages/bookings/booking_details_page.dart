@@ -53,16 +53,22 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   ///
   /// Falling back to `booking.agent` unconditionally whenever the warranty's
   /// own `assignedTechnician` snapshot is missing used to conflate two very
-  /// different situations: a plain (non-warranty) booking, and an active
-  /// claim that currently has **nobody** assigned — e.g. the technician just
-  /// rejected the claim (`RejectWarranty` clears `assignedTechnician` /
+  /// different situations: a plain (non-warranty) booking, and a claim that
+  /// currently has **nobody** assigned — e.g. the technician just rejected
+  /// the claim (`RejectWarranty` clears `assignedTechnician` /
   /// `assignedTechnicianId` but leaves the status at 'R' while admin picks a
   /// replacement). In that gap this used to keep showing the rejecting
-  /// technician's name/chat/phone as if they were still on the job. Once the
-  /// claim itself is no longer active, there is no gap to worry about and the
-  /// original completing agent is exactly who should show.
-  UserModel? _resolveActiveAgent(BookingModel booking, bool isActiveWarranty) {
-    if (!isActiveWarranty) return booking.agent;
+  /// technician's name/chat/phone as if they were still on the job.
+  ///
+  /// `resolveFromWarranty` should be true for every warranty status that has
+  /// (or once had) its own claim-handling technician — including completed
+  /// ('C') and expired ('E') claims — so that once a claim is done, the tab
+  /// keeps showing whoever actually handled/completed *that* claim rather
+  /// than silently reverting to the original job's technician. Contact
+  /// actions (call/WhatsApp/chat) are gated separately and stay hidden for
+  /// those closed-out statuses even though the technician is still shown.
+  UserModel? _resolveActiveAgent(BookingModel booking, bool resolveFromWarranty) {
+    if (!resolveFromWarranty) return booking.agent;
 
     final assignedTechnician = booking.warranty!.assignedTechnician;
     if (assignedTechnician != null) {
@@ -377,9 +383,13 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
             isWarranty &&
             booking.warranty != null &&
             ['R', 'A', 'S'].contains(booking.warranty!.warrantyStatusCode);
+        // Broader than isActiveWarranty: also covers completed ('C') and
+        // expired ('E') claims so the tab keeps crediting whoever actually
+        // handled that claim instead of falling back to the original agent.
+        final bool resolveFromWarranty = isWarranty && booking.warranty != null;
         final UserModel? activeAgent = _resolveActiveAgent(
           booking,
-          isActiveWarranty,
+          resolveFromWarranty,
         );
 
         if (activeAgent != null && (activeAgent.uid ?? "").isNotEmpty) {
@@ -1948,13 +1958,10 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
     bool showChatOnHeader = true,
     Widget? trailing,
   }) {
-    final bool isActiveWarranty =
-        isWarranty &&
-        booking.warranty != null &&
-        ['R', 'A', 'S'].contains(booking.warranty!.warrantyStatusCode);
+    final bool resolveFromWarranty = isWarranty && booking.warranty != null;
     final UserModel? activeAgent = _resolveActiveAgent(
       booking,
-      isActiveWarranty,
+      resolveFromWarranty,
     );
 
     return Container(
