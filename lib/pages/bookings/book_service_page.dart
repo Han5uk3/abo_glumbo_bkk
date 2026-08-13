@@ -2945,7 +2945,26 @@ backgroundColor: Colors.red,
         _shouldShowTechnicianSelection();
 
     if (isManual) {
-      if (selectedWorker.uid?.isNotEmpty == true && _bookingRequestId != null) {
+      // `_bookingRequestId` names a doc in one of two different collections
+      // depending on how we got here: the broadcast flow's
+      // `BookingUtils.saveBookingRequest` writes to `booking_request`, while
+      // the rebook flow's RebookWaitWidget writes to `job_requests` and hands
+      // its id back through `onBroadcastIdCreated`. The conversion below reads
+      // and deletes `booking_request/{id}` unconditionally, so on a rebook it
+      // looked up an id that only exists in `job_requests`, found nothing,
+      // found no booking under that id either, and reported a failure over a
+      // booking it had simply never attempted.
+      //
+      // Rebooks belong on the `saveBooking` path further down, which is
+      // already collection-aware (it reads `job_requests` when
+      // `rebookTechnicianId` is set, and finalizes that doc afterwards).
+      // `_activeRebookTechnician` is the discriminator: every place that
+      // assigns a `booking_request` id to `_bookingRequestId` clears it first.
+      final bool isRebookRequest = _activeRebookTechnician != null;
+
+      if (selectedWorker.uid?.isNotEmpty == true &&
+          _bookingRequestId != null &&
+          !isRebookRequest) {
         // We already have a selected technician and a request ID.
         // Convert the request to a booking.
         try {

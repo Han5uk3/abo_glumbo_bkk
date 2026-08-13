@@ -162,7 +162,15 @@ class NotificationServices {
     }
 
     if (_isInitialized) {
-      debugPrint('⚠️ FCM already initialized, skipping...');
+      debugPrint('⚠️ FCM already initialized, skipping listener setup...');
+      // The listeners are set up once per process, but the token registration
+      // is not idempotent with respect to *who is signed in*. The first run
+      // usually happens before login (guest browsing, or the splash screen), at
+      // which point `updateFCMToken` has no uid to write against and silently
+      // does nothing. Latching on `_isInitialized` alone meant that customer
+      // never got a token written - no pushes, and (because the backend used to
+      // skip storing when there was no token) an empty notifications page too.
+      await _getFCMTokenAndUpdate();
       return;
     }
 

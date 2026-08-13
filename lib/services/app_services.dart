@@ -99,10 +99,13 @@ class AppServices {
       debugPrint('📤 Updating FCM token for user: $currentUid');
       debugPrint('🔑 Token: $token');
 
-      await AppFirestore.customersCollectionRef.doc(currentUid).update({
+      // merge-set, not update(): update() throws if the customer document does
+      // not exist yet, and a thrown token write is only logged - the customer
+      // then has no fcmToken at all, which costs them every push.
+      await AppFirestore.customersCollectionRef.doc(currentUid).set({
         'fcmToken': token,
         'fcmTokenUpdatedAt': Timestamp.now(),
-      });
+      }, SetOptions(merge: true));
 
       debugPrint('✅ FCM token updated successfully in Firestore');
     } catch (e) {
