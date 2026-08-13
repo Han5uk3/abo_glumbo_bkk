@@ -9,6 +9,13 @@ sealed class BookingState extends Equatable {
 
 final class BookingInitial extends BookingState {}
 
+/// When the customer finished paying for a booking. `paymentCompletedAt` is
+/// the field the payment flow writes today; the fallbacks keep bookings paid
+/// before it existed from sinking to the bottom of every list.
+DateTime? _paymentCompletionTime(BookingModel booking) =>
+    (booking.paymentCompletedAt ?? booking.paidAt ?? booking.completedAt)
+        ?.toDate();
+
 class BookingsLoading extends BookingState {
   final BookingStatusType selectedStatus;
   final List<BookingModel> allBookings;
@@ -107,14 +114,25 @@ class BookingsLoaded extends BookingState {
           final warranty = e.warranty != null;
           return completed && warranty;
         }).toList();
-        // Sort by warranty requestedOn in descending order (newest first)
+        // Claims with a repair request come first, newest request on top -
+        // those are the ones the customer is waiting on. The untouched
+        // warranties follow, newest payment first, since the payment is what
+        // started their warranty window.
         onWarranty.sort((a, b) {
           final aRequested = a.warranty?.requestedOn;
           final bRequested = b.warranty?.requestedOn;
-          if (aRequested == null && bRequested == null) return 0;
-          if (aRequested == null) return 1;
-          if (bRequested == null) return -1;
-          return bRequested.compareTo(aRequested);
+          if (aRequested != null && bRequested != null) {
+            return bRequested.compareTo(aRequested);
+          }
+          if (aRequested != null) return -1;
+          if (bRequested != null) return 1;
+
+          final aPaid = _paymentCompletionTime(a);
+          final bPaid = _paymentCompletionTime(b);
+          if (aPaid == null && bPaid == null) return 0;
+          if (aPaid == null) return 1;
+          if (bPaid == null) return -1;
+          return bPaid.compareTo(aPaid);
         });
         return onWarranty;
       case BookingStatusType.verificationPending:

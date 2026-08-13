@@ -648,6 +648,11 @@ class ServiceBookingTile extends StatelessWidget {
     final warranty = booking.warranty;
     if (warranty == null) return SizedBox.shrink();
 
+    // Until the customer asks for a repair the warranty is just sitting there,
+    // and a date on the card only reads as clutter. The claim is what gives a
+    // date something to refer to, so the card stays date-free before it.
+    if (warranty.requestedOn == null) return SizedBox.shrink();
+
     final locale = AppLocalizations.of(context)?.localeName ?? 'en';
     final statusCode = warranty.warrantyStatusCode;
 
