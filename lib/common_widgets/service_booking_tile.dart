@@ -1057,59 +1057,95 @@ class ServiceBookingTile extends StatelessWidget {
     return '${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}';
   }
 
+  /// The complaint button is the customer's escape hatch when a warranty claim
+  /// stalls. It appears for three separate reasons:
+  ///
+  ///  1. the admin rejected the claim outright (status X);
+  ///  2. the assigned technician dropped it and nobody has picked it up since;
+  ///  3. nothing at all has happened on the claim for 24 hours.
+  ///
+  /// (1) and (2) are concrete events, so they are answered by what the claim
+  /// looks like now. (3) is silence, so it is measured against the clock.
   bool _shouldShowComplaintButton() {
     final warranty = booking.warranty;
     if (warranty == null) return false;
 
-    // Do not show for completed warranties
+    // A finished claim has nothing left to chase.
     if (warranty.warrantyStatusCode == 'C') return false;
 
-    // Do not show for expired warranties
-    if (calculateDaysLeft() <= 0) return false;
+    // Still inside the warranty window? Compared as instants, not as whole
+    // days: `calculateDaysLeft()` truncates with `inDays`, so it reports 0 -
+    // "expired" - for the entire final day of a live warranty. On a 7-day
+    // window that hid the button for the last 24 hours, which is exactly when a
+    // claim raised late in the window needs it most.
+    final now = TimeService.now;
+    final endsAt =
+        warranty.expiredOn ??
+        warranty.createdAt?.add(const Duration(days: 7));
+    if (endsAt == null || !now.isBefore(endsAt)) return false;
 
-    // Do not show if it's already escalated
+    // Already complained - the tile shows the "escalated" badge instead.
     if (booking.isEscalated == true) return false;
 
-    // Do not show for 1 day after admin resolves it
-    if (booking.resolvedAt != null) {
-      final daysSinceResolved = DateTime.now()
-          .difference(booking.resolvedAt!.toDate())
-          .inDays;
-      if (daysSinceResolved <= 1) return false;
+    // When the admin resolves a complaint, the events that caused it are still
+    // written on the claim (the rejection, the empty assignment). Without this,
+    // reasons (1) and (2) would re-arm the button the instant the complaint was
+    // resolved and the customer would keep re-reporting the same thing. So a
+    // failure only counts if it happened after the last resolution.
+    final resolvedAt = booking.resolvedAt?.toDate();
+    bool isUnaddressed(DateTime? failedAt) {
+      if (resolvedAt == null) return true;
+      return failedAt != null && failedAt.isAfter(resolvedAt);
     }
 
-    // Show if the warranty booking is rejected (by admin)
-    if (warranty.warrantyStatusCode == 'X') return true;
+    // 1. Admin rejected the claim.
+    if (warranty.warrantyStatusCode == 'X') {
+      return isUnaddressed(warranty.rejectedAt);
+    }
 
-    final isAssignedTechnicianEmpty =
-        warranty.assignedTechnician == null ||
-        warranty.assignedTechnician!.isEmpty;
-    final isAssignedTechnicianIdEmpty =
-        warranty.assignedTechnicianId == null ||
-        warranty.assignedTechnicianId!.isEmpty;
+    // 2. The claim lost its technician and is waiting to be reassigned. Both
+    // fields matter: a cancellation clears the id and the embedded technician
+    // together, and either one left behind means somebody is still on it.
+    final isUnassigned =
+        (warranty.assignedTechnician == null ||
+            warranty.assignedTechnician!.isEmpty) &&
+        (warranty.assignedTechnicianId == null ||
+            warranty.assignedTechnicianId!.isEmpty);
 
+    DateTime? lastRejectionAt = warranty.rejectedAt;
+    for (final rejection in warranty.rejectedTechnicians ?? const []) {
+      final rejectedAt = rejection.rejectedAt;
+      if (rejectedAt == null) continue;
+      if (lastRejectionAt == null || rejectedAt.isAfter(lastRejectionAt)) {
+        lastRejectionAt = rejectedAt;
+      }
+    }
     final hasRejections =
-        (warranty.rejectedTechnicians != null &&
-            warranty.rejectedTechnicians!.isNotEmpty) ||
+        (warranty.rejectedTechnicians?.isNotEmpty ?? false) ||
         warranty.rejectedAt != null;
 
-    // Show if the assigned technician rejects the warranty booking (technician cancelled)
-    if (hasRejections &&
-        isAssignedTechnicianEmpty &&
-        isAssignedTechnicianIdEmpty) {
-      return true;
+    if (hasRejections && isUnassigned) {
+      return isUnaddressed(lastRejectionAt);
     }
 
-    // Check if there is a relevant date to calculate from
-    final lastActivityDate =
+    // 3. Silence. Every real action on a claim - requesting it, assigning,
+    // accepting, cancelling, completing - stamps `warranty.updatedAt`, so this
+    // measures genuine inactivity.
+    final lastActivity =
         warranty.updatedAt ?? warranty.requestedOn ?? warranty.createdAt;
-    if (lastActivityDate == null) return false;
+    if (lastActivity == null) return false;
 
-    // Calculate the difference in days
-    final daysSinceUpdate = DateTime.now().difference(lastActivityDate).inDays;
+    // Resolving a complaint restarts the clock, which is what gives the admin
+    // their day to actually fix things before the customer can complain again.
+    var silentSince = lastActivity;
+    if (resolvedAt != null && resolvedAt.isAfter(silentSince)) {
+      silentSince = resolvedAt;
+    }
 
-    // Show button if more than 1 days have passed without updates
-    return daysSinceUpdate > 1;
+    // 24 hours, measured as a duration. The previous test was
+    // `difference(...).inDays > 1`, and because `inDays` truncates that only
+    // became true at the 48-hour mark - a full day later than intended.
+    return now.difference(silentSince) >= const Duration(hours: 24);
   }
 
   int calculateDaysLeft() {
