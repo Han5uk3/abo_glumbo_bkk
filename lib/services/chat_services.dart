@@ -396,9 +396,14 @@ class ChatService {
   }
 
   /// How often the presence flag is refreshed while the chat is on screen.
-  /// Must stay well below CHAT_PRESENCE_TTL_MS in functions/index.js so a live
-  /// viewer is never mistaken for a stale one.
-  static const Duration _presenceHeartbeat = Duration(seconds: 15);
+  /// Must stay comfortably below CHAT_PRESENCE_TTL_MS (15s) in
+  /// functions/index.js: a beat that lands late reads as stale there and the
+  /// backend pushes anyway. On Android that is invisible - onMessage drops the
+  /// banner via NotificationServices.currentActiveChatId - but on iOS
+  /// setForegroundNotificationPresentationOptions(alert: true) lets the system
+  /// present the banner before Dart can suppress it, so this margin is the only
+  /// thing keeping a banner off a chat the user is actively reading.
+  static const Duration _presenceHeartbeat = Duration(seconds: 5);
 
   Timer? _presenceTimer;
 
