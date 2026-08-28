@@ -39,7 +39,7 @@ class FilterCriteria extends Equatable {
     // Price range filter
     if (selectedPriceRanges.isNotEmpty) {
       final matchesPrice = selectedPriceRanges.any(
-        (range) => _isInPriceRange(range, service.price ?? 0.0),
+        (range) => _isInPriceRange(range, service.getCurrentPrice()),
       );
       if (!matchesPrice) return false;
     }

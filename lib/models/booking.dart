@@ -74,12 +74,17 @@ class BookingModel {
 
   List<String>? cancelledWorkerUids;
 
-  /// Returns the correct inspection fee based on the on-hour/off-hour status
+  /// The inspection fee for this booking's on-hour/off-hour band, and 0 when
+  /// that band is not priced.
+  ///
+  /// `service.price` (the general price) is deliberately not a fallback — an
+  /// unpriced band charges nothing rather than quietly billing the general
+  /// price. See [ServiceModel.getCurrentPrice].
   double get effectiveInspectionFee {
     if (isOnHour == true) {
-      return service.onWorkHourPrice ?? service.price ?? 0.0;
+      return service.onWorkHourPrice ?? 0.0;
     } else {
-      return service.offWorkHourPrice ?? service.price ?? 0.0;
+      return service.offWorkHourPrice ?? 0.0;
     }
   }
 

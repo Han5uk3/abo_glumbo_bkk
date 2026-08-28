@@ -75,7 +75,7 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
     final amount = widget.booking?.completionData != null
         ? (serviceCost + discountedInspectionFee)
         : (widget.service
-                  ?.getDiscountedPrice(widget.service?.price ?? 0.0)
+                  ?.getDiscountedPrice(widget.service!.getCurrentPrice())
                   .toDouble() ??
               0.00);
 
@@ -191,7 +191,7 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
                               widget.booking!.completionData?.inspectionFee ??
                               0.0))
                     : (widget.service
-                              ?.getDiscountedPrice(widget.service?.price ?? 0.0)
+                              ?.getDiscountedPrice(widget.service!.getCurrentPrice())
                               .toDouble() ??
                           0.00))
               : widget.review?.tipAmount ?? 0.00,

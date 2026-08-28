@@ -110,6 +110,27 @@ class _PaymentWindowState extends State<PaymentWindow> {
     return "ORDER$uidSuffix$timestamp$amountString";
   }
 
+  /// The amount the customer is actually charged.
+  ///
+  /// Single source of truth for every payment route in this sheet. The Apple
+  /// Pay routes used to send `service.price` — the general price — while the
+  /// card route sent the computed total, so the two could charge different
+  /// amounts for the same booking. The general price is no longer a
+  /// customer-facing figure at all; see [ServiceModel.getCurrentPrice].
+  double get _payableAmount {
+    final inspectionFee =
+        widget.booking.completionData?.inspectionFee ??
+        widget.booking.effectiveInspectionFee;
+    final discountedInspectionFee = widget.booking.service.getDiscountedPrice(
+      inspectionFee,
+    );
+    final totalServiceCost = widget.booking.completionData?.totalCost ?? 0.0;
+
+    return widget.booking.completionData != null
+        ? (totalServiceCost + discountedInspectionFee)
+        : discountedInspectionFee;
+  }
+
   // Future<bool> saveBooking() async {
   //   return await BookingUtils.saveBooking(
   //     service: widget.service,
@@ -133,18 +154,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
       isLoading = true;
     });
 
-    double inspectionFee =
-        widget.booking.completionData?.inspectionFee ??
-        widget.booking.service.price ??
-        0.0;
-    double discountedInspectionFee = widget.booking.service.getDiscountedPrice(
-      inspectionFee,
-    );
-    double totalServiceCost = widget.booking.completionData?.totalCost ?? 0.0;
-
-    double finalAmount = widget.booking.completionData != null
-        ? (totalServiceCost + discountedInspectionFee)
-        : discountedInspectionFee;
+    double finalAmount = _payableAmount;
 
     String orderId = generateOrderId(
       widget.customerData.uid ?? "guest",
@@ -235,7 +245,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
         try {
           final paymentSuccess = await applePayService.sendApplePayTokenToTelr(
             applePayToken: tokenForTelr,
-            amount: double.tryParse(widget.service.price.toString()) ?? 0,
+            amount: finalAmount,
             orderId: orderId,
             customerName: widget.customerData.name.toString(),
             customerEmail: widget.customerData.email.toString(),
@@ -439,7 +449,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
       final paymentItems = [
         PaymentItem(
           label: 'Total',
-          amount: widget.service.price.toString(),
+          amount: _payableAmount.toString(),
           status: PaymentItemStatus.final_price,
         ),
       ];

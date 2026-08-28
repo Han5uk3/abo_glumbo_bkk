@@ -481,21 +481,20 @@ class ServiceModel {
 
   bool get isCurrentlyOnHour => isOnWorkHour();
 
+  /// The customer-facing price for the given moment: the on-hour or off-hour
+  /// band, and **0 when that band is not priced**.
+  ///
+  /// [price] — the service's "general" price — is deliberately *not* a fallback
+  /// here, and is not read anywhere in the customer app. It used to stand in
+  /// whenever either band was null or zero, which meant an unpriced band
+  /// silently charged the customer the general price instead. The general price
+  /// now serves one purpose only: it is the basis for the technician's monthly
+  /// bonus when the band price is 0. See `applyMonthlyBonus` in
+  /// `functions/index.js`, which reads it from `completionData.generalServicePrice`.
   double getCurrentPrice({DateTime? currentTime}) {
-    if (workStartTime == null ||
-        workEndTime == null ||
-        onWorkHourPrice == null ||
-        offWorkHourPrice == null ||
-        onWorkHourPrice == 0 ||
-        offWorkHourPrice == 0) {
-      return price ?? 0.0;
-    }
-
-    if (isOnWorkHour(currentTime: currentTime)) {
-      return onWorkHourPrice!;
-    } else {
-      return offWorkHourPrice!;
-    }
+    return isOnWorkHour(currentTime: currentTime)
+        ? (onWorkHourPrice ?? 0.0)
+        : (offWorkHourPrice ?? 0.0);
   }
 
   double getDiscountedPrice(double currentPrice) {

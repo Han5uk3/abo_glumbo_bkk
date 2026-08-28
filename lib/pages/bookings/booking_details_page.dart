@@ -2219,20 +2219,19 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
 
           Divider(thickness: 0.5, color: Colors.grey.shade300),
 
-          if (booking.service.price != null)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${AppLocalizations.of(context)!.inspectionFee}\t\t  ',
-                  style: const TextStyle(fontSize: 12),
-                ),
-                Text(
-                  '${booking.service.price} ${AppLocalizations.of(context)!.sar}',
-                  style: const TextStyle(fontSize: 12, color: Colors.green),
-                ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${AppLocalizations.of(context)!.inspectionFee}\t\t  ',
+                style: const TextStyle(fontSize: 12),
+              ),
+              Text(
+                '${booking.effectiveInspectionFee} ${AppLocalizations.of(context)!.sar}',
+                style: const TextStyle(fontSize: 12, color: Colors.green),
+              ),
+            ],
+          ),
         ],
       ),
     );

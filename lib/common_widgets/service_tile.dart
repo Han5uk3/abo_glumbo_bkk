@@ -242,7 +242,7 @@ class ServiceTile extends StatelessWidget {
                       children: [
                         if ((service.discountPercentage ?? 0) > 0)
                           Text(
-                            "${service.price} ${AppLocalizations.of(context)!.sar}",
+                            "${service.getCurrentPrice()} ${AppLocalizations.of(context)!.sar}",
                             style: TextStyle(
                               color: Colors.black26,
                               fontWeight: FontWeight.w500,
@@ -251,7 +251,7 @@ class ServiceTile extends StatelessWidget {
                             ),
                           ),
                         Text(
-                          "${service.getDiscountedPrice(service.price ?? 0)} ${AppLocalizations.of(context)!.sar}",
+                          "${service.getDiscountedPrice(service.getCurrentPrice())} ${AppLocalizations.of(context)!.sar}",
                           style: TextStyle(
                             color: AppColors.green1,
                             fontWeight: FontWeight.bold,
