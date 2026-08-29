@@ -18,6 +18,7 @@ class BookingModel {
   Timestamp? assignmentScheduledTime; // Scheduled time for auto assignment
   String? autoAssignmentStatus; // ✅ Added for auto assignment tracking
   bool? isTrackingPaused; // ✅ Added
+  bool isRatingSheetShown = false; // ✅ Track if rating sheet was shown for this booking
 
   late String notes;
   late String? issueImage;
@@ -105,6 +106,7 @@ class BookingModel {
     this.paymentCompletedAt,
     this.paymentVerifiedAt,
     this.cancelledWorkers = const [],
+    this.isRatingSheetShown = false,
     this.isEscalated = false,
     this.escalatedAt,
     this.resolutionText,
@@ -229,6 +231,7 @@ class BookingModel {
       technicianSelectedAt = data['technicianSelectedAt'], // ✅ Added
       cancelledBy = data['cancelledBy'], // ✅ Added
       isTrackingPaused = data['isTrackingPaused'], // ✅ Added
+      isRatingSheetShown = data['isRatingSheetShown'] ?? false, // ✅ Added
       invoiceId = data['invoiceId'],
       invoicePdfUrl = data['invoicePdfUrl'],
       cancelledAt = data['cancelledAt'];
@@ -298,6 +301,7 @@ class BookingModel {
       'assignmentScheduledTime': assignmentScheduledTime,
       'rebookTechnicianId': rebookTechnicianId, // ✅ Added
       'isTrackingPaused': isTrackingPaused, // ✅ Added
+      'isRatingSheetShown': isRatingSheetShown, // ✅ Added
       'invoiceId': invoiceId,
       'invoicePdfUrl': invoicePdfUrl,
     };

@@ -597,33 +597,47 @@ class ServiceBookingTile extends StatelessWidget {
   Widget _buildBookingTimestamp(BuildContext context) {
     final locale = AppLocalizations.of(context)?.localeName ?? 'en';
 
-    if (booking.bookingStatusCode == "P" && booking.createdAt != null) {
-      return _timestampText(
-        "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(booking.createdAt!.toDate(), locale)}",
-      );
+    if (booking.bookingStatusCode == "P") {
+      final date = booking.createdAt ?? booking.bookingDateTime;
+      if (date != null) {
+        return _timestampText(
+          "${AppLocalizations.of(context)!.bookedOn} : ${formatBookingDateTime(date.toDate(), locale)}",
+        );
+      }
     }
 
-    final dateToUse = booking.assignedAt ?? booking.acceptedAt;
-    if (dateToUse != null && booking.bookingStatusCode == "A") {
-      return _timestampText(
-        "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(dateToUse.toDate(), locale)}",
-      );
+    if (booking.bookingStatusCode == "A") {
+      final dateToUse = booking.assignedAt ?? booking.acceptedAt ?? booking.createdAt;
+      if (dateToUse != null) {
+        return _timestampText(
+          "${AppLocalizations.of(context)!.acceptedOn} : ${formatBookingDateTime(dateToUse.toDate(), locale)}",
+        );
+      }
     }
 
-    if (booking.completedAt != null && booking.bookingStatusCode == "C") {
-      return _timestampText(
-        "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(booking.completedAt!.toDate(), locale)}",
-      );
+    if (booking.bookingStatusCode == "C") {
+      final dateToUse = booking.completedAt ??
+          booking.paymentCompletedAt ??
+          booking.paidAt ??
+          booking.updatedAt ??
+          booking.createdAt;
+      if (dateToUse != null) {
+        return _timestampText(
+          "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(dateToUse.toDate(), locale)}",
+        );
+      }
     }
 
-    if (booking.bookingStatusCode == "VP") {
+    if (booking.bookingStatusCode == "VP" || booking.bookingStatusCode == "CP") {
       if (booking.paidAt != null) {
         return _timestampText(
           "${AppLocalizations.of(context)!.paidOn} : ${formatBookingDateTime(booking.paidAt!.toDate(), locale)}",
         );
-      } else if (booking.completedAt != null) {
+      }
+      final dateToUse = booking.completedAt ?? booking.updatedAt ?? booking.createdAt;
+      if (dateToUse != null) {
         return _timestampText(
-          "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(booking.completedAt!.toDate(), locale)}",
+          "${AppLocalizations.of(context)!.completedOn} : ${formatBookingDateTime(dateToUse.toDate(), locale)}",
         );
       }
     }
@@ -632,13 +646,20 @@ class ServiceBookingTile extends StatelessWidget {
         booking.bookingStatusCode == "XC" ||
         booking.bookingStatusCode == "R") {
       if (booking.bookingStatusCode != "R") {
-        return _timestampText(
-          "${AppLocalizations.of(context)!.cancelledOn} : ${formatBookingDateTime(booking.cancelledAt!.toDate(), locale)}",
-        );
+        final dateToUse = booking.cancelledAt ?? booking.updatedAt ?? booking.createdAt;
+        if (dateToUse != null) {
+          return _timestampText(
+            "${AppLocalizations.of(context)!.cancelledOn} : ${formatBookingDateTime(dateToUse.toDate(), locale)}",
+          );
+        }
+      } else {
+        final dateToUse = booking.rejectedAt ?? booking.cancelledAt ?? booking.updatedAt ?? booking.createdAt;
+        if (dateToUse != null) {
+          return _timestampText(
+            "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(dateToUse.toDate(), locale)}",
+          );
+        }
       }
-      return _timestampText(
-        "${AppLocalizations.of(context)!.rejectedOn} : ${formatBookingDateTime(booking.rejectedAt!.toDate(), locale)}",
-      );
     }
 
     return SizedBox.shrink();

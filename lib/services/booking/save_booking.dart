@@ -273,7 +273,10 @@ class BookingUtils {
       log("Review: ${review?.toJson()}");
       log("Rating: ${review?.rating}");
       final newReview = review?.copyWith(createdAt: Timestamp.now());
-      Map<String, dynamic> updateData = {"review": newReview?.toJson() ?? {}};
+      Map<String, dynamic> updateData = {
+        "review": newReview?.toJson() ?? {},
+        "isRatingSheetShown": true,
+      };
 
       if ((review?.tipAmount ?? 0) > 0 &&
           review?.paymentType?.isNotEmpty == true) {

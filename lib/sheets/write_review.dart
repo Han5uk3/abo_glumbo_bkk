@@ -1,3 +1,4 @@
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/total_tip.dart';
@@ -58,6 +59,25 @@ class _WriteReviewBottomSheetWidgetState
 
   static const List<double> _tipAmounts = [5.0, 10.0, 20.0, 50.0];
   static const double _minTipAmount = 1.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _markRatingSheetShown();
+  }
+
+  void _markRatingSheetShown() {
+    if (widget.booking.id.isNotEmpty && widget.booking.isRatingSheetShown != true) {
+      widget.booking.isRatingSheetShown = true;
+      try {
+        AppFirestore.bookingsCollectionRef.doc(widget.booking.id).update({
+          'isRatingSheetShown': true,
+        });
+      } catch (e) {
+        debugPrint('Error updating isRatingSheetShown in WriteReviewBottomSheet: $e');
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -284,6 +304,8 @@ class _WriteReviewBottomSheetWidgetState
                 key: _formKey,
                 child: Column(
                   children: [
+                    _buildBookingInfoCard(l10n),
+                    const SizedBox(height: 16),
                     _buildRatingSection(l10n),
                     const SizedBox(height: 20),
                     _buildReviewSection(l10n),
@@ -299,6 +321,115 @@ class _WriteReviewBottomSheetWidgetState
         ],
       ),
     ),);
+  }
+
+  Widget _buildBookingInfoCard(AppLocalizations? l10n) {
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final serviceName = widget.booking.service.nameLocalized(languageCode: languageCode) ??
+        widget.booking.service.name ??
+        '';
+    final technicianName = widget.booking.agent?.name?.trim() ?? '';
+    final bookingIdDisplay = (widget.booking.newBookingId != null &&
+            widget.booking.newBookingId!.trim().isNotEmpty)
+        ? widget.booking.newBookingId!.trim()
+        : widget.booking.id;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  serviceName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.black1,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColors.primary.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  '#$bookingIdDisplay',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (technicianName.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            const Divider(height: 1, thickness: 0.8, color: Color(0xFFF0F0F0)),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.person_outline,
+                    color: AppColors.primary,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n?.technician ?? 'Technician',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      Text(
+                        technicianName,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.black1,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   Widget _buildDragHandle() {

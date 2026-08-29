@@ -5,6 +5,7 @@ import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/common_widgets/welcome_modal.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
@@ -112,7 +113,8 @@ class _HomeState extends State<Home> {
         setState(() {
           _completedUnreviewedBookings = bookings.where((b) {
             return b.bookingStatusCode == 'C' &&
-                (b.review == null || b.review?.rating == null);
+                (b.review == null || b.review?.rating == null) &&
+                b.isRatingSheetShown != true;
           }).toList();
         });
         _checkAndShowPendingReviews();
@@ -126,6 +128,7 @@ class _HomeState extends State<Home> {
 
     BookingModel? bookingToReview;
     for (var b in _completedUnreviewedBookings) {
+      if (b.isRatingSheetShown == true) continue;
       if (!_sessionLaterBookings.contains(b.id)) {
         // Only auto-show popup if completed in the last 15 minutes
         if (b.completedAt != null) {
@@ -134,9 +137,6 @@ class _HomeState extends State<Home> {
             bookingToReview = b;
             break;
           }
-        } else {
-          // If completedAt is somehow null, don't show it repeatedly.
-          // Or we could fallback to not showing. Let's just skip it.
         }
       }
     }
@@ -157,6 +157,17 @@ class _HomeState extends State<Home> {
 
   Future<void> _showReviewSheet(BookingModel booking) async {
     setState(() => _isReviewSheetOpen = true);
+
+    // Track on the booking document that the rating sheet has been shown so it only appears once
+    try {
+      booking.isRatingSheetShown = true;
+      await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
+        'isRatingSheetShown': true,
+      });
+    } catch (e) {
+      debugPrint('Error marking isRatingSheetShown in Firestore: $e');
+    }
+
     try {
       final result = await showWriteReviewBottomSheet(
         context,

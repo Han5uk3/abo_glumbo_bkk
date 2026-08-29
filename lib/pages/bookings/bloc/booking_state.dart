@@ -43,71 +43,98 @@ class BookingsLoaded extends BookingState {
         final pending = allBookings
             .where((e) => e.bookingStatusCode == 'P')
             .toList();
-        // Sort by createdAt in descending order (newest first)
+        // Sort by booked date in descending order (newest first)
         pending.sort((a, b) {
-          if (a.createdAt == null && b.createdAt == null) return 0;
-          if (a.createdAt == null) return 1;
-          if (b.createdAt == null) return -1;
-          return b.createdAt!.compareTo(a.createdAt!);
+          final aDate = a.createdAt ?? a.bookingDateTime;
+          final bDate = b.createdAt ?? b.bookingDateTime;
+          if (aDate == null && bDate == null) return 0;
+          if (aDate == null) return 1;
+          if (bDate == null) return -1;
+          return bDate.compareTo(aDate);
         });
         return pending;
+
       case BookingStatusType.confirmed:
         final confirmed = allBookings
             .where((e) => e.bookingStatusCode == 'A')
             .toList();
-        // Sort by acceptedAt in descending order (newest first)
+        // Sort by accepted/assigned date in descending order (newest first)
         confirmed.sort((a, b) {
-          if (a.acceptedAt == null && b.acceptedAt == null) return 0;
-          if (a.acceptedAt == null) return 1;
-          if (b.acceptedAt == null) return -1;
-          return b.acceptedAt!.compareTo(a.acceptedAt!);
+          final aDate = a.assignedAt ?? a.acceptedAt ?? a.createdAt;
+          final bDate = b.assignedAt ?? b.acceptedAt ?? b.createdAt;
+          if (aDate == null && bDate == null) return 0;
+          if (aDate == null) return 1;
+          if (bDate == null) return -1;
+          return bDate.compareTo(aDate);
         });
         return confirmed;
+
       case BookingStatusType.completed:
         final completed = allBookings.where((e) {
           final isCompleted = e.bookingStatusCode == 'C' && e.paymentCompleted;
-
           return isCompleted;
         }).toList();
-        // Sort by paymentCompletedAt in descending order (newest first)
+        // Sort by completed date in descending order (newest first)
+        // Matches the exact date shown on the card: completedAt ?? paymentCompletedAt ?? paidAt ?? updatedAt ?? createdAt
         completed.sort((a, b) {
-          if (a.paymentCompletedAt == null && b.paymentCompletedAt == null) {
-            return 0;
-          }
-          if (a.paymentCompletedAt == null) {
-            return 1;
-          }
-          if (b.paymentCompletedAt == null) {
-            return -1;
-          }
-          return b.paymentCompletedAt!.compareTo(a.paymentCompletedAt!);
+          final aDate = a.completedAt ?? a.paymentCompletedAt ?? a.paidAt ?? a.updatedAt ?? a.createdAt;
+          final bDate = b.completedAt ?? b.paymentCompletedAt ?? b.paidAt ?? b.updatedAt ?? b.createdAt;
+          if (aDate == null && bDate == null) return 0;
+          if (aDate == null) return 1;
+          if (bDate == null) return -1;
+          return bDate.compareTo(aDate);
         });
         return completed;
+
       case BookingStatusType.pendingPayment:
         final pending = allBookings.where((e) {
           final isPending = e.bookingStatusCode == 'CP';
-          final isVerification = e.bookingStatusCode == 'VP'; 
-
+          final isVerification = e.bookingStatusCode == 'VP';
           return isPending || isVerification;
         }).toList();
-        // Sort by completedAt in descending order (newest first)
+        // Sort by payment/completion date in descending order (newest first)
         pending.sort((a, b) {
-          if (a.completedAt == null && b.completedAt == null) return 0;
-          if (a.completedAt == null) return 1;
-          if (b.completedAt == null) return -1;
-          return b.completedAt!.compareTo(a.completedAt!);
+          final aDate = a.paidAt ?? a.completedAt ?? a.updatedAt ?? a.createdAt;
+          final bDate = b.paidAt ?? b.completedAt ?? b.updatedAt ?? b.createdAt;
+          if (aDate == null && bDate == null) return 0;
+          if (aDate == null) return 1;
+          if (bDate == null) return -1;
+          return bDate.compareTo(aDate);
         });
         return pending;
+
       case BookingStatusType.cancelled:
-        return allBookings
+        final cancelled = allBookings
             .where(
               (e) => e.bookingStatusCode == 'X' || e.bookingStatusCode == 'XC',
             )
             .toList();
+        // Sort by cancelled date in descending order (newest first)
+        cancelled.sort((a, b) {
+          final aDate = a.cancelledAt ?? a.updatedAt ?? a.createdAt;
+          final bDate = b.cancelledAt ?? b.updatedAt ?? b.createdAt;
+          if (aDate == null && bDate == null) return 0;
+          if (aDate == null) return 1;
+          if (bDate == null) return -1;
+          return bDate.compareTo(aDate);
+        });
+        return cancelled;
+
       case BookingStatusType.rejected:
-        return allBookings
+        final rejected = allBookings
             .where((e) => e.bookingStatusCode == 'R')
             .toList();
+        // Sort by rejected date in descending order (newest first)
+        rejected.sort((a, b) {
+          final aDate = a.rejectedAt ?? a.cancelledAt ?? a.updatedAt ?? a.createdAt;
+          final bDate = b.rejectedAt ?? b.cancelledAt ?? b.updatedAt ?? b.createdAt;
+          if (aDate == null && bDate == null) return 0;
+          if (aDate == null) return 1;
+          if (bDate == null) return -1;
+          return bDate.compareTo(aDate);
+        });
+        return rejected;
+
       case BookingStatusType.onWarranty:
         final onWarranty = allBookings.where((e) {
           final completed = e.bookingStatusCode == 'C' && e.paymentCompleted;
@@ -116,8 +143,7 @@ class BookingsLoaded extends BookingState {
         }).toList();
         // Claims with a repair request come first, newest request on top -
         // those are the ones the customer is waiting on. The untouched
-        // warranties follow, newest payment first, since the payment is what
-        // started their warranty window.
+        // warranties follow, newest payment/completed first.
         onWarranty.sort((a, b) {
           final aRequested = a.warranty?.requestedOn;
           final bRequested = b.warranty?.requestedOn;
@@ -135,8 +161,18 @@ class BookingsLoaded extends BookingState {
           return bPaid.compareTo(aPaid);
         });
         return onWarranty;
+
       case BookingStatusType.verificationPending:
-        return allBookings.where((e) => e.bookingStatusCode == 'VP').toList();
+        final vp = allBookings.where((e) => e.bookingStatusCode == 'VP').toList();
+        vp.sort((a, b) {
+          final aDate = a.paidAt ?? a.completedAt ?? a.updatedAt ?? a.createdAt;
+          final bDate = b.paidAt ?? b.completedAt ?? b.updatedAt ?? b.createdAt;
+          if (aDate == null && bDate == null) return 0;
+          if (aDate == null) return 1;
+          if (bDate == null) return -1;
+          return bDate.compareTo(aDate);
+        });
+        return vp;
     }
   }
 
