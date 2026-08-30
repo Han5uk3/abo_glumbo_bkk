@@ -62,11 +62,13 @@ class TrackingData extends StatelessWidget {
           throw Exception('User not authenticated');
         }
 
+        final activeTech = worker ?? booking.activeAgent ?? booking.agent;
+
         chatId = await chatService.createChat(
           booking.id,
-          booking.agent!.uid ?? '',
-          booking.agent!.name ?? 'Technician',
-          booking.agent!.profileUrl ?? '',
+          activeTech?.uid ?? '',
+          activeTech?.name ?? 'Technician',
+          activeTech?.profileUrl ?? '',
           booking.customer.name ?? 'Customer',
           '', // Customer photo - update if available
           'customer',
@@ -84,14 +86,15 @@ class TrackingData extends StatelessWidget {
 
       // Open chat screen
       if (context.mounted) {
+        final activeTech = worker ?? booking.activeAgent ?? booking.agent;
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ChatScreen(
               chatId: chatId,
-              participantName: booking.agent!.name ?? 'Technician',
-              participantId: booking.agent!.uid ?? '',
-              participantPhoto: booking.agent!.profileUrl ?? '',
+              participantName: activeTech?.name ?? 'Technician',
+              participantId: activeTech?.uid ?? '',
+              participantPhoto: activeTech?.profileUrl ?? '',
               customerName: booking.customer.name ?? 'Customer',
               customerPhoto: '',
               bookingId: booking.id,

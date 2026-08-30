@@ -89,6 +89,43 @@ class BookingModel {
     }
   }
 
+  /// Whether the booking is currently undergoing active warranty repair tracking/service.
+  bool get isWarrantyTracking => warranty?.warrantyStatusCode == 'S';
+
+  /// Resolves the technician responsible for the current state of the booking.
+  /// If the booking is in active warranty tracking ([isWarrantyTracking] == true) or [isWarranty] is true,
+  /// returns the technician assigned to the warranty.
+  /// If [warranty.assignedTechnician] is set, that technician model is returned.
+  /// If only [warranty.assignedTechnicianId] is set and matches the original [agent.uid], [agent] is returned.
+  /// If [warranty.assignedTechnicianId] is set to a different technician, returns a [UserModel] placeholder
+  /// with that UID so tracking tracks the assigned technician rather than the completed agent.
+  /// Otherwise, falls back to the original booking [agent] (or null if [isWarranty] is true and no warranty tech is assigned).
+  UserModel? resolveTechnician({bool isWarranty = false}) {
+    if (isWarranty || isWarrantyTracking) {
+      final warrantyTech = warranty?.assignedTechnicianModel;
+      if (warrantyTech != null) {
+        return warrantyTech;
+      }
+      if (warranty?.assignedTechnicianId != null &&
+          warranty!.assignedTechnicianId!.isNotEmpty) {
+        if (warranty!.assignedTechnicianId == agent?.uid) {
+          return agent;
+        }
+        return UserModel(
+          role: 'technician',
+          uid: warranty!.assignedTechnicianId,
+        );
+      }
+      if (isWarranty) {
+        return null;
+      }
+    }
+    return agent;
+  }
+
+  /// The active technician who is servicing this booking right now (including during warranty repair).
+  UserModel? get activeAgent => resolveTechnician();
+
   BookingModel({
     required this.id,
     this.newBookingId,

@@ -51,8 +51,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _currentUserId = _chatService.currentUserId;
     _chatService.markAsRead(widget.chatId, userType);
-    _chatService.setActiveChat(widget.chatId);
-    
+
     // Set active chat for notification suppression
     NotificationServices.setActiveChatId(widget.chatId);
 
@@ -581,24 +580,21 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _chatService.setActiveChat(widget.chatId);
       NotificationServices.setActiveChatId(widget.chatId);
       _chatService.markAsRead(widget.chatId, userType);
     } else {
       // paused / inactive / hidden / detached - the chat is no longer on
-      // screen, so drop both the backend presence flag and the on-device
-      // suppression. Anything that arrives from here on must alert the user.
-      _chatService.clearActiveChat(widget.chatId);
-      NotificationServices.setActiveChatId(null);
+      // screen, so clear the active chat suppression. Anything arriving
+      // while app is in background or on another screen alerts the user.
+      NotificationServices.clearActiveChatId(widget.chatId);
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _chatService.clearActiveChat(widget.chatId);
     // Clear active chat for notification suppression
-    NotificationServices.setActiveChatId(null);
+    NotificationServices.clearActiveChatId(widget.chatId);
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();

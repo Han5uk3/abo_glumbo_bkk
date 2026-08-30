@@ -34,12 +34,21 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     with WidgetsBindingObserver {
   GoogleMapController? _mapController;
   final Completer<GoogleMapController> _controller = Completer();
-  BitmapDescriptor? _scooterIcon;
+  BitmapDescriptor? _driverCarIcon;
   BitmapDescriptor? _customerIcon;
 
   LatLng? _customerLatLng;
   LatLng? _agentLatLng;
   LatLng? _previousAgentLatLng;
+  double _agentBearing = 0.0;
+
+  final ValueNotifier<Set<Marker>> _markersNotifier =
+      ValueNotifier<Set<Marker>>({});
+  bool _showRecenterButton = false;
+  bool _isProgrammaticMove = false;
+  bool _hasInitiallyFitRoute = false;
+  LatLng? _lastRouteFetchLocation;
+  static const double _routeUpdateDistanceMeters = 50.0;
 
   StreamSubscription? _agentLocationSubscription;
 
@@ -80,7 +89,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     // Capture initial delivery address to detect changes on multi-device scenarios
-    _lastTrackedAgentUid = widget.booking?.agent?.uid;
+    _lastTrackedAgentUid = widget.booking?.activeAgent?.uid;
     _initializeTracking();
   }
 
@@ -92,6 +101,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     _cameraDebounce?.cancel();
     _mapController?.dispose();
     _agentMarkerAnimTimer?.cancel();
+    _markersNotifier.dispose();
     super.dispose();
   }
 
@@ -108,7 +118,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       } else {
         await _loadCustomerLocation();
 
-        final agentUid = widget.booking?.agent?.uid;
+        final agentUid = widget.booking?.activeAgent?.uid;
         if (agentUid != null && agentUid.isNotEmpty) {
           _listenToAgentLocation(agentUid);
         } else {
@@ -123,14 +133,52 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
   Future<void> _setCustomMarkerIcons() async {
     try {
-      _scooterIcon = await _getResizedMarker('assets/images/vann.png', 200);
+      _driverCarIcon =
+          await _getResizedMarker('assets/images/drivercar.png', 140);
       _customerIcon = BitmapDescriptor.defaultMarkerWithHue(
         BitmapDescriptor.hueGreen,
       );
     } catch (_) {
-      _scooterIcon = BitmapDescriptor.defaultMarker;
+      _driverCarIcon = BitmapDescriptor.defaultMarker;
       _customerIcon = BitmapDescriptor.defaultMarker;
     }
+    _updateMarkers();
+  }
+
+  void _updateMarkers({LatLng? agentPos, double? bearing}) {
+    final pos = agentPos ?? _agentLatLng;
+    final b = bearing ?? _agentBearing;
+    final markers = <Marker>{};
+
+    if (_customerLatLng != null && _customerIcon != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('customer'),
+          position: _customerLatLng!,
+          icon: _customerIcon!,
+          anchor: const Offset(0.5, 0.5),
+        ),
+      );
+    }
+
+    if (pos != null && _driverCarIcon != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('agent'),
+          position: pos,
+          icon: _driverCarIcon!,
+          rotation: b,
+          anchor: const Offset(0.5, 0.5),
+          flat: true,
+          infoWindow: InfoWindow(
+            title: widget.booking?.activeAgent?.name ?? 'Delivery Agent',
+            snippet: 'Live location',
+          ),
+        ),
+      );
+    }
+
+    _markersNotifier.value = markers;
   }
 
   Future<BitmapDescriptor> _getResizedMarker(
@@ -174,13 +222,12 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       setState(() {
         _customerLatLng = customerPosition;
         _isLoading = false;
-        if (_agentLatLng != null) {
-          _moveCameraToBounds(
-            customerLatLng: _customerLatLng!,
-            agentLatLng: _agentLatLng!,
-          );
-        }
       });
+      _updateMarkers();
+      if (_agentLatLng != null && _isMapReady && !_hasInitiallyFitRoute) {
+        _hasInitiallyFitRoute = true;
+        _fitRouteBounds();
+      }
       debugPrint('📍 Customer Delivery Address SET (STATIC): $lat, $lon');
     } catch (e) {
       _handleError('Failed to load customer address: $e');
@@ -231,18 +278,42 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
             debugPrint(
               '🚗 [AGENT] Location update: ${newAgentLatLng.latitude}, ${newAgentLatLng.longitude} at ${DateTime.now()}',
             );
-            debugPrint('🚗 [AGENT] Delivery address: $_customerLatLng');
 
-            _scheduleFetchETA();
+            if (_agentLatLng == null) {
+              _agentLatLng = newAgentLatLng;
+              _previousAgentLatLng = newAgentLatLng;
+              _lastRouteFetchLocation = newAgentLatLng;
+              _updateMarkers(agentPos: newAgentLatLng, bearing: _agentBearing);
+              _fetchETAAndRoute();
+              if (_isMapReady && !_hasInitiallyFitRoute) {
+                _hasInitiallyFitRoute = true;
+                _fitRouteBounds();
+              }
+              return;
+            }
 
-            if (_agentLatLng == null ||
-                _agentLatLng!.latitude != newAgentLatLng.latitude ||
+            if (_agentLatLng!.latitude != newAgentLatLng.latitude ||
                 _agentLatLng!.longitude != newAgentLatLng.longitude) {
+              final distanceMovedMeters = _calculateStraightDistanceKm(
+                _lastRouteFetchLocation ?? _agentLatLng!,
+                newAgentLatLng,
+              ) * 1000.0;
+
+              debugPrint(
+                '🚗 [AGENT] Distance since last route update: ${distanceMovedMeters.toStringAsFixed(1)}m',
+              );
+
+              // Smoothly animate the vehicle pin
               _animateAgentMarker(newAgentLatLng);
 
-              if (_customerLatLng != null &&
-                  _mapController != null &&
-                  _isFollowingAgent) {
+              // Update route from Google Directions API every 50 meters travelled
+              if (_lastRouteFetchLocation == null ||
+                  distanceMovedMeters >= _routeUpdateDistanceMeters) {
+                _lastRouteFetchLocation = newAgentLatLng;
+                _scheduleFetchETA();
+              }
+
+              if (_isFollowingAgent && _mapController != null) {
                 _debouncedCameraUpdate();
               }
             }
@@ -265,7 +336,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     }
 
     // Validate agent UID hasn't changed (multi-device safety check)
-    final currentAgentUid = widget.booking?.agent?.uid;
+    final currentAgentUid = widget.booking?.activeAgent?.uid;
     if (currentAgentUid != null && !_isETADataStillValid(currentAgentUid)) {
       debugPrint('[LOG] ETA data invalid - agent or booking may have changed');
       // Reset eta and distance to force fresh calculation
@@ -329,7 +400,8 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           newEta,
         );
         final bookingId = widget.booking?.id;
-        final technicianName = widget.booking?.agent?.name ?? 'Technician';
+        final technicianName =
+            widget.booking?.activeAgent?.name ?? 'Technician';
 
         if (bookingId != null) {
           if (etaMinutes == 10) {
@@ -406,6 +478,21 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           debugPrint(
             '[LOG] Route points updated: ${routePoints.length} points',
           );
+          if (_agentLatLng != null) {
+            final roadBearing = _calculateRoadBearingAhead(
+              _agentLatLng!,
+              routePoints,
+            );
+            if (roadBearing != null) {
+              _agentBearing = roadBearing;
+              _updateMarkers();
+            }
+          }
+
+          if (!_hasInitiallyFitRoute && _isMapReady) {
+            _hasInitiallyFitRoute = true;
+            _fitRouteBounds();
+          }
         } else {
           routePoints = [_agentLatLng!, _customerLatLng!];
           debugPrint('[LOG] Using fallback straight line route');
@@ -413,14 +500,11 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
         // Update tracking metadata for multi-device safety
         _lastETAUpdateTimestamp = DateTime.now().millisecondsSinceEpoch;
-        _lastTrackedAgentUid = widget.booking?.agent?.uid;
+        _lastTrackedAgentUid = widget.booking?.activeAgent?.uid;
       });
 
       if (_isFollowingAgent && _mapController != null) {
-        _moveCameraToBounds(
-          customerLatLng: _customerLatLng!,
-          agentLatLng: _agentLatLng!,
-        );
+        _debouncedCameraUpdate();
       }
     } catch (e) {
       debugPrint("❌ ETA fetch error: $e");
@@ -455,14 +539,11 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
         // Update tracking metadata for multi-device safety
         _lastETAUpdateTimestamp = DateTime.now().millisecondsSinceEpoch;
-        _lastTrackedAgentUid = widget.booking?.agent?.uid;
+        _lastTrackedAgentUid = widget.booking?.activeAgent?.uid;
       });
 
       if (_isFollowingAgent && _mapController != null) {
-        _moveCameraToBounds(
-          customerLatLng: _customerLatLng!,
-          agentLatLng: _agentLatLng!,
-        );
+        _debouncedCameraUpdate();
       }
     }
   }
@@ -570,6 +651,55 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     return distance;
   }
 
+  double _calculateBearing(LatLng start, LatLng end) {
+    const p = math.pi / 180.0;
+    final lat1 = start.latitude * p;
+    final lon1 = start.longitude * p;
+    final lat2 = end.latitude * p;
+    final lon2 = end.longitude * p;
+
+    final dLon = lon2 - lon1;
+
+    final y = math.sin(dLon) * math.cos(lat2);
+    final x = math.cos(lat1) * math.sin(lat2) -
+        math.sin(lat1) * math.cos(lat2) * math.cos(dLon);
+
+    final radians = math.atan2(y, x);
+    final degrees = (radians * (180.0 / math.pi) + 360.0) % 360.0;
+    return degrees;
+  }
+
+  double? _calculateRoadBearingAhead(LatLng currentPos, List<LatLng> points) {
+    if (points.length < 2) return null;
+
+    int closestIndex = 0;
+    double minDistance = double.infinity;
+
+    for (int i = 0; i < points.length; i++) {
+      final dist = _calculateStraightDistanceKm(currentPos, points[i]);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestIndex = i;
+      }
+    }
+
+    // Look ahead from closestIndex for the next distinct segment
+    for (int i = closestIndex; i < points.length - 1; i++) {
+      final p1 = points[i];
+      final p2 = points[i + 1];
+      if (_calculateStraightDistanceKm(p1, p2) > 0.002) {
+        return _calculateBearing(p1, p2);
+      }
+    }
+
+    // Fallback: segment leading to closestIndex
+    if (closestIndex > 0) {
+      return _calculateBearing(points[closestIndex - 1], points[closestIndex]);
+    }
+
+    return null;
+  }
+
   double _getInitialZoom() {
     if (_agentLatLng == null || _customerLatLng == null) {
       return 16.0;
@@ -613,7 +743,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   }
 
   void _scheduleMockMovement() {
-    Timer.periodic(const Duration(seconds: 5), (timer) {
+    Timer.periodic(const Duration(seconds: 4), (timer) {
       if (!mounted || _agentLatLng == null) {
         timer.cancel();
         return;
@@ -625,76 +755,165 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         _agentLatLng!.latitude + latOffset,
         _agentLatLng!.longitude + lngOffset,
       );
+
+      final distanceMovedMeters = _calculateStraightDistanceKm(
+        _lastRouteFetchLocation ?? _agentLatLng!,
+        newAgent,
+      ) * 1000.0;
+
       _animateAgentMarker(newAgent);
-      _fetchETAAndRoute();
+
+      if (_lastRouteFetchLocation == null ||
+          distanceMovedMeters >= _routeUpdateDistanceMeters) {
+        _lastRouteFetchLocation = newAgent;
+        _fetchETAAndRoute();
+      }
+
       if (_isFollowingAgent && _isMapReady) _debouncedCameraUpdate();
     });
   }
 
   void _debouncedCameraUpdate() {
+    if (!_isFollowingAgent || _mapController == null || _agentLatLng == null) return;
     _cameraDebounce?.cancel();
-    _cameraDebounce = Timer(const Duration(milliseconds: 300), () {
-      if (_customerLatLng != null && _agentLatLng != null) {
-        _moveCameraToBounds(
-          customerLatLng: _customerLatLng!,
-          agentLatLng: _agentLatLng!,
-        );
-      }
+    _cameraDebounce = Timer(const Duration(milliseconds: 200), () {
+      if (!_isFollowingAgent || _mapController == null || _agentLatLng == null) return;
+      _isProgrammaticMove = true;
+      _mapController!.animateCamera(
+        CameraUpdate.newLatLng(_agentLatLng!),
+      ).then((_) {
+        _isProgrammaticMove = false;
+      });
     });
   }
 
-  void _moveCameraToBounds({
-    required LatLng customerLatLng,
-    required LatLng agentLatLng,
-  }) async {
-    log("[LOG] _moveCameraToBounds() called - centering on agent");
+  void _recenterOnAgent() async {
+    if (_agentLatLng == null || _mapController == null) return;
+    setState(() {
+      _isFollowingAgent = true;
+      _showRecenterButton = false;
+    });
 
-    if (_mapController == null) return;
-
+    _isProgrammaticMove = true;
     try {
       final double currentZoom = await _mapController!.getZoomLevel();
-
+      final double targetZoom = math.max(currentZoom, 16.5);
       await _mapController!.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: agentLatLng, zoom: currentZoom),
+          CameraPosition(target: _agentLatLng!, zoom: targetZoom),
         ),
       );
     } catch (e) {
-      log('[LOG] Failed to animate camera: $e');
+      debugPrint('[MAP] Recenter error: $e');
+    } finally {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _isProgrammaticMove = false;
+      });
     }
+  }
 
-    log('[LOG] Camera animation completed');
+  void _fitRouteBounds({double padding = 80.0}) async {
+    if (_mapController == null) return;
+
+    final points = <LatLng>[];
+    if (routePoints.isNotEmpty) {
+      points.addAll(routePoints);
+    }
+    if (_agentLatLng != null) points.add(_agentLatLng!);
+    if (_customerLatLng != null) points.add(_customerLatLng!);
+
+    if (points.isEmpty) return;
+
+    _isProgrammaticMove = true;
+    try {
+      if (points.length == 1) {
+        await _mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(points.first, 15.0),
+        );
+      } else {
+        double minLat = points.first.latitude;
+        double maxLat = points.first.latitude;
+        double minLng = points.first.longitude;
+        double maxLng = points.first.longitude;
+
+        for (final p in points) {
+          minLat = math.min(minLat, p.latitude);
+          maxLat = math.max(maxLat, p.latitude);
+          minLng = math.min(minLng, p.longitude);
+          maxLng = math.max(maxLng, p.longitude);
+        }
+
+        final bounds = LatLngBounds(
+          southwest: LatLng(minLat, minLng),
+          northeast: LatLng(maxLat, maxLng),
+        );
+
+        await _mapController!.animateCamera(
+          CameraUpdate.newLatLngBounds(bounds, padding),
+        );
+      }
+    } catch (e) {
+      debugPrint('[MAP] Error fitting bounds: $e');
+    } finally {
+      Future.delayed(const Duration(milliseconds: 600), () {
+        _isProgrammaticMove = false;
+      });
+    }
   }
 
   void _animateAgentMarker(LatLng newLoc) {
     _agentMarkerAnimTimer?.cancel();
 
     if (_agentLatLng == null) {
-      setState(() {
-        _agentLatLng = newLoc;
-        _previousAgentLatLng = newLoc;
-      });
+      _agentLatLng = newLoc;
+      _previousAgentLatLng = newLoc;
+      _updateMarkers(agentPos: newLoc, bearing: _agentBearing);
       return;
     }
 
     final start = _agentLatLng!;
+    final double startBearing = _agentBearing;
+    double targetBearing = startBearing;
+
+    if (_calculateStraightDistanceKm(start, newLoc) > 0.001) {
+      targetBearing = _calculateBearing(start, newLoc);
+      _agentBearing = targetBearing;
+    }
+
     int current = 0;
-    final frameInterval = _markerAnimationDuration ~/ _markerFrames;
+    const animFrames = 30;
+    const animDuration = Duration(milliseconds: 900);
+    final frameInterval = animDuration ~/ animFrames;
 
     _agentMarkerAnimTimer = Timer.periodic(frameInterval, (timer) {
       current++;
-      final t = (current / _markerFrames).clamp(0.0, 1.0);
-      final lat = start.latitude + (newLoc.latitude - start.latitude) * t;
-      final lng = start.longitude + (newLoc.longitude - start.longitude) * t;
-      setState(() {
-        _agentLatLng = LatLng(lat, lng);
-      });
-      if (current >= _markerFrames) {
+      final t = (current / animFrames).clamp(0.0, 1.0);
+      final curvedT = Curves.easeInOutCubic.transform(t);
+      final lat = start.latitude + (newLoc.latitude - start.latitude) * curvedT;
+      final lng =
+          start.longitude + (newLoc.longitude - start.longitude) * curvedT;
+      final currentPos = LatLng(lat, lng);
+      _agentLatLng = currentPos;
+
+      final currentBearing =
+          _interpolateAngle(startBearing, targetBearing, curvedT);
+
+      // Update only marker ValueNotifier — DOES NOT refresh or rebuild the whole map widget!
+      _updateMarkers(agentPos: currentPos, bearing: currentBearing);
+
+      if (current >= animFrames) {
         timer.cancel();
         _previousAgentLatLng = newLoc;
         _agentMarkerAnimTimer = null;
       }
     });
+  }
+
+  double _interpolateAngle(double from, double to, double t) {
+    double diff = (to - from) % 360.0;
+    if (diff > 180.0) diff -= 360.0;
+    if (diff < -180.0) diff += 360.0;
+    return (from + diff * t + 360.0) % 360.0;
   }
 
   void _handleError(String error) {
@@ -764,7 +983,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           ),
         ),
       ),
-      body: _isLoading || _scooterIcon == null || _customerIcon == null
+      body: _isLoading || _driverCarIcon == null || _customerIcon == null
           ? Center(child: Loader(color: AppColors.primary))
           : _errorMessage != null
           ? _buildErrorWidget()
@@ -773,70 +992,178 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: GoogleMap(
-                      onMapCreated: (controller) {
-                        log(
-                          "[MAP_DEBUG] 🗺️ onMapCreated triggered for LiveTrackingPage",
-                        );
-                        _mapController = controller;
-                        if (!_controller.isCompleted) {
-                          _controller.complete(controller);
-                        }
-                        _isMapReady = true;
-                        _applyMapStyle();
-                        if (_customerLatLng != null && _agentLatLng != null) {
-                          log(
-                            "[MAP_DEBUG] 📍 Auto-moving camera to bounds on initialization",
-                          );
-                          _moveCameraToBounds(
-                            customerLatLng: _customerLatLng!,
-                            agentLatLng: _agentLatLng!,
-                          );
-                        }
-                      },
-                      initialCameraPosition: CameraPosition(
-                        target: _customerLatLng ?? _mockCustomerLocation,
-                        zoom: _getInitialZoom(),
-                      ),
-                      mapType: MapType.normal,
-                      trafficEnabled: _showTrafficLayer,
-                      myLocationEnabled: false,
-                      myLocationButtonEnabled: false,
-                      zoomControlsEnabled: false,
-                      compassEnabled: false,
-                      markers: {
-                        if (_customerLatLng != null)
-                          Marker(
-                            markerId: const MarkerId('customer'),
-                            position: _customerLatLng!,
-                            icon: _customerIcon!,
+                    child: Stack(
+                      children: [
+                        Listener(
+                          onPointerDown: (_) {
+                            if (_isFollowingAgent) {
+                              setState(() {
+                                _isFollowingAgent = false;
+                                _showRecenterButton = true;
+                              });
+                            }
+                          },
+                          child: ValueListenableBuilder<Set<Marker>>(
+                            valueListenable: _markersNotifier,
+                            builder: (context, markers, _) {
+                              return GoogleMap(
+                                onMapCreated: (controller) {
+                                  log(
+                                    "[MAP_DEBUG] 🗺️ onMapCreated triggered for LiveTrackingPage",
+                                  );
+                                  _mapController = controller;
+                                  if (!_controller.isCompleted) {
+                                    _controller.complete(controller);
+                                  }
+                                  _isMapReady = true;
+                                  _applyMapStyle();
+                                  _updateMarkers();
+                                  if (!_hasInitiallyFitRoute &&
+                                      (_customerLatLng != null ||
+                                          _agentLatLng != null)) {
+                                    _hasInitiallyFitRoute = true;
+                                    _fitRouteBounds();
+                                  }
+                                },
+                                onCameraMoveStarted: () {
+                                  if (!_isProgrammaticMove &&
+                                      _isFollowingAgent) {
+                                    setState(() {
+                                      _isFollowingAgent = false;
+                                      _showRecenterButton = true;
+                                    });
+                                  }
+                                },
+                                onCameraMove: (position) {
+                                  if (!_isProgrammaticMove &&
+                                      _isFollowingAgent) {
+                                    setState(() {
+                                      _isFollowingAgent = false;
+                                      _showRecenterButton = true;
+                                    });
+                                  }
+                                },
+                                initialCameraPosition: CameraPosition(
+                                  target: _customerLatLng ??
+                                      _agentLatLng ??
+                                      _mockCustomerLocation,
+                                  zoom: _getInitialZoom(),
+                                ),
+                                mapType: MapType.normal,
+                                trafficEnabled: _showTrafficLayer,
+                                myLocationEnabled: false,
+                                myLocationButtonEnabled: false,
+                                zoomControlsEnabled: false,
+                                compassEnabled: false,
+                                markers: markers,
+                                polylines: {
+                                  if (routePoints.isNotEmpty)
+                                    Polyline(
+                                      polylineId: const PolylineId("route"),
+                                      color: const Color(
+                                        0xFF4A89F3,
+                                      ), // Google Maps Blue
+                                      width: 5,
+                                      startCap: Cap.roundCap,
+                                      endCap: Cap.roundCap,
+                                      jointType: JointType.round,
+                                      points: routePoints,
+                                    ),
+                                },
+                              );
+                            },
                           ),
+                        ),
 
-                        if (_agentLatLng != null)
-                          Marker(
-                            markerId: const MarkerId('agent'),
-                            position: _agentLatLng!,
-                            icon: _scooterIcon!,
-                            infoWindow: InfoWindow(
-                              title:
-                                  widget.booking?.agent?.name ??
-                                  'Delivery Agent',
-                              snippet: 'Live location',
+                        // "View Full Route" Floating Button
+                        Positioned(
+                          top: 16,
+                          right: 16,
+                          child: Material(
+                            elevation: 4,
+                            shadowColor: Colors.black26,
+                            shape: const CircleBorder(),
+                            color: Colors.white,
+                            child: InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () {
+                                setState(() {
+                                  _isFollowingAgent = false;
+                                  _showRecenterButton = true;
+                                });
+                                _fitRouteBounds();
+                              },
+                              child: Container(
+                                width: 44,
+                                height: 44,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.route_rounded,
+                                  color: AppColors.primary,
+                                  size: 22,
+                                ),
+                              ),
                             ),
                           ),
-                      },
-                      polylines: {
-                        if (routePoints.isNotEmpty)
-                          Polyline(
-                            polylineId: const PolylineId("route"),
-                            color: const Color(0xFF4A89F3), // Google Maps Blue
-                            width: 5,
-                            startCap: Cap.roundCap,
-                            endCap: Cap.roundCap,
-                            jointType: JointType.round,
-                            points: routePoints,
+                        ),
+
+                        // "Recenter on Technician" Floating Button
+                        if (_showRecenterButton)
+                          Positioned(
+                            bottom: 16,
+                            right: 16,
+                            child: Material(
+                              elevation: 5,
+                              shadowColor: Colors.black26,
+                              borderRadius: BorderRadius.circular(30),
+                              color: Colors.white,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(30),
+                                onTap: _recenterOnAgent,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    border: Border.all(
+                                      color: Colors.grey.shade200,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.my_location_rounded,
+                                        color: AppColors.primary,
+                                        size: 18,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        AppLocalizations.of(context)?.localeName ==
+                                                'ar'
+                                            ? 'إعادة التوسيط'
+                                            : (AppLocalizations.of(context)
+                                                        ?.localeName ==
+                                                    'ur'
+                                                ? 'دوبارہ مرکز'
+                                                : 'Re-center'),
+                                        style: TextStyle(
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                      },
+                      ],
                     ),
                   ),
                 ),
@@ -854,7 +1181,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                               context,
                             )!.waitingForAgentLocation
                           : ""),
-                  worker: widget.booking?.agent,
+                  worker: widget.booking?.activeAgent,
                 ),
               ],
             ),

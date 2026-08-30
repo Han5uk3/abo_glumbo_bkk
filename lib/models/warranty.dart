@@ -1,4 +1,6 @@
+import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class WarrantyModel {
   String? id;
@@ -16,6 +18,17 @@ class WarrantyModel {
   DateTime? preferredDateTime;
   bool? availability;
   Map<String, dynamic>? assignedTechnician;
+
+  UserModel? get assignedTechnicianModel {
+    if (assignedTechnician != null && assignedTechnician!.isNotEmpty) {
+      try {
+        return UserModel.fromJson(assignedTechnician!);
+      } catch (e) {
+        debugPrint('Error parsing assignedTechnician: $e');
+      }
+    }
+    return null;
+  }
 
 
   WarrantyModel({
@@ -70,7 +83,11 @@ class WarrantyModel {
           ? (json['preferredDateTime'] as Timestamp).toDate()
           : json['preferredDateTime'] as DateTime?,
       availability: json['availability'] as bool?,
-      assignedTechnician: json['assignedTechnician'] as Map<String, dynamic>?,
+      assignedTechnician: json['assignedTechnician'] is Map
+          ? (json['assignedTechnician'] is Map<String, dynamic>
+              ? json['assignedTechnician'] as Map<String, dynamic>
+              : Map<String, dynamic>.from(json['assignedTechnician'] as Map))
+          : null,
 
       rejectedTechnicians: (json['rejectedTechnicians'] is List)
           ? (json['rejectedTechnicians'] as List)

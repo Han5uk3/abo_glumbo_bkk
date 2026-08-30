@@ -9,6 +9,8 @@ import 'package:abo_glumbo_bbk/common_widgets/live_tracking.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
+import 'package:abo_glumbo_bbk/models/user.dart';
+import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/pages/home/active_bookings/widgets/active_live_tracking_card.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
@@ -142,13 +144,13 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   /// Handle changes in bookings list
   void _handleBookingsChanged(List<BookingModel> oldBookings) {
     final oldAgentUids = oldBookings
-        .where((b) => b.agent?.uid != null)
-        .map((b) => b.agent!.uid)
+        .where((b) => b.activeAgent?.uid != null)
+        .map((b) => b.activeAgent!.uid!)
         .toSet();
 
     final newAgentUids = widget.activeBookings
-        .where((b) => b.agent?.uid != null)
-        .map((b) => b.agent!.uid)
+        .where((b) => b.activeAgent?.uid != null)
+        .map((b) => b.activeAgent!.uid!)
         .toSet();
 
     // Cancel subscriptions for agents no longer in the list
@@ -171,7 +173,8 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   /// Initialize ETA calculations for all active bookings
   void _initializeETACalculations() {
     for (final booking in widget.activeBookings) {
-      final agentUid = booking.agent?.uid;
+      _ensureTechnicianLoaded(booking);
+      final agentUid = booking.activeAgent?.uid;
       if (agentUid != null && agentUid.isNotEmpty) {
         // Start tracking agent location if not already tracking
         if (!_agentLocationSubscriptions.containsKey(agentUid)) {
@@ -180,6 +183,27 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       } else {
         _log('[ETA] ⚠️ No agent UID found for booking ${booking.id}');
         _setFallbackETA(booking.id);
+      }
+    }
+  }
+
+  void _ensureTechnicianLoaded(BookingModel booking) async {
+    final techId = booking.warranty?.assignedTechnicianId;
+    if (booking.isWarrantyTracking &&
+        techId != null &&
+        techId.isNotEmpty &&
+        (booking.activeAgent?.name == null ||
+            booking.activeAgent!.name!.isEmpty)) {
+      try {
+        final doc = await AppFirestore.usersCollectionRef.doc(techId).get();
+        if (doc.exists && mounted) {
+          final user = UserModel.fromDocumentSnapshot(doc);
+          setState(() {
+            booking.warranty?.assignedTechnician = user.toJson();
+          });
+        }
+      } catch (e) {
+        _log('[TECH_LOAD] Error fetching technician $techId: $e');
       }
     }
   }
@@ -251,7 +275,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
 
       // Find all bookings with this agent and recalculate their ETAs
       for (final booking in widget.activeBookings) {
-        if (booking.agent?.uid == agentUid) {
+        if (booking.activeAgent?.uid == agentUid) {
           _log(
             '[ETA] Scheduled recalculation for booking ${booking.id} with agent $agentUid',
           );
@@ -419,7 +443,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
 
     // Verify the booking data hasn't changed
     final cachedAgentUid = cachedData['agentUid'] as String?;
-    final currentAgentUid = currentBooking.agent?.uid;
+    final currentAgentUid = currentBooking.activeAgent?.uid;
 
     if (cachedAgentUid != currentAgentUid) {
       _log(
@@ -459,7 +483,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       return;
     }
 
-    final agentUid = booking.agent?.uid;
+    final agentUid = booking.activeAgent?.uid;
     if (agentUid == null || agentUid.isEmpty) {
       _log('[ETA] ⚠️ No agent UID for booking ${booking.id}');
       _setFallbackETA(booking.id, agentUid: agentUid);
@@ -618,7 +642,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
               'minutes': etaMinutes,
               'arrivalTime': arrivalTime,
               'timestamp': DateTime.now().millisecondsSinceEpoch,
-              'agentUid': booking.agent?.uid,
+              'agentUid': booking.activeAgent?.uid,
               'bookingId': booking.id,
               'isLocationError': false,
               'customerLat': customerLat,
@@ -636,7 +660,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
               NotificationServices.showLocalLiveTrackingNotification(
                 type: '10_minutes',
                 bookingId: booking.id,
-                technicianName: booking.agent?.name ?? 'Technician',
+                technicianName: booking.activeAgent?.name ?? 'Technician',
               );
               NotificationServices.markLocalNotificationTriggered(
                 booking.id,
@@ -651,7 +675,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
               NotificationServices.showLocalLiveTrackingNotification(
                 type: 'nearby',
                 bookingId: booking.id,
-                technicianName: booking.agent?.name ?? 'Technician',
+                technicianName: booking.activeAgent?.name ?? 'Technician',
               );
               NotificationServices.markLocalNotificationTriggered(
                 booking.id,
@@ -830,6 +854,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                 padEnds: false,
                 itemBuilder: (context, index) {
                   final booking = widget.activeBookings[index];
+                  final activeTech = booking.activeAgent;
                   final customerSelectedAddress = _getCustomerSelectedAddress(
                     booking,
                   );
@@ -839,8 +864,8 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                       ? 'Unknown Address'
                       : "${customerSelectedAddress.buildingNumber.isNotEmpty ? '${customerSelectedAddress.buildingNumber}, ' : ''}${customerSelectedAddress.streetName ?? 'Unknown Address'}";
                   final fromLocationText =
-                      booking.agent?.districtName ??
-                      booking.agent?.name ??
+                      activeTech?.districtName ??
+                      activeTech?.name ??
                       'Unknown Location';
 
                   // Get ETA data
@@ -848,7 +873,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                   final etaMinutes = bookingEtaData?['minutes'] as int? ?? 15;
 
                   // Check tracking status
-                  final agentUid = booking.agent?.uid;
+                  final agentUid = activeTech?.uid;
                   final hasLiveLocation =
                       agentUid != null &&
                       _agentLiveLocations.containsKey(agentUid);
@@ -870,7 +895,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                     toLocation: toLocationText,
                     isCalculating: isCalculating,
                     onTrack:
-                        customerSelectedAddress != null && booking.agent != null
+                        customerSelectedAddress != null && activeTech != null
                         ? () {
                             _log(
                               '[NAVIGATION] Opening live tracking for booking ${booking.id}',

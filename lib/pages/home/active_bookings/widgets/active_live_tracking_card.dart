@@ -55,7 +55,13 @@ class TrackingCard extends StatelessWidget {
                       children: [
                         // Technician Name
                         Text(
-                          booking.agent?.name ?? 'Unknown Technician',
+                          (booking.activeAgent?.name != null &&
+                                  booking.activeAgent!.name!.isNotEmpty)
+                              ? booking.activeAgent!.name!
+                              : (booking.isWarrantyTracking
+                                  ? 'Technician'
+                                  : (booking.agent?.name ??
+                                      'Unknown Technician')),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
