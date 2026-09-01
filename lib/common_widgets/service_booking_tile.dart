@@ -1096,8 +1096,14 @@ class ServiceBookingTile extends StatelessWidget {
     final warranty = booking.warranty;
     if (warranty == null) return false;
 
-    // A finished claim has nothing left to chase.
-    if (warranty.warrantyStatusCode == 'C') return false;
+    final statusCode = warranty.warrantyStatusCode.toUpperCase();
+
+    // Do not show for warranty completed ('C') and warranty expired ('E') statuses.
+    if (statusCode == 'C' || statusCode == 'E') return false;
+
+    // Do not show if warranty status code is A (available) and claim requested is false.
+    final isClaimRequested = warranty.claimrequested == true;
+    if (statusCode == 'A' && !isClaimRequested) return false;
 
     // Still inside the warranty window? Compared as instants, not as whole
     // days: `calculateDaysLeft()` truncates with `inDays`, so it reports 0 -
@@ -1125,7 +1131,7 @@ class ServiceBookingTile extends StatelessWidget {
     }
 
     // 1. Admin rejected the claim.
-    if (warranty.warrantyStatusCode == 'X') {
+    if (statusCode == 'X') {
       return isUnaddressed(warranty.rejectedAt);
     }
 
