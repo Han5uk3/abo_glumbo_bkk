@@ -53,8 +53,18 @@ class TrackingData extends StatelessWidget {
 
       String chatId;
 
-      // Check if chatroom exists
-      if (booking.chatroomId != null && booking.chatroomId.isNotEmpty) {
+      // A chatroomId on the booking is not proof the chat still exists.
+      // The cleanup functions delete chats/<id> from RTDB without clearing
+      // this field, and reusing the id blindly skips createChat - so nothing
+      // ever writes `participants`, and notifyOnNewChatMessage has no one to
+      // notify. The technician's push disappears with no error anywhere the
+      // customer can see. createChat is idempotent and regenerates the same
+      // deterministic id, so recreating costs nothing when it is already gone.
+      final bool canReuseChat =
+          booking.chatroomId.isNotEmpty &&
+          await chatService.isChatUsable(booking.chatroomId);
+
+      if (canReuseChat) {
         chatId = booking.chatroomId;
       } else {
         // Create new chatroom

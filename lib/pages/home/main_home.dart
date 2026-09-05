@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:abo_glumbo_bbk/common_widgets/customNavigationBar.dart';
+import 'package:abo_glumbo_bbk/common_widgets/custom_navigation_bar.dart';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';

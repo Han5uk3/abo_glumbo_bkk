@@ -30,6 +30,29 @@ class LiveTrackingPage extends StatefulWidget {
   State<LiveTrackingPage> createState() => _LiveTrackingPageState();
 }
 
+/// A raw GPS fix projected onto the drawn route.
+class _RouteSnap {
+  const _RouteSnap({
+    required this.position,
+    required this.bearing,
+    required this.offsetMeters,
+    required this.segmentIndex,
+  });
+
+  /// The point on the polyline, which is what gets drawn.
+  final LatLng position;
+
+  /// Compass bearing of the segment [position] landed on.
+  final double bearing;
+
+  /// Distance from the raw fix to [position]; how far off the line the driver
+  /// appeared to be.
+  final double offsetMeters;
+
+  /// Index of that segment's first point in the route list.
+  final int segmentIndex;
+}
+
 class _LiveTrackingPageState extends State<LiveTrackingPage>
     with WidgetsBindingObserver {
   GoogleMapController? _mapController;
@@ -49,6 +72,18 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   bool _hasInitiallyFitRoute = false;
   LatLng? _lastRouteFetchLocation;
   static const double _routeUpdateDistanceMeters = 50.0;
+
+  /// Index of the route segment the vehicle was last snapped onto. Snapping
+  /// searches forward from here first so the marker cannot jump backwards
+  /// where the route passes close to itself - a divided highway, a U-turn, or
+  /// a road the route uses twice.
+  int _lastSnapSegment = 0;
+
+  /// How far a raw GPS fix may sit from the drawn route and still be treated
+  /// as being on it. Beyond this the fix is trusted as-is: the driver has
+  /// genuinely left the route and the drawn line is stale until the next
+  /// Directions refresh.
+  static const double _maxSnapMeters = 60.0;
 
   StreamSubscription? _agentLocationSubscription;
 
@@ -478,16 +513,16 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
         if (newRoute.isNotEmpty) {
           routePoints = newRoute;
+          // Segment indices belong to the list they were measured against.
+          _lastSnapSegment = 0;
           debugPrint(
             '[LOG] Route points updated: ${routePoints.length} points',
           );
           if (_agentLatLng != null) {
-            final roadBearing = _calculateRoadBearingAhead(
-              _agentLatLng!,
-              routePoints,
-            );
-            if (roadBearing != null) {
-              _agentBearing = roadBearing;
+            final snap = _snapToRoute(_agentLatLng!, routePoints);
+            if (snap != null) {
+              _agentLatLng = snap.position;
+              _agentBearing = snap.bearing;
               _updateMarkers();
             }
           }
@@ -672,35 +707,78 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     return degrees;
   }
 
-  double? _calculateRoadBearingAhead(LatLng currentPos, List<LatLng> points) {
+  /// Drops a raw GPS fix onto the drawn route.
+  ///
+  /// Two things were wrong before, and they were separate problems that both
+  /// read as "the van is not on the line":
+  ///
+  /// * Position - the marker was drawn at the raw fix. Directions snaps the
+  ///   route it returns to the road centreline, so a fix that is 15-25m off
+  ///   (normal in a street canyon) puts the van beside the blue line even
+  ///   when the driver is exactly on the road.
+  /// * Heading - the bearing came from the straight line between two
+  ///   consecutive pings. That cuts every corner, and while the vehicle is
+  ///   stopped it spins with GPS jitter, because a 3m wobble is still a
+  ///   bearing.
+  ///
+  /// Projecting onto the polyline fixes both at once: the returned point is on
+  /// the line the user can see, and the tangent of the segment it landed on is
+  /// the direction that stretch of road actually runs.
+  _RouteSnap? _snapToRoute(LatLng raw, List<LatLng> points) {
     if (points.length < 2) return null;
 
-    int closestIndex = 0;
-    double minDistance = double.infinity;
+    // Flat-earth projection is accurate well past the scale of one route
+    // segment, and avoids a trig call per point on every animation frame.
+    const metersPerDegLat = 111320.0;
+    final metersPerDegLng =
+        metersPerDegLat * math.cos(raw.latitude * math.pi / 180.0);
 
-    for (int i = 0; i < points.length; i++) {
-      final dist = _calculateStraightDistanceKm(currentPos, points[i]);
-      if (dist < minDistance) {
-        minDistance = dist;
-        closestIndex = i;
+    _RouteSnap? best;
+
+    void scan(int from) {
+      for (int i = from; i < points.length - 1; i++) {
+        final a = points[i];
+        final b = points[i + 1];
+
+        final bx = (b.longitude - a.longitude) * metersPerDegLng;
+        final by = (b.latitude - a.latitude) * metersPerDegLat;
+        final px = (raw.longitude - a.longitude) * metersPerDegLng;
+        final py = (raw.latitude - a.latitude) * metersPerDegLat;
+
+        final lengthSquared = bx * bx + by * by;
+        if (lengthSquared <= 0) continue; // duplicate point, no direction
+
+        final t = ((px * bx + py * by) / lengthSquared).clamp(0.0, 1.0);
+        final dx = px - bx * t;
+        final dy = py - by * t;
+        final offset = math.sqrt(dx * dx + dy * dy);
+
+        if (best == null || offset < best!.offsetMeters) {
+          best = _RouteSnap(
+            position: LatLng(
+              a.latitude + (by * t) / metersPerDegLat,
+              a.longitude + (bx * t) / metersPerDegLng,
+            ),
+            bearing: _calculateBearing(a, b),
+            offsetMeters: offset,
+            segmentIndex: i,
+          );
+        }
       }
     }
 
-    // Look ahead from closestIndex for the next distinct segment
-    for (int i = closestIndex; i < points.length - 1; i++) {
-      final p1 = points[i];
-      final p2 = points[i + 1];
-      if (_calculateStraightDistanceKm(p1, p2) > 0.002) {
-        return _calculateBearing(p1, p2);
-      }
+    // Forward from where we were last, so progress along the route stays
+    // monotonic. Only fall back to the whole route when that finds nothing
+    // plausible - the driver has jumped, or the route was just replaced.
+    scan(_lastSnapSegment);
+    if (best == null || best!.offsetMeters > _maxSnapMeters) {
+      best = null;
+      scan(0);
     }
 
-    // Fallback: segment leading to closestIndex
-    if (closestIndex > 0) {
-      return _calculateBearing(points[closestIndex - 1], points[closestIndex]);
-    }
-
-    return null;
+    if (best == null || best!.offsetMeters > _maxSnapMeters) return null;
+    _lastSnapSegment = best!.segmentIndex;
+    return best;
   }
 
   double _getInitialZoom() {
@@ -868,9 +946,12 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     _agentMarkerAnimTimer?.cancel();
 
     if (_agentLatLng == null) {
-      _agentLatLng = newLoc;
-      _previousAgentLatLng = newLoc;
-      _updateMarkers(agentPos: newLoc, bearing: _agentBearing);
+      final firstSnap = _snapToRoute(newLoc, routePoints);
+      final firstPos = firstSnap?.position ?? newLoc;
+      if (firstSnap != null) _agentBearing = firstSnap.bearing;
+      _agentLatLng = firstPos;
+      _previousAgentLatLng = firstPos;
+      _updateMarkers(agentPos: firstPos, bearing: _agentBearing);
       return;
     }
 
@@ -878,7 +959,18 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
     final double startBearing = _agentBearing;
     double targetBearing = startBearing;
 
-    if (_calculateStraightDistanceKm(start, newLoc) > 0.001) {
+    // Ride the drawn route where we can: both the point animated towards and
+    // the heading come off the polyline, so the van tracks the blue line
+    // instead of the raw fix.
+    final snap = _snapToRoute(newLoc, routePoints);
+    final target = snap?.position ?? newLoc;
+
+    if (snap != null) {
+      targetBearing = snap.bearing;
+      _agentBearing = targetBearing;
+    } else if (_calculateStraightDistanceKm(start, newLoc) > 0.001) {
+      // Off-route, or no route yet - the ping-to-ping heading is all there is.
+      // The 1m gate keeps a parked vehicle from spinning on GPS jitter.
       targetBearing = _calculateBearing(start, newLoc);
       _agentBearing = targetBearing;
     }
@@ -892,9 +984,9 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       current++;
       final t = (current / animFrames).clamp(0.0, 1.0);
       final curvedT = Curves.easeInOutCubic.transform(t);
-      final lat = start.latitude + (newLoc.latitude - start.latitude) * curvedT;
+      final lat = start.latitude + (target.latitude - start.latitude) * curvedT;
       final lng =
-          start.longitude + (newLoc.longitude - start.longitude) * curvedT;
+          start.longitude + (target.longitude - start.longitude) * curvedT;
       final currentPos = LatLng(lat, lng);
       _agentLatLng = currentPos;
 
@@ -906,7 +998,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
       if (current >= animFrames) {
         timer.cancel();
-        _previousAgentLatLng = newLoc;
+        _previousAgentLatLng = target;
         _agentMarkerAnimTimer = null;
       }
     });

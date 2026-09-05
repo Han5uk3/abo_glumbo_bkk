@@ -3,16 +3,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class ServiceLocationModel {
   final String id;
   final String name;
-  final String name_ar;
-  final String name_ur;
+  final String nameAr;
+  final String nameUr;
   final List<LatLng> polygon;
   final int priority;
 
   ServiceLocationModel({
     required this.id,
     required this.name,
-    required this.name_ar,
-    required this.name_ur,
+    required this.nameAr,
+    required this.nameUr,
     this.polygon = const [],
     this.priority = 0,
   });
@@ -21,8 +21,8 @@ class ServiceLocationModel {
     return ServiceLocationModel(
       id: json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
-      name_ar: json['name_ar'] as String? ?? '',
-      name_ur: json['name_ur'] as String? ?? json['name_ar'] as String? ?? '',
+      nameAr: json['name_ar'] as String? ?? '',
+      nameUr: json['name_ur'] as String? ?? json['name_ar'] as String? ?? '',
       polygon: (json['polygon'] as List<dynamic>?)
               ?.map((point) {
                 final lat = (point['lat'] as num?)?.toDouble() ?? 0.0;
@@ -39,8 +39,8 @@ class ServiceLocationModel {
     return {
       'id': id,
       'name': name,
-      'name_ar': name_ar,
-      'name_ur': name_ur,
+      'name_ar': nameAr,
+      'name_ur': nameUr,
       'polygon': polygon
           .map((point) => {
                 'lat': point.latitude,
