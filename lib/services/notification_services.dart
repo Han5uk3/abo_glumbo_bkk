@@ -73,32 +73,56 @@ class NotificationServices {
   /// Track if the tracking notification has already alerted the user
   static bool _hasAlertedTracking = false;
 
-  /// Track the current active chat to suppress notifications when user is inside the chat
-  static String? currentActiveChatId;
+  /// Probes that report which chat is genuinely in front of the user, asked
+  /// at the moment a message arrives rather than recorded when the screen
+  /// opens.
+  ///
+  /// A stored "user is viewing chat X" flag is only ever as trustworthy as the
+  /// event that clears it, and the two events that matter most - the app being
+  /// swiped away and the app being backgrounded - are exactly the ones the
+  /// process may not survive long enough to deliver. There is nothing to go
+  /// stale here because there is no transition to miss: if the screen is gone
+  /// so is its probe, and if the whole process is gone the push is rendered by
+  /// the system tray with no client involvement at all.
+  ///
+  /// A list rather than a single slot so that stacked chat screens unwind
+  /// correctly - each probe answers only for itself, and a screen buried under
+  /// another route reports null on its own.
+  static final List<String? Function()> _activeChatProbes = [];
 
-  /// Set the current active chat ID
-  static void setActiveChatId(String? chatId) {
-    currentActiveChatId = chatId;
-    debugPrint('🔔 Active chat set to: $chatId');
+  /// Called by a chat screen while it is on screen. Pass the same function
+  /// object to [unregisterActiveChatProbe] when the screen is disposed.
+  static void registerActiveChatProbe(String? Function() probe) {
+    if (!_activeChatProbes.contains(probe)) {
+      _activeChatProbes.add(probe);
+      debugPrint('🔔 Active chat probe registered (${_activeChatProbes.length})');
+    }
   }
 
-  /// Clear the current active chat ID safely to prevent race conditions
-  static void clearActiveChatId(String? chatId) {
-    if (chatId == null || currentActiveChatId == chatId) {
-      currentActiveChatId = null;
-      debugPrint('🔔 Active chat cleared for: $chatId');
-    } else {
-      debugPrint(
-        '🔔 Ignoring clearActiveChatId for $chatId (current active is: $currentActiveChatId)',
-      );
+  static void unregisterActiveChatProbe(String? Function() probe) {
+    if (_activeChatProbes.remove(probe)) {
+      debugPrint('🔔 Active chat probe removed (${_activeChatProbes.length})');
     }
+  }
+
+  /// The chat the user is looking at right now, or null if none is.
+  static String? get currentActiveChatId {
+    for (final probe in _activeChatProbes) {
+      try {
+        final chatId = probe();
+        if (chatId != null && chatId.isNotEmpty) return chatId;
+      } catch (e) {
+        // A probe that throws must never cost the user a notification.
+        debugPrint('⚠️ Active chat probe failed, treating chat as inactive: $e');
+      }
+    }
+    return null;
   }
 
   /// Check if the user is currently actively viewing the given chat
   static bool isChatActive(String? chatId) {
-    if (currentActiveChatId == null) return false;
     // If the incoming notification has no chatId, we can't confirm it belongs
-    // to the active conversation — let it through so it's never silently lost.
+    // to the active conversation - let it through so it's never silently lost.
     if (chatId == null || chatId.isEmpty) return false;
     return currentActiveChatId == chatId;
   }

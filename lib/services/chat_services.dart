@@ -395,11 +395,6 @@ class ChatService {
     }
   }
 
-  /// Presence flag has been removed in favor of app-side notification suppression.
-  Future<void> setActiveChat(String chatId) async {}
-
-  Future<void> clearActiveChat(String chatId) async {}
-
   Stream<DatabaseEvent> getChatListStream() {
     return _rtdb
         .child('userChats/$currentUserId')

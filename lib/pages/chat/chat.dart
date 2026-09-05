@@ -45,6 +45,15 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   double _previousKeyboardHeight = 0;
 
+  /// Captured in [didChangeDependencies] so the probe can ask whether this
+  /// screen is still the top-most route without doing an inherited-widget
+  /// lookup outside of build.
+  ModalRoute<dynamic>? _route;
+
+  /// Held in a field so the exact same function object can be handed to both
+  /// register and unregister.
+  late final String? Function() _activeChatProbe = _resolveActiveChat;
+
   @override
   void initState() {
     super.initState();
@@ -52,8 +61,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _currentUserId = _chatService.currentUserId;
     _chatService.markAsRead(widget.chatId, userType);
 
-    // Set active chat for notification suppression
-    NotificationServices.setActiveChatId(widget.chatId);
+    // Notification suppression asks this screen whether it is visible at the
+    // moment a message lands, instead of us telling it up front.
+    NotificationServices.registerActiveChatProbe(_activeChatProbe);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
@@ -66,6 +76,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    _route = ModalRoute.of(context);
 
     // Listen for keyboard changes
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
@@ -577,24 +589,42 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     return DateFormat('MMM d, h:mm a').format(dateTime);
   }
 
+  /// Answers "is the user looking at this chat right now?" for notification
+  /// suppression. Every condition is read live, so nothing has to be kept in
+  /// sync and no missed lifecycle callback can leave a stale claim behind:
+  /// a killed process takes the probe with it and the push falls through to
+  /// the system tray untouched.
+  String? _resolveActiveChat() {
+    if (!mounted) return null;
+
+    // Another route sits on top of the chat, so it is not on screen even
+    // though this State is still alive.
+    if (!(_route?.isCurrent ?? false)) return null;
+
+    // Only paused/hidden/detached mean the chat is off screen. `inactive` is
+    // still visually foreground (an iOS control-centre pull, a system dialog)
+    // and suppressing there avoids a pointless banner over the open chat.
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    if (lifecycle == AppLifecycleState.paused ||
+        lifecycle == AppLifecycleState.hidden ||
+        lifecycle == AppLifecycleState.detached) {
+      return null;
+    }
+
+    return widget.chatId;
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      NotificationServices.setActiveChatId(widget.chatId);
       _chatService.markAsRead(widget.chatId, userType);
-    } else {
-      // paused / inactive / hidden / detached - the chat is no longer on
-      // screen, so clear the active chat suppression. Anything arriving
-      // while app is in background or on another screen alerts the user.
-      NotificationServices.clearActiveChatId(widget.chatId);
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    // Clear active chat for notification suppression
-    NotificationServices.clearActiveChatId(widget.chatId);
+    NotificationServices.unregisterActiveChatProbe(_activeChatProbe);
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
