@@ -249,12 +249,7 @@ class _SignUpAlertContentState extends State<_SignUpAlertContent>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.rocket_launch_rounded,
-                          size: 20,
-                          color: colorScheme.onPrimary,
-                        ),
-                        const SizedBox(width: 8),
+                       
                         Text(
                           localizations?.signUp ?? 'Sign Up',
                           style: theme.textTheme.titleMedium?.copyWith(
