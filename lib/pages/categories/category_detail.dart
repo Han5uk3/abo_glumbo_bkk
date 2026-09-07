@@ -169,7 +169,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                         Positioned.directional(
                           top: 16,
                           start: 16,
-                          textDirection: TextDirection.ltr,
+                          textDirection: Directionality.of(context),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: BackdropFilter(

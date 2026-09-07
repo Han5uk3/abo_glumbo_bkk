@@ -127,6 +127,41 @@ class NotificationServices {
     return currentActiveChatId == chatId;
   }
 
+  /// Notification taps that have already been navigated for, keyed by the
+  /// FCM message id.
+  ///
+  /// One tap can be reported twice. Handling the launch intent, the Android
+  /// plugin BOTH emits `onMessageOpenedApp` and stores the message for
+  /// `getInitialMessage()` - and that getter's fast path hands the stored copy
+  /// back without consulting the plugin's own consumed-message set:
+  ///
+  ///     if (initialMessage != null) { ...setResult(...); initialMessage = null; }
+  ///
+  /// Both MainHome and the login page call `checkForInitialMessage()` on init,
+  /// and navigating from a tap rebuilds the home route - so the replayed
+  /// message opened a second copy of the chat screen over the first.
+  static final Set<String> _handledTapIds = <String>{};
+
+  /// Claims [id] for this tap, returning false if it has already been handled.
+  static bool _claimTapId(String? id) {
+    if (id == null || id.isEmpty) return true; // nothing to key on, let it run
+
+    if (_handledTapIds.contains(id)) {
+      debugPrint('🔁 Ignoring duplicate notification tap for message $id');
+      return false;
+    }
+
+    // Claim it only once there is a navigator to act on, so a tap arriving
+    // before the app has a route stack is retried rather than swallowed.
+    if (navigatorKey?.currentState == null) return true;
+
+    _handledTapIds.add(id);
+    if (_handledTapIds.length > 50) {
+      _handledTapIds.remove(_handledTapIds.first);
+    }
+    return true;
+  }
+
   /// Initialize local notifications
   static Future<void> initializeNotifications() async {
     try {
@@ -692,6 +727,10 @@ class NotificationServices {
       final data = json.decode(payload) as Map<String, dynamic>;
       debugPrint('📱 Full notification payload: $data');
 
+      // Shares the id space with the remote-tap path, so a local notification
+      // and a replayed RemoteMessage for the same push cannot both navigate.
+      if (!_claimTapId(data['messageId']?.toString())) return;
+
       final type = data['type'] as String?;
       final chatId = data['chatId'] as String?;
       final bookingId = data['bookingId'] as String?;
@@ -825,6 +864,12 @@ class NotificationServices {
   /// Handle chat notification tap (extracted for reusability)
   static void _handleChatNotificationTap(RemoteMessage message) {
     try {
+      if (!_claimTapId(
+        message.messageId ?? message.data['messageId']?.toString(),
+      )) {
+        return;
+      }
+
       final data = message.data;
       debugPrint('📱 Chat notification data: $data');
 
