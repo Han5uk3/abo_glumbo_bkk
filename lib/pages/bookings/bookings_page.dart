@@ -12,7 +12,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BookingsPage extends StatefulWidget {
-  const BookingsPage({super.key});
+  /// Filter tab to open on. Falls back to [BookingStatusType.pending].
+  final BookingStatusType? initialStatus;
+
+  const BookingsPage({super.key, this.initialStatus});
 
   @override
   State<BookingsPage> createState() => _BookingsPageState();
@@ -22,7 +25,10 @@ class _BookingsPageState extends State<BookingsPage> {
   @override
   void initState() {
     context.read<BookingBloc>().add(
-      LoadBookingsEvent(LocalStoreHelper.getUID() ?? ''),
+      LoadBookingsEvent(
+        LocalStoreHelper.getUID() ?? '',
+        selectedStatus: widget.initialStatus ?? BookingStatusType.pending,
+      ),
     );
     super.initState();
   }

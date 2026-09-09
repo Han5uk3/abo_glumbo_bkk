@@ -1,4 +1,5 @@
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
+import 'package:abo_glumbo_bbk/models/booking.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -291,9 +292,17 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen>
                     height: 52,
                     child: ElevatedButton(
                       onPressed: () {
+                        // Land on the bookings tab, already filtered to the
+                        // payment pending list this booking now sits in.
                         Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => const Home()),
+                          MaterialPageRoute(
+                            builder: (context) => const Home(
+                              initialIndex: 1,
+                              initialBookingStatus:
+                                  BookingStatusType.pendingPayment,
+                            ),
+                          ),
                           (Route<dynamic> route) => false,
                         );
                       },

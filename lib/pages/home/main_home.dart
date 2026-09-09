@@ -28,11 +28,16 @@ class Home extends StatefulWidget {
   final int? initialIndex;
   final String? byPassedUid;
   final bool isNewRegistration;
+
+  /// Filter tab the bookings page should open on when landing here. Applies
+  /// only to the first time the bookings tab is shown.
+  final BookingStatusType? initialBookingStatus;
   const Home({
     super.key,
     this.initialIndex,
     this.byPassedUid,
     this.isNewRegistration = false,
+    this.initialBookingStatus,
   });
 
   @override
@@ -42,6 +47,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool? _isGuest;
   int currentIndex = 0;
+  BookingStatusType? _bookingsInitialStatus;
   bool _hasShownWelcome = false;
   StreamSubscription<List<BookingModel>>? _bookingsSubscription;
   StreamSubscription<List<BookingModel>>? _completedBookingsSubscription;
@@ -64,6 +70,7 @@ class _HomeState extends State<Home> {
     if (widget.initialIndex != null) {
       currentIndex = widget.initialIndex!;
     }
+    _bookingsInitialStatus = widget.initialBookingStatus;
     String? uid;
     if (widget.byPassedUid != null) {
       uid = widget.byPassedUid!;
@@ -77,7 +84,7 @@ class _HomeState extends State<Home> {
     _customerStream = AppServices.listenToCustomerData(uid ?? '');
 
     // Initial pages setup (AccountPage will be added dynamically in build)
-    _pages = [const HomePage(), if (!(_isGuest ?? false)) const BookingsPage()];
+    _pages = [const HomePage()];
 
     super.initState();
 
@@ -329,6 +336,9 @@ class _HomeState extends State<Home> {
       if (currentIndex == accountIndex) {
         return AccountPage(customerData: customerData);
       }
+      if (currentIndex == 1) {
+        return BookingsPage(initialStatus: _bookingsInitialStatus);
+      }
       return _pages[currentIndex];
     }
 
@@ -411,6 +421,7 @@ class _HomeState extends State<Home> {
         } else {
           setState(() {
             currentIndex = 0;
+            _bookingsInitialStatus = null;
           });
           _checkAndShowPendingReviews();
         }
@@ -424,6 +435,9 @@ class _HomeState extends State<Home> {
           onDestinationSelected: (index) {
             setState(() {
               currentIndex = index;
+              // The deep-linked bookings filter only applies to the first
+              // landing; once the user navigates by hand, go back to default.
+              _bookingsInitialStatus = null;
             });
             _checkAndShowPendingReviews();
           },
