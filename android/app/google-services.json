@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "629201660527-jktthvpcemt1c8lpheepaafp3m9hdktv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aboglumbo",
+            "certificate_hash": "1de6c3414aa83a2a75b21802c41b49252602b3ce"
+          }
+        },
+        {
           "client_id": "629201660527-mktunh3tm3minui2p5bguss5iqk1c6s2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
