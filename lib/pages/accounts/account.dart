@@ -16,6 +16,7 @@ import 'package:abo_glumbo_bbk/pages/accounts/widgets/faq_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/widgets/language_dialog.dart';
 // import 'package:abo_glumbo_bbk/pages/accounts/wishlist.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
+import 'package:abo_glumbo_bbk/services/app_settings_service.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/biometric_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -37,11 +38,16 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   String _currentNotificationLanguage = 'English';
   bool _isGuest = false;
 
+  /// Remote flag from `app_settings/customer_app_v1.showDeleteAccountOption`.
+  /// Created once so rebuilds do not re-subscribe.
+  late final Stream<bool> _deleteAccountEnabled;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _isGuest = LocalStoreHelper.getGuestUser();
+    _deleteAccountEnabled = AppSettingsService.watchDeleteAccountEnabled();
     _loadBiometricSettings();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -386,8 +392,24 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   }
 
   Widget _buildDangerZone() {
-    // Hidden per user request
-    return const SizedBox.shrink();
+    return StreamBuilder<bool>(
+      stream: _deleteAccountEnabled,
+      initialData: false,
+      builder: (context, snapshot) {
+        // Stays hidden unless the remote flag is explicitly enabled.
+        if (snapshot.data != true) return const SizedBox.shrink();
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: AccountListTile(
+            leading: Icon(Icons.delete, color: Colors.red),
+            textcolor: Colors.red,
+            title: AppLocalizations.of(context)?.deleteAccount ?? '',
+            onTap: () => _showDeleteAccountConfirmation(),
+            dense: true,
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildAuthSection() {

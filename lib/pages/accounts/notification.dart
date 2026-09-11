@@ -171,9 +171,9 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
               if (_cachedNotifications.any((n) => !n.read))
                 IconButton(
                   iconSize: 16,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.done_all_rounded,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                   tooltip: isAr
                       ? 'تحديد الكل كمقروء'
@@ -208,7 +208,7 @@ class _NewNotificationsPageState extends State<NewNotificationsPage> {
                   iconSize: 16,
                   icon: const Icon(
                     Icons.delete_sweep_rounded,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                   tooltip: isAr
                       ? 'حذف الكل'

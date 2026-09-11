@@ -75,6 +75,11 @@ class AppFirestore {
   static CollectionReference autoAssignmentRequestsCollectionRef = FirebaseFirestore
       .instance
       .collection('auto-assignment_requests');
+
+  // app_settings collection (remote feature flags)
+  static CollectionReference appSettingsCollectionRef = FirebaseFirestore
+      .instance
+      .collection('app_settings');
 }
 
 class AppFireStorage {

@@ -8,6 +8,7 @@ import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/login/otp.dart';
 import 'package:abo_glumbo_bbk/pages/login/widgets/language_selector.dart';
+import 'package:abo_glumbo_bbk/services/app_settings_service.dart';
 import 'package:abo_glumbo_bbk/services/auth_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -38,6 +39,10 @@ class _LoginPageState extends State<LoginPage> {
   String? customerLastUid;
   bool isUserLogout = false;
   bool _isFaceId = false;
+
+  /// Remote flag from `app_settings/customer_app_v1.showGuestLogin`.
+  /// Created once so rebuilds do not re-subscribe.
+  late final Stream<bool> _guestLoginEnabled;
   // String? _detectedCountryCode;
   // String? _displayCountryCode;
   // String? _detectedFlag;
@@ -49,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
     isCheckUserEnableTwoStepVerification =
         LocalStoreHelper.getBiometricAuthEnabled(customerLastUid ?? '');
     isUserLogout = LocalStoreHelper.getLogoutStatus();
+    _guestLoginEnabled = AppSettingsService.watchGuestLoginEnabled();
     _isRememberMeChecked = LocalStoreHelper.getRememberMe();
     if (_isRememberMeChecked) {
       String savedPhone = LocalStoreHelper.getPhoneNumber() ?? '';
@@ -711,8 +717,22 @@ class _LoginPageState extends State<LoginPage> {
                             _buildRememberMeCheckbox(),
                             const SizedBox(height: 20),
                             _buildLoginButton(),
-                            const SizedBox(height: 10),
-                            _buildSignUpLaterButton(),
+                            StreamBuilder<bool>(
+                              stream: _guestLoginEnabled,
+                              initialData: true,
+                              builder: (context, snapshot) {
+                                // Shown unless the remote flag turns it off.
+                                if (snapshot.data != true) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Column(
+                                  children: [
+                                    const SizedBox(height: 10),
+                                    _buildSignUpLaterButton(),
+                                  ],
+                                );
+                              },
+                            ),
                             const SizedBox(height: 20),
                             _buildTermsAndPrivacyText(),
                             const SizedBox(height: 20),
