@@ -68,11 +68,17 @@ flutter run
   flutter build apk --release
   ```
 
-- **Android App Bundle:**
+- **Android App Bundle (this is the Play Store build):**
 
   ```bash
-  flutter build appbundle --release
+  flutter build appbundle --release --obfuscate --split-debug-info=build/debug-info
   ```
+
+  R8 obfuscates the Java/Kotlin side (enabled in `android/app/build.gradle.kts`);
+  `--obfuscate` covers the Dart side. Both are needed to stay above Play's
+  App optimisation threshold. Keep the `build/debug-info` directory produced by
+  each release build — without it Dart stack traces from that build cannot be
+  symbolicated (`flutter symbolize`).
 
 - **iOS (Mac only):**
   ```bash
