@@ -66,7 +66,7 @@ class DefaultFirebaseOptions {
     databaseURL: 'https://worker-app-tnext-default-rtdb.firebaseio.com',
     storageBucket: 'worker-app-tnext.appspot.com',
     androidClientId: '629201660527-06j03rhhajgm12puud6vc878ipr5ebh2.apps.googleusercontent.com',
-    iosClientId: '629201660527-spqt88udkg6prv5ov2p90na7rgkft7hc.apps.googleusercontent.com',
+    iosClientId: '629201660527-9q80rvt86qudun13pgumtn0sjcn4u95a.apps.googleusercontent.com',
     iosBundleId: 'com.aboglumbo',
   );
 

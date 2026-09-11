@@ -29,7 +29,7 @@
 				<string>Editor</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>com.googleusercontent.apps.629201660527-spqt88udkg6prv5ov2p90na7rgkft7hc</string>
+					<string>com.googleusercontent.apps.629201660527-9q80rvt86qudun13pgumtn0sjcn4u95a</string>
 				</array>
 			</dict>
 			<dict>
@@ -38,6 +38,14 @@
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>com.aboglumbo</string>
+				</array>
+			</dict>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>app-1-629201660527-ios-975df7f9cab623bc2dfb9a</string>
 				</array>
 			</dict>
 		</array>
