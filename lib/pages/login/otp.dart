@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -34,7 +35,7 @@ class _OtpPageState extends State<OtpPage> {
   bool _isSmsAutofillListening = false;
   final ValueNotifier<int> _resendSecondsNotifier = ValueNotifier<int>(60);
   Timer? _timer;
-  Timer? _smsListeningTimer;
+  int _smsListenGeneration = 0;
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _otpController = TextEditingController();
@@ -126,6 +127,7 @@ class _OtpPageState extends State<OtpPage> {
 
             startTimer();
             debugPrint('⏱️ [CUSTOMER OTP] Timer restarted');
+            _startSmsAutofillListener();
           }
         },
         onError: (error) {
@@ -436,46 +438,40 @@ class _OtpPageState extends State<OtpPage> {
     }
   }
 
+  /// Android only: Google asks the user to share the OTP SMS, then the code
+  /// is filled in and verified. On iOS the keyboard offers the code from
+  /// Messages instead, through Pinput's default oneTimeCode autofill hint.
+  /// Called when the page opens (first send) and after every resend.
   void _startSmsAutofillListener() {
+    if (!Platform.isAndroid || !mounted) return;
     debugPrint('🎯 [CUSTOMER OTP] Starting SMS autofill listener...');
-
-    if (!mounted) return;
 
     setState(() {
       _isSmsAutofillListening = true;
     });
 
-    _smsListeningTimer = Timer(const Duration(seconds: 30), () {
-      if (mounted) {
-        setState(() {
-          _isSmsAutofillListening = false;
-        });
-        _smsAutofillService.cancelListening();
-        debugPrint('⏰ [CUSTOMER OTP] SMS listening timeout reached');
-      }
-    });
-
-    _listenForSmsCode();
+    _listenForSmsCode(++_smsListenGeneration);
   }
 
-  void _listenForSmsCode() async {
+  void _listenForSmsCode(int generation) async {
     try {
       debugPrint('👂 [CUSTOMER OTP] Listening for SMS code...');
 
       final smsCode = await _smsAutofillService.listenForSms(
-        timeout: const Duration(seconds: 30),
+        timeout: const Duration(minutes: 5),
       );
 
-      if (smsCode != null && smsCode.isNotEmpty && mounted) {
+      // A resend restarted listening; the newer listener owns the UI.
+      if (!mounted || generation != _smsListenGeneration) return;
+
+      setState(() {
+        _isSmsAutofillListening = false;
+      });
+
+      if (smsCode != null && smsCode.isNotEmpty) {
         debugPrint('✅ [CUSTOMER OTP] SMS code received: $smsCode');
 
         _otpController.text = smsCode;
-
-        setState(() {
-          _isSmsAutofillListening = false;
-        });
-
-        _smsListeningTimer?.cancel();
 
         await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) {
@@ -485,7 +481,7 @@ class _OtpPageState extends State<OtpPage> {
       }
     } catch (e) {
       debugPrint('❌ [CUSTOMER OTP] Error listening for SMS: $e');
-      if (mounted) {
+      if (mounted && generation == _smsListenGeneration) {
         setState(() {
           _isSmsAutofillListening = false;
         });
@@ -498,7 +494,6 @@ class _OtpPageState extends State<OtpPage> {
   @override
   void dispose() {
     _timer?.cancel();
-    _smsListeningTimer?.cancel();
     _resendSecondsNotifier.dispose();
     _smsAutofillService.cancelListening();
     _otpController.dispose();
@@ -588,6 +583,9 @@ class _OtpPageState extends State<OtpPage> {
                                 length: 6,
                                 controller: _otpController,
                                 focusNode: _focusNode,
+                                // Keyboard up on open, so iOS can offer the
+                                // code from Messages without a tap first.
+                                autofocus: true,
                                 defaultPinTheme: PinTheme(
                                   width: 45,
                                   height: 60,

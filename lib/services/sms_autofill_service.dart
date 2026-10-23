@@ -1,10 +1,17 @@
 import 'dart:async';
-import 'package:sms_autofill/sms_autofill.dart';
+import 'dart:io';
+import 'package:smart_auth/smart_auth.dart';
 import 'package:flutter/material.dart';
 
+/// Reads the OTP from the incoming SMS with Android's SMS User Consent API:
+/// Google shows a prompt asking the user to let the app read that one
+/// message. No SMS permission and no app hash in the message are needed.
+///
+/// iOS has no API to read SMS. There the OTP field's `oneTimeCode` autofill
+/// hint makes the keyboard offer the code from Messages, so this is a no-op.
 class SmsAutofillService {
   static final SmsAutofillService _instance = SmsAutofillService._internal();
-  StreamSubscription<String>? _smsSubscription;
+  Completer<String?>? _pending;
 
   factory SmsAutofillService() {
     return _instance;
@@ -12,133 +19,48 @@ class SmsAutofillService {
 
   SmsAutofillService._internal();
 
-  /// Get the app signature for SMS autofill
-  Future<String?> getAppSignature() async {
-    try {
-      final signature = await SmsAutoFill().getAppSignature;
-      debugPrint('📱 [SMS AUTOFILL] App Signature: $signature');
-      return signature;
-    } catch (e) {
-      debugPrint('❌ [SMS AUTOFILL] Failed to get app signature: $e');
-      return null;
-    }
-  }
+  /// Waits for the next SMS and returns its 6-digit code, or null if the user
+  /// declines, [timeout] passes, or listening is cancelled or restarted.
+  /// Android keeps a consent request open for at most 5 minutes.
+  Future<String?> listenForSms({required Duration timeout}) async {
+    if (!Platform.isAndroid) return null;
 
-  /// Listen for incoming SMS and extract OTP
-  Future<String?> listenForSms({
-    required Duration timeout,
-    String? codePattern,
-  }) async {
-    try {
-      debugPrint('👂 [SMS AUTOFILL] Listening for SMS...');
+    // Only one consent request can be open; a new one replaces the old one
+    // natively without completing it, so complete it here instead.
+    await cancelListening();
+    final completer = Completer<String?>();
+    _pending = completer;
 
-      // Start listening for SMS codes
-      await SmsAutoFill().listenForCode();
-
-      // Create a completer to handle the timeout
-      final completer = Completer<String?>();
-
-      _smsSubscription?.cancel();
-      _smsSubscription = SmsAutoFill().code.listen(
-        (code) {
-          if (!completer.isCompleted) {
-            final otp = _extractOtpFromMessage(code, codePattern);
-            if (otp != null) {
-              debugPrint('✅ [SMS AUTOFILL] OTP extracted: $otp');
-              completer.complete(otp);
-            }
-          }
-        },
-        onError: (error) {
-          if (!completer.isCompleted) {
-            debugPrint('❌ [SMS AUTOFILL] Error in SMS stream: $error');
-            completer.complete(null);
-          }
-        },
-      );
-
-      // Wait for result or timeout
-      final result = await completer.future
-          .timeout(timeout, onTimeout: () {
-            debugPrint('⚠️ [SMS AUTOFILL] SMS listening timeout');
-            return null;
-          });
-
-      return result;
-    } catch (e) {
-      debugPrint('❌ [SMS AUTOFILL] Error listening for SMS: $e');
-      return null;
-    }
-  }
-
-  /// Extract OTP from SMS message using pattern matching
-  String? _extractOtpFromMessage(String message, String? pattern) {
-    try {
-      if (pattern != null && pattern.isNotEmpty) {
-        final regExp = RegExp(pattern);
-        final match = regExp.firstMatch(message);
-        if (match != null) {
-          return match.group(0);
-        }
+    debugPrint('👂 [SMS AUTOFILL] Waiting for SMS (user consent)...');
+    SmartAuth.instance.getSmsWithUserConsentApi(matcher: r'\b\d{6}\b').then((
+      result,
+    ) {
+      if (result.isCanceled) {
+        debugPrint('🚫 [SMS AUTOFILL] User declined to share the SMS');
+      } else if (result.hasError) {
+        debugPrint('❌ [SMS AUTOFILL] ${result.error}');
+      } else {
+        debugPrint('✅ [SMS AUTOFILL] OTP extracted: ${result.data?.code}');
       }
+      if (!completer.isCompleted) completer.complete(result.data?.code);
+    });
 
-      // Default pattern: look for 4-6 consecutive digits
-      final regExp = RegExp(r'\b\d{4,6}\b');
-      final match = regExp.firstMatch(message);
-      if (match != null) {
-        return match.group(0);
-      }
-
-      debugPrint('⚠️ [SMS AUTOFILL] Could not extract OTP from message: $message');
-      return null;
-    } catch (e) {
-      debugPrint('❌ [SMS AUTOFILL] Error extracting OTP: $e');
-      return null;
-    }
+    return completer.future.timeout(
+      timeout,
+      onTimeout: () {
+        debugPrint('⚠️ [SMS AUTOFILL] SMS listening timeout');
+        if (identical(_pending, completer)) cancelListening();
+        return null;
+      },
+    );
   }
 
-  /// Request user permission for SMS reading
-  Future<bool> requestSmsPermission() async {
-    try {
-      debugPrint('🔐 [SMS AUTOFILL] Requesting SMS permission...');
-
-      // Get app signature to trigger permission requests
-      await SmsAutoFill().getAppSignature;
-
-      debugPrint('✅ [SMS AUTOFILL] SMS permission granted');
-      return true;
-    } catch (e) {
-      debugPrint('❌ [SMS AUTOFILL] SMS permission denied: $e');
-      return false;
-    }
-  }
-
-  /// Cancel listening for SMS
+  /// Stops waiting for the SMS; a pending [listenForSms] returns null.
   Future<void> cancelListening() async {
-    try {
-      debugPrint('🛑 [SMS AUTOFILL] Canceling SMS listening...');
-      _smsSubscription?.cancel();
-      await SmsAutoFill().unregisterListener();
-      debugPrint('✅ [SMS AUTOFILL] SMS listening canceled');
-    } catch (e) {
-      debugPrint('❌ [SMS AUTOFILL] Error canceling SMS listening: $e');
-    }
-  }
-
-  /// Verify if SMS autofill is available on the device
-  Future<bool> isSmsAutofillAvailable() async {
-    try {
-      // Try to get app signature - if it works, SMS autofill is likely available
-      final signature = await getAppSignature();
-      return signature != null && signature.isNotEmpty;
-    } catch (e) {
-      debugPrint('⚠️ [SMS AUTOFILL] SMS autofill not available: $e');
-      return false;
-    }
-  }
-
-  /// Cleanup
-  void dispose() {
-    _smsSubscription?.cancel();
+    if (!Platform.isAndroid) return;
+    final pending = _pending;
+    _pending = null;
+    if (pending != null && !pending.isCompleted) pending.complete(null);
+    await SmartAuth.instance.removeUserConsentApiListener();
   }
 }
