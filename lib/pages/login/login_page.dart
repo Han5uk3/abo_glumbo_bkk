@@ -407,6 +407,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             Expanded(
               child: TextFormField(
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 controller: _phoneController,
                 textInputAction: TextInputAction.done,
                 keyboardType: TextInputType.number,
