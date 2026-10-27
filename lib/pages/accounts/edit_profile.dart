@@ -234,6 +234,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           );
         },
+        onAutoVerified: (PhoneAuthCredential credential) {
+          // Android verified the new number without an SMS; the OTP page
+          // signs in with it and moves the account over as usual.
+          if (!mounted) return;
+          setState(() {
+            isLoading = false;
+            _isUpdatingPhone = false;
+          });
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OtpPage(
+                phoneNumber: newPhone,
+                isFromProfile: true,
+                autoVerifiedCredential: credential,
+              ),
+            ),
+          );
+        },
         onError: (FirebaseAuthException e) {
           if (mounted) {
             setState(() {

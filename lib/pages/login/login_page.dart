@@ -169,6 +169,23 @@ class _LoginPageState extends State<LoginPage> {
           // Still set loading false globally if possible or shared state
         }
       },
+      onAutoVerified: (PhoneAuthCredential credential) {
+        // Android verified the number without an SMS. The OTP page signs in
+        // with it and routes exactly like a typed code.
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtpPage(
+              phoneNumber: AuthServices.phoneNumber ?? formattedPhoneNumber,
+              autoVerifiedCredential: credential,
+            ),
+          ),
+        );
+      },
       onError: (FirebaseAuthException e) {
         debugPrint('❌ [LOGIN PAGE] onError callback triggered');
         debugPrint('❌ [LOGIN PAGE] Error: ${e.code} - ${e.message}');

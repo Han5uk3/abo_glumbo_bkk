@@ -35,8 +35,6 @@ target 'Runner' do
   # ✅ Firebase dependencies
   pod 'Firebase/Auth'
   pod 'Firebase/Core'
-  pod 'GoogleUtilities'  # Required for reCAPTCHA
-  pod 'RecaptchaEnterprise'  # Required for iOS reCAPTCHA
 
   target 'RunnerTests' do
     inherit! :search_paths

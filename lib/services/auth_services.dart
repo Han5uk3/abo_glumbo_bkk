@@ -34,11 +34,27 @@ class AuthServices {
 
   String? _verificationId;
 
+  /// Android only: Firebase verified a number by itself while the OTP page
+  /// was open, by reading the SMS or, on a resend, without one. OtpPage
+  /// signs in with the credential, so the code is used once and the user
+  /// moves on instead of being signed in silently in the background.
+  static final StreamController<
+    ({String phoneNumber, PhoneAuthCredential credential})
+  >
+  _autoVerifiedController = StreamController.broadcast();
+
+  static Stream<({String phoneNumber, PhoneAuthCredential credential})>
+  get autoVerifiedCredentials => _autoVerifiedController.stream;
+
+  /// [onAutoVerified] gets the credential when Android verifies the number
+  /// before any SMS is sent ("instant verification"). codeSent never fires
+  /// then, so the caller must open the OTP page with it itself.
   Future<void> sendOTP(
     BuildContext context, {
     required String phoneNumber,
     required Function(String verificationId, {int? resendToken}) onCodeSent,
     required Function(FirebaseAuthException e) onError,
+    required void Function(PhoneAuthCredential credential) onAutoVerified,
     int? forceResendingToken,
   }) async {
     debugPrint('🟢 [CUSTOMER AUTH] sendOTP method called');
@@ -70,20 +86,25 @@ class AuthServices {
         '📞 [CUSTOMER AUTH] Calling Firebase verifyPhoneNumber (no-await version)...',
       );
 
+      var codeWasSent = false;
+      var verifiedWithoutCode = false;
       _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: forceResendingToken,
         timeout: const Duration(seconds: 120),
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          debugPrint('✅ [CUSTOMER AUTH] verificationCompleted triggered');
-          try {
-            AuthServices.phoneNumber = sanitizedPhoneNumber;
-            await _auth.signInWithCredential(credential);
-            debugPrint('✅ [CUSTOMER AUTH] Auto sign-in successful');
-          } catch (e) {
-            debugPrint(
-              "❌ [CUSTOMER AUTH] Auto verification sign-in failed: $e",
-            );
+        verificationCompleted: (PhoneAuthCredential credential) {
+          debugPrint(
+            '✅ [CUSTOMER AUTH] verificationCompleted triggered (codeSent: $codeWasSent)',
+          );
+          AuthServices.phoneNumber = sanitizedPhoneNumber;
+          if (codeWasSent) {
+            _autoVerifiedController.add((
+              phoneNumber: sanitizedPhoneNumber,
+              credential: credential,
+            ));
+          } else {
+            verifiedWithoutCode = true;
+            onAutoVerified(credential);
           }
         },
         verificationFailed: (FirebaseAuthException e) {
@@ -95,6 +116,10 @@ class AuthServices {
         codeSent: (String verificationId, int? resendToken) {
           debugPrint('✅ [CUSTOMER AUTH] codeSent triggered');
           debugPrint('🆔 [CUSTOMER AUTH] ID: $verificationId');
+          // Already verified instantly and the OTP page is open with that
+          // credential; a second page for the same number is not wanted.
+          if (verifiedWithoutCode) return;
+          codeWasSent = true;
           onCodeSent(verificationId, resendToken: resendToken);
         },
         codeAutoRetrievalTimeout: (String verificationId) {
@@ -139,20 +164,15 @@ class AuthServices {
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: resendToken,
         timeout: const Duration(seconds: 120),
-        verificationCompleted: (PhoneAuthCredential credential) async {
+        verificationCompleted: (PhoneAuthCredential credential) {
+          // Resends start from the OTP page, which is open to receive this.
           debugPrint(
             '✅ [CUSTOMER AUTH] verificationCompleted callback triggered',
           );
-          debugPrint('🔐 [CUSTOMER AUTH] Auto-signing in with credential...');
-          try {
-            debugPrint("Auto-verification completed during resend OTP");
-            await _auth.signInWithCredential(credential);
-            debugPrint('✅ [CUSTOMER AUTH] Auto sign-in successful');
-          } catch (e) {
-            debugPrint(
-              "❌ [CUSTOMER AUTH] Auto verification failed during resend: $e",
-            );
-          }
+          _autoVerifiedController.add((
+            phoneNumber: sanitizedPhoneNumber,
+            credential: credential,
+          ));
         },
         verificationFailed: (FirebaseAuthException e) {
           debugPrint('❌ [CUSTOMER AUTH] verificationFailed callback triggered');
@@ -265,6 +285,17 @@ class AuthServices {
         );
       }
     }
+  }
+
+  /// Signs in with a credential Firebase produced by itself (see
+  /// [sendOTP]'s onAutoVerified and [autoVerifiedCredentials]), with the
+  /// same side effect as [verifyOTP].
+  Future<UserCredential> signInWithAutoVerifiedCredential(
+    PhoneAuthCredential credential,
+  ) async {
+    final userCredential = await _auth.signInWithCredential(credential);
+    AuthServices.phoneNumber = userCredential.user?.phoneNumber ?? '';
+    return userCredential;
   }
 
   Future<void> checkUser({

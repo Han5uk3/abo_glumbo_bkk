@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
@@ -17,11 +18,16 @@ class OtpPage extends StatefulWidget {
   final String? phoneNumber;
   final String? verificationId;
   final bool? isFromProfile;
+
+  /// Set when Android verified the number without sending an SMS; the page
+  /// signs in with it straight away instead of waiting for a code.
+  final PhoneAuthCredential? autoVerifiedCredential;
   const OtpPage({
     super.key,
     this.phoneNumber,
     this.verificationId,
     this.isFromProfile,
+    this.autoVerifiedCredential,
   });
 
   @override
@@ -45,13 +51,34 @@ class _OtpPageState extends State<OtpPage> {
   int? _resendToken;
   bool _isDialogShowing = false;
   final SmsAutofillService _smsAutofillService = SmsAutofillService();
+  StreamSubscription<({String phoneNumber, PhoneAuthCredential credential})>?
+  _autoVerifiedSub;
 
   @override
   void initState() {
     super.initState();
     _verificationId = widget.verificationId;
     startTimer();
-    _startSmsAutofillListener();
+
+    // Android may read the SMS itself; sign in with that instead of asking
+    // the user. Ignore credentials for any other number from an earlier try.
+    final myNumber = CountryCodeDetector.normalizeSaudiPhone(
+      widget.phoneNumber ?? '',
+    );
+    _autoVerifiedSub = AuthServices.autoVerifiedCredentials.listen((event) {
+      if (event.phoneNumber == myNumber) {
+        _verifyAutoCredential(event.credential);
+      }
+    });
+
+    final instantCredential = widget.autoVerifiedCredential;
+    if (instantCredential != null) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _verifyAutoCredential(instantCredential),
+      );
+    } else {
+      _startSmsAutofillListener();
+    }
   }
 
   // Get the complete OTP from all controllers
@@ -318,16 +345,9 @@ class _OtpPageState extends State<OtpPage> {
       return;
     }
 
-    setState(() {
-      isLoading = true;
-    });
-
     final verificationId = _verificationId ?? widget.verificationId;
 
     if (verificationId == null) {
-      setState(() {
-        isLoading = false;
-      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)?.verificationIdNotFound ?? 'Verification ID not found. Please try again.'),
@@ -337,13 +357,43 @@ class _OtpPageState extends State<OtpPage> {
       return;
     }
 
-    try {
-      final UserCredential userCredential = await AuthServices().verifyOTP(
+    await _signInAndContinue(
+      () => AuthServices().verifyOTP(
         context,
         otp,
         verificationId: verificationId,
         smsCode: otp,
-      );
+      ),
+    );
+  }
+
+  /// Android verified the number itself (read the SMS, or needed none).
+  void _verifyAutoCredential(PhoneAuthCredential credential) {
+    if (isLoading || !mounted) return;
+    debugPrint('✅ [CUSTOMER OTP] Signing in with auto-verified credential');
+    // The code is in hand, so Google's "share this SMS?" prompt is not needed.
+    _smsAutofillService.cancelListening();
+    _signInAndContinue(
+      () => AuthServices().signInWithAutoVerifiedCredential(credential),
+      codeToShow: credential.smsCode,
+    );
+  }
+
+  /// Runs [signIn], then routes the same way for a typed, shared or
+  /// auto-verified code: profile phone change, or checkUser for login.
+  Future<void> _signInAndContinue(
+    Future<UserCredential> Function() signIn, {
+    String? codeToShow,
+  }) async {
+    setState(() {
+      isLoading = true;
+    });
+    if (codeToShow != null && codeToShow.isNotEmpty) {
+      _otpController.text = codeToShow;
+    }
+
+    try {
+      final UserCredential userCredential = await signIn();
       if (widget.isFromProfile == true) {
         final String oldUid = LocalStoreHelper.getUID() ?? '';
         final String newUid = userCredential.user?.uid ?? '';
@@ -493,6 +543,7 @@ class _OtpPageState extends State<OtpPage> {
 
   @override
   void dispose() {
+    _autoVerifiedSub?.cancel();
     _timer?.cancel();
     _resendSecondsNotifier.dispose();
     _smsAutofillService.cancelListening();
