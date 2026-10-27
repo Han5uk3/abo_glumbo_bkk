@@ -1,5 +1,9 @@
+import 'package:flutter/services.dart';
+
 /// Helper class for country code detection and phone number formatting
 class CountryCodeDetector {
+  static const String saudiDialCode = '+966';
+
   static const Map<String, Map<String, dynamic>> countryMap = {
     'SA': {
       'code': '+966',
@@ -160,18 +164,79 @@ class CountryCodeDetector {
     return null;
   }
 
+  /// Converts Arabic-Indic (٠-٩) and Persian (۰-۹) digits to ASCII digits.
+  static String toAsciiDigits(String input) {
+    return input.replaceAllMapped(RegExp('[٠-٩۰-۹]'), (m) {
+      final code = m[0]!.codeUnitAt(0);
+      return (code >= 0x06F0 ? code - 0x06F0 : code - 0x0660).toString();
+    });
+  }
+
+  /// Normalizes a Saudi phone number to E.164, for example "+966512312312".
+  ///
+  /// All of these give "+966512312312": "512312312", "0512312312",
+  /// "966512312312", "00966512312312", "+966512312312" and "+966 0512312312",
+  /// with or without spaces, dashes or brackets, and with Arabic or Persian
+  /// digits. A doubled country code ("966966…") is removed too.
+  ///
+  /// A number with another country's code ("+971…" or "00971…") is returned
+  /// as "+" plus its digits, so it isn't corrupted. Returns "" when there are
+  /// no digits.
+  static String normalizeSaudiPhone(String input) {
+    final cleaned = toAsciiDigits(input).trim();
+    var digits = cleaned.replaceAll(RegExp(r'\D'), '');
+    if (digits.isEmpty) return '';
+
+    final hasInternationalPrefix =
+        cleaned.startsWith('+') || digits.startsWith('00');
+    digits = digits.replaceFirst(RegExp(r'^0+'), '');
+    if (hasInternationalPrefix && !digits.startsWith('966')) {
+      return '+$digits';
+    }
+
+    // Drop the country code (repeated if it was added twice), but never from
+    // a number that is already down to its 9 local digits.
+    while (digits.startsWith('966') && digits.length > 9) {
+      digits = digits.substring(3);
+    }
+    // Drop the leading "0" of the local format (0512312312).
+    digits = digits.replaceFirst(RegExp(r'^0+'), '');
+    return digits.isEmpty ? '' : '$saudiDialCode$digits';
+  }
+
+  /// Whether [input] is a Saudi number: +966 followed by exactly 9 digits
+  /// once normalized.
+  static bool isValidSaudiPhone(String input) {
+    return RegExp(r'^\+966\d{9}$').hasMatch(normalizeSaudiPhone(input));
+  }
+
+  /// The 9 local digits of a Saudi number ("512312312"), for fields that
+  /// show "+966" as a fixed prefix. Non-Saudi numbers are returned normalized.
+  static String saudiLocalNumber(String input) {
+    final normalized = normalizeSaudiPhone(input);
+    return normalized.startsWith(saudiDialCode)
+        ? normalized.substring(saudiDialCode.length)
+        : normalized;
+  }
+
   /// Format phone number with country code
   static String formatPhoneNumber(String phoneNumber, {String? countryCode}) {
-    String cleanNumber = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+    // Determine which country to use
+    String country = countryCode ?? 'SA';
+    if (country == 'SA' || !countryMap.containsKey(country)) {
+      return normalizeSaudiPhone(phoneNumber);
+    }
+
+    String cleanNumber = toAsciiDigits(
+      phoneNumber,
+    ).replaceAll(RegExp(r'[^\d+]'), '');
 
     // If already has country code, return as is
     if (cleanNumber.startsWith('+')) {
       return cleanNumber;
     }
 
-    // Determine which country to use
-    String country = countryCode ?? 'SA';
-    String dialCode = countryMap[country]?['dialCode'] ?? '+966';
+    String dialCode = countryMap[country]!['dialCode'];
 
     // Remove leading 0 if present
     if (cleanNumber.startsWith('0')) {
@@ -209,6 +274,7 @@ class CountryCodeDetector {
 
     // First, format with country code
     String formatted = formatPhoneNumber(phoneNumber, countryCode: countryCode);
+    if (formatted.isEmpty) return formatted;
 
     // Ensure it starts with +
     if (!formatted.startsWith('+')) {
@@ -218,5 +284,30 @@ class CountryCodeDetector {
     }
 
     return formatted;
+  }
+}
+
+/// Input formatter for phone fields: turns Arabic and Persian digits into
+/// ASCII digits and keeps only digits, plus "+" as the first character, so
+/// "+966…", "00966…", "966…" and "05…" can all be typed or pasted.
+class PhoneNumberInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final ascii = CountryCodeDetector.toAsciiDigits(newValue.text);
+    final buffer = StringBuffer();
+    for (var i = 0; i < ascii.length; i++) {
+      final ch = ascii[i];
+      final isDigit = ch.codeUnitAt(0) >= 0x30 && ch.codeUnitAt(0) <= 0x39;
+      if (isDigit || (ch == '+' && buffer.isEmpty)) buffer.write(ch);
+    }
+    final text = buffer.toString();
+    if (text == newValue.text) return newValue;
+    return TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
   }
 }

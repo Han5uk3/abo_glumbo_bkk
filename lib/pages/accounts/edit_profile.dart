@@ -1,6 +1,7 @@
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
+import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
@@ -81,11 +82,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       nameController.text = widget.customer!.name ?? '';
       emailController.text = widget.customer!.email ?? '';
       String phoneNum = widget.customer!.phone ?? '';
-      if (phoneNum.startsWith('+966')) {
-        phoneController.text = '0${phoneNum.substring(4)}';
-      } else {
-        phoneController.text = phoneNum;
-      }
+      phoneController.text = CountryCodeDetector.isValidSaudiPhone(phoneNum)
+          ? '0${CountryCodeDetector.saudiLocalNumber(phoneNum)}'
+          : phoneNum;
     } catch (e) {
       _showSnackBar(
         AppLocalizations.of(context)?.errorFillingProfile ??
@@ -145,10 +144,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   bool _isValidPhoneNumber(String phoneNumber) {
-    if (phoneNumber.isEmpty) return false;
-    if (!phoneNumber.startsWith('05')) return false;
-    if (phoneNumber.length != 10) return false;
-    return true;
+    return CountryCodeDetector.isValidSaudiPhone(phoneNumber);
   }
 
   void _updatePhoneNumber() async {
@@ -174,7 +170,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
 
-    if (phoneController.text != widget.customer?.phone) {
+    // "+966" plus 9 digits, however the number was typed.
+    final newPhone = CountryCodeDetector.normalizeSaudiPhone(
+      phoneController.text,
+    );
+
+    if (newPhone !=
+        CountryCodeDetector.normalizeSaudiPhone(widget.customer?.phone ?? '')) {
       if (mounted) {
         setState(() {
           isLoading = true;
@@ -184,7 +186,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       bool isNumberAlreadyExists =
           await AppServices.checkCustomerPhoneNumberAlredyExist(
-            phoneController.text,
+            newPhone,
             excludeUid: widget.customer!.uid,
           );
 
@@ -202,69 +204,64 @@ class _EditProfilePageState extends State<EditProfilePage> {
         return;
       }
 
-      if (phoneController.text.startsWith('05')) {
-        if (mounted) setState(() => isPhoneNumberUpdated = true);
-        final formattedPhone = '+966${phoneController.text.substring(1)}';
+      if (mounted) setState(() => isPhoneNumberUpdated = true);
 
-        await AuthServices().sendOTP(
-          context,
-          phoneNumber: formattedPhone,
-          forceResendingToken: _resendToken,
-          onCodeSent: (String verificationId, {int? resendToken}) {
-            if (mounted) {
-              setState(() {
-                _resendToken = resendToken;
-                isLoading = false;
-                _isUpdatingPhone = false;
-              });
-            }
-            showSnackBar(
-              AppLocalizations.of(context)?.sendingOTP ?? 'Sending OTP...',
-              backgroundColor: AppColors.primary,
-              context,
-            );
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => OtpPage(
-                  phoneNumber: phoneController.text,
-                  verificationId: verificationId,
-                  isFromProfile: true,
-                ),
+      await AuthServices().sendOTP(
+        context,
+        phoneNumber: newPhone,
+        forceResendingToken: _resendToken,
+        onCodeSent: (String verificationId, {int? resendToken}) {
+          if (mounted) {
+            setState(() {
+              _resendToken = resendToken;
+              isLoading = false;
+              _isUpdatingPhone = false;
+            });
+          }
+          showSnackBar(
+            AppLocalizations.of(context)?.sendingOTP ?? 'Sending OTP...',
+            backgroundColor: AppColors.primary,
+            context,
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OtpPage(
+                phoneNumber: newPhone,
+                verificationId: verificationId,
+                isFromProfile: true,
               ),
-            );
-          },
-          onError: (FirebaseAuthException e) {
-            if (mounted) {
-              setState(() {
-                isLoading = false;
-                _isUpdatingPhone = false;
-              });
-            }
-            String errorMessage;
-            switch (e.code) {
-              case 'too-many-requests':
-                errorMessage =
-                    AppLocalizations.of(context)?.tooManyAttempts ??
-                    'Too many attempts. Please wait and try again.';
-                break;
-              case 'invalid-phone-number':
-                errorMessage =
-                    AppLocalizations.of(
-                      context,
-                    )?.pleaseEnterAValidPhoneNumber ??
-                    'Please enter a valid phone number';
-                break;
-              default:
-                errorMessage =
-                    e.message ??
-                    AppLocalizations.of(context)?.somethingWentWrongTryAgain ??
-                    'Something went wrong. Please try again.';
-            }
-            _showSnackBar(errorMessage, backgroundColor: AppColors.red);
-          },
-        );
-      }
+            ),
+          );
+        },
+        onError: (FirebaseAuthException e) {
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+              _isUpdatingPhone = false;
+            });
+          }
+          String errorMessage;
+          switch (e.code) {
+            case 'too-many-requests':
+              errorMessage =
+                  AppLocalizations.of(context)?.tooManyAttempts ??
+                  'Too many attempts. Please wait and try again.';
+              break;
+            case 'invalid-phone-number':
+              errorMessage =
+                  AppLocalizations.of(context)?.pleaseEnterAValidPhoneNumber ??
+                  'Please enter a valid phone number';
+              break;
+            default:
+              errorMessage =
+                  e.message ??
+                  AppLocalizations.of(context)?.somethingWentWrongTryAgain ??
+                  'Something went wrong. Please try again.';
+          }
+          _showSnackBar(errorMessage, backgroundColor: AppColors.red);
+        },
+      );
     } else {
       if (mounted) {
         setState(() {
@@ -364,8 +361,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       label: locale.phoneNumber,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*')),
-                        LengthLimitingTextInputFormatter(10),
+                        PhoneNumberInputFormatter(),
+                        LengthLimitingTextInputFormatter(15),
                       ],
                       suffixIcon: _isUpdatingPhone
                           ? Padding(

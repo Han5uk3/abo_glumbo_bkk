@@ -57,16 +57,9 @@ class _LoginPageState extends State<LoginPage> {
     _guestLoginEnabled = AppSettingsService.watchGuestLoginEnabled();
     _isRememberMeChecked = LocalStoreHelper.getRememberMe();
     if (_isRememberMeChecked) {
-      String savedPhone = LocalStoreHelper.getPhoneNumber() ?? '';
-      if (savedPhone.startsWith('+966')) {
-        savedPhone = savedPhone.substring(4);
-      } else if (savedPhone.startsWith('966')) {
-        savedPhone = savedPhone.substring(3);
-      }
-      if (savedPhone.startsWith('0')) {
-        savedPhone = savedPhone.substring(1);
-      }
-      _phoneController.text = savedPhone;
+      _phoneController.text = CountryCodeDetector.saudiLocalNumber(
+        LocalStoreHelper.getPhoneNumber() ?? '',
+      );
     } else {
       _phoneController.clear();
     }
@@ -108,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_isLoading) return;
     final phoneNumber = _phoneController.text.trim();
 
-    if (phoneNumber.length < 9) {
+    if (!CountryCodeDetector.isValidSaudiPhone(phoneNumber)) {
       _showSnackBar(
         AppLocalizations.of(context)?.pleaseEnterAValidPhoneNumber ??
             'Please enter a valid phone number',
@@ -117,10 +110,9 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    // Format phone number with country code
-    final formattedPhoneNumber = CountryCodeDetector.formatPhoneNumber(
+    // Always "+966" plus 9 digits, whether typed as 5…, 05…, 966…, 00966… or +966…
+    final formattedPhoneNumber = CountryCodeDetector.normalizeSaudiPhone(
       phoneNumber,
-      countryCode: "SA",
     );
     debugPrint('📱 [CUSTOMER LOGIN] Original: $phoneNumber');
     debugPrint('📱 [CUSTOMER LOGIN] Formatted: $formattedPhoneNumber');
@@ -407,7 +399,10 @@ class _LoginPageState extends State<LoginPage> {
             ),
             Expanded(
               child: TextFormField(
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: [
+                  PhoneNumberInputFormatter(),
+                  LengthLimitingTextInputFormatter(15),
+                ],
                 controller: _phoneController,
                 textInputAction: TextInputAction.done,
                 keyboardType: TextInputType.number,

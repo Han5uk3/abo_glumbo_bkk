@@ -347,7 +347,10 @@ class UserModel {
       json['email'] = email;
     }
     if (phone != previous.phone && phone != null) {
-      json['phone'] = phone;
+      json['phone'] = CountryCodeDetector.convertToFirebaseFormat(
+        phone!,
+        countryCode: country,
+      );
     }
     if (lanCode != previous.lanCode && lanCode != null) {
       json['lanCode'] = lanCode;

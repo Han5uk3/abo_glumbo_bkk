@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/banner.dart';
@@ -578,9 +579,8 @@ class AppServices {
     String? excludeUid,
   }) async {
     try {
-      String normalizedPhoneNumber = phoneNumber.replaceAll(
-        RegExp(r'[^\d+]'),
-        '',
+      String normalizedPhoneNumber = CountryCodeDetector.normalizeSaudiPhone(
+        phoneNumber,
       );
 
       // Query customers with the phone number (normalized)
