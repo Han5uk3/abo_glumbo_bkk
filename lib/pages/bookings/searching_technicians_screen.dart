@@ -93,7 +93,6 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             }
           },
           onError: (e) {
-            debugPrint("Error listening to booking request: $e");
             if (mounted) {
               setState(() {
                 _isLoading = false;
@@ -164,8 +163,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             ),
           ),
         );
-      } catch (e) {
-        debugPrint("Error auto-cancelling expired request: $e");
+      } catch (_) {
       }
     } else if (mounted) {
       Navigator.pop(context);
@@ -217,7 +215,6 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
         _listenToBookingRequest();
       }
     } catch (e) {
-      debugPrint("Error searching again: $e");
       if (mounted) {
         setState(() => _isSearchingAgain = false);
       }
@@ -310,7 +307,6 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
           Navigator.pop(context);
         }
       } catch (e) {
-        debugPrint("Error cancelling booking request: $e");
         if (mounted) {
           setState(() => _isLoading = false);
         }
@@ -400,8 +396,7 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
             orElse: () => customer.addresses.first,
           );
         }
-      } catch (e) {
-        debugPrint("Error extracting selected address: $e");
+      } catch (_) {
       }
 
       if (mounted) {
@@ -428,7 +423,6 @@ class _SearchingTechniciansScreenState extends State<SearchingTechniciansScreen>
         );
       }
     } catch (e) {
-      debugPrint("Error confirming selection: $e");
       if (mounted) {
         ScaffoldMessenger.of(
           context,

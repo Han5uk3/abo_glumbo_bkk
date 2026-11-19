@@ -73,8 +73,7 @@ class _WriteReviewBottomSheetWidgetState
         AppFirestore.bookingsCollectionRef.doc(widget.booking.id).update({
           'isRatingSheetShown': true,
         });
-      } catch (e) {
-        debugPrint('Error updating isRatingSheetShown in WriteReviewBottomSheet: $e');
+      } catch (_) {
       }
     }
   }
@@ -205,8 +204,7 @@ class _WriteReviewBottomSheetWidgetState
         workerId: workerId,
         tipData: tipModel,
       );
-    } catch (e) {
-      debugPrint('Error saving cash tip: $e');
+    } catch (_) {
     }
   }
 

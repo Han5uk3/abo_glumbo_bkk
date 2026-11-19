@@ -48,8 +48,7 @@ class _RebookServiceSelectionState extends State<RebookServiceSelection> {
           _technician = UserModel.fromDocumentSnapshot(doc);
           technicianRoles = _technician.jobRoles ?? [];
         }
-      } catch (e) {
-        debugPrint('Error fetching technician: $e');
+      } catch (_) {
       }
     }
 

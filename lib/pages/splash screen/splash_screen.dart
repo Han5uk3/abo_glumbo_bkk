@@ -173,36 +173,15 @@ class _SplashScreenState extends State<SplashScreen>
                           opacity: _logoFadeAnimation,
                           child: ScaleTransition(
                             scale: _logoScaleAnimation,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Logo
-                                SizedBox(
-                                  width: 120,
-                                  height: 120,
-                                  child: Image.asset(
-                                    'assets/icons/app_icon.png',
-                                    color: Colors.white,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-
-                                // Text
-                                Text(
-                                  (state.locale.languageCode == "ar")
-                                      ? "ابو جلمبو"
-                                      : (state.locale.languageCode == "ur")
-                                          ? "ابو گلمبو"
-                                          : "Abo Glumbo",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ],
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 40,
+                              ),
+                              child: Image.asset(
+                                'assets/icons/new_logo.png',
+                                color: Colors.white,
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
                         );

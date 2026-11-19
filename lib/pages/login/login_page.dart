@@ -86,8 +86,7 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
       }
-    } catch (e) {
-      debugPrint("Error checking biometrics: $e");
+    } catch (_) {
     }
   }
 
@@ -114,8 +113,6 @@ class _LoginPageState extends State<LoginPage> {
     final formattedPhoneNumber = CountryCodeDetector.normalizeSaudiPhone(
       phoneNumber,
     );
-    debugPrint('📱 [CUSTOMER LOGIN] Original: $phoneNumber');
-    debugPrint('📱 [CUSTOMER LOGIN] Formatted: $formattedPhoneNumber');
 
     setState(() {
       _isLoading = true;
@@ -128,20 +125,12 @@ class _LoginPageState extends State<LoginPage> {
       LocalStoreHelper.clearPhoneNumber();
     }
 
-    debugPrint(
-      '🚀 [LOGIN PAGE] Initiating OTP send for: $formattedPhoneNumber',
-    );
     await AuthServices().sendOTP(
       context,
       forceResendingToken: _resendToken,
       phoneNumber: formattedPhoneNumber,
       onCodeSent: (String verificationId, {int? resendToken}) {
-        debugPrint('🎯 [LOGIN PAGE] onCodeSent callback triggered');
-        debugPrint('🆔 [LOGIN PAGE] Verification ID: $verificationId');
         if (mounted) {
-          debugPrint(
-            '📱 [LOGIN PAGE] Widget mounted, updating UI and navigating to OTP page',
-          );
           setState(() {
             _resendToken = resendToken;
             _isLoading = false;
@@ -158,14 +147,8 @@ class _LoginPageState extends State<LoginPage> {
                 verificationId: verificationId,
               ),
             ),
-          ).then(
-            (value) =>
-                debugPrint('✅ [LOGIN PAGE] Navigation to OtpPage complete'),
           );
         } else {
-          debugPrint(
-            '⚠️ [LOGIN PAGE] onCodeSent received but widget is unmounted',
-          );
           // Still set loading false globally if possible or shared state
         }
       },
@@ -187,8 +170,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       },
       onError: (FirebaseAuthException e) {
-        debugPrint('❌ [LOGIN PAGE] onError callback triggered');
-        debugPrint('❌ [LOGIN PAGE] Error: ${e.code} - ${e.message}');
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -278,8 +259,31 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (didAuthenticate) {
-        if (FirebaseAuth.instance.currentUser == null) {
-          await FirebaseAuth.instance.signInAnonymously();
+        // Biometrics unlock this device's existing session for the same
+        // account; they never sign anyone in. Without that session the user
+        // verifies their number again.
+        if (!await AuthServices.hasValidSessionFor(customerLastUid)) {
+          final lastUid = customerLastUid;
+          if (lastUid != null) {
+            await LocalStoreHelper.clearBiometricAuthEnabled(lastUid);
+          }
+          await LocalStoreHelper.clearLastValidUID();
+          await LocalStoreHelper.clearUID();
+          await FirebaseAuth.instance.signOut();
+          if (!context.mounted) return;
+          setState(() {
+            isCheckUserEnableTwoStepVerification = false;
+            customerLastUid = null;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)?.biometricSessionExpired ??
+                    'Your session has ended. Please sign in with your phone number again.',
+              ),
+            ),
+          );
+          return;
         }
         await LocalStoreHelper.putGuestUser(false);
         if (customerLastUid != null) {

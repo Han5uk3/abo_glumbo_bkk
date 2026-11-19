@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:smart_auth/smart_auth.dart';
-import 'package:flutter/material.dart';
 
 /// Reads the OTP from the incoming SMS with Android's SMS User Consent API:
 /// Google shows a prompt asking the user to let the app read that one
@@ -31,24 +30,15 @@ class SmsAutofillService {
     final completer = Completer<String?>();
     _pending = completer;
 
-    debugPrint('👂 [SMS AUTOFILL] Waiting for SMS (user consent)...');
     SmartAuth.instance.getSmsWithUserConsentApi(matcher: r'\b\d{6}\b').then((
       result,
     ) {
-      if (result.isCanceled) {
-        debugPrint('🚫 [SMS AUTOFILL] User declined to share the SMS');
-      } else if (result.hasError) {
-        debugPrint('❌ [SMS AUTOFILL] ${result.error}');
-      } else {
-        debugPrint('✅ [SMS AUTOFILL] OTP extracted');
-      }
       if (!completer.isCompleted) completer.complete(result.data?.code);
     });
 
     return completer.future.timeout(
       timeout,
       onTimeout: () {
-        debugPrint('⚠️ [SMS AUTOFILL] SMS listening timeout');
         if (identical(_pending, completer)) cancelListening();
         return null;
       },

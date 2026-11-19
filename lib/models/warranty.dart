@@ -1,6 +1,5 @@
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 
 class WarrantyModel {
   String? id;
@@ -23,8 +22,7 @@ class WarrantyModel {
     if (assignedTechnician != null && assignedTechnician!.isNotEmpty) {
       try {
         return UserModel.fromJson(assignedTechnician!);
-      } catch (e) {
-        debugPrint('Error parsing assignedTechnician: $e');
+      } catch (_) {
       }
     }
     return null;

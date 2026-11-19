@@ -1,5 +1,4 @@
 import 'package:abo_glumbo_bbk/services/time_service.dart';
-import 'dart:developer';
 
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
@@ -328,7 +327,6 @@ class ServiceBookingTile extends StatelessWidget {
                           onRefresh.call();
                         }
                       } catch (e) {
-                        log('Error escalating complaint: $e');
                         if (context.mounted) {
                           showSnackBar(
                             "${AppLocalizations.of(context)!.error}: $e",
@@ -1432,7 +1430,6 @@ class _WarrantyClaimFormState extends State<_WarrantyClaimForm> {
       navigator.pop();
       widget.onRefresh.call();
     } catch (e) {
-      log(e.toString());
       if (!mounted) return;
 
       showSnackBar(

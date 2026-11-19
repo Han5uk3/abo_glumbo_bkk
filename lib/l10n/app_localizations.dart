@@ -103,7 +103,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'abo glumbo'**
+  /// **'Aboglumbo Tools'**
   String get appName;
 
   /// No description provided for @waitingForRequestedTechnician.
@@ -313,7 +313,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboard1.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Abo Glumbo!  We are your new partner for peace of mind.'**
+  /// **'Welcome to Aboglumbo Tools!  We are your new partner for peace of mind.'**
   String get onboard1;
 
   /// No description provided for @onboard1desc.
@@ -4045,7 +4045,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeToAboGlumbo.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Abo Glumbo!'**
+  /// **'Welcome to Aboglumbo Tools!'**
   String get welcomeToAboGlumbo;
 
   /// No description provided for @welcomeDescription.
@@ -5005,7 +5005,7 @@ abstract class AppLocalizations {
   /// No description provided for @thankYouInvoice.
   ///
   /// In en, this message translates to:
-  /// **'Thank you for choosing Abo Glumbo!'**
+  /// **'Thank you for choosing Aboglumbo Tools!'**
   String get thankYouInvoice;
 
   /// No description provided for @biometricError.
@@ -5169,6 +5169,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Welcome'**
   String get welcome;
+
+  /// No description provided for @guest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guest;
 
   /// No description provided for @jobsCount.
   ///
@@ -5463,6 +5469,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Phone number updated successfully'**
   String get phoneNumberChangedSuccessfully;
+
+  /// No description provided for @biometricSessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has ended. Please sign in with your phone number again.'**
+  String get biometricSessionExpired;
 }
 
 class _AppLocalizationsDelegate

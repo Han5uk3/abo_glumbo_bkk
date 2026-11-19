@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 
 /// Unified Payout Services for Customer App
 /// This is a lightweight version that only handles wallet updates
@@ -48,14 +47,8 @@ class UnifiedPayoutServices {
           'lastUpdated': FieldValue.serverTimestamp(),
         });
 
-        if (kDebugMode) {
-          print('✅ Created new unified wallet for worker: $workerId');
-        }
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('❌ Error getting/creating unified wallet: $e');
-      }
       rethrow;
     }
   }
@@ -84,16 +77,7 @@ class UnifiedPayoutServices {
         'lastUpdated': FieldValue.serverTimestamp(),
       });
 
-      if (kDebugMode) {
-        print(
-          '💰 Recorded in-app service payment: $amount for worker: $workerId',
-        );
-        print('   ℹ️ This is tracked for lifetime totals only, NOT for payout');
-      }
     } catch (e) {
-      if (kDebugMode) {
-        print('❌ Error recording in-app service payment: $e');
-      }
       rethrow;
     }
   }
@@ -124,22 +108,12 @@ class UnifiedPayoutServices {
         if (isCashTip) {
           // Cash tips are tracked but not added to available balance
           updates['cashTips'] = FieldValue.increment(tipsIncrement);
-          if (kDebugMode) {
-            print(
-              '💵 Adding cash tip: $tipsIncrement to worker: $workerId (not payable)',
-            );
-          }
         } else {
           // Inside App tips ARE added to available balance (payoutable)
           updates['cardTips'] = FieldValue.increment(tipsIncrement);
           updates['totalAvailableBalance'] = FieldValue.increment(
             tipsIncrement,
           );
-          if (kDebugMode) {
-            print(
-              '💳 Adding Inside App tip: $tipsIncrement to worker: $workerId (payable)',
-            );
-          }
         }
       }
 
@@ -150,22 +124,11 @@ class UnifiedPayoutServices {
         updates['lifetimeTotal'] = FieldValue.increment(bonusIncrement);
         updates['totalAvailableBalance'] = FieldValue.increment(bonusIncrement);
 
-        if (kDebugMode) {
-          print(
-            '🎁 Adding bonus: $bonusIncrement to worker: $workerId (payable)',
-          );
-        }
       }
 
       await walletRef.update(updates);
 
-      if (kDebugMode) {
-        print('✅ Unified wallet updated successfully for worker: $workerId');
-      }
     } catch (e) {
-      if (kDebugMode) {
-        print('❌ Error updating unified wallet: $e');
-      }
       rethrow;
     }
   }

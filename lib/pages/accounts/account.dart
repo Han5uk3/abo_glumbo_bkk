@@ -61,9 +61,6 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         );
       }
 
-      debugPrint(
-        '🔄 Account Page: Synced language with bloc: $_currentLanguage',
-      );
     });
   }
 
@@ -98,14 +95,12 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      debugPrint('📱 App resumed, refreshing language state');
       final currentLocale = context.read<AccountBloc>().state.locale;
       final newLanguage = _getDisplayLanguage(currentLocale.languageCode);
       if (_currentLanguage != newLanguage) {
         setState(() {
           _currentLanguage = newLanguage;
         });
-        debugPrint('🔄 Updated language state to: $_currentLanguage');
       }
     }
   }
@@ -513,7 +508,6 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         _currentNotificationLanguage = language;
       });
     } catch (e) {
-      debugPrint('❌ Error changing locale: $e');
       return;
     }
     showSnackBar(
@@ -830,7 +824,6 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
         );
       }
     } catch (e) {
-      debugPrint('Error during account deletion: $e');
       if (mounted) {
         showSnackBar(
           'Failed to delete account. Please try again.',
@@ -918,13 +911,15 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
       await LocalStoreHelper.putGuestUser(false);
       try {
         await AppServices.deleteFCMToken();
-      } catch (e) {
-        debugPrint('❌ Error deleting FCM token: $e');
+      } catch (_) {
       }
 
-      LocalStoreHelper.clearUID();
+      await LocalStoreHelper.clearUID();
 
       if (!keepFirebaseAuth) {
+        // Fully signed out: nothing on the device should still name the
+        // account. With biometrics on, the session stays for the unlock.
+        await LocalStoreHelper.clearLastValidUID();
         await FirebaseAuth.instance.signOut();
       }
 

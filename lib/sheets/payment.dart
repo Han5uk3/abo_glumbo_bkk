@@ -1,5 +1,4 @@
 import 'package:abo_glumbo_bbk/sheets/upload_payment_proof_sheet.dart';
-import 'package:flutter/foundation.dart';
 import 'package:abo_glumbo_bbk/apis/telr_apple_pay.dart';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
@@ -460,8 +459,6 @@ class _PaymentWindowState extends State<PaymentWindow> {
       );
       return result;
     } catch (e) {
-      debugPrint("Apple Pay Error: $e");
-
       // Show a dialog with error details instead of a snackbar
       if (mounted) {
         showDialog(
@@ -927,11 +924,6 @@ class _CashPaymentDetailsState extends State<CashPaymentDetails> {
         // the cash directly. The wallet tracking for these payments is handled by
         // the technician app's verify_payment_sheet when they upload payment proof.
         // We do NOT track cash payments as in-app earnings here.
-        if (kDebugMode) {
-          debugPrint(
-            'ℹ️ Cash payment: wallet tracking handled by technician app verify_payment_sheet',
-          );
-        }
 
         if (mounted) {
           Navigator.of(context).pushAndRemoveUntil(

@@ -150,7 +150,6 @@ class _ProcessingPaymentPageState extends State<ProcessingPaymentPage> {
         return true;
       }
     } catch (e) {
-      debugPrint('Error saving review: $e');
       return false;
     }
   }

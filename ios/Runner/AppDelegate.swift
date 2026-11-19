@@ -50,11 +50,9 @@ import Firebase
         if apiKey != nil { break }
     }
 
+    // Without a key, Google Maps crashes when a map is first shown.
     if let key = apiKey {
         GMSServices.provideAPIKey(key)
-    } else {
-        // Critical: If we can't find the key, Google Maps will crash
-        print("❌ ERROR: Google Maps API Key not found in any .env location!")
     }
 
     GeneratedPluginRegistrant.register(with: self)

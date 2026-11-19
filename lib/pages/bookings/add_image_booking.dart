@@ -78,7 +78,6 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
         }
       }
     } catch (e) {
-      debugPrint("Error picking image: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -106,7 +105,6 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
         }
       }
     } catch (e) {
-      debugPrint("Error picking video: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -151,8 +149,7 @@ class _AddIssueImageAndVideoState extends State<AddIssueImageAndVideo> {
           _initialPosition = coordinates;
         });
       }
-    } catch (error) {
-      debugPrint("Error fetching coordinates: $error");
+    } catch (_) {
     }
   }
 

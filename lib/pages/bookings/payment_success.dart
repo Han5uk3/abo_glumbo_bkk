@@ -1,5 +1,4 @@
 import 'package:abo_glumbo_bbk/services/time_service.dart';
-import 'dart:developer';
 import 'package:flutter/services.dart';
 
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
@@ -107,10 +106,6 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
 
   @override
   Widget build(BuildContext context) {
-    log('PaymentSuccessPage build called');
-    log(
-      'Amount: ${widget.amount}, Order ID: ${widget.orderId}, Payment Method: ${widget.paymentMethod}, Booking: ${widget.booking?.id ?? widget.bookingId}',
-    );
     return PopScope(
       canPop: false,
       child: Scaffold(

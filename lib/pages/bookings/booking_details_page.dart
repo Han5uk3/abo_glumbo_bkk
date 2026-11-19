@@ -1398,8 +1398,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     }
                   },
                 );
-              } catch (e) {
-                debugPrint('Error showing invoice: $e');
+              } catch (_) {
               } finally {
                 if (!loaderPopped && context.mounted) {
                   Navigator.pop(context);
@@ -1454,8 +1453,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                             }
                           },
                         );
-                      } catch (e) {
-                        debugPrint('Error sharing invoice: $e');
+                      } catch (_) {
                       } finally {
                         if (!loaderPopped && context.mounted) {
                           Navigator.pop(context);
@@ -2299,8 +2297,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         // Fallback: try direct launch as system schemes often work regardless of canLaunchUrl status
         await launchUrl(uri, mode: LaunchMode.platformDefault);
       }
-    } catch (e) {
-      debugPrint('Error launching URL: $e');
+    } catch (_) {
     }
   }
 

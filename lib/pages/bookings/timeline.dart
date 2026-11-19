@@ -674,8 +674,7 @@ Future<String?> _fetchWarrantyTechnicianName(BookingModel booking) async {
     if (doc.exists) {
       return UserModel.fromDocumentSnapshot(doc).name;
     }
-  } catch (e) {
-    debugPrint('Error fetching technician name: $e');
+  } catch (_) {
   }
   return null;
 }

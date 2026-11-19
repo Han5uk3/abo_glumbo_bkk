@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 
 enum OtpPurpose {
   login('login'),
@@ -43,6 +42,8 @@ class OtpApi {
       'phone': phone,
       'purpose': purpose.wireName,
       'locale': locale,
+      // Picks the app name in the SMS text.
+      'app': 'customer',
       'expectedUid': ?expectedUid,
     }, retryStaleSession: purpose == OtpPurpose.login);
     _requestIds.clear();
@@ -105,12 +106,10 @@ class OtpApi {
         await FirebaseAuth.instance.signOut();
         return _call(name, payload, retryStaleSession: false);
       }
-      debugPrint('❌ [OTP API] $name failed: ${e.code}');
       throw _toAuthException(e);
     } on FirebaseAuthException {
       rethrow;
     } catch (e) {
-      debugPrint('❌ [OTP API] $name failed: $e');
       throw FirebaseAuthException(code: 'network-request-failed');
     }
   }

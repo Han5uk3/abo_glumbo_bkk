@@ -9,7 +9,7 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appName => 'أبو جلمبو';
+  String get appName => 'Aboglumbo Tools';
 
   @override
   String get waitingForRequestedTechnician => 'في انتظار رد الفني المطلوب';
@@ -116,7 +116,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get getStarted => 'ابدأ';
 
   @override
-  String get onboard1 => 'مرحباً بك في أبو جلمبو! نحن شريكك الجديد لراحة بالك.';
+  String get onboard1 =>
+      'مرحباً بك في Aboglumbo Tools! نحن شريكك الجديد لراحة بالك.';
 
   @override
   String get onboard1desc => 'هل أنت مستعد لصيانة منزلك؟ ابدأ طلبك الأول الآن.';
@@ -2055,7 +2056,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'اختر التصنيف الرئيسي (الكهربائي/السباك) لتبدأ طلب الخدمة';
 
   @override
-  String get welcomeToAboGlumbo => 'أهلاً بك في ابو جلمبو!';
+  String get welcomeToAboGlumbo => 'أهلاً بك في Aboglumbo Tools!';
 
   @override
   String get welcomeDescription =>
@@ -2604,7 +2605,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get totalLabel => 'الإجمالي:';
 
   @override
-  String get thankYouInvoice => 'شكرًا لاختيارك Abo Glumbo!';
+  String get thankYouInvoice => 'شكرًا لاختيارك Aboglumbo Tools!';
 
   @override
   String get biometricError => '❌ خطأ في المصادقة البيومترية';
@@ -2697,6 +2698,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get welcome => 'مرحبًا';
+
+  @override
+  String get guest => 'ضيف';
 
   @override
   String get jobsCount => 'مهمة';
@@ -2867,4 +2871,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get phoneNumberChangedSuccessfully => 'تم تحديث رقم الهاتف بنجاح';
+
+  @override
+  String get biometricSessionExpired =>
+      'انتهت جلستك. يرجى تسجيل الدخول برقم هاتفك مرة أخرى.';
 }

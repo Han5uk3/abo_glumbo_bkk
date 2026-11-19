@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:abo_glumbo_bbk/configs/env_config.dart';
@@ -156,8 +155,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         final agentUid = widget.booking?.activeAgent?.uid;
         if (agentUid != null && agentUid.isNotEmpty) {
           _listenToAgentLocation(agentUid);
-        } else {
-          debugPrint('⚠️ No agent UID found in booking');
         }
       }
       await _fetchETAAndRoute();
@@ -240,12 +237,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       final lat = widget.selectedAddress.lat ?? 0.0;
       final lon = widget.selectedAddress.lon ?? 0.0;
 
-      debugPrint('🏠 [CUSTOMER] Static coordinates from selectedAddress:');
-      debugPrint('🏠 [CUSTOMER]   Latitude: $lat');
-      debugPrint('🏠 [CUSTOMER]   Longitude: $lon');
-      debugPrint(
-        '🏠 [CUSTOMER]   Address: ${widget.selectedAddress.streetName}',
-      );
 
       if (lat == 0.0 && lon == 0.0) {
         throw Exception('Invalid customer address coordinates');
@@ -266,7 +257,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         _hasInitiallyFitRoute = true;
         _fitRouteBounds();
       }
-      debugPrint('📍 Customer Delivery Address SET (STATIC): $lat, $lon');
     } catch (e) {
       _handleError('Failed to load customer address: $e');
     }
@@ -276,9 +266,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
   bool _isETADataStillValid(String agentUid) {
     // Check if agent UID has changed (different agent assigned)
     if (_lastTrackedAgentUid != null && _lastTrackedAgentUid != agentUid) {
-      debugPrint(
-        '[ETA_VALIDATION] Agent UID changed from $_lastTrackedAgentUid to $agentUid - clearing cache',
-      );
       return false;
     }
 
@@ -287,9 +274,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       final dataAge =
           DateTime.now().millisecondsSinceEpoch - _lastETAUpdateTimestamp!;
       if (dataAge > _etaDataValidityWindow.inMilliseconds) {
-        debugPrint(
-          '[ETA_VALIDATION] ETA data expired (age: ${dataAge}ms) - forcing refresh',
-        );
         return false;
       }
     }
@@ -302,7 +286,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
     // Track current agent UID for multi-device safety
     _lastTrackedAgentUid = agentUid;
-    debugPrint('[MULTI_DEVICE] Now tracking agent: $agentUid');
 
     _agentLocationSubscription = AppServices()
         .getAgentLiveLocationStream(agentUid)
@@ -312,10 +295,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           final lng = liveLocation?.longitude;
           if (lat != null && lng != null) {
             final newAgentLatLng = LatLng(lat, lng);
-
-            debugPrint(
-              '🚗 [AGENT] Location update: ${newAgentLatLng.latitude}, ${newAgentLatLng.longitude} at ${DateTime.now()}',
-            );
 
             if (_agentLatLng == null) {
               _agentLatLng = newAgentLatLng;
@@ -336,10 +315,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                 _lastRouteFetchLocation ?? _agentLatLng!,
                 newAgentLatLng,
               ) * 1000.0;
-
-              debugPrint(
-                '🚗 [AGENT] Distance since last route update: ${distanceMovedMeters.toStringAsFixed(1)}m',
-              );
 
               // Smoothly animate the vehicle pin
               _animateAgentMarker(newAgentLatLng);
@@ -368,15 +343,12 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
 
   Future<void> _fetchETAAndRoute() async {
     if (_agentLatLng == null || _customerLatLng == null) {
-      debugPrint('[LOG] Cannot fetch ETA: Missing coordinates');
-      debugPrint('[LOG] Agent: $_agentLatLng, Customer: $_customerLatLng');
       return;
     }
 
     // Validate agent UID hasn't changed (multi-device safety check)
     final currentAgentUid = widget.booking?.activeAgent?.uid;
     if (currentAgentUid != null && !_isETADataStillValid(currentAgentUid)) {
-      debugPrint('[LOG] ETA data invalid - agent or booking may have changed');
       // Reset eta and distance to force fresh calculation
       setState(() {
         eta = null;
@@ -414,9 +386,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
             }
           }
           newRoute = stitchedPoints;
-          debugPrint(
-            '[LOG] Stitched ${newRoute.length} high-res points from steps',
-          );
         } else {
           // Fallback to overview if steps missing
           final polyline = result['overview_polyline'] as String?;
@@ -428,9 +397,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           }
         }
 
-        debugPrint('[LOG] API Result - ETA: $newEta, Distance: $newDistance');
-      } else {
-        debugPrint('[LOG] API result is not a Map: $result');
       }
 
       if (newEta != null && newEta.isNotEmpty) {
@@ -479,7 +445,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       if ((newDistance == null || newDistance.isEmpty)) {
         final d = _calculateStraightDistanceKm(_agentLatLng!, _customerLatLng!);
         newDistance = "${d.toStringAsFixed(1)} km";
-        debugPrint('[LOG] Using fallback distance: $newDistance');
       }
 
       final double straightDist = _calculateStraightDistanceKm(
@@ -515,9 +480,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           routePoints = newRoute;
           // Segment indices belong to the list they were measured against.
           _lastSnapSegment = 0;
-          debugPrint(
-            '[LOG] Route points updated: ${routePoints.length} points',
-          );
           if (_agentLatLng != null) {
             final snap = _snapToRoute(_agentLatLng!, routePoints);
             if (snap != null) {
@@ -533,7 +495,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           }
         } else {
           routePoints = [_agentLatLng!, _customerLatLng!];
-          debugPrint('[LOG] Using fallback straight line route');
         }
 
         // Update tracking metadata for multi-device safety
@@ -545,7 +506,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         _debouncedCameraUpdate();
       }
     } catch (e) {
-      debugPrint("❌ ETA fetch error: $e");
       final d = _calculateStraightDistanceKm(_agentLatLng!, _customerLatLng!);
       final bool isPaused = widget.booking?.isTrackingPaused ?? false;
 
@@ -571,9 +531,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         }
 
         routePoints = [_agentLatLng!, _customerLatLng!];
-        debugPrint(
-          '[LOG] Created fallback route with ${routePoints.length} points',
-        );
 
         // Update tracking metadata for multi-device safety
         _lastETAUpdateTimestamp = DateTime.now().millisecondsSinceEpoch;
@@ -676,15 +633,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
         math.cos(lat1) * math.cos(lat2) * math.pow(math.sin(dlon / 2), 2);
     final distance = 12742 * math.asin(math.sqrt(hav));
 
-    debugPrint('[DISTANCE] 🧮 Calculation Details:');
-    debugPrint('[DISTANCE]   Agent: ${a.latitude}, ${a.longitude}');
-    debugPrint('[DISTANCE]   Delivery Address: ${b.latitude}, ${b.longitude}');
-    debugPrint(
-      '[DISTANCE]   Are coordinates identical? ${a.latitude == b.latitude && a.longitude == b.longitude}',
-    );
-    debugPrint(
-      '[DISTANCE]   Final distance: ${distance.toStringAsFixed(6)} km',
-    );
 
     return distance;
   }
@@ -884,8 +832,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           CameraPosition(target: _agentLatLng!, zoom: targetZoom),
         ),
       );
-    } catch (e) {
-      debugPrint('[MAP] Recenter error: $e');
+    } catch (_) {
     } finally {
       Future.delayed(const Duration(milliseconds: 500), () {
         _isProgrammaticMove = false;
@@ -933,8 +880,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           CameraUpdate.newLatLngBounds(bounds, padding),
         );
       }
-    } catch (e) {
-      debugPrint('[MAP] Error fitting bounds: $e');
+    } catch (_) {
     } finally {
       Future.delayed(const Duration(milliseconds: 600), () {
         _isProgrammaticMove = false;
@@ -1016,7 +962,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
       _errorMessage = error;
       _isLoading = false;
     });
-    debugPrint('❌ Error: $error');
   }
 
   Widget _buildErrorWidget() {
@@ -1044,17 +989,14 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
           'assets/map_styles/gray_map.json',
         );
         _mapController?.setMapStyle(style);
-      } catch (e) {
-        debugPrint("⚠️ Failed to apply map style: $e");
+      } catch (_) {
       }
     }
   }
 
   Future<void> openAppSettings() async {
     final uri = Uri.parse('app-settings:');
-    if (!await launchUrl(uri)) {
-      debugPrint('Could not open settings');
-    }
+    await launchUrl(uri);
   }
 
   @override
@@ -1103,9 +1045,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage>
                             builder: (context, markers, _) {
                               return GoogleMap(
                                 onMapCreated: (controller) {
-                                  log(
-                                    "[MAP_DEBUG] 🗺️ onMapCreated triggered for LiveTrackingPage",
-                                  );
                                   _mapController = controller;
                                   if (!_controller.isCompleted) {
                                     _controller.complete(controller);

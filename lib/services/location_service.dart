@@ -1,6 +1,5 @@
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/fetch_location_geolocator.dart';
-import 'package:flutter/material.dart';
 
 class LocationService {
   static final LocationService _instance = LocationService._internal();
@@ -36,7 +35,6 @@ class LocationService {
       userLocality = null;
       longitude = null;
       latitude = null;
-      debugPrint('❌ LocationService error: $e');
       rethrow;
     }
   }

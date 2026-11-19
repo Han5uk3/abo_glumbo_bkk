@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
@@ -12,7 +11,6 @@ import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/services/location_matcher_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:abo_glumbo_bbk/services/unified_payout_services.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
 import 'package:abo_glumbo_bbk/services/time_service.dart';
@@ -78,8 +76,7 @@ class BookingUtils {
           final snapshot = await uploadTask;
           selectedVideoDownloadUrl = await snapshot.ref.getDownloadURL();
         }
-      } catch (e) {
-        debugPrint("Error uploading files: $e");
+      } catch (_) {
       }
 
       final bookingId = AppFirestore.bookingsCollectionRef.doc().id;
@@ -134,8 +131,7 @@ class BookingUtils {
               requestCreatedAt = data['createdAt'] as Timestamp;
             }
           }
-        } catch (e) {
-          debugPrint("Error fetching request createdAt: $e");
+        } catch (_) {
         }
       }
 
@@ -252,15 +248,13 @@ class BookingUtils {
               data: {'bookingId': bookingId},
             );
           }
-        } catch (e) {
-          debugPrint("Error finalizing broadcast request cleanup: $e");
+        } catch (_) {
         }
       }
 
       // If we reach here, the booking was created successfully
       return bookingId;
     } catch (e) {
-      debugPrint("Error during booking process: $e");
       return null;
     }
   }
@@ -270,8 +264,6 @@ class BookingUtils {
     required ReviewModel? review,
   }) async {
     try {
-      log("Review: ${review?.toJson()}");
-      log("Rating: ${review?.rating}");
       final newReview = review?.copyWith(createdAt: Timestamp.now());
       Map<String, dynamic> updateData = {
         "review": newReview?.toJson() ?? {},
@@ -310,18 +302,13 @@ class BookingUtils {
             tipsIncrement: review?.tipAmount ?? 0.0,
             isCashTip: isCashTip,
           );
-          debugPrint(
-            '✅ Unified wallet updated with tip: ${review?.tipAmount} (${isCashTip ? "Cash" : "Card"})',
-          );
         } catch (e) {
-          debugPrint('❌ Error updating unified wallet with tip: $e');
           // Don't block the review flow if wallet update fails
         }
       }
 
       return true;
     } catch (e) {
-      debugPrint("Error saving review: $e");
       return false;
     }
   }
@@ -336,7 +323,6 @@ class BookingUtils {
     try {
       final String? id = booking?.id ?? bookingId;
       if (id == null) {
-        debugPrint("Error: No booking ID provided for status update");
         return false;
       }
       final bool isOutsideApp = paymentModeCode == "O";
@@ -355,7 +341,6 @@ class BookingUtils {
       });
       return true;
     } catch (e) {
-      debugPrint("Error updating booking status: $e");
       return false;
     }
   }
@@ -369,7 +354,6 @@ class BookingUtils {
           .set(transaction.toMap());
       return true;
     } catch (e) {
-      debugPrint("Error saving transaction: $e");
       return false;
     }
   }
@@ -397,19 +381,16 @@ class BookingUtils {
           'tipData': [tipData.toJson()],
         };
         await docRef.set(documentData);
-        debugPrint('Tip document created successfully');
       } else {
         // Subsequent calls: Update only tipData array
         await docRef.update({
           "updatedAt": Timestamp.now(),
           'tipData': FieldValue.arrayUnion([tipData.toJson()]),
         });
-        debugPrint('Tip added to existing document');
       }
 
       return true;
     } catch (e) {
-      debugPrint('Error saving tip to subcollection: $e');
       return false;
     }
   }
@@ -424,7 +405,6 @@ class BookingUtils {
           .set(tipData.toJson());
       return true;
     } catch (e) {
-      debugPrint('Error saving tip to collection: $e');
       return false;
     }
   }
@@ -437,7 +417,6 @@ class BookingUtils {
       }
       return null;
     } catch (e) {
-      debugPrint("Error fetching booking: $e");
       return null;
     }
   }
@@ -492,8 +471,7 @@ class BookingUtils {
           final snapshot = await uploadTask;
           selectedVideoDownloadUrl = await snapshot.ref.getDownloadURL();
         }
-      } catch (e) {
-        debugPrint("Error uploading files: $e");
+      } catch (_) {
       }
 
       final updatedCustomerData = CustomerModel(
@@ -544,7 +522,6 @@ class BookingUtils {
       await AppFirestore.bookingRequestsCollectionRef.doc(bookingId).set(requestData);
       return bookingId;
     } catch (e) {
-      debugPrint("Error saving booking request: $e");
       return null;
     }
   }
@@ -594,8 +571,7 @@ class BookingUtils {
           final snapshot = await uploadTask;
           selectedVideoDownloadUrl = await snapshot.ref.getDownloadURL();
         }
-      } catch (e) {
-        debugPrint("Error uploading files: $e");
+      } catch (_) {
       }
 
       final bookingId = AppFirestore.bookingsCollectionRef.doc().id;
@@ -690,7 +666,6 @@ class BookingUtils {
       await batch.commit();
       return bookingId;
     } catch (e) {
-      debugPrint("Error saving auto assignment request: $e");
       return null;
     }
   }

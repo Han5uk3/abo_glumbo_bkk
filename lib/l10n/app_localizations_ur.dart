@@ -9,7 +9,7 @@ class AppLocalizationsUr extends AppLocalizations {
   AppLocalizationsUr([String locale = 'ur']) : super(locale);
 
   @override
-  String get appName => 'ابو گلمبو';
+  String get appName => 'Aboglumbo Tools';
 
   @override
   String get waitingForRequestedTechnician =>
@@ -121,7 +121,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get onboard1 =>
-      'ابو گلمبو میں خوش آمدید! ہم آپ کے ذہنی سکون کے نئے ساتھی ہیں۔';
+      'Aboglumbo Tools میں خوش آمدید! ہم آپ کے ذہنی سکون کے نئے ساتھی ہیں۔';
 
   @override
   String get onboard1desc =>
@@ -2104,7 +2104,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'اپنی سروس کی درخواست شروع کرنے کے لیے مرکزی زمرہ (الیکٹریشن/پلمبر) منتخب کریں۔';
 
   @override
-  String get welcomeToAboGlumbo => 'ابو گلمبو میں خوش آمدید!';
+  String get welcomeToAboGlumbo => 'Aboglumbo Tools میں خوش آمدید!';
 
   @override
   String get welcomeDescription =>
@@ -2661,7 +2661,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get totalLabel => 'کل:';
 
   @override
-  String get thankYouInvoice => 'Abo Glumbo منتخب کرنے کا شکریہ!';
+  String get thankYouInvoice => 'Aboglumbo Tools منتخب کرنے کا شکریہ!';
 
   @override
   String get biometricError => '❌ بایومیٹرک غلطی';
@@ -2758,6 +2758,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get welcome => 'خوش آمدید';
+
+  @override
+  String get guest => 'مہمان';
 
   @override
   String get jobsCount => 'کام';
@@ -2931,4 +2934,8 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get phoneNumberChangedSuccessfully =>
       'فون نمبر کامیابی سے اپ ڈیٹ ہو گیا';
+
+  @override
+  String get biometricSessionExpired =>
+      'آپ کا سیشن ختم ہو گیا ہے۔ براہ کرم اپنے فون نمبر سے دوبارہ سائن ان کریں۔';
 }

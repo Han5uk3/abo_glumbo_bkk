@@ -16,7 +16,6 @@ import 'package:abo_glumbo_bbk/models/service.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:abo_glumbo_bbk/models/job_request.dart';
 import 'package:rxdart/rxdart.dart';
@@ -40,20 +39,14 @@ class AppServices {
       if (userId.isEmpty && Hive.isBoxOpen('myBox')) {
         try {
           userId = LocalStoreHelper.getUID() ?? '';
-        } catch (e) {
-          debugPrint('⚠️ Could not get UID from Hive: $e');
+        } catch (_) {
         }
       }
 
       // ✅ If still empty, cannot store notification
       if (userId.isEmpty) {
-        debugPrint(
-          '❌ Cannot store notification: No userId available in message or Hive',
-        );
         return;
       }
-
-      debugPrint('📝 Storing notification for customerId: $userId');
 
       String title =
           message.notification?.title ??
@@ -81,11 +74,7 @@ class AppServices {
           .collection('notifications')
           .add(notificationData);
 
-      debugPrint(
-        '✅ Notification stored in customers/$userId/notifications subcollection',
-      );
-    } catch (e) {
-      debugPrint('❌ Error storing notification in Firestore: $e');
+    } catch (_) {
     }
   }
 
@@ -93,12 +82,9 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot update FCM token: User ID is empty');
         return;
       }
 
-      debugPrint('📤 Updating FCM token for user: $currentUid');
-      debugPrint('🔑 Token: $token');
 
       // merge-set, not update(): update() throws if the customer document does
       // not exist yet, and a thrown token write is only logged - the customer
@@ -108,9 +94,7 @@ class AppServices {
         'fcmTokenUpdatedAt': Timestamp.now(),
       }, SetOptions(merge: true));
 
-      debugPrint('✅ FCM token updated successfully in Firestore');
-    } catch (e) {
-      debugPrint('❌ Error updating FCM token: $e');
+    } catch (_) {
     }
   }
 
@@ -128,14 +112,12 @@ class AppServices {
         throw Exception('Customer data not found for UID: $uid');
       }
     } catch (e) {
-      debugPrint('❌ Error fetching customer data: $e');
       rethrow;
     }
   }
 
   static Stream<CustomerModel> listenToCustomerData(String uid) {
     if (uid.isEmpty) {
-      debugPrint('⚠️ listenToCustomerData called with empty UID');
       return const Stream.empty();
     }
     return AppFirestore.customersCollectionRef.doc(uid).snapshots().map((
@@ -153,22 +135,19 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot update notification language: User ID is empty');
         return;
       }
 
       await AppFirestore.customersCollectionRef.doc(currentUid).update({
         'lanCode': lanCode,
       });
-    } catch (e) {
-      debugPrint('❌ Error updating notification language: $e');
+    } catch (_) {
     }
   }
 
   static Stream<List<ServiceModel>> listenToWishlist() {
     String currentUid = LocalStoreHelper.getUID() ?? '';
     if (currentUid.isEmpty) {
-      debugPrint('❌ Cannot listen to wishlist: User ID is empty');
       return Stream.value(<ServiceModel>[]);
     }
 
@@ -202,7 +181,6 @@ class AppServices {
                 .map((doc) => ServiceModel.fromDocumentSnapshot(doc))
                 .toList();
           } catch (e) {
-            debugPrint('❌ Error loading wishlist: $e');
             return <ServiceModel>[];
           }
         });
@@ -212,15 +190,13 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot remove from wishlist: User ID is empty');
         return;
       }
 
       await AppFirestore.customersCollectionRef.doc(currentUid).update({
         'favourites': FieldValue.arrayRemove([serviceId]),
       });
-    } catch (e) {
-      debugPrint('❌ Error removing from wishlist: $e');
+    } catch (_) {
     }
   }
 
@@ -231,7 +207,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot update customer profile: User ID is empty');
         throw Exception('User ID is empty');
       }
 
@@ -248,7 +223,6 @@ class AppServices {
       }
       return customerData;
     } catch (e) {
-      debugPrint('❌ Error updating customer profile: $e');
       rethrow;
     }
   }
@@ -262,7 +236,6 @@ class AppServices {
           )
           .toList();
     } catch (e) {
-      debugPrint('❌ Error fetching locations: $e');
       return [];
     }
   }
@@ -314,7 +287,6 @@ class AppServices {
           )
           .toList();
     } catch (e) {
-      debugPrint('❌ Error fetching banners: $e');
       return [];
     }
   }
@@ -337,7 +309,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot update customer location: User ID is empty');
         return;
       }
 
@@ -361,8 +332,7 @@ class AppServices {
         },
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-    } catch (e) {
-      debugPrint('❌ Error updating customer location: $e');
+    } catch (_) {
     }
   }
 
@@ -373,7 +343,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot update customer coordinates: User ID is empty');
         return;
       }
 
@@ -397,8 +366,7 @@ class AppServices {
         'location': updatedLocation,
         'updatedAt': FieldValue.serverTimestamp(),
       });
-    } catch (e) {
-      debugPrint('❌ Error updating customer longitude and latitude: $e');
+    } catch (_) {
     }
   }
 
@@ -422,7 +390,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot get customer address: User ID is empty');
         return [];
       }
 
@@ -443,7 +410,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot add customer address: User ID is empty');
         return false;
       }
 
@@ -462,7 +428,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot get selected address: User ID is empty');
         return null;
       }
 
@@ -492,7 +457,6 @@ class AppServices {
       }
       return null;
     } catch (e) {
-      debugPrint('❌ Error getting selected address: $e');
       return null;
     }
   }
@@ -501,7 +465,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot remove address: User ID is empty');
         return false;
       }
 
@@ -521,8 +484,7 @@ class AppServices {
         });
         return true;
       }
-    } catch (e) {
-      debugPrint('❌ Error removing address: $e');
+    } catch (_) {
     }
     return false;
   }
@@ -531,7 +493,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot select location: User ID is empty');
         return false;
       }
 
@@ -569,7 +530,6 @@ class AppServices {
 
       return true;
     } catch (e) {
-      debugPrint('❌ Error cancelling booking: $e');
       return false;
     }
   }
@@ -623,15 +583,13 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot delete FCM token: User ID is empty');
         return;
       }
 
       await AppFirestore.customersCollectionRef.doc(currentUid).update({
         'fcmToken': FieldValue.delete(),
       });
-    } catch (e) {
-      debugPrint('❌ Error deleting FCM token: $e');
+    } catch (_) {
     }
   }
 
@@ -640,11 +598,9 @@ class AppServices {
       // Get the current UID dynamically instead of using the static variable
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot delete account: User ID is empty');
         return;
       }
 
-      debugPrint('🔒 Deleting account for user: $currentUid');
       await AppFirestore.customersCollectionRef.doc(currentUid).delete();
 
       // Clear local biometric settings and UID credentials immediately
@@ -654,8 +610,7 @@ class AppServices {
 
       LocalStoreHelper.clearGuestUser();
       LocalStoreHelper.putlogoutStatus(true);
-    } catch (e) {
-      debugPrint('❌ Error deleting account: $e');
+    } catch (_) {
     }
   }
 
@@ -675,7 +630,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot get active bookings: User ID is empty');
         return [];
       }
 
@@ -728,7 +682,6 @@ class AppServices {
 
       return combined;
     } catch (e) {
-      debugPrint('❌ Error getting active bookings: $e');
       return [];
     }
   }
@@ -737,7 +690,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot listen to active bookings: User ID is empty');
         return Stream.value([]);
       }
 
@@ -793,7 +745,6 @@ class AppServices {
         return combined;
       });
     } catch (e) {
-      debugPrint('❌ Error listening to active bookings: $e');
       return Stream.value([]);
     }
   }
@@ -802,7 +753,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot listen to accepted bookings: User ID is empty');
         return Stream.value([]);
       }
 
@@ -856,7 +806,6 @@ class AppServices {
         return combined;
       });
     } catch (e) {
-      debugPrint('❌ Error listening to accepted bookings: $e');
       return Stream.value([]);
     }
   }
@@ -904,7 +853,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot get customer address: User ID is empty');
         return null;
       }
 
@@ -934,7 +882,6 @@ class AppServices {
 
       return AddressModel.fromJson(selectedAddressMap);
     } catch (e) {
-      debugPrint('❌ Error getting selected address: $e');
       return null;
     }
   }
@@ -1104,7 +1051,6 @@ class AppServices {
 
       return categories;
     } catch (e) {
-      debugPrint('Error fetching categories by IDs: $e');
       return [];
     }
   }
@@ -1124,7 +1070,6 @@ class AppServices {
       }
       return null;
     } catch (e) {
-      debugPrint('Error fetching category $categoryId: $e');
       return null;
     }
   }
@@ -1156,7 +1101,6 @@ class AppServices {
 
       return null;
     } catch (e) {
-      debugPrint('Error fetching category ID for job role $jobRole: $e');
       return null;
     }
   }
@@ -1183,7 +1127,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot mark notification as read: User ID is empty');
         return;
       }
 
@@ -1192,9 +1135,7 @@ class AppServices {
           .collection('notifications')
           .doc(notificationId)
           .update({'read': true, 'readAt': FieldValue.serverTimestamp()});
-      debugPrint('✅ Notification marked as read: $notificationId');
-    } catch (e) {
-      debugPrint('❌ Error marking notification as read: $e');
+    } catch (_) {
     }
   }
 
@@ -1203,7 +1144,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot delete notifications: User ID is empty');
         return false;
       }
 
@@ -1213,7 +1153,6 @@ class AppServices {
           .get();
 
       if (snapshot.docs.isEmpty) {
-        debugPrint('✅ No notifications to delete');
         return true;
       }
 
@@ -1225,10 +1164,8 @@ class AppServices {
       }
 
       await batch.commit();
-      debugPrint('✅ All ${snapshot.docs.length} notifications deleted');
       return true;
     } catch (e) {
-      debugPrint('❌ Error deleting all notifications: $e');
       return false;
     }
   }
@@ -1238,7 +1175,6 @@ class AppServices {
     try {
       String currentUid = LocalStoreHelper.getUID() ?? '';
       if (currentUid.isEmpty) {
-        debugPrint('❌ Cannot mark all as read: User ID is empty');
         return false;
       }
 
@@ -1250,7 +1186,6 @@ class AppServices {
           .get();
 
       if (snapshot.docs.isEmpty) {
-        debugPrint('✅ No unread notifications to mark');
         return true;
       }
 
@@ -1265,10 +1200,8 @@ class AppServices {
       }
 
       await batch.commit();
-      debugPrint('✅ All ${snapshot.docs.length} notifications marked as read');
       return true;
     } catch (e) {
-      debugPrint('❌ Error marking all notifications as read: $e');
       return false;
     }
   }
@@ -1281,9 +1214,6 @@ class AppServices {
     try {
       String userId = LocalStoreHelper.getUID() ?? '';
       if (userId.isEmpty) {
-        if (kDebugMode) {
-          print('⚠️ No user logged in, cannot retrieve notifications');
-        }
         return [];
       }
 
@@ -1321,17 +1251,9 @@ class AppServices {
         };
       }).toList();
 
-      if (kDebugMode) {
-        print(
-          '📱 Retrieved ${notifications.length} notifications for customer from subcollection',
-        );
-      }
 
       return notifications;
     } catch (e) {
-      if (kDebugMode) {
-        print('❌ Error retrieving notifications: $e');
-      }
       return [];
     }
   }
@@ -1366,8 +1288,7 @@ class AppServices {
         'warranty.updatedAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
-    } catch (e) {
-      debugPrint('❌ Error requesting warranty repair: $e');
+    } catch (_) {
     }
   }
 
@@ -1496,8 +1417,7 @@ class AppServices {
             'createdAt': FieldValue.serverTimestamp(),
             'read': false,
           });
-    } catch (e) {
-      debugPrint('Error recording technician notification: $e');
+    } catch (_) {
     }
   }
 
@@ -1524,8 +1444,7 @@ class AppServices {
             'createdAt': FieldValue.serverTimestamp(),
             'read': false,
           });
-    } catch (e) {
-      debugPrint('Error recording customer notification: $e');
+    } catch (_) {
     }
   }
 
@@ -1568,7 +1487,6 @@ class AppServices {
 
       return request.id;
     } catch (e) {
-      debugPrint('Error broadcasting job request: $e');
       rethrow;
     }
   }
@@ -1683,8 +1601,7 @@ class AppServices {
         batch.update(doc.reference, {'status': 'cancelled'});
       }
       await batch.commit();
-    } catch (e) {
-      debugPrint('Error cancelling job request: $e');
+    } catch (_) {
     }
   }
 
@@ -1714,9 +1631,7 @@ class AppServices {
       batch.delete(AppFirestore.bookingRequestsCollectionRef.doc(requestId));
 
       await batch.commit();
-      debugPrint('✅ Cancelled technician search $requestId');
-    } catch (e) {
-      debugPrint('❌ Error cancelling technician search: $e');
+    } catch (_) {
     }
   }
 
@@ -1792,7 +1707,6 @@ class AppServices {
 
       return true;
     } catch (e) {
-      debugPrint('Error responding to job offer for request: $e');
       return false;
     }
   }

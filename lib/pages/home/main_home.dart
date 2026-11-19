@@ -171,8 +171,7 @@ class _HomeState extends State<Home> {
       await AppFirestore.bookingsCollectionRef.doc(booking.id).update({
         'isRatingSheetShown': true,
       });
-    } catch (e) {
-      debugPrint('Error marking isRatingSheetShown in Firestore: $e');
+    } catch (_) {
     }
 
     try {
@@ -190,8 +189,7 @@ class _HomeState extends State<Home> {
           _showLaterSnackBar();
         }
       }
-    } catch (e) {
-      debugPrint('Error showing review sheet: $e');
+    } catch (_) {
     } finally {
       if (mounted) {
         setState(() => _isReviewSheetOpen = false);
@@ -744,13 +742,15 @@ class _HomeState extends State<Home> {
       await LocalStoreHelper.putGuestUser(false);
       try {
         await AppServices.deleteFCMToken();
-      } catch (e) {
-        debugPrint('❌ Error deleting FCM token: $e');
+      } catch (_) {
       }
 
-      LocalStoreHelper.clearUID();
+      await LocalStoreHelper.clearUID();
 
       if (!keepFirebaseAuth) {
+        // Fully signed out: nothing on the device should still name the
+        // account. With biometrics on, the session stays for the unlock.
+        await LocalStoreHelper.clearLastValidUID();
         await FirebaseAuth.instance.signOut();
       }
 

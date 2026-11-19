@@ -1,7 +1,6 @@
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 
 /// Which service delivers login codes.
 enum OtpProvider { taqnyat, firebase }
@@ -54,7 +53,6 @@ class AppSettingsService {
       await LocalStoreHelper.putOtpProvider(provider.name);
       return provider;
     } catch (e) {
-      debugPrint('⚠️ Failed to read $otpProviderField flag: $e');
       return _parseOtpProvider(LocalStoreHelper.getOtpProvider());
     }
   }
@@ -77,7 +75,6 @@ class AppSettingsService {
         .snapshots()
         .map((snapshot) => _readFlag(snapshot, field, fallback: fallback))
         .handleError((Object e) {
-          debugPrint('⚠️ Failed to watch $field flag: $e');
         });
   }
 

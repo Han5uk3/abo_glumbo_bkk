@@ -1,5 +1,5 @@
 {
-  "appName": "abo glumbo",
+  "appName": "Aboglumbo Tools",
   "waitingForRequestedTechnician": "Waiting for the requested technician to respond",
   "lookingForTechnicians": "Looking for nearby technicians...",
   "appLoginCaption": "Your go-to app for finding qualified professionals.",
@@ -34,7 +34,7 @@
   "sText": "s",
   "verifiedTrustedAndProfessionalTechnicians": "Verified, Trusted and Professional Technicians",
   "getStarted": "Get Started",
-  "onboard1": "Welcome to Abo Glumbo!  We are your new partner for peace of mind.",
+  "onboard1": "Welcome to Aboglumbo Tools!  We are your new partner for peace of mind.",
   "onboard1desc": "Ready for your home maintenance? Start your first request now.",
   "namehomeworketc": "Name (Home,Work,etc)",
   "technicianIsBusyatThisTime": "Technician is busy at this time",
@@ -675,7 +675,7 @@
   "typeNeighborhoodNameToSearch": "Type neighborhood name to search...",
   "loginDescription": "Trusted, pro technicians. Get service with a tap!",
   "categoriesDescription": "Choose the main category (Electrician/Plumber) to begin your service request.",
-  "welcomeToAboGlumbo": "Welcome to Abo Glumbo!",
+  "welcomeToAboGlumbo": "Welcome to Aboglumbo Tools!",
   "welcomeDescription": "We have become your new partner for your peace of mind. We are ready to maintain your home. Start now by requesting your first service.",
   "newServiceRequest": "New Service Request",
   "uploadPaymentProof": "Upload Payment Proof",
@@ -959,7 +959,7 @@
     }
   },
   "totalLabel": "Total:",
-  "thankYouInvoice": "Thank you for choosing Abo Glumbo!",
+  "thankYouInvoice": "Thank you for choosing Aboglumbo Tools!",
   "biometricError": "Biometric error",
   "unknownError": "Unknown error",
   "errorDuringLogin": "Error during login",
@@ -994,6 +994,7 @@
     }
   },
   "welcome": "Welcome",
+  "guest": "Guest",
   "jobsCount": "jobs",
   "chooseYourTechnician": "Choose your technician",
   "welcomeUser": "Welcome, {username}",
@@ -1101,5 +1102,6 @@
   },
   "signInAgainToChangePhone": "Please sign in again to change your phone number.",
   "phoneChangeUnavailable": "Changing your phone number is temporarily unavailable. Please try again later.",
-  "phoneNumberChangedSuccessfully": "Phone number updated successfully"
+  "phoneNumberChangedSuccessfully": "Phone number updated successfully",
+  "biometricSessionExpired": "Your session has ended. Please sign in with your phone number again."
 }

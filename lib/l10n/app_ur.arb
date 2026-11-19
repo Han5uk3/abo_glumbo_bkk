@@ -1,5 +1,5 @@
 {
-  "appName": "ابو گلمبو",
+  "appName": "Aboglumbo Tools",
   "waitingForRequestedTechnician": "درخواست کردہ ٹیکنیشن کے جواب کا انتظار ہے",
   "lookingForTechnicians": "قریبی ٹیکنیشنز تلاش کیے جا رہے ہیں...",
   "appLoginCaption": "کوالیفائیڈ پیشہ ور افراد کو تلاش کرنے کے لیے آپ کی پسندیدہ ایپ۔",
@@ -35,7 +35,7 @@
   "sText": "سیکنڈ",
   "verifiedTrustedAndProfessionalTechnicians": "تصدیق شدہ، قابل اعتماد اور پیشہ ور ٹیکنیشنز",
   "getStarted": "شروع کریں",
-  "onboard1": "ابو گلمبو میں خوش آمدید! ہم آپ کے ذہنی سکون کے نئے ساتھی ہیں۔",
+  "onboard1": "Aboglumbo Tools میں خوش آمدید! ہم آپ کے ذہنی سکون کے نئے ساتھی ہیں۔",
   "onboard1desc": "کیا آپ اپنے گھر کے رکھ رکھاؤ کے لیے تیار ہیں؟ اپنا پہلا آرڈر ابھی شروع کریں۔",
   "namehomeworketc": "نام (گھر، کام وغیرہ)",
   "technicianIsBusyatThisTime": "ٹیکنیشن اس وقت مصروف ہے",
@@ -676,7 +676,7 @@
   "typeNeighborhoodNameToSearch": "محلے کا نام تلاش کرنے کے لیے ٹائپ کریں...",
   "loginDescription": "قابل اعتماد، پیشہ ور ٹیکنیشنز۔ صرف ایک ٹیپ میں سروس حاصل کریں!",
   "categoriesDescription": "اپنی سروس کی درخواست شروع کرنے کے لیے مرکزی زمرہ (الیکٹریشن/پلمبر) منتخب کریں۔",
-  "welcomeToAboGlumbo": "ابو گلمبو میں خوش آمدید!",
+  "welcomeToAboGlumbo": "Aboglumbo Tools میں خوش آمدید!",
   "welcomeDescription": "ہم آپ کے ذہنی سکون کے لیے آپ کے نئے شراکت دار بن گئے ہیں۔ ہم آپ کے گھر کی دیکھ بھال کے لیے تیار ہیں۔ اپنی پہلی سروس کی درخواست کر کے ابھی شروع کریں۔",
   "newServiceRequest": "سروس کی نئی درخواست",
   "uploadPaymentProof": "ادائیگی کا ثبوت اپ لوڈ کریں",
@@ -960,7 +960,7 @@
     }
   },
   "totalLabel": "کل:",
-  "thankYouInvoice": "Abo Glumbo منتخب کرنے کا شکریہ!",
+  "thankYouInvoice": "Aboglumbo Tools منتخب کرنے کا شکریہ!",
   "biometricError": "❌ بایومیٹرک غلطی",
   "unknownError": "نامعلوم غلطی",
   "errorDuringLogin": "لاگ ان کے دوران غلطی",
@@ -995,6 +995,7 @@
     }
   },
   "welcome": "خوش آمدید",
+  "guest": "مہمان",
   "jobsCount": "کام",
   "welcomeUser": "خوش آمدید، {username}",
   "@welcomeUser": {
@@ -1091,5 +1092,6 @@
   "technicianTrackingNotification": "ٹیکنیشن راستے میں ہے، {distance} دور، اور پہنچنے کا وقت ہے {time}",
   "signInAgainToChangePhone": "اپنا فون نمبر تبدیل کرنے کے لیے براہ کرم دوبارہ سائن ان کریں۔",
   "phoneChangeUnavailable": "فون نمبر کی تبدیلی عارضی طور پر دستیاب نہیں ہے۔ براہ کرم بعد میں دوبارہ کوشش کریں۔",
-  "phoneNumberChangedSuccessfully": "فون نمبر کامیابی سے اپ ڈیٹ ہو گیا"
+  "phoneNumberChangedSuccessfully": "فون نمبر کامیابی سے اپ ڈیٹ ہو گیا",
+  "biometricSessionExpired": "آپ کا سیشن ختم ہو گیا ہے۔ براہ کرم اپنے فون نمبر سے دوبارہ سائن ان کریں۔"
 }

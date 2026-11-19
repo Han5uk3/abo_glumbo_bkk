@@ -79,7 +79,6 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
         });
       }
     } catch (e) {
-      debugPrint('Error picking files: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -207,7 +206,6 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
         );
       }
     } catch (e) {
-      debugPrint('Error uploading payment proof: $e');
       if (mounted) {
         setState(() {
           _isUploading = false;

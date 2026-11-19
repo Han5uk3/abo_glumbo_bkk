@@ -32,14 +32,10 @@ class _SignupPageState extends State<SignupPage> {
   @override
   void initState() {
     super.initState();
-    debugPrint('📝 SignupPage initialized for UID: ${widget.uid}');
   }
 
   Future<void> signup() async {
-    debugPrint('🚀 Starting signup process...');
-
     if (!_formkey.currentState!.validate()) {
-      debugPrint('❌ Form validation failed');
       return;
     }
 
@@ -75,7 +71,6 @@ class _SignupPageState extends State<SignupPage> {
 
     try {
       String phoneNumber = FirebaseAuth.instance.currentUser?.phoneNumber ?? '';
-      debugPrint('📱 Creating customer with phone: $phoneNumber');
 
       // Create customer model
       CustomerModel customer = CustomerModel(
@@ -92,12 +87,9 @@ class _SignupPageState extends State<SignupPage> {
         updatedAt: Timestamp.now(),
       );
 
-      debugPrint('💾 Saving customer to Firestore...');
       await AppFirestore.customersCollectionRef
           .doc(widget.uid)
           .set(customer.toJson());
-
-      debugPrint('✅ Customer created successfully in Firestore');
 
       // Close loading dialog
       if (mounted) {
@@ -107,7 +99,6 @@ class _SignupPageState extends State<SignupPage> {
       if (mounted) {
         await LocalStoreHelper.putUID(widget.uid);
         await LocalStoreHelper.putUserName(nameController.text.trim());
-        debugPrint('✅ UID and username saved to local storage');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -124,7 +115,6 @@ class _SignupPageState extends State<SignupPage> {
 
         // Navigate to home with isNewRegistration flag
         if (mounted) {
-          debugPrint('🏠 Navigating to home page...');
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -134,9 +124,7 @@ class _SignupPageState extends State<SignupPage> {
           );
         }
       }
-    } catch (e, stackTrace) {
-      debugPrint('❌ Error during signup: $e');
-      debugPrint('Stack trace: $stackTrace');
+    } catch (e) {
 
       // Close loading dialog on error
       if (mounted) {

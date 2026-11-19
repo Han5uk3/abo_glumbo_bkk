@@ -16,7 +16,6 @@ import '../main.dart';
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  debugPrint('📨 Background message received: ${message.messageId}');
 
   // Set persistence in background isolate too (with try-catch)
   try {
@@ -38,8 +37,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       
       const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        'abo_glumbo_channel', 'Abo Glumbo Notifications',
-        channelDescription: 'Notifications related to Abo Glumbo tasks and updates',
+        'abo_glumbo_channel', 'Aboglumbo Tools Notifications',
+        channelDescription: 'Notifications related to Aboglumbo Tools tasks and updates',
         importance: Importance.max, priority: Priority.high,
       );
       const DarwinNotificationDetails iOSDetails = DarwinNotificationDetails();
@@ -49,8 +48,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         message.hashCode, title, body, platformDetails,
         payload: json.encode(data),
       );
-    } catch (e) {
-      debugPrint('❌ Error showing background data notification: $e');
+    } catch (_) {
     }
   }
 
@@ -95,14 +93,11 @@ class NotificationServices {
   static void registerActiveChatProbe(String? Function() probe) {
     if (!_activeChatProbes.contains(probe)) {
       _activeChatProbes.add(probe);
-      debugPrint('🔔 Active chat probe registered (${_activeChatProbes.length})');
     }
   }
 
   static void unregisterActiveChatProbe(String? Function() probe) {
-    if (_activeChatProbes.remove(probe)) {
-      debugPrint('🔔 Active chat probe removed (${_activeChatProbes.length})');
-    }
+    _activeChatProbes.remove(probe);
   }
 
   /// The chat the user is looking at right now, or null if none is.
@@ -113,7 +108,6 @@ class NotificationServices {
         if (chatId != null && chatId.isNotEmpty) return chatId;
       } catch (e) {
         // A probe that throws must never cost the user a notification.
-        debugPrint('⚠️ Active chat probe failed, treating chat as inactive: $e');
       }
     }
     return null;
@@ -147,7 +141,6 @@ class NotificationServices {
     if (id == null || id.isEmpty) return true; // nothing to key on, let it run
 
     if (_handledTapIds.contains(id)) {
-      debugPrint('🔁 Ignoring duplicate notification tap for message $id');
       return false;
     }
 
@@ -184,7 +177,6 @@ class NotificationServices {
       await _flutterLocalNotificationsPlugin.initialize(
         initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse response) {
-          debugPrint('👆 Notification tapped: ${response.payload}');
           _handleNotificationTap(response.payload);
         },
       );
@@ -199,8 +191,8 @@ class NotificationServices {
       await androidImplementation?.createNotificationChannel(
         const AndroidNotificationChannel(
           'abo_glumbo_channel',
-          'Abo Glumbo Notifications',
-          description: 'Notifications related to Abo Glumbo tasks and updates',
+          'Aboglumbo Tools Notifications',
+          description: 'Notifications related to Aboglumbo Tools tasks and updates',
           importance: Importance.max,
         ),
       );
@@ -245,9 +237,7 @@ class NotificationServices {
         await androidImplementation?.requestNotificationsPermission();
       }
 
-      debugPrint('✅ Local notifications initialized with permissions');
-    } catch (e) {
-      debugPrint('❌ Error initializing local notifications: $e');
+    } catch (_) {
     }
   }
 
@@ -255,12 +245,10 @@ class NotificationServices {
   static Future<void> setupFCMListeners() async {
     // Prevent duplicate permission requests
     if (_isRequestingPermission) {
-      debugPrint('⚠️ Permission request already in progress, skipping...');
       return;
     }
 
     if (_isInitialized) {
-      debugPrint('⚠️ FCM already initialized, skipping listener setup...');
       // The listeners are set up once per process, but the token registration
       // is not idempotent with respect to *who is signed in*. The first run
       // usually happens before login (guest browsing, or the splash screen), at
@@ -291,8 +279,6 @@ class NotificationServices {
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized ||
           settings.authorizationStatus == AuthorizationStatus.provisional) {
-        debugPrint('✅ FCM permission granted');
-
         // Get FCM token
         await _getFCMTokenAndUpdate();
 
@@ -303,8 +289,6 @@ class NotificationServices {
         // Cancel any previous subscription to prevent duplicates after logout/login
         await _onMessageSubscription?.cancel();
         _onMessageSubscription = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-          debugPrint('📨 Foreground message received: ${message.messageId}');
-
           final data = message.data;
           final String? incomingChatId = data['chatId']?.toString();
           final String? type = data['type']?.toString();
@@ -314,17 +298,11 @@ class NotificationServices {
               type == 'chat' || (incomingChatId != null && incomingChatId.isNotEmpty);
 
           if (isChatNotification && isChatActive(incomingChatId)) {
-            debugPrint(
-              '🤫 Suppressing chat push notification because user is inside active chat: $incomingChatId (currentActiveChatId: $currentActiveChatId)',
-            );
             return;
           }
 
           // ALL OTHER NOTIFICATIONS (booking, tracking, job offer, custom, etc.)
           // MUST appear as a push notification, even if user is currently inside chatscreen!
-          debugPrint(
-            '🔔 Showing push notification for foreground message (type: $type, chatId: $incomingChatId)',
-          );
 
           RemoteNotification? notification = message.notification;
           String? title = notification?.title ?? data['title'];
@@ -354,7 +332,6 @@ class NotificationServices {
 
         await _onMessageOpenedAppSubscription?.cancel();
         _onMessageOpenedAppSubscription = FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-          debugPrint('👆 Message opened from background: ${message.messageId}');
           if (message.notification != null) {
             // Only handle chat navigation, do NOT store notification again
             _handleChatNotificationTap(message);
@@ -362,18 +339,10 @@ class NotificationServices {
         });
 
         _isInitialized = true;
-        debugPrint('✅ FCM listeners setup complete');
-      } else {
-        debugPrint('❌ FCM permission denied');
       }
     } catch (e) {
-      debugPrint('❌ Error setting up FCM: $e');
-
       // Handle "already running" error gracefully
       if (e.toString().contains('already running')) {
-        debugPrint(
-          '⚠️ Permission request already running - marking as initialized',
-        );
         _isInitialized = true;
       }
     } finally {
@@ -395,13 +364,9 @@ class NotificationServices {
       }
 
       if (token != null && token.isNotEmpty) {
-        debugPrint('🔑 FCM Token: ${token.substring(0, 20)}...');
         await AppServices.updateFCMToken(token);
-      } else {
-        debugPrint('⚠️ No FCM token available');
       }
-    } catch (e) {
-      debugPrint('❌ Error getting FCM token: $e');
+    } catch (_) {
     }
   }
 
@@ -416,75 +381,52 @@ class NotificationServices {
         apnsToken = await _firebaseMessaging.getAPNSToken();
         attempts++;
       }
-
-      if (apnsToken != null) {
-        debugPrint('✅ APNS token obtained');
-      } else {
-        debugPrint('⚠️ APNS token not available after 10 seconds');
-      }
-    } catch (e) {
-      debugPrint('❌ Error waiting for APNS token: $e');
+    } catch (_) {
     }
   }
 
   /// Setup token refresh listener
   static void _setupTokenRefreshListener() {
     if (_tokenRefreshListenerSet) {
-      debugPrint('⚠️ Token refresh listener already set');
       return;
     }
 
     _firebaseMessaging.onTokenRefresh.listen(
       (fcmToken) {
         if (fcmToken.isNotEmpty) {
-          debugPrint('🔄 FCM Token refreshed: ${fcmToken.substring(0, 20)}...');
           AppServices.updateFCMToken(fcmToken)
               .then((_) {
-                debugPrint('✅ Refreshed FCM Token updated successfully');
               })
               .catchError((error) {
-                debugPrint('❌ Error updating refreshed FCM token: $error');
               });
         }
       },
       onError: (error) {
-        debugPrint('❌ Error in token refresh listener: $error');
       },
     );
 
     _tokenRefreshListenerSet = true;
-    debugPrint('✅ Token refresh listener set up');
   }
 
   /// Manually refresh FCM token (use sparingly)
   static Future<void> refreshFCMToken() async {
     if (_isRequestingPermission) {
-      debugPrint('⚠️ Cannot refresh token - permission request in progress');
       return;
     }
 
     try {
-      debugPrint('🔄 Manually refreshing FCM token...');
       await _firebaseMessaging.deleteToken();
       await Future.delayed(const Duration(milliseconds: 500));
       await _getFCMTokenAndUpdate();
-    } catch (e) {
-      debugPrint('❌ Error manually refreshing FCM token: $e');
+    } catch (_) {
     }
   }
 
   /// Get current FCM token
   static Future<String?> getCurrentFCMToken() async {
     try {
-      String? token = await _firebaseMessaging.getToken();
-      if (token != null) {
-        debugPrint('🔑 Current FCM Token: ${token.substring(0, 20)}...');
-      } else {
-        debugPrint('❌ No FCM token available');
-      }
-      return token;
+      return await _firebaseMessaging.getToken();
     } catch (e) {
-      debugPrint('❌ Error getting current FCM token: $e');
       return null;
     }
   }
@@ -494,40 +436,7 @@ class NotificationServices {
     try {
       await _firebaseMessaging.deleteToken();
       _isInitialized = false; // Reset so FCM can be re-initialized
-      debugPrint('🗑️ FCM token deleted successfully');
-    } catch (e) {
-      debugPrint('❌ Error deleting FCM token: $e');
-    }
-  }
-
-  /// Debug FCM status
-  static Future<void> debugFCMStatus() async {
-    try {
-      debugPrint('🔍 FCM Debug Status:');
-      debugPrint('   - Initialized: $_isInitialized');
-      debugPrint('   - Token refresh listener set: $_tokenRefreshListenerSet');
-      debugPrint('   - Requesting permission: $_isRequestingPermission');
-
-      String? token = await getCurrentFCMToken();
-      if (token != null) {
-        debugPrint('   - Current token available: Yes');
-        debugPrint('   - Token length: ${token.length}');
-      } else {
-        debugPrint('   - Current token available: No');
-      }
-
-      if (Platform.isIOS) {
-        String? apnsToken = await _firebaseMessaging.getAPNSToken();
-        debugPrint(
-          '   - APNS Token available: ${apnsToken != null ? "Yes" : "No"}',
-        );
-      }
-
-      NotificationSettings settings = await _firebaseMessaging
-          .getNotificationSettings();
-      debugPrint('   - Permission status: ${settings.authorizationStatus}');
-    } catch (e) {
-      debugPrint('❌ Error getting FCM debug status: $e');
+    } catch (_) {
     }
   }
 
@@ -540,9 +449,9 @@ class NotificationServices {
   }) async {
     AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       'abo_glumbo_channel',
-      'Abo Glumbo Notifications',
+      'Aboglumbo Tools Notifications',
       channelDescription:
-          'Notifications related to Abo Glumbo tasks and updates',
+          'Notifications related to Aboglumbo Tools tasks and updates',
       importance: Importance.max,
       priority: Priority.high,
       showWhen: true,
@@ -679,7 +588,6 @@ class NotificationServices {
       payload: payload,
     );
 
-    debugPrint('✅ Ongoing tracking notification shown');
   }
 
   /// Cancel ongoing tracking notification
@@ -689,9 +597,7 @@ class NotificationServices {
     try {
       await _flutterLocalNotificationsPlugin.cancel(trackingNotificationId);
       _hasAlertedTracking = false; // Reset flag so next session alerts again
-      debugPrint('✅ Tracking notification cancelled and state reset');
-    } catch (e) {
-      debugPrint('❌ Error cancelling tracking notification: $e');
+    } catch (_) {
     }
   }
 
@@ -702,7 +608,6 @@ class NotificationServices {
           .getInitialMessage();
 
       if (initialMessage != null) {
-        debugPrint('📬 Initial message found: ${initialMessage.messageId}');
         if (initialMessage.notification != null) {
           // Only handle chat navigation, do NOT store notification again
           _handleChatNotificationTap(initialMessage);
@@ -711,21 +616,18 @@ class NotificationServices {
 
       // Note: onMessageOpenedApp listener is already set up in setupFCMListeners()
       // No need to add it here again to avoid duplicate navigation
-    } catch (e) {
-      debugPrint('❌ Error checking initial message: $e');
+    } catch (_) {
     }
   }
 
   /// Handle notification tap and navigate accordingly
   static void _handleNotificationTap(String? payload) {
     if (payload == null || payload.isEmpty) {
-      debugPrint('⚠️ No payload in notification');
       return;
     }
 
     try {
       final data = json.decode(payload) as Map<String, dynamic>;
-      debugPrint('📱 Full notification payload: $data');
 
       // Shares the id space with the remote-tap path, so a local notification
       // and a replayed RemoteMessage for the same push cannot both navigate.
@@ -735,14 +637,8 @@ class NotificationServices {
       final chatId = data['chatId'] as String?;
       final bookingId = data['bookingId'] as String?;
 
-      debugPrint(
-        '📱 Notification type: $type, chatId: $chatId, bookingId: $bookingId',
-      );
-
       // Check if this is a tracking notification
       if (type == 'tracking' && bookingId != null && bookingId.isNotEmpty) {
-        debugPrint('📍 Tracking notification detected!');
-        debugPrint('   bookingId: $bookingId');
         _handleTrackingNotificationTap(bookingId);
       }
       // Check if this is a chat notification (either by type or presence of chatId)
@@ -756,18 +652,10 @@ class NotificationServices {
         final customerPhoto = data['customerPhoto'] as String? ?? '';
         final bookingId = data['bookingId'] as String? ?? '';
 
-        debugPrint('💬 Chat notification detected!');
-        debugPrint('   chatId: $chatId');
-        debugPrint('   participantName: $participantName');
-        debugPrint('   participantId: $participantId');
 
         if (chatId != null && chatId.isNotEmpty) {
-          debugPrint('🚀 Starting navigation to chat screen...');
-
           // Use the global navigator key to navigate
           if (navigatorKey?.currentState != null) {
-            debugPrint('✅ Navigator is available');
-
             // Clear stack and set up: Home -> ChatScreen
             // This ensures back button from chat goes directly to home
             navigatorKey!.currentState!.pushAndRemoveUntil(
@@ -791,22 +679,13 @@ class NotificationServices {
                   ),
                 )
                 .then((_) {
-                  debugPrint('✅ Chat screen navigation completed');
                 })
                 .catchError((error) {
-                  debugPrint('❌ Error pushing chat screen: $error');
                 });
-          } else {
-            debugPrint('⚠️ Navigator key is null, cannot navigate');
           }
-        } else {
-          debugPrint('⚠️ Chat ID is missing in notification payload');
         }
       } else if (type == 'offer_accepted' && data['requestId'] != null) {
         final reqId = data['requestId'] as String;
-        debugPrint(
-          '✅ Offer accepted! Navigating to SearchingTechniciansScreen for request: $reqId',
-        );
         if (navigatorKey?.currentState != null) {
           navigatorKey!.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const Home()),
@@ -820,44 +699,30 @@ class NotificationServices {
           );
         }
       } else if (type == 'booking_assigned') {
-        debugPrint('✅ Booking assigned! Navigating to Home');
         if (navigatorKey?.currentState != null) {
           navigatorKey!.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const Home()),
             (route) => false,
           );
         }
-      } else {
-        debugPrint('ℹ️ Not a recognized notification type, ignoring');
       }
-    } catch (e) {
-      debugPrint('❌ Error handling notification tap: $e');
+    } catch (_) {
     }
   }
 
   /// Handle tracking notification tap - navigate to live tracking
   static void _handleTrackingNotificationTap(String bookingId) {
     try {
-      debugPrint(
-        '🚀 Starting navigation to tracking page for booking: $bookingId',
-      );
-
       // Use the global navigator key to navigate
       if (navigatorKey?.currentState != null) {
-        debugPrint('✅ Navigator is available for tracking navigation');
-
         // Navigate to Home which will display ActiveBookingsSection
         navigatorKey!.currentState!.pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const Home()),
           (route) => false,
         );
 
-        debugPrint('✅ Navigated to Home to show live tracking');
-      } else {
-        debugPrint('⚠️ Navigator key is null, cannot navigate to tracking');
       }
-    } catch (e) {
-      debugPrint('❌ Error handling tracking notification tap: $e');
+    } catch (_) {
     }
   }
 
@@ -871,7 +736,6 @@ class NotificationServices {
       }
 
       final data = message.data;
-      debugPrint('📱 Chat notification data: $data');
 
       final chatId = data['chatId'] as String?;
       final participantName =
@@ -882,16 +746,10 @@ class NotificationServices {
       final customerPhoto = data['customerPhoto'] as String? ?? '';
       final bookingId = data['bookingId'] as String? ?? '';
 
-      debugPrint('💬 Navigating to chat screen...');
-      debugPrint('   chatId: $chatId');
-      debugPrint('   participantName: $participantName');
-      debugPrint('   participantId: $participantId');
 
       if (chatId != null && chatId.isNotEmpty) {
         // Use the global navigator key to navigate
         if (navigatorKey?.currentState != null) {
-          debugPrint('✅ Navigator is available');
-
           // Clear stack and set up: Home -> ChatScreen
           // This ensures back button from chat goes directly to home
           navigatorKey!.currentState!.pushAndRemoveUntil(
@@ -915,19 +773,12 @@ class NotificationServices {
                 ),
               )
               .then((_) {
-                debugPrint('✅ Chat screen navigation completed');
               })
               .catchError((error) {
-                debugPrint('❌ Error pushing chat screen: $error');
               });
-        } else {
-          debugPrint('⚠️ Navigator key is null, cannot navigate');
         }
-      } else {
-        debugPrint('⚠️ Chat ID is missing in notification payload');
       }
-    } catch (e) {
-      debugPrint('❌ Error handling chat notification tap: $e');
+    } catch (_) {
     }
   }
 
@@ -935,8 +786,7 @@ class NotificationServices {
   static Future<void> initializeFCM() async {
     try {
       await setupFCMListeners();
-    } catch (e) {
-      debugPrint('❌ Error initializing FCM: $e');
+    } catch (_) {
     }
   }
 
@@ -951,9 +801,6 @@ class NotificationServices {
   static void markLocalNotificationTriggered(String bookingId, String type) {
     final key = 'notif_${bookingId}_$type';
     MyApp.box.put(key, true);
-    debugPrint(
-      '🔔 Marked tracking notification $type as triggered for $bookingId',
-    );
   }
 
   /// Clear the local notification triggers for a booking (e.g. when tracking stops/resets)
@@ -962,7 +809,6 @@ class NotificationServices {
     MyApp.box.delete('notif_${bookingId}_10_minutes');
     MyApp.box.delete('notif_${bookingId}_nearby');
     MyApp.box.delete('notif_${bookingId}_arrived');
-    debugPrint('🗑️ Cleared tracking notification flags for $bookingId');
   }
 
   /// Display local live tracking notifications for the customer in multiple languages
@@ -1054,7 +900,6 @@ class NotificationServices {
         'trackingType': type,
       }),
     );
-    debugPrint('🔔 Local live tracking notification shown: $title - $body');
   }
 
   /// Parse a duration string (e.g. "10 mins") into an integer representing minutes

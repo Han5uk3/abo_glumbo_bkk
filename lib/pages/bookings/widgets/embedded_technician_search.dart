@@ -118,7 +118,6 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
             }
           },
           onError: (e) {
-            debugPrint("Error listening to booking request: $e");
             if (mounted) {
               setState(() {
                 _isLoading = false;
@@ -233,7 +232,6 @@ class _EmbeddedTechnicianSearchState extends State<EmbeddedTechnicianSearch>
         _listenToBookingRequest();
       }
     } catch (e) {
-      debugPrint("Error searching again: $e");
       if (mounted) {
         setState(() => _isSearchingAgain = false);
       }

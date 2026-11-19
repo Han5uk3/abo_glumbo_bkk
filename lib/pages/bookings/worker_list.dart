@@ -121,8 +121,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
         }
         if (mounted) setState(() => _busyAgentIds = busyIds);
       });
-    } catch (e) {
-      debugPrint("Error subscribing to busy agents: $e");
+    } catch (_) {
     }
   }
 
@@ -137,8 +136,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
         final data = serviceLocationsQuery.docs.first.data() as Map<String, dynamic>;
         serviceLocations = data['locations'] as List<dynamic>? ?? [];
       }
-    } catch (e) {
-      debugPrint("Error fetching service locations in WorkerList: $e");
+    } catch (_) {
     }
 
     // 2. Get eligible workers
@@ -205,8 +203,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
         final snapshot = await uploadTask;
         issueVideoUrl = await snapshot.ref.getDownloadURL();
       }
-    } catch (e) {
-      debugPrint("Error uploading files in WorkerList: $e");
+    } catch (_) {
     }
     final now = Timestamp.now();
     final expiresAt = Timestamp.fromDate(TimeService.now.add(const Duration(seconds: 120)));
@@ -363,8 +360,7 @@ class _WorkerListState extends State<WorkerList> with WidgetsBindingObserver {
           );
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching customer data: $e');
+    } catch (_) {
     } finally {
       if (mounted) {
         setState(() => isLoadingCustomer = false);
@@ -1077,11 +1073,9 @@ class _WorkerListViewState extends State<_WorkerListView>
               }
             },
             onError: (e) {
-              debugPrint("Error fetching busy agents: $e");
             },
           );
-    } catch (e) {
-      debugPrint("Error setting up busy agents subscription: $e");
+    } catch (_) {
     }
   }
 
@@ -1160,8 +1154,7 @@ class _WorkerListViewState extends State<_WorkerListView>
           categoryIdToNames.addAll(idToNamesMap);
         });
       }
-    } catch (e) {
-      debugPrint('Error loading category names: $e');
+    } catch (_) {
     } finally {
       if (mounted) {
         setState(() {

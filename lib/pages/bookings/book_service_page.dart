@@ -246,8 +246,7 @@ class _BookServicePageState extends State<BookServicePage> {
         await AppFirestore.bookingRequestsCollectionRef.doc(reqId).update({
           'status': 'closed',
         });
-      } catch (e) {
-        debugPrint("Error updating expired request: $e");
+      } catch (_) {
       }
 
       showDialog(
@@ -353,8 +352,7 @@ class _BookServicePageState extends State<BookServicePage> {
         _validateSelectedAddress(selectedAddress!);
       }
       if (mounted) setState(() {});
-    } catch (e) {
-      debugPrint("Error fetching addresses: $e");
+    } catch (_) {
     }
   }
 
@@ -366,8 +364,7 @@ class _BookServicePageState extends State<BookServicePage> {
           _initialPosition = coordinates;
         });
       }
-    } catch (error) {
-      debugPrint("Error fetching coordinates: $error");
+    } catch (_) {
     }
   }
 
@@ -392,7 +389,6 @@ class _BookServicePageState extends State<BookServicePage> {
 
     try {
       // Check Service Area using polygon-based point-in-polygon (PIP)
-      debugPrint("🔍 Checking polygon service area for ${address.fullName}");
       final serviceLocationsQuery = await AppFirestore.locationsCollectionRef
           .where('service_id', isEqualTo: widget.service.id)
           .get();
@@ -452,12 +448,8 @@ class _BookServicePageState extends State<BookServicePage> {
           addressValidationError = null;
           _matchedServiceZone = matched;
         });
-        debugPrint(
-          "✅ Matched zone: ${matched?.nameEn} (priority ${matched?.priority})",
-        );
       }
     } catch (e) {
-      debugPrint("❌ Error validating address: $e");
       if (mounted) {
         setState(() {
           isValidatingAddress = false;
@@ -3004,8 +2996,7 @@ backgroundColor: Colors.red,
                 final snapshot = await uploadTask;
                 requestData['issueVideo'] = await snapshot.ref.getDownloadURL();
               }
-            } catch (e) {
-              debugPrint("Error uploading permanent media for booking: $e");
+            } catch (_) {
             }
 
             final bookingJson = {
@@ -3050,8 +3041,7 @@ backgroundColor: Colors.red,
                 type: 'booking_confirmed',
                 data: {'bookingId': _bookingRequestId},
               );
-            } catch (e) {
-              debugPrint("Error notifying technician of confirmed booking: $e");
+            } catch (_) {
             }
 
             setState(() => saving = false);
@@ -3113,7 +3103,6 @@ backgroundColor: Colors.red,
           }
           return;
         } catch (e) {
-          debugPrint("Error confirming booking request: $e");
           setState(() => saving = false);
           if (mounted) {
             _showSnackBar(

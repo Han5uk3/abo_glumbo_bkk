@@ -100,25 +100,16 @@ class _OtpPageState extends State<OtpPage> {
 
   void resendOTP() async {
     if (_resendSecondsNotifier.value > 0) {
-      debugPrint(
-        '🚫 [CUSTOMER OTP] Cannot resend - timer still active: ${_resendSecondsNotifier.value} seconds remaining',
-      );
       return;
     }
     if (isResendingOtp) return;
 
-    debugPrint('🔄 [CUSTOMER OTP] Starting resend OTP process');
-    debugPrint('📱 [CUSTOMER OTP] Phone number: ${widget.phoneNumber}');
-    debugPrint('🔑 [CUSTOMER OTP] Current resend token: $_resendToken');
-    debugPrint('🆔 [CUSTOMER OTP] Current verification ID: $_verificationId');
 
     setState(() {
       isResendingOtp = true;
     });
-    debugPrint('⏳ [CUSTOMER OTP] Loading state set to TRUE');
 
     try {
-      debugPrint('📞 [CUSTOMER OTP] Calling AuthServices().resendOTP...');
       await AuthServices().resendOTP(
         phoneNumber: widget.phoneNumber ?? '',
         resendToken: _resendToken,
@@ -129,9 +120,6 @@ class _OtpPageState extends State<OtpPage> {
         locale: Localizations.localeOf(context).languageCode,
         expectedUid: widget.expectedUid,
         onCodeSent: (verificationId, {int? resendToken}) {
-          debugPrint('✅ [CUSTOMER OTP] onCodeSent callback triggered!');
-          debugPrint('🆔 [CUSTOMER OTP] New verification ID: $verificationId');
-          debugPrint('🔑 [CUSTOMER OTP] New resend token: $resendToken');
 
           if (mounted) {
             setState(() {
@@ -158,14 +146,10 @@ class _OtpPageState extends State<OtpPage> {
             );
 
             startTimer();
-            debugPrint('⏱️ [CUSTOMER OTP] Timer restarted');
             _startSmsAutofillListener();
           }
         },
         onError: (error) {
-          debugPrint('❌ [CUSTOMER OTP] onError callback triggered');
-          debugPrint('❌ [CUSTOMER OTP] Error code: ${error.code}');
-          debugPrint('❌ [CUSTOMER OTP] Error message: ${error.message}');
 
           if (mounted) {
             String errorMessage;
@@ -199,9 +183,6 @@ class _OtpPageState extends State<OtpPage> {
                 errorMessage = error.message ?? 'Failed to resend OTP';
             }
 
-            debugPrint(
-              '📢 [CUSTOMER OTP] Showing error message: $errorMessage',
-            );
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(errorMessage.isEmpty ? 'Verification Failed' : errorMessage),
@@ -217,12 +198,7 @@ class _OtpPageState extends State<OtpPage> {
           }
         },
       );
-      debugPrint(
-        '✅ [CUSTOMER OTP] AuthServices().resendOTP completed (await finished)',
-      );
     } catch (e) {
-      debugPrint('💥 [CUSTOMER OTP] Exception caught in try-catch: $e');
-      debugPrint('💥 [CUSTOMER OTP] Exception type: ${e.runtimeType}');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -239,14 +215,11 @@ class _OtpPageState extends State<OtpPage> {
         );
       }
     } finally {
-      debugPrint('🏁 [CUSTOMER OTP] Finally block executing');
       if (mounted) {
         setState(() {
           isResendingOtp = false;
         });
-        debugPrint('⏳ [CUSTOMER OTP] Loading state set to FALSE');
       }
-      debugPrint('🏁 [CUSTOMER OTP] Resend OTP process complete');
     }
   }
 
@@ -302,7 +275,6 @@ class _OtpPageState extends State<OtpPage> {
   /// Android verified the number itself (read the SMS, or needed none).
   void _verifyAutoCredential(PhoneAuthCredential credential) {
     if (isLoading || !mounted) return;
-    debugPrint('✅ [CUSTOMER OTP] Signing in with auto-verified credential');
     // The code is in hand, so Google's "share this SMS?" prompt is not needed.
     _smsAutofillService.cancelListening();
     _signInAndContinue(
@@ -436,7 +408,6 @@ class _OtpPageState extends State<OtpPage> {
   /// Called when the page opens (first send) and after every resend.
   void _startSmsAutofillListener() {
     if (!Platform.isAndroid || !mounted) return;
-    debugPrint('🎯 [CUSTOMER OTP] Starting SMS autofill listener...');
 
     setState(() {
       _isSmsAutofillListening = true;
@@ -447,8 +418,6 @@ class _OtpPageState extends State<OtpPage> {
 
   void _listenForSmsCode(int generation) async {
     try {
-      debugPrint('👂 [CUSTOMER OTP] Listening for SMS code...');
-
       final smsCode = await _smsAutofillService.listenForSms(
         timeout: const Duration(minutes: 5),
       );
@@ -461,18 +430,14 @@ class _OtpPageState extends State<OtpPage> {
       });
 
       if (smsCode != null && smsCode.isNotEmpty) {
-        debugPrint('✅ [CUSTOMER OTP] SMS code received');
-
         _otpController.text = smsCode;
 
         await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) {
-          debugPrint('🔐 [CUSTOMER OTP] Auto-verifying OTP from SMS...');
           verifyOtp();
         }
       }
     } catch (e) {
-      debugPrint('❌ [CUSTOMER OTP] Error listening for SMS: $e');
       if (mounted && generation == _smsListenGeneration) {
         setState(() {
           _isSmsAutofillListening = false;

@@ -41,7 +41,6 @@ class LocationsCache {
       _regions = jsonData.map((r) => Region.fromJson(r)).toList();
       return _regions!;
     } catch (e) {
-      debugPrint('Failed to load locations: $e');
       return [];
     } finally {
       _isLoading = false;
@@ -147,7 +146,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         });
       }
     } catch (e) {
-      debugPrint('Failed to load locations: $e');
       if (mounted) {
         setState(() {
           regions = [];
@@ -206,7 +204,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         });
       }
     } catch (e) {
-      debugPrint('Failed to load categories: $e');
       if (mounted) {
         // Set empty categories list to prevent further errors
         setState(() {

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:abo_glumbo_bbk/firebase_options.dart';
+import 'package:abo_glumbo_bbk/helpers/secure_box.dart';
 import 'package:abo_glumbo_bbk/pages/splash%20screen/splash_screen.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -23,7 +24,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:abo_glumbo_bbk/services/time_service.dart';
 
-final String hiveBoxName = 'myBox';
 GlobalKey<NavigatorState>? navigatorKey = GlobalKey();
 
 // Track if persistence has been set
@@ -34,9 +34,7 @@ Future<void> _initializeFirebaseDatabase() async {
     try {
       FirebaseDatabase.instance.setPersistenceEnabled(true);
       _persistenceEnabled = true;
-      debugPrint('✅ Database persistence enabled');
     } catch (e) {
-      debugPrint('⚠️ Persistence already set or error: $e');
       _persistenceEnabled = true;
     }
   }
@@ -54,18 +52,21 @@ Future<void> _activateAppCheck() async {
           ? const AppleDebugProvider()
           : const AppleAppAttestWithDeviceCheckFallbackProvider(),
     );
-  } catch (e) {
-    debugPrint('⚠️ App Check activation failed: $e');
+  } catch (_) {
   }
 }
 
 Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
-    debugPrint('✅ Flutter binding initialized');
+
+    // Release builds print nothing, including debugPrint calls made inside
+    // plugins, so no tokens, phone numbers or IDs end up in device logs.
+    if (kReleaseMode) {
+      debugPrint = (String? message, {int? wrapWidth}) {};
+    }
 
     await dotenv.load(fileName: ".env");
-    debugPrint('✅ .env file loaded');
 
     // Initialize Google Maps Renderer for Android
     final GoogleMapsFlutterPlatform mapsImplementation =
@@ -76,9 +77,7 @@ Future<void> main() async {
         await mapsImplementation.initializeWithRenderer(
           AndroidMapRenderer.latest,
         );
-        debugPrint('✅ Google Maps Latest Renderer initialized');
-      } catch (e) {
-        debugPrint('⚠️ Google Maps Renderer initialization failed: $e');
+      } catch (_) {
       }
     }
 
@@ -87,10 +86,7 @@ Future<void> main() async {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      debugPrint('✅ Firebase initialized successfully');
-    } catch (e, stackTrace) {
-      debugPrint('❌ CRITICAL: Firebase initialization failed: $e');
-      debugPrint('Stack trace: $stackTrace');
+    } catch (e) {
       // Firebase is critical - rethrow to show error screen
       throw Exception('Firebase Init Error: $e');
     }
@@ -101,36 +97,21 @@ Future<void> main() async {
     try {
       await _initializeFirebaseDatabase();
     } catch (e) {
-      debugPrint('⚠️ Database persistence setup failed (non-critical): $e');
       // Continue anyway - app can work without persistence
     }
 
     // 3. Set background message handler
     try {
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-      debugPrint('✅ Background message handler set');
     } catch (e) {
-      debugPrint('⚠️ Background message handler setup failed: $e');
       // Continue anyway
     }
 
     // 4. Initialize Hive
     try {
       await Hive.initFlutter();
-
-      try {
-        await Hive.openBox(hiveBoxName);
-      } catch (e) {
-        debugPrint(
-          '⚠️ Hive box corrupted or failed to open: $e. Deleting and reopening...',
-        );
-        await Hive.deleteBoxFromDisk(hiveBoxName);
-        await Hive.openBox(hiveBoxName);
-      }
-      debugPrint('✅ Hive initialized successfully');
-    } catch (e, stackTrace) {
-      debugPrint('❌ CRITICAL: Hive initialization failed: $e');
-      debugPrint('Stack trace: $stackTrace');
+      await SecureBox.open();
+    } catch (e) {
       // Hive is critical for app state - rethrow
       throw Exception('Hive Init Error: $e');
     }
@@ -148,20 +129,15 @@ Future<void> main() async {
           statusBarIconBrightness: Brightness.dark,
         ),
       );
-      debugPrint('✅ System UI configured (One UI 8 compatible)');
     } catch (e) {
-      debugPrint('⚠️ System UI setup failed (non-critical): $e');
       // Continue anyway
     }
 
     // 7. Initialize Time Service
     await TimeService.init();
 
-    debugPrint('🚀 App initialization complete - launching app');
     runApp(MyApp(navigatorKey: navigatorKey));
   } catch (e, stackTrace) {
-    debugPrint('❌ FATAL: App initialization failed completely: $e');
-    debugPrint('Stack trace: $stackTrace');
 
     // Show error screen instead of white screen
     runApp(
@@ -181,12 +157,14 @@ Future<void> main() async {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    'Error: $e\n\nStack trace preview:\n${stackTrace.toString().split('\n').take(3).join('\n')}',
-                    style: const TextStyle(fontSize: 14),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
+                  if (kDebugMode) ...[
+                    Text(
+                      'Error: $e\n\nStack trace preview:\n${stackTrace.toString().split('\n').take(3).join('\n')}',
+                      style: const TextStyle(fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                   const Text(
                     'Please reinstall the app or contact support.',
                     style: TextStyle(fontSize: 12, color: Colors.grey),
@@ -203,7 +181,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  static Box box = Hive.box(hiveBoxName);
+  static Box box = Hive.box(SecureBox.boxName);
   final GlobalKey<NavigatorState>? navigatorKey;
   const MyApp({super.key, this.navigatorKey});
 
@@ -225,7 +203,7 @@ class MyApp extends StatelessWidget {
               child: MaterialApp(
                 key: ValueKey(state.locale.languageCode),
                 navigatorKey: navigatorKey,
-                title: 'Abo Glumbo - Customer',
+                title: 'Aboglumbo Tools',
                 locale: state.locale,
                 localizationsDelegates: [
                   AppLocalizations.delegate,

@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'abo glumbo';
+  String get appName => 'Aboglumbo Tools';
 
   @override
   String get waitingForRequestedTechnician =>
@@ -120,7 +120,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboard1 =>
-      'Welcome to Abo Glumbo!  We are your new partner for peace of mind.';
+      'Welcome to Aboglumbo Tools!  We are your new partner for peace of mind.';
 
   @override
   String get onboard1desc =>
@@ -2093,7 +2093,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Choose the main category (Electrician/Plumber) to begin your service request.';
 
   @override
-  String get welcomeToAboGlumbo => 'Welcome to Abo Glumbo!';
+  String get welcomeToAboGlumbo => 'Welcome to Aboglumbo Tools!';
 
   @override
   String get welcomeDescription =>
@@ -2643,7 +2643,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totalLabel => 'Total:';
 
   @override
-  String get thankYouInvoice => 'Thank you for choosing Abo Glumbo!';
+  String get thankYouInvoice => 'Thank you for choosing Aboglumbo Tools!';
 
   @override
   String get biometricError => 'Biometric error';
@@ -2738,6 +2738,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get welcome => 'Welcome';
+
+  @override
+  String get guest => 'Guest';
 
   @override
   String get jobsCount => 'jobs';
@@ -2911,4 +2914,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get phoneNumberChangedSuccessfully =>
       'Phone number updated successfully';
+
+  @override
+  String get biometricSessionExpired =>
+      'Your session has ended. Please sign in with your phone number again.';
 }

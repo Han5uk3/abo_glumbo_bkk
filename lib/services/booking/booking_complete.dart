@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
@@ -155,8 +154,6 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
   ) async {
     bool isArabic = Directionality.of(context) == TextDirection.rtl;
 
-    log("Role IDs: $roleIds");
-
     // Use Future.wait to fetch all role names in parallel
     List<String> roleNames = await Future.wait(
       roleIds.map((element) async {
@@ -170,7 +167,6 @@ class _BookingCompletedPageState extends State<BookingCompletedPage>
 
     // Join the names with commas
     String name = roleNames.join(', ');
-    log("Localized roles: $name");
 
     return name;
   }

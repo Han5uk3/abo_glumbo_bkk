@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
@@ -73,7 +72,6 @@ class ContactBottomSheet extends StatelessWidget {
           }
           final data = asyncSnapshot.data!;
 
-          log(data.toString());
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [

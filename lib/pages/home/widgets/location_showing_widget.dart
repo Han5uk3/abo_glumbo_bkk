@@ -61,7 +61,6 @@ class _LocationShowingWidgetState extends State<LocationShowingWidget> {
         context,
         backgroundColor: AppColors.red,
       );
-      debugPrint('Error fetching location: $e');
     }
   }
 

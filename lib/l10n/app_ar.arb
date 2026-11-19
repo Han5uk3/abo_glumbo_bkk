@@ -1,5 +1,5 @@
 {
-  "appName": "أبو جلمبو",
+  "appName": "Aboglumbo Tools",
   "waitingForRequestedTechnician": "في انتظار رد الفني المطلوب",
   "lookingForTechnicians": "جاري البحث عن فنيين قريبين...",
   "appLoginCaption": "التطبيق للعثور على محترفين مؤهلين.",
@@ -35,7 +35,7 @@
   "sText": "ث",
   "verifiedTrustedAndProfessionalTechnicians": "فنيين موثوقين ومحترفين",
   "getStarted": "ابدأ",
-  "onboard1": "مرحباً بك في أبو جلمبو! نحن شريكك الجديد لراحة بالك.",
+  "onboard1": "مرحباً بك في Aboglumbo Tools! نحن شريكك الجديد لراحة بالك.",
   "onboard1desc": "هل أنت مستعد لصيانة منزلك؟ ابدأ طلبك الأول الآن.",
   "namehomeworketc": "الاسم (المنزل، العمل، إلخ)",
   "technicianIsBusyatThisTime": "الفني مشغول في هذا الوقت",
@@ -676,7 +676,7 @@
   "typeNeighborhoodNameToSearch": "اكتب اسم الحي للبحث...",
   "loginDescription": "فنيين محترفين وموثوقين. اطلب الخدمة بلمسة!",
   "categoriesDescription": "اختر التصنيف الرئيسي (الكهربائي/السباك) لتبدأ طلب الخدمة",
-  "welcomeToAboGlumbo": "أهلاً بك في ابو جلمبو!",
+  "welcomeToAboGlumbo": "أهلاً بك في Aboglumbo Tools!",
   "welcomeDescription": "لقد أصبحنا شريكك الجديد لراحة بالك. جاهزون لصيانة منزلك. ابدأ الآن بطلب خدمتك الأولى.",
   "newServiceRequest": "طلب خدمة جديدة",
   "uploadPaymentProof": "رفع إثبات الدفع",
@@ -960,7 +960,7 @@
     }
   },
   "totalLabel": "الإجمالي:",
-  "thankYouInvoice": "شكرًا لاختيارك Abo Glumbo!",
+  "thankYouInvoice": "شكرًا لاختيارك Aboglumbo Tools!",
   "biometricError": "❌ خطأ في المصادقة البيومترية",
   "unknownError": "خطأ غير معروف",
   "errorDuringLogin": "خطأ أثناء تسجيل الدخول",
@@ -995,6 +995,7 @@
     }
   },
   "welcome": "مرحبًا",
+  "guest": "ضيف",
   "jobsCount": "مهمة",
   "welcomeUser": "أهلاً بك، {username}",
   "@welcomeUser": {
@@ -1091,5 +1092,6 @@
   "technicianTrackingNotification": "الفني في الطريق، يبعد {distance}، ووقت الوصول {time}",
   "signInAgainToChangePhone": "يرجى تسجيل الدخول مرة أخرى لتغيير رقم هاتفك.",
   "phoneChangeUnavailable": "تغيير رقم الهاتف غير متاح مؤقتاً. يرجى المحاولة لاحقاً.",
-  "phoneNumberChangedSuccessfully": "تم تحديث رقم الهاتف بنجاح"
+  "phoneNumberChangedSuccessfully": "تم تحديث رقم الهاتف بنجاح",
+  "biometricSessionExpired": "انتهت جلستك. يرجى تسجيل الدخول برقم هاتفك مرة أخرى."
 }

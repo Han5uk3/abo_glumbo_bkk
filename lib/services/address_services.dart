@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/models/address.dart';
@@ -24,7 +23,6 @@ class AppServicesAddressRepository implements AddressRepository {
     final uid = LocalStoreHelper.getUID();
     if (uid == null) return [];
     final address = await AppServices.getCustomerAddress();
-    log('Loaded addresses: ${address.length}');
     return address;
   }
 

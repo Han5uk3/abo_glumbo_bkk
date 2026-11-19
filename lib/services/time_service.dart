@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:ntp/ntp.dart';
 
 class TimeService {
@@ -10,9 +9,7 @@ class TimeService {
       final myTime = DateTime.now();
       final ntpTime = await NTP.now();
       _offset = ntpTime.difference(myTime);
-      debugPrint('TimeService initialized. Clock skew offset: ${_offset.inMilliseconds}ms');
     } catch (e) {
-      debugPrint('TimeService failed to initialize, falling back to local clock: $e');
       _offset = Duration.zero;
     }
   }

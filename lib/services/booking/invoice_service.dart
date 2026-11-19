@@ -190,7 +190,7 @@ class InvoiceService {
                     pw.Container(width: 80, height: 80, child: pw.Image(logo)),
                   pw.SizedBox(height: 10),
                   text(
-                    "Abo Glumbo",
+                    "Aboglumbo Tools",
                     style: pw.TextStyle(
                       fontSize: 20,
                       fontWeight: pw.FontWeight.bold,
@@ -483,10 +483,10 @@ class InvoiceService {
           pw.Center(
             child: text(
               (loc.localeName == 'ar')
-                  ? 'شكرا لاختيارك أبو جلمبو'
+                  ? 'شكرا لاختيارك Aboglumbo Tools'
                   : (loc.localeName == 'ur')
-                  ? 'ابو جلمبو کا انتخاب کرنے کا شکریہ'
-                  : 'Thank you for choosing Abo Glumbo',
+                  ? 'Aboglumbo Tools کا انتخاب کرنے کا شکریہ'
+                  : 'Thank you for choosing Aboglumbo Tools',
               style: pw.TextStyle(color: PdfColors.grey),
             ),
           ),

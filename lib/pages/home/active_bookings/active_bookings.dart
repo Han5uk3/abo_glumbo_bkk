@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_final_fields
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math' as math;
 import 'package:abo_glumbo_bbk/configs/env_config.dart';
 import 'package:abo_glumbo_bbk/apis/google_tracking_polylines.dart';
@@ -134,13 +133,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     super.dispose();
   }
 
-  /// Safe logging that only works in debug mode
-  void _log(String message) {
-    if (kDebugMode) {
-      log(message);
-    }
-  }
-
   /// Handle changes in bookings list
   void _handleBookingsChanged(List<BookingModel> oldBookings) {
     final oldAgentUids = oldBookings
@@ -159,7 +151,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       _agentLocationSubscriptions[agentUid]?.cancel();
       _agentLocationSubscriptions.remove(agentUid);
       _agentLiveLocations.remove(agentUid);
-      _log('[AGENT_TRACKING] Stopped tracking agent: $agentUid');
     }
 
     // Clear cache for removed bookings
@@ -181,7 +172,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
           _startTrackingAgent(agentUid, booking.id);
         }
       } else {
-        _log('[ETA] ⚠️ No agent UID found for booking ${booking.id}');
         _setFallbackETA(booking.id);
       }
     }
@@ -202,18 +192,13 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
             booking.warranty?.assignedTechnician = user.toJson();
           });
         }
-      } catch (e) {
-        _log('[TECH_LOAD] Error fetching technician $techId: $e');
+      } catch (_) {
       }
     }
   }
 
   /// Start tracking agent's live location
   void _startTrackingAgent(String agentUid, String bookingId) {
-    _log(
-      '[AGENT_TRACKING] Starting to track agent: $agentUid for booking: $bookingId',
-    );
-
     _agentLocationSubscriptions[agentUid] = AppServices()
         .getAgentLiveLocationStream(agentUid)
         .timeout(_locationTimeout)
@@ -224,10 +209,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
             final lng = liveLocation?.longitude;
 
             if (lat != null && lng != null && _areValidCoordinates(lat, lng)) {
-              _log(
-                '[AGENT_TRACKING] 🚗 Agent $agentUid location update: $lat, $lng',
-              );
-
               final previousLocation = _agentLiveLocations[agentUid];
               final hasLocationChanged =
                   previousLocation == null ||
@@ -245,14 +226,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
               if (hasLocationChanged) {
                 _scheduleETARecalculationForAgent(agentUid);
               }
-            } else {
-              _log(
-                '[AGENT_TRACKING] ⚠️ Invalid location data for agent $agentUid: $lat, $lng',
-              );
             }
           },
           onError: (error) {
-            _log('[AGENT_TRACKING] ❌ Error tracking agent $agentUid: $error');
             // Retry tracking after a delay
             Timer(const Duration(seconds: 5), () {
               if (mounted &&
@@ -276,9 +252,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       // Find all bookings with this agent and recalculate their ETAs
       for (final booking in widget.activeBookings) {
         if (booking.activeAgent?.uid == agentUid) {
-          _log(
-            '[ETA] Scheduled recalculation for booking ${booking.id} with agent $agentUid',
-          );
           // Clear cache to force recalculation
           etaData.remove(booking.id);
           calculatingETAs.remove(booking.id);
@@ -316,11 +289,8 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
   /// Enhanced duration parsing with multiple format support
   int _extractMinutesFromDuration(String duration) {
     if (duration.trim().isEmpty) {
-      _log('[ETA] Empty duration string, using fallback');
       return 15;
     }
-
-    _log('[ETA] Parsing duration: "$duration"');
 
     // Clean the input string
     final cleanDuration = duration.toLowerCase().trim();
@@ -330,7 +300,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     final simpleMatch = simpleMinRegex.firstMatch(cleanDuration);
     if (simpleMatch != null) {
       final minutes = int.tryParse(simpleMatch.group(1) ?? '0') ?? 0;
-      _log('[ETA] Extracted simple minutes: $minutes');
       return minutes > 0 ? minutes : 15;
     }
 
@@ -342,7 +311,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       final hoursStr = hourOnlyMatch.group(1) ?? '0';
       final hours = double.tryParse(hoursStr) ?? 0.0;
       final minutes = (hours * 60).round();
-      _log('[ETA] Extracted hour-only: $hours hours = $minutes minutes');
       return minutes > 0 ? minutes : 15;
     }
 
@@ -358,13 +326,11 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     if (hourMatch != null) {
       final hours = int.tryParse(hourMatch.group(1) ?? '0') ?? 0;
       totalMinutes += hours * 60;
-      _log('[ETA] Extracted hours: $hours (${hours * 60} minutes)');
     }
 
     if (minMatch != null) {
       final minutes = int.tryParse(minMatch.group(1) ?? '0') ?? 0;
       totalMinutes += minutes;
-      _log('[ETA] Extracted additional minutes: $minutes');
     }
 
     // Pattern 4: Just numbers (assume minutes)
@@ -373,13 +339,11 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       final numberMatch = numberRegex.firstMatch(cleanDuration);
       if (numberMatch != null) {
         totalMinutes = int.tryParse(numberMatch.group(1) ?? '0') ?? 0;
-        _log('[ETA] Extracted raw number as minutes: $totalMinutes');
       }
     }
 
     // Fallback to 15 minutes if no valid duration found
     final result = totalMinutes > 0 ? totalMinutes : 15;
-    _log('[ETA] Final extracted minutes: $result');
     return result;
   }
 
@@ -431,13 +395,11 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
 
     // Check if cache is expired
     if (cacheAge > _etaDataCacheTimeout.inMilliseconds) {
-      _log('[ETA] Cache expired for booking $bookingId (age: ${cacheAge}ms)');
       return false;
     }
 
     // Check if this is location error that needs re-validation
     if (cachedData['isLocationError'] == true) {
-      _log('[ETA] Cache contains location error, forcing recalculation');
       return false;
     }
 
@@ -446,9 +408,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     final currentAgentUid = currentBooking.activeAgent?.uid;
 
     if (cachedAgentUid != currentAgentUid) {
-      _log(
-        '[ETA] Agent UID mismatch - Cache: $cachedAgentUid, Current: $currentAgentUid',
-      );
       return false;
     }
 
@@ -457,15 +416,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     final currentBookingId = currentBooking.id;
 
     if (cachedBookingId != currentBookingId) {
-      _log(
-        '[ETA] Booking ID mismatch - Cache: $cachedBookingId, Current: $currentBookingId (multi-device detection)',
-      );
       return false;
     }
 
-    _log(
-      '[ETA] Using valid cached data for booking $bookingId (age: ${cacheAge}ms)',
-    );
     return true;
   }
 
@@ -479,21 +432,16 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
     }
 
     if (calculatingETAs.contains(booking.id)) {
-      _log('[ETA] Already calculating ETA for booking ${booking.id}');
       return;
     }
 
     final agentUid = booking.activeAgent?.uid;
     if (agentUid == null || agentUid.isEmpty) {
-      _log('[ETA] ⚠️ No agent UID for booking ${booking.id}');
       _setFallbackETA(booking.id, agentUid: agentUid);
       return;
     }
 
     calculatingETAs.add(booking.id);
-    _log(
-      '[ETA] Starting ETA calculation for booking ${booking.id} with agent $agentUid (attempt ${retryCount + 1})',
-    );
 
     try {
       // Find customer's selected delivery address
@@ -502,19 +450,14 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         customerSelectedAddress = booking.customer.addresses.firstWhere(
           (address) => address.isSelected == true,
         );
-        _log('[ETA] Found selected address for booking ${booking.id}');
       } catch (e) {
         // Fallback to first address if no selected address
         customerSelectedAddress = booking.customer.addresses.isNotEmpty
             ? booking.customer.addresses.first
             : null;
-        _log(
-          '[ETA] No selected address, using first available for booking ${booking.id}',
-        );
       }
 
       if (customerSelectedAddress == null) {
-        _log('[ETA] ⚠️ No customer address for booking ${booking.id}');
         _setFallbackETA(booking.id, agentUid: agentUid);
         return;
       }
@@ -538,9 +481,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         );
 
         if (addressDistance > 0.01) {
-          _log(
-            '[ETA] Delivery address changed (distance: ${addressDistance.toStringAsFixed(3)} km) - recalculating ETA',
-          );
           etaData.remove(booking.id);
         }
       }
@@ -548,9 +488,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       // Get agent's live location from our tracked locations
       final agentLocation = _agentLiveLocations[agentUid];
       if (agentLocation == null) {
-        _log(
-          '[ETA] ⚠️ No live location available for agent $agentUid (booking ${booking.id})',
-        );
         _setFallbackETA(booking.id, agentUid: agentUid);
         return;
       }
@@ -562,23 +499,15 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
 
       // Validate coordinates
       if (!_areValidCoordinates(agentLat, agentLng)) {
-        _log(
-          '[ETA] ⚠️ Invalid agent coordinates for booking ${booking.id}: $agentLat, $agentLng',
-        );
         _setFallbackETA(booking.id, agentUid: agentUid);
         return;
       }
 
       if (!_areValidCoordinates(customerLat, customerLng)) {
-        _log(
-          '[ETA] ⚠️ Invalid customer coordinates for booking ${booking.id}: $customerLat, $customerLng',
-        );
         _setFallbackETA(booking.id, agentUid: agentUid);
         return;
       }
 
-      _log('[ETA] Agent live location: $agentLat, $agentLng');
-      _log('[ETA] Delivery address: $customerLat, $customerLng');
 
       // Calculate straight-line distance to validate coordinates
       final straightLineDistance = _calculateStraightLineDistance(
@@ -587,16 +516,10 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         customerLat,
         customerLng,
       );
-      _log(
-        '[ETA] Straight-line distance: ${straightLineDistance.toStringAsFixed(2)} km',
-      );
 
       // Validate that distance is reasonable (not too far)
       if (straightLineDistance > 1000) {
         // More than 1000km - likely incorrect coordinates
-        _log(
-          '[ETA] ⚠️ Distance too large (${straightLineDistance.toStringAsFixed(1)} km) - possible location error for booking ${booking.id}',
-        );
         _setFallbackETA(booking.id, isLocationError: true, agentUid: agentUid);
         return;
       }
@@ -609,8 +532,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         destinationLng: customerLng,
         apiKey: EnvConfig.googleMapsApiKey,
       ).timeout(const Duration(seconds: 10));
-
-      _log('[ETA] API Response for booking ${booking.id}: $result');
 
       // Handle different possible response formats
       String? durationString;
@@ -631,10 +552,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
       if (durationString != null && durationString.isNotEmpty) {
         final etaMinutes = _extractMinutesFromDuration(durationString);
         final arrivalTime = _calculateArrivalTime(etaMinutes);
-
-        _log(
-          '[ETA] ✅ API Success - Duration: "$durationString", Distance: "$distanceString", Minutes: $etaMinutes, Arrival: $arrivalTime',
-        );
 
         if (mounted) {
           setState(() {
@@ -688,20 +605,12 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
           _updateTrackingNotification();
         }
       } else {
-        _log('[ETA] ⚠️ No duration found in API response: $result');
         throw Exception('Invalid API response format');
       }
-    } catch (e, stackTrace) {
-      _log('[ETA] ❌ API Error for booking ${booking.id}: $e');
-      if (kDebugMode) {
-        _log('[ETA] Stack trace: $stackTrace');
-      }
+    } catch (e) {
 
       // Retry logic
       if (retryCount < _maxRetries) {
-        _log(
-          '[ETA] Retrying calculation for booking ${booking.id} in 5 seconds...',
-        );
         Timer(const Duration(seconds: 5), () {
           if (mounted) {
             _calculateETA(booking, retryCount + 1);
@@ -742,9 +651,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
 
     // Update notification even on fallback to ensure it appears/persists
     _updateTrackingNotification();
-    _log(
-      '[ETA] Set fallback ETA (${isLocationError ? "location error" : "$fallbackMinutes mins"}, arrival: $fallbackArrivalTime) for booking $bookingId (agent: $agentUid)',
-    );
   }
 
   /// Get customer's selected delivery address for a booking
@@ -811,8 +717,7 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
         etaTime: null,
         bookingId: bookingId,
       );
-    } catch (e) {
-      debugPrint('❌ Error updating tracking notification: $e');
+    } catch (_) {
     }
   }
 
@@ -872,21 +777,9 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                   final bookingEtaData = etaData[booking.id];
                   final etaMinutes = bookingEtaData?['minutes'] as int? ?? 15;
 
-                  // Check tracking status
-                  final agentUid = activeTech?.uid;
-                  final hasLiveLocation =
-                      agentUid != null &&
-                      _agentLiveLocations.containsKey(agentUid);
                   final isCalculating =
                       calculatingETAs.contains(booking.id) ||
                       bookingEtaData == null;
-
-                  // Log status for debugging (only in debug mode)
-                  if (kDebugMode && !hasLiveLocation && !isCalculating) {
-                    _log(
-                      '[ETA] No live location for booking ${booking.id}, agent: $agentUid',
-                    );
-                  }
 
                   return TrackingCard(
                     etaMinutes: etaMinutes,
@@ -897,10 +790,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                     onTrack:
                         customerSelectedAddress != null && activeTech != null
                         ? () {
-                            _log(
-                              '[NAVIGATION] Opening live tracking for booking ${booking.id}',
-                            );
-
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -912,10 +801,6 @@ class _ActiveBookingsSectionState extends State<ActiveBookingsSection> {
                             );
                           }
                         : () {
-                            _log(
-                              '[NAVIGATION] ⚠️ Cannot open live tracking - missing data',
-                            );
-
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

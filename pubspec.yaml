@@ -1,7 +1,7 @@
 name: abo_glumbo_bbk
 description: "A new Flutter project."
 publish_to: "none"
-version: 2.0.5+35
+version: 2.0.7+37
 environment:
   sdk: ^3.8.1
 
@@ -63,6 +63,7 @@ dependencies:
   bidi: ^2.0.13
   cloud_functions: 6.0.4
   firebase_app_check: 0.4.1+2
+  flutter_secure_storage: ^10.3.4
 
 dev_dependencies:
   flutter_launcher_icons: "^0.14.1"

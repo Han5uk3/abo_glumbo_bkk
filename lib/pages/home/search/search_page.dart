@@ -118,7 +118,6 @@ class _SearchPageState extends State<SearchPage> {
                 return service;
               }
             } catch (e) {
-              debugPrint('Error parsing service from document ${doc.id}: $e');
               // Return null for invalid services, we'll filter them out
               return null;
             }
@@ -134,7 +133,6 @@ class _SearchPageState extends State<SearchPage> {
         });
       }
     } catch (e) {
-      debugPrint('Error fetching services: $e');
       if (mounted) {
         setState(() {
           isLoading = false;

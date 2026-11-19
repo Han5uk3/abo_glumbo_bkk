@@ -195,10 +195,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                 return _handleNavigation(request.url, widget.isFromBooking);
               },
               onPageStarted: (String url) {
-                debugPrint('Page started loading: $url');
               },
               onPageFinished: (String url) {
-                debugPrint('Page finished loading: $url');
               },
             ),
           )
@@ -224,7 +222,6 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         }
       }
     } catch (e) {
-      debugPrint('Payment initialization error: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;

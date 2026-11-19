@@ -109,10 +109,21 @@ class _HomePageState extends State<HomePage>
     try {
       _isGuest = LocalStoreHelper.getGuestUser();
     } catch (e) {
-      debugPrint('❌ Error getting guest user: $e');
       _isGuest = false;
     }
   }
+
+  String getUserName() {
+    if (_isGuest) {
+      return AppLocalizations.of(context)?.guest ?? "Guest";
+    }
+    try {
+      return LocalStoreHelper.getUserName();
+    } catch (e) {
+      return '';
+    }
+  }
+
 
   Future<void> _initializeAsync() async {
     if (_isInitialized || _isDisposed) return;
@@ -125,8 +136,7 @@ class _HomePageState extends State<HomePage>
       if (!_isDisposed) {
         _isInitialized = true;
       }
-    } catch (e) {
-      debugPrint('❌ Error during async initialization: $e');
+    } catch (_) {
     }
   }
 
@@ -143,8 +153,7 @@ class _HomePageState extends State<HomePage>
       if (!_isDisposed) {
         WidgetsBinding.instance.addObserver(this);
       }
-    } catch (e) {
-      debugPrint('❌ Error initializing authenticated user: $e');
+    } catch (_) {
     }
   }
 
@@ -237,7 +246,7 @@ class _HomePageState extends State<HomePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${AppLocalizations.of(context)!.welcome}, ${LocalStoreHelper.getUserName()}",
+                        "${AppLocalizations.of(context)!.welcome}, ${getUserName()}",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.white,

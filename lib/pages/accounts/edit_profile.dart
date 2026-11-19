@@ -14,7 +14,6 @@ import 'package:abo_glumbo_bbk/services/otp_api.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,9 +57,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       // 2. Fill text fields
       _fillOut();
     } catch (e) {
-      if (kDebugMode) {
-        print('Error loading data: $e');
-      }
       if (mounted) {
         _showSnackBar(
           AppLocalizations.of(context)?.errorFillingProfile ??

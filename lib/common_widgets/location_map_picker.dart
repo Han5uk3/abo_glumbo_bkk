@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:ui';
 import 'package:abo_glumbo_bbk/apis/place_suggestion_api.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
@@ -63,7 +62,6 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
   void initState() {
     super.initState();
     _initializeLocation();
-    log("populating Controllers");
 
     _populateControllers();
 
@@ -139,8 +137,7 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
           }
         }
       }
-    } catch (e) {
-      log("Error checking location permissions: $e");
+    } catch (_) {
     }
   }
 
@@ -153,26 +150,22 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
       return;
     }
 
-    log("getting user details");
     try {
       final uid = LocalStoreHelper.getUID();
       if (uid == null || uid.isEmpty) {
-        log("⚠️ No UID found, skipping user details fetch");
         return;
       }
 
       final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
       if (userDoc.exists) {
         final data = userDoc.data() as Map<String, dynamic>?;
-        log("got user details: ${data.toString()}");
         if (data != null && mounted) {
           setState(() {
             _phoneNumberController.text = data['phone'] ?? '';
           });
         }
       }
-    } catch (e) {
-      log("❌ Error fetching user details: $e");
+    } catch (_) {
     }
   }
 
@@ -195,16 +188,12 @@ class _LocationMapPickerState extends State<LocationMapPicker> {
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    log("[MAP_DEBUG] 🗺️ onMapCreated triggered for LocationMapPicker");
     mapController = controller;
     setState(() {
       _mapReady = true;
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      log(
-        "[MAP_DEBUG] 📍 Centering camera on: ${_selectedLocation?.latitude}, ${_selectedLocation?.longitude}",
-      );
       _moveCameraToLocation(_selectedLocation!, animate: false);
       _getAddressFromLatLng(_selectedLocation!, showLoader: true);
     });

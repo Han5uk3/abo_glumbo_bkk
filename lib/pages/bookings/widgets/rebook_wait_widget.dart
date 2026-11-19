@@ -123,7 +123,6 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
     } catch (e) {
       // Fall back to the model we were given rather than blocking on a transient
       // network error — the offer simply expires if they really are unavailable.
-      debugPrint('Could not refresh technician before rebook: $e');
     }
 
     // Same gate the Cloud Functions apply to every automated assignment path, so a
@@ -223,7 +222,6 @@ class _RebookWaitWidgetState extends State<RebookWaitWidget>
         _listenToOffers();
       }
     } catch (e) {
-      debugPrint("Error starting rebook flow: $e");
       widget.onFailed(customerCancelled: false);
     }
   }

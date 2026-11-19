@@ -23,6 +23,29 @@ class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   static String? phoneNumber;
 
+  /// Whether this device still holds a Firebase session for [uid] that the
+  /// server accepts. A disabled or deleted account or a revoked session fails;
+  /// an unreachable network does not, since the SDK re-checks on its next
+  /// token refresh anyway.
+  static Future<bool> hasValidSessionFor(String? uid) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (uid == null ||
+        uid.isEmpty ||
+        user == null ||
+        user.isAnonymous ||
+        user.uid != uid) {
+      return false;
+    }
+    try {
+      await user.getIdToken(true);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      return e.code == 'network-request-failed';
+    } catch (_) {
+      return false;
+    }
+  }
+
   String _sanitizeOTP(String input) {
     // Remove spaces and convert Arabic digits to ASCII for OTP
     String result = input.replaceAll(RegExp(r'\s'), '');
@@ -61,15 +84,9 @@ class AuthServices {
     OtpPurpose purpose = OtpPurpose.login,
     String? expectedUid,
   }) async {
-    debugPrint('🟢 [CUSTOMER AUTH] sendOTP method called');
-    debugPrint('📱 [CUSTOMER AUTH] Phone number: $phoneNumber');
 
     String sanitizedPhoneNumber = CountryCodeDetector.normalizeSaudiPhone(
       phoneNumber,
-    );
-    debugPrint('🔢 [CUSTOMER AUTH] Sanitized number: $sanitizedPhoneNumber');
-    debugPrint(
-      '📱 [CUSTOMER AUTH] Platform: ${Platform.isIOS ? "iOS" : "Android"}',
     );
 
     AuthServices.phoneNumber = sanitizedPhoneNumber;
@@ -92,18 +109,11 @@ class AuthServices {
 
     try {
       if (Platform.isIOS) {
-        debugPrint(
-          '🍎 [CUSTOMER AUTH] Explicitly setting appVerificationDisabledForTesting to false to clear cache',
-        );
         await FirebaseAuth.instance.setSettings(
           appVerificationDisabledForTesting: false,
           userAccessGroup: null,
         );
       }
-
-      debugPrint(
-        '📞 [CUSTOMER AUTH] Calling Firebase verifyPhoneNumber (no-await version)...',
-      );
 
       var codeWasSent = false;
       var verifiedWithoutCode = false;
@@ -112,9 +122,6 @@ class AuthServices {
         forceResendingToken: forceResendingToken,
         timeout: const Duration(seconds: 120),
         verificationCompleted: (PhoneAuthCredential credential) {
-          debugPrint(
-            '✅ [CUSTOMER AUTH] verificationCompleted triggered (codeSent: $codeWasSent)',
-          );
           AuthServices.phoneNumber = sanitizedPhoneNumber;
           if (codeWasSent) {
             _autoVerifiedController.add((
@@ -127,14 +134,9 @@ class AuthServices {
           }
         },
         verificationFailed: (FirebaseAuthException e) {
-          debugPrint('❌ [CUSTOMER AUTH] verificationFailed triggered');
-          debugPrint('❌ [CUSTOMER AUTH] Code: ${e.code}');
-          debugPrint('❌ [CUSTOMER AUTH] Message: ${e.message}');
           onError(e);
         },
         codeSent: (String verificationId, int? resendToken) {
-          debugPrint('✅ [CUSTOMER AUTH] codeSent triggered');
-          debugPrint('🆔 [CUSTOMER AUTH] ID: $verificationId');
           // Already verified instantly and the OTP page is open with that
           // credential; a second page for the same number is not wanted.
           if (verifiedWithoutCode) return;
@@ -142,13 +144,10 @@ class AuthServices {
           onCodeSent(verificationId, resendToken: resendToken);
         },
         codeAutoRetrievalTimeout: (String verificationId) {
-          debugPrint('⏰ [CUSTOMER AUTH] codeAutoRetrievalTimeout triggered');
         },
       );
 
-      debugPrint('✅ [CUSTOMER AUTH] verifyPhoneNumber call initiated');
     } catch (e) {
-      debugPrint('💥 [CUSTOMER AUTH] Exception in sendOTP: $e');
       if (e is FirebaseAuthException) {
         onError(e);
       } else {
@@ -156,7 +155,6 @@ class AuthServices {
       }
       rethrow;
     }
-    debugPrint('🏁 [CUSTOMER AUTH] sendOTP method complete');
   }
 
   Future<void> _sendTaqnyatOtp({
@@ -197,7 +195,6 @@ class AuthServices {
       await _auth.currentUser?.reload();
     } catch (e) {
       // The change is already saved; the session refreshes on its own later.
-      debugPrint('⚠️ [CUSTOMER AUTH] Could not reload user: $e');
     }
     return newPhone;
   }
@@ -213,15 +210,9 @@ class AuthServices {
     String locale = 'ar',
     String? expectedUid,
   }) async {
-    debugPrint('🔵 [CUSTOMER AUTH] resendOTP method called');
-    debugPrint('📱 [CUSTOMER AUTH] Phone number: $phoneNumber');
-    debugPrint('🔑 [CUSTOMER AUTH] Resend token: $resendToken');
 
     String sanitizedPhoneNumber = CountryCodeDetector.normalizeSaudiPhone(
       phoneNumber,
-    );
-    debugPrint(
-      '🔢 [CUSTOMER AUTH] Sanitized phone number: $sanitizedPhoneNumber',
     );
 
     if (OtpApi.isTaqnyatVerification(currentVerificationId)) {
@@ -237,75 +228,42 @@ class AuthServices {
     }
 
     try {
-      debugPrint('📞 [CUSTOMER AUTH] Calling Firebase verifyPhoneNumber...');
       await _auth.verifyPhoneNumber(
         phoneNumber: sanitizedPhoneNumber,
         forceResendingToken: resendToken,
         timeout: const Duration(seconds: 120),
         verificationCompleted: (PhoneAuthCredential credential) {
           // Resends start from the OTP page, which is open to receive this.
-          debugPrint(
-            '✅ [CUSTOMER AUTH] verificationCompleted callback triggered',
-          );
           _autoVerifiedController.add((
             phoneNumber: sanitizedPhoneNumber,
             credential: credential,
           ));
         },
         verificationFailed: (FirebaseAuthException e) {
-          debugPrint('❌ [CUSTOMER AUTH] verificationFailed callback triggered');
-          debugPrint('❌ [CUSTOMER AUTH] Error code: ${e.code}');
-          debugPrint('❌ [CUSTOMER AUTH] Error message: ${e.message}');
 
-          debugPrint('❌ [CUSTOMER AUTH] Calling onError callback');
           onError(e);
         },
         codeSent: (String verificationId, int? token) {
-          debugPrint('✅ [CUSTOMER AUTH] codeSent callback triggered');
-          debugPrint('🆔 [CUSTOMER AUTH] Verification ID: $verificationId');
-          debugPrint('🔑 [CUSTOMER AUTH] New resend token: $token');
 
           _verificationId = verificationId;
-          debugPrint('📞 [CUSTOMER AUTH] Calling onCodeSent callback');
           onCodeSent(verificationId, resendToken: token);
-          debugPrint('✅ [CUSTOMER AUTH] onCodeSent callback completed');
         },
         codeAutoRetrievalTimeout: (String verificationId) {
-          debugPrint(
-            '⏰ [CUSTOMER AUTH] codeAutoRetrievalTimeout callback triggered',
-          );
-          debugPrint(
-            '🆔 [CUSTOMER AUTH] Timeout verification ID: $verificationId',
-          );
 
           _verificationId = verificationId;
           if (onAutoRetrievalTimeout != null) {
-            debugPrint(
-              '📞 [CUSTOMER AUTH] Calling onAutoRetrievalTimeout callback',
-            );
             onAutoRetrievalTimeout(verificationId);
           }
         },
       );
-      debugPrint(
-        '✅ [CUSTOMER AUTH] verifyPhoneNumber call completed (setup done, waiting for callbacks)',
-      );
     } catch (e) {
-      debugPrint('💥 [CUSTOMER AUTH] Exception caught in resendOTP: $e');
       if (e is FirebaseAuthException) {
-        debugPrint(
-          '❌ [CUSTOMER AUTH] Calling onError callback from catch block',
-        );
         onError(e);
       } else {
-        debugPrint(
-          '❌ [CUSTOMER AUTH] Unknown error - wrapping in FirebaseAuthException',
-        );
         onError(FirebaseAuthException(code: 'unknown', message: e.toString()));
       }
       rethrow;
     }
-    debugPrint('🏁 [CUSTOMER AUTH] resendOTP method complete');
   }
 
   Future<UserCredential> verifyOTP(
@@ -346,25 +304,7 @@ class AuthServices {
 
       return tempUserCredential;
     } catch (e) {
-      debugPrint("Error verifying OTP: $e");
       if (e is FirebaseAuthException) {
-        // Enhanced error handling for iOS-specific issues
-        switch (e.code) {
-          case 'invalid-verification-code':
-            debugPrint("iOS: Invalid verification code provided");
-            break;
-          case 'session-expired':
-            debugPrint("iOS: OTP session expired");
-            break;
-          case 'too-many-requests':
-            debugPrint("iOS: Too many requests - temporarily blocked");
-            break;
-          case 'network-request-failed':
-            debugPrint("iOS: Network request failed");
-            break;
-          default:
-            debugPrint("iOS: Unknown error - ${e.code}: ${e.message}");
-        }
         rethrow;
       } else {
         throw FirebaseAuthException(
@@ -393,15 +333,12 @@ class AuthServices {
     try {
       final uid = userCredential.user?.uid;
       if (uid == null) {
-        debugPrint("❌ Error: User UID is null");
         return;
       }
 
-      debugPrint("🔍 Checking user in customers collection: $uid");
       final userDoc = await AppFirestore.customersCollectionRef.doc(uid).get();
 
       if (!context.mounted) {
-        debugPrint("⚠️ Context unmounted after Firestore check in checkUser");
         return;
       }
 
@@ -412,13 +349,8 @@ class AuthServices {
         final userRole =
             userData?['role']?.toString().toLowerCase() ?? 'customer';
 
-        debugPrint("🔍 User found with role: $userRole");
-
         // Only allow users with role "customer" to log in via customer app
         if (userRole != 'customer') {
-          debugPrint(
-            "❌ User role is '$userRole', not 'customer'. Access denied.",
-          );
           // Sign out the Firebase Auth session since this user isn't a customer
           await FirebaseAuth.instance.signOut();
           if (context.mounted) {
@@ -441,8 +373,6 @@ class AuthServices {
           return;
         }
 
-        debugPrint("✅ User exists with role 'customer', logging in...");
-
         // Setup authenticated state within the code
         await LocalStoreHelper.putUID(uid);
         await LocalStoreHelper.putUserName(userData?['name'] ?? '');
@@ -450,14 +380,12 @@ class AuthServices {
         await LocalStoreHelper.putBlockStatus(false);
 
         // Update current location address on login
-        debugPrint("📍 Updating current location on login...");
         await _updateCurrentLocationAddress(uid);
 
         // Refresh FCM token on successful login (re-login)
         await NotificationServices.refreshFCMToken();
 
         if (context.mounted) {
-          debugPrint("🏠 Navigating to home...");
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const Home()),
@@ -467,7 +395,6 @@ class AuthServices {
       } else {
         // UID not found — check by phone number to prevent duplicate accounts
         final phone = userCredential.user?.phoneNumber;
-        debugPrint("🔍 UID not found, checking customers by phone: $phone");
 
         if (phone != null && phone.isNotEmpty) {
           final phoneQuery = await AppFirestore.customersCollectionRef
@@ -481,10 +408,6 @@ class AuthServices {
             final oldData = oldDoc.data() as Map<String, dynamic>;
             final oldDocId = oldDoc.id;
 
-            debugPrint(
-              "✅ Existing customer found by phone (old UID: $oldDocId), migrating to new UID: $uid",
-            );
-
             // Update UID field and write to new doc
             oldData['uid'] = uid;
             oldData['updatedAt'] = Timestamp.now();
@@ -493,7 +416,6 @@ class AuthServices {
             // Delete old document
             if (oldDocId != uid) {
               await AppFirestore.customersCollectionRef.doc(oldDocId).delete();
-              debugPrint("🗑️ Old customer doc ($oldDocId) deleted");
             }
 
             // Login with migrated account
@@ -506,7 +428,6 @@ class AuthServices {
             await NotificationServices.refreshFCMToken();
 
             if (context.mounted) {
-              debugPrint("🏠 Navigating to home (migrated account)...");
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const Home()),
@@ -518,9 +439,6 @@ class AuthServices {
         }
 
         // Truly new user — redirect to signup
-        debugPrint(
-          "📝 No existing customer found by phone, navigating to signup...",
-        );
         if (context.mounted) {
           Navigator.pushAndRemoveUntil(
             context,
@@ -530,7 +448,6 @@ class AuthServices {
         }
       }
     } catch (e) {
-      debugPrint("❌ Error in checkUser: $e");
       if (e is FirebaseAuthException) {
         rethrow;
       } else {
@@ -544,8 +461,6 @@ class AuthServices {
 
   Future<void> signInAsGuest(BuildContext context) async {
     try {
-      debugPrint("👤 Setting up Guest User state...");
-
       final currentUid = LocalStoreHelper.getUID();
       final isBiometricEnabled = currentUid != null
           ? LocalStoreHelper.getBiometricAuthEnabled(currentUid)
@@ -561,7 +476,6 @@ class AuthServices {
       await LocalStoreHelper.putBlockStatus(false);
 
       if (context.mounted) {
-        debugPrint("🏠 Navigating to home as Guest...");
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const Home(initialIndex: 0)),
@@ -569,7 +483,6 @@ class AuthServices {
         );
       }
     } catch (e) {
-      debugPrint("❌ Error in signInAsGuest: $e");
       rethrow;
     }
   }
@@ -577,8 +490,6 @@ class AuthServices {
   /// Update or create current location address on login
   Future<void> _updateCurrentLocationAddress(String uid) async {
     try {
-      debugPrint("📍 Fetching current location for user: $uid");
-
       // Get current position
       Position? position;
       try {
@@ -587,31 +498,23 @@ class AuthServices {
           timeLimit: const Duration(seconds: 10),
         );
       } catch (e) {
-        debugPrint("⚠️ Failed to get current position: $e");
         position = null;
       }
 
       if (position == null) {
-        debugPrint("⚠️ Could not fetch location, skipping update");
         return;
       }
-
-      debugPrint(
-        "📍 Position fetched: ${position.latitude}, ${position.longitude}",
-      );
 
       // Get customer document
       final customerDoc = await AppFirestore.customersCollectionRef
           .doc(uid)
           .get();
       if (!customerDoc.exists) {
-        debugPrint("❌ Customer document not found");
         return;
       }
 
       final customerData = customerDoc.data();
       if (customerData == null) {
-        debugPrint("❌ Customer data is null");
         return;
       }
 
@@ -624,11 +527,7 @@ class AuthServices {
       String addressName = 'Current Location';
       try {
         // Reverse geocoding is handled externally; use a safe fallback
-        debugPrint(
-          "📍 Skipping reverse geocode — using default 'Current Location'",
-        );
-      } catch (e) {
-        debugPrint("⚠️ Reverse geocoding failed: $e");
+      } catch (_) {
       }
 
       // Find existing current location address
@@ -640,7 +539,6 @@ class AuthServices {
 
       if (currentLocationIndex != -1) {
         // Update existing current location
-        debugPrint("🔄 Updating existing current location address");
         addresses[currentLocationIndex] = addresses[currentLocationIndex]
             .copyWith(
               fullName: addressName,
@@ -650,7 +548,6 @@ class AuthServices {
             );
       } else {
         // Create new current location address
-        debugPrint("➕ Creating new current location address");
         final newAddress = AddressModel(
           id: const Uuid().v4(),
           fullName: addressName,
@@ -670,10 +567,7 @@ class AuthServices {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      debugPrint("✅ Current location address updated successfully");
-    } catch (e, stackTrace) {
-      debugPrint("❌ Error updating current location: $e");
-      debugPrint("Stack trace: $stackTrace");
+    } catch (e) {
       // Don't throw - location update failure shouldn't block login
     }
   }
