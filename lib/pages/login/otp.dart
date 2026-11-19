@@ -1,15 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
-import 'package:abo_glumbo_bbk/helpers/collections.dart';
 import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
-import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
-import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/services/auth_services.dart';
+import 'package:abo_glumbo_bbk/services/otp_api.dart';
 import 'package:abo_glumbo_bbk/services/sms_autofill_service.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
@@ -19,6 +16,9 @@ class OtpPage extends StatefulWidget {
   final String? verificationId;
   final bool? isFromProfile;
 
+  /// The account whose number is being changed, when [isFromProfile] is true.
+  final String? expectedUid;
+
   /// Set when Android verified the number without sending an SMS; the page
   /// signs in with it straight away instead of waiting for a code.
   final PhoneAuthCredential? autoVerifiedCredential;
@@ -27,6 +27,7 @@ class OtpPage extends StatefulWidget {
     this.phoneNumber,
     this.verificationId,
     this.isFromProfile,
+    this.expectedUid,
     this.autoVerifiedCredential,
   });
 
@@ -37,7 +38,6 @@ class OtpPage extends StatefulWidget {
 class _OtpPageState extends State<OtpPage> {
   bool isLoading = false;
   bool isResendingOtp = false;
-  bool _isMigratingCustomerData = false;
   bool _isSmsAutofillListening = false;
   final ValueNotifier<int> _resendSecondsNotifier = ValueNotifier<int>(60);
   Timer? _timer;
@@ -49,7 +49,6 @@ class _OtpPageState extends State<OtpPage> {
 
   String? _verificationId;
   int? _resendToken;
-  bool _isDialogShowing = false;
   final SmsAutofillService _smsAutofillService = SmsAutofillService();
   StreamSubscription<({String phoneNumber, PhoneAuthCredential credential})>?
   _autoVerifiedSub;
@@ -123,6 +122,12 @@ class _OtpPageState extends State<OtpPage> {
       await AuthServices().resendOTP(
         phoneNumber: widget.phoneNumber ?? '',
         resendToken: _resendToken,
+        currentVerificationId: _verificationId,
+        purpose: widget.isFromProfile == true
+            ? OtpPurpose.changePhone
+            : OtpPurpose.login,
+        locale: Localizations.localeOf(context).languageCode,
+        expectedUid: widget.expectedUid,
         onCodeSent: (verificationId, {int? resendToken}) {
           debugPrint('✅ [CUSTOMER OTP] onCodeSent callback triggered!');
           debugPrint('🆔 [CUSTOMER OTP] New verification ID: $verificationId');
@@ -245,84 +250,6 @@ class _OtpPageState extends State<OtpPage> {
     }
   }
 
-  Future<void> migrateUserData(
-    String oldUid,
-    String newUid,
-    String newPhone,
-  ) async {
-    try {
-      if (mounted) {
-        setState(() => _isMigratingCustomerData = true);
-        _showMigrationDialog();
-      }
-
-      final oldCustomerDoc = await AppFirestore.customersCollectionRef
-          .doc(oldUid)
-          .get();
-      if (oldCustomerDoc.exists) {
-        final oldData = oldCustomerDoc.data() as Map<String, dynamic>;
-        final newData = <String, dynamic>{
-          ...oldData,
-          'uid': newUid,
-          'phone': newPhone,
-          'updatedAt': FieldValue.serverTimestamp(),
-        };
-        await AppFirestore.customersCollectionRef.doc(newUid).set(newData);
-      }
-
-      final bookingsQuery = await AppFirestore.bookingsCollectionRef
-          .where('customer.uid', isEqualTo: oldUid)
-          .get();
-      if (bookingsQuery.docs.isNotEmpty) {
-        for (final bookingDoc in bookingsQuery.docs) {
-          final Map<String, dynamic> updatedCustomer =
-              Map<String, dynamic>.from(bookingDoc['customer'] ?? {});
-          updatedCustomer['uid'] = newUid;
-          updatedCustomer['phone'] = newPhone;
-          updatedCustomer['updatedAt'] = FieldValue.serverTimestamp();
-
-          await AppFirestore.bookingsCollectionRef.doc(bookingDoc.id).update({
-            'customer': updatedCustomer,
-            'phone': newPhone,
-            'uid': newUid,
-            'updatedAt': FieldValue.serverTimestamp(),
-          });
-        }
-      }
-
-      final notificationQuery = await AppFirestore.notificationsCollectionRef
-          .where('userId', isEqualTo: oldUid)
-          .get();
-      if (notificationQuery.docs.isNotEmpty) {
-        for (final notificationDoc in notificationQuery.docs) {
-          await AppFirestore.notificationsCollectionRef
-              .doc(notificationDoc.id)
-              .update({'userId': newUid});
-        }
-      }
-
-      await AppFirestore.customersCollectionRef.doc(oldUid).delete();
-
-      if (mounted) {
-        setState(() => _isMigratingCustomerData = false);
-        _closeMigrationDialog();
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isMigratingCustomerData = false);
-        _closeMigrationDialog();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '${AppLocalizations.of(context)?.unexpectedErrorOccurred}: $e',
-            ),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    }
-  }
-
   void verifyOtp() async {
     if (isLoading) return;
 
@@ -357,6 +284,11 @@ class _OtpPageState extends State<OtpPage> {
       return;
     }
 
+    if (widget.isFromProfile == true) {
+      await _confirmPhoneChange(verificationId, otp);
+      return;
+    }
+
     await _signInAndContinue(
       () => AuthServices().verifyOTP(
         context,
@@ -380,9 +312,38 @@ class _OtpPageState extends State<OtpPage> {
   }
 
   /// Runs [signIn], then routes the same way for a typed, shared or
-  /// auto-verified code: profile phone change, or checkUser for login.
+  /// auto-verified code.
   Future<void> _signInAndContinue(
     Future<UserCredential> Function() signIn, {
+    String? codeToShow,
+  }) {
+    return _runVerification(() async {
+      final UserCredential userCredential = await signIn();
+      if (!mounted) return;
+      await AuthServices().checkUser(
+        userCredential: userCredential,
+        context: context,
+      );
+    }, codeToShow: codeToShow);
+  }
+
+  /// Moves this account to the verified number, then returns that number to
+  /// the profile page. The user stays signed in on the same UID.
+  Future<void> _confirmPhoneChange(String verificationId, String otp) {
+    return _runVerification(() async {
+      final newPhone = await AuthServices().confirmPhoneChange(
+        verificationId: verificationId,
+        otp: otp,
+        expectedUid: widget.expectedUid ?? '',
+      );
+      if (!mounted) return;
+      setState(() => isLoading = false);
+      Navigator.pop(context, newPhone);
+    });
+  }
+
+  Future<void> _runVerification(
+    Future<void> Function() action, {
     String? codeToShow,
   }) async {
     setState(() {
@@ -393,36 +354,7 @@ class _OtpPageState extends State<OtpPage> {
     }
 
     try {
-      final UserCredential userCredential = await signIn();
-      if (widget.isFromProfile == true) {
-        final String oldUid = LocalStoreHelper.getUID() ?? '';
-        final String newUid = userCredential.user?.uid ?? '';
-        if (oldUid != null && newUid != null && oldUid != newUid) {
-          await migrateUserData(
-            oldUid,
-            newUid,
-            userCredential.user?.phoneNumber ?? '',
-          );
-        }
-        LocalStoreHelper.clearGuestUser();
-        LocalStoreHelper.clearUID();
-        LocalStoreHelper.putlogoutStatus(true);
-        await FirebaseAuth.instance.signOut();
-        await Future.delayed(const Duration(milliseconds: 500));
-        if (mounted) {
-          setState(() => isLoading = false);
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-            (route) => false,
-          );
-        }
-      } else {
-        await AuthServices().checkUser(
-          userCredential: userCredential,
-          context: context,
-        );
-      }
+      await action();
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -460,6 +392,16 @@ class _OtpPageState extends State<OtpPage> {
               errorMessage =
                   AppLocalizations.of(context)?.internalError ??
                   'An internal error occurred. Please try again later.';
+              break;
+            case 'phone-already-in-use':
+              errorMessage =
+                  AppLocalizations.of(context)?.phoneNumberAlreadyExists ??
+                  'Phone number already exists';
+              break;
+            case 'requires-recent-login':
+              errorMessage =
+                  AppLocalizations.of(context)?.signInAgainToChangePhone ??
+                  'Please sign in again to change your phone number.';
               break;
             default:
               errorMessage =
@@ -519,7 +461,7 @@ class _OtpPageState extends State<OtpPage> {
       });
 
       if (smsCode != null && smsCode.isNotEmpty) {
-        debugPrint('✅ [CUSTOMER OTP] SMS code received: $smsCode');
+        debugPrint('✅ [CUSTOMER OTP] SMS code received');
 
         _otpController.text = smsCode;
 
@@ -580,7 +522,7 @@ class _OtpPageState extends State<OtpPage> {
         ),
       ),
       body: AbsorbPointer(
-        absorbing: _isMigratingCustomerData,
+        absorbing: isLoading,
         child: SafeArea(
           child: CustomScrollView(
             slivers: [
@@ -793,137 +735,6 @@ class _OtpPageState extends State<OtpPage> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  void _closeMigrationDialog() {
-    if (_isDialogShowing && mounted) {
-      _isDialogShowing = false;
-      Navigator.of(context).pop();
-    }
-  }
-
-  void _showMigrationDialog() {
-    if (!_isDialogShowing && mounted) {
-      _isDialogShowing = true;
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        barrierColor: Colors.black.withOpacity(0.85),
-        builder: (context) => _migratingDataDialog(),
-      );
-    }
-  }
-
-  Widget _migratingDataDialog() {
-    return AlertDialog(
-      backgroundColor: AppColors.bgBlueTint,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      contentPadding: const EdgeInsets.all(32),
-      content: WillPopScope(
-        onWillPop: () async => false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.secondary.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.sync_alt_rounded,
-                  size: 40,
-                  color: AppColors.secondary,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Loader(),
-            const SizedBox(height: 28),
-            Text(
-              AppLocalizations.of(context)!.migratingData,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-                letterSpacing: -0.5,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              AppLocalizations.of(context)!.weAreMigratingYourData,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                color: Colors.black54,
-                height: 1.5,
-                letterSpacing: 0.1,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Container(
-              width: double.infinity,
-              height: 6,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(3),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(3),
-                child: LinearProgressIndicator(
-                  backgroundColor: Colors.transparent,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    AppColors.secondary,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.orange.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.orange.shade200, width: 1),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline_rounded,
-                    color: Colors.orange.shade600,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      AppLocalizations.of(context)!.pleaseDontCloseTheApp,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.orange.shade700,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              AppLocalizations.of(context)!.transferringData,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey.shade600,
-              ),
-            ),
-          ],
         ),
       ),
     );

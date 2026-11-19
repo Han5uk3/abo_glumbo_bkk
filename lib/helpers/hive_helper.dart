@@ -79,6 +79,15 @@ class LocalStoreHelper {
     await MyApp.box.delete('phone_number');
   }
 
+  // Last OTP provider read from remote settings
+  static Future<void> putOtpProvider(String provider) async {
+    await MyApp.box.put('otp_provider', provider);
+  }
+
+  static String? getOtpProvider() {
+    return MyApp.box.get('otp_provider');
+  }
+
   static Future<String> putUserlanguage(String lang) async {
     await MyApp.box.put('user_language', lang);
     await MyApp.box.flush();

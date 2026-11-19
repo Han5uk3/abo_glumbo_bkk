@@ -1,6 +1,10 @@
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+
+/// Which service delivers login codes.
+enum OtpProvider { taqnyat, firebase }
 
 /// Reads remote feature flags from `app_settings/customer_app_v1`.
 ///
@@ -20,8 +24,40 @@ class AppSettingsService {
   /// Flag deciding whether guest ("sign up later") login is offered.
   static const String showGuestLoginField = 'showGuestLogin';
 
+  /// Set to `firebase` to fall back to Firebase SMS, for example during a
+  /// Taqnyat outage. Any other value, or none, uses Taqnyat.
+  static const String otpProviderField = 'otpProvider';
+
+  static const Duration _otpProviderTimeout = Duration(milliseconds: 2500);
+
   static DocumentReference<Object?> get _docRef =>
       AppFirestore.appSettingsCollectionRef.doc(docId);
+
+  static OtpProvider _parseOtpProvider(Object? value) =>
+      value == OtpProvider.firebase.name
+      ? OtpProvider.firebase
+      : OtpProvider.taqnyat;
+
+  /// The provider to use for the login the user just started.
+  ///
+  /// The wait is bounded so a slow network cannot hold up login. If the flag
+  /// cannot be read, the last value seen on this device applies.
+  static Future<OtpProvider> resolveOtpProvider() async {
+    try {
+      final snapshot = await _docRef
+          .get(const GetOptions(source: Source.server))
+          .timeout(_otpProviderTimeout);
+      final data = snapshot.data();
+      final provider = _parseOtpProvider(
+        data is Map<String, dynamic> ? data[otpProviderField] : null,
+      );
+      await LocalStoreHelper.putOtpProvider(provider.name);
+      return provider;
+    } catch (e) {
+      debugPrint('⚠️ Failed to read $otpProviderField flag: $e');
+      return _parseOtpProvider(LocalStoreHelper.getOtpProvider());
+    }
+  }
 
   static bool _readFlag(
     DocumentSnapshot<Object?> snapshot,

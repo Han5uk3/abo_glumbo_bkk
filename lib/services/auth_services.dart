@@ -9,7 +9,9 @@ import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/signup_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
+import 'package:abo_glumbo_bbk/services/app_settings_service.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
+import 'package:abo_glumbo_bbk/services/otp_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
@@ -56,6 +58,8 @@ class AuthServices {
     required Function(FirebaseAuthException e) onError,
     required void Function(PhoneAuthCredential credential) onAutoVerified,
     int? forceResendingToken,
+    OtpPurpose purpose = OtpPurpose.login,
+    String? expectedUid,
   }) async {
     debugPrint('🟢 [CUSTOMER AUTH] sendOTP method called');
     debugPrint('📱 [CUSTOMER AUTH] Phone number: $phoneNumber');
@@ -70,6 +74,21 @@ class AuthServices {
 
     AuthServices.phoneNumber = sanitizedPhoneNumber;
     _verificationId = null;
+
+    // Read before the first await, while the context is certainly valid.
+    final locale = Localizations.localeOf(context).languageCode;
+    final provider = await AppSettingsService.resolveOtpProvider();
+    if (provider == OtpProvider.taqnyat) {
+      await _sendTaqnyatOtp(
+        phoneNumber: sanitizedPhoneNumber,
+        purpose: purpose,
+        locale: locale,
+        expectedUid: expectedUid,
+        onCodeSent: onCodeSent,
+        onError: onError,
+      );
+      return;
+    }
 
     try {
       if (Platform.isIOS) {
@@ -140,12 +159,59 @@ class AuthServices {
     debugPrint('🏁 [CUSTOMER AUTH] sendOTP method complete');
   }
 
+  Future<void> _sendTaqnyatOtp({
+    required String phoneNumber,
+    required OtpPurpose purpose,
+    required String locale,
+    required String? expectedUid,
+    required Function(String verificationId, {int? resendToken}) onCodeSent,
+    required Function(FirebaseAuthException e) onError,
+  }) async {
+    try {
+      final verificationId = await OtpApi.requestOtp(
+        phone: phoneNumber,
+        purpose: purpose,
+        locale: locale,
+        expectedUid: expectedUid,
+      );
+      onCodeSent(verificationId);
+    } on FirebaseAuthException catch (e) {
+      onError(e);
+    }
+  }
+
+  /// Moves the signed-in account to the number the code was sent to, keeping
+  /// its UID, and returns the new number.
+  Future<String> confirmPhoneChange({
+    required String verificationId,
+    required String otp,
+    required String expectedUid,
+  }) async {
+    final newPhone = await OtpApi.verifyPhoneChange(
+      verificationId: verificationId,
+      code: _sanitizeOTP(otp),
+      expectedUid: expectedUid,
+    );
+    AuthServices.phoneNumber = newPhone;
+    try {
+      await _auth.currentUser?.reload();
+    } catch (e) {
+      // The change is already saved; the session refreshes on its own later.
+      debugPrint('⚠️ [CUSTOMER AUTH] Could not reload user: $e');
+    }
+    return newPhone;
+  }
+
   Future<void> resendOTP({
     required String phoneNumber,
     required int? resendToken,
     required Function(String verificationId, {int? resendToken}) onCodeSent,
     required Function(FirebaseAuthException e) onError,
     Function(String verificationId)? onAutoRetrievalTimeout,
+    String? currentVerificationId,
+    OtpPurpose purpose = OtpPurpose.login,
+    String locale = 'ar',
+    String? expectedUid,
   }) async {
     debugPrint('🔵 [CUSTOMER AUTH] resendOTP method called');
     debugPrint('📱 [CUSTOMER AUTH] Phone number: $phoneNumber');
@@ -157,6 +223,18 @@ class AuthServices {
     debugPrint(
       '🔢 [CUSTOMER AUTH] Sanitized phone number: $sanitizedPhoneNumber',
     );
+
+    if (OtpApi.isTaqnyatVerification(currentVerificationId)) {
+      await _sendTaqnyatOtp(
+        phoneNumber: sanitizedPhoneNumber,
+        purpose: purpose,
+        locale: locale,
+        expectedUid: expectedUid,
+        onCodeSent: onCodeSent,
+        onError: onError,
+      );
+      return;
+    }
 
     try {
       debugPrint('📞 [CUSTOMER AUTH] Calling Firebase verifyPhoneNumber...');
@@ -245,6 +323,16 @@ class AuthServices {
           code: 'invalid-verification-code',
           message: 'Invalid OTP format. Please enter a 6-digit code.',
         );
+      }
+
+      if (OtpApi.isTaqnyatVerification(verificationId)) {
+        final token = await OtpApi.verifyLogin(
+          verificationId: verificationId,
+          code: sanitizedOTP,
+        );
+        final userCredential = await _auth.signInWithCustomToken(token);
+        AuthServices.phoneNumber = userCredential.user?.phoneNumber ?? '';
+        return userCredential;
       }
 
       final credential = PhoneAuthProvider.credential(

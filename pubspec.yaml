@@ -61,6 +61,8 @@ dependencies:
   material_symbols_icons: ^4.2951.0
   ntp: ^2.0.0
   bidi: ^2.0.13
+  cloud_functions: 6.0.4
+  firebase_app_check: 0.4.1+2
 
 dev_dependencies:
   flutter_launcher_icons: "^0.14.1"

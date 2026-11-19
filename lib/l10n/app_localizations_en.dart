@@ -2899,4 +2899,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String technicianTrackingNotification(String distance, String time) {
     return 'The technician is on the way, $distance away, and arrival time is $time';
   }
+
+  @override
+  String get signInAgainToChangePhone =>
+      'Please sign in again to change your phone number.';
+
+  @override
+  String get phoneChangeUnavailable =>
+      'Changing your phone number is temporarily unavailable. Please try again later.';
+
+  @override
+  String get phoneNumberChangedSuccessfully =>
+      'Phone number updated successfully';
 }

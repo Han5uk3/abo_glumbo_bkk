@@ -1088,5 +1088,8 @@
   "complaintResolvedByAdmin": "تم حل الشكوى من قبل الإدارة",
   "adminResolvedYourComplaint": "قامت الإدارة بحل شكواك",
   "bookingRequestTimedOut": "انتهت مهلة طلب الحجز. يرجى الطلب مرة أخرى.",
-  "technicianTrackingNotification": "الفني في الطريق، يبعد {distance}، ووقت الوصول {time}"
+  "technicianTrackingNotification": "الفني في الطريق، يبعد {distance}، ووقت الوصول {time}",
+  "signInAgainToChangePhone": "يرجى تسجيل الدخول مرة أخرى لتغيير رقم هاتفك.",
+  "phoneChangeUnavailable": "تغيير رقم الهاتف غير متاح مؤقتاً. يرجى المحاولة لاحقاً.",
+  "phoneNumberChangedSuccessfully": "تم تحديث رقم الهاتف بنجاح"
 }

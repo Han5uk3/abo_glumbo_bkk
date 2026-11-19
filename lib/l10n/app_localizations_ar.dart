@@ -2856,4 +2856,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String technicianTrackingNotification(String distance, String time) {
     return 'الفني في الطريق، يبعد $distance، ووقت الوصول $time';
   }
+
+  @override
+  String get signInAgainToChangePhone =>
+      'يرجى تسجيل الدخول مرة أخرى لتغيير رقم هاتفك.';
+
+  @override
+  String get phoneChangeUnavailable =>
+      'تغيير رقم الهاتف غير متاح مؤقتاً. يرجى المحاولة لاحقاً.';
+
+  @override
+  String get phoneNumberChangedSuccessfully => 'تم تحديث رقم الهاتف بنجاح';
 }

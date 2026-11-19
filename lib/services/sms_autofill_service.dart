@@ -40,7 +40,7 @@ class SmsAutofillService {
       } else if (result.hasError) {
         debugPrint('❌ [SMS AUTOFILL] ${result.error}');
       } else {
-        debugPrint('✅ [SMS AUTOFILL] OTP extracted: ${result.data?.code}');
+        debugPrint('✅ [SMS AUTOFILL] OTP extracted');
       }
       if (!completer.isCompleted) completer.complete(result.data?.code);
     });

@@ -5445,6 +5445,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The technician is on the way, {distance} away, and arrival time is {time}'**
   String technicianTrackingNotification(String distance, String time);
+
+  /// No description provided for @signInAgainToChangePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in again to change your phone number.'**
+  String get signInAgainToChangePhone;
+
+  /// No description provided for @phoneChangeUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing your phone number is temporarily unavailable. Please try again later.'**
+  String get phoneChangeUnavailable;
+
+  /// No description provided for @phoneNumberChangedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number updated successfully'**
+  String get phoneNumberChangedSuccessfully;
 }
 
 class _AppLocalizationsDelegate

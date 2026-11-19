@@ -2919,4 +2919,16 @@ class AppLocalizationsUr extends AppLocalizations {
   String technicianTrackingNotification(String distance, String time) {
     return 'ٹیکنیشن راستے میں ہے، $distance دور، اور پہنچنے کا وقت ہے $time';
   }
+
+  @override
+  String get signInAgainToChangePhone =>
+      'اپنا فون نمبر تبدیل کرنے کے لیے براہ کرم دوبارہ سائن ان کریں۔';
+
+  @override
+  String get phoneChangeUnavailable =>
+      'فون نمبر کی تبدیلی عارضی طور پر دستیاب نہیں ہے۔ براہ کرم بعد میں دوبارہ کوشش کریں۔';
+
+  @override
+  String get phoneNumberChangedSuccessfully =>
+      'فون نمبر کامیابی سے اپ ڈیٹ ہو گیا';
 }

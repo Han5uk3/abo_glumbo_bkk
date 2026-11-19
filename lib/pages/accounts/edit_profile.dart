@@ -2,12 +2,15 @@ import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/common_widgets/snak_bar.dart';
 import 'package:abo_glumbo_bbk/common_widgets/text_form.dart';
 import 'package:abo_glumbo_bbk/helpers/country_code_detector.dart';
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/pages/login/otp.dart';
 import 'package:abo_glumbo_bbk/services/app_services.dart';
+import 'package:abo_glumbo_bbk/services/app_settings_service.dart';
 import 'package:abo_glumbo_bbk/services/auth_services.dart';
+import 'package:abo_glumbo_bbk/services/otp_api.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,6 +34,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool isPhoneNumberUpdated = false;
   bool _isUpdatingPhone = false;
   int? _resendToken;
+  String? _verifiedPhone;
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
@@ -147,6 +151,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return CountryCodeDetector.isValidSaudiPhone(phoneNumber);
   }
 
+  /// The verified number: the one just changed to, else the one on the profile.
+  String? get _currentPhone => _verifiedPhone ?? widget.customer?.phone;
+
+  void _stopPhoneUpdate() {
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+        _isUpdatingPhone = false;
+      });
+    }
+  }
+
   void _updatePhoneNumber() async {
     // Check if customer data exists
     if (widget.customer == null) {
@@ -176,12 +192,38 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
 
     if (newPhone !=
-        CountryCodeDetector.normalizeSaudiPhone(widget.customer?.phone ?? '')) {
+        CountryCodeDetector.normalizeSaudiPhone(_currentPhone ?? '')) {
       if (mounted) {
         setState(() {
           isLoading = true;
           _isUpdatingPhone = true;
         });
+      }
+
+      // The backend changes the number on this signed-in account, so it needs
+      // a real session for the profile being edited.
+      final uid = widget.customer!.uid ?? '';
+      final sessionUser = FirebaseAuth.instance.currentUser;
+      if (sessionUser == null ||
+          sessionUser.isAnonymous ||
+          sessionUser.uid != uid) {
+        _stopPhoneUpdate();
+        _showSnackBar(
+          AppLocalizations.of(context)?.signInAgainToChangePhone ?? '',
+          backgroundColor: AppColors.red,
+        );
+        return;
+      }
+
+      final otpProvider = await AppSettingsService.resolveOtpProvider();
+      if (!mounted) return;
+      if (otpProvider != OtpProvider.taqnyat) {
+        _stopPhoneUpdate();
+        _showSnackBar(
+          AppLocalizations.of(context)?.phoneChangeUnavailable ?? '',
+          backgroundColor: AppColors.red,
+        );
+        return;
       }
 
       bool isNumberAlreadyExists =
@@ -210,49 +252,46 @@ class _EditProfilePageState extends State<EditProfilePage> {
         context,
         phoneNumber: newPhone,
         forceResendingToken: _resendToken,
-        onCodeSent: (String verificationId, {int? resendToken}) {
-          if (mounted) {
-            setState(() {
-              _resendToken = resendToken;
-              isLoading = false;
-              _isUpdatingPhone = false;
-            });
-          }
+        purpose: OtpPurpose.changePhone,
+        expectedUid: uid,
+        onCodeSent: (String verificationId, {int? resendToken}) async {
+          if (!mounted) return;
+          setState(() {
+            _resendToken = resendToken;
+            isLoading = false;
+            _isUpdatingPhone = false;
+          });
           showSnackBar(
             AppLocalizations.of(context)?.sendingOTP ?? 'Sending OTP...',
             backgroundColor: AppColors.primary,
             context,
           );
-          Navigator.push(
+          final changedPhone = await Navigator.push<String>(
             context,
             MaterialPageRoute(
               builder: (context) => OtpPage(
                 phoneNumber: newPhone,
                 verificationId: verificationId,
                 isFromProfile: true,
+                expectedUid: uid,
               ),
             ),
           );
-        },
-        onAutoVerified: (PhoneAuthCredential credential) {
-          // Android verified the new number without an SMS; the OTP page
-          // signs in with it and moves the account over as usual.
-          if (!mounted) return;
-          setState(() {
-            isLoading = false;
-            _isUpdatingPhone = false;
-          });
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => OtpPage(
-                phoneNumber: newPhone,
-                isFromProfile: true,
-                autoVerifiedCredential: credential,
-              ),
-            ),
+          if (changedPhone == null || !mounted) return;
+          setState(() => _verifiedPhone = changedPhone);
+          // "Remember me" should prefill the new number at the next login.
+          if (LocalStoreHelper.getRememberMe()) {
+            LocalStoreHelper.putPhoneNumber(
+              CountryCodeDetector.saudiLocalNumber(changedPhone),
+            );
+          }
+          _showSnackBar(
+            AppLocalizations.of(context)?.phoneNumberChangedSuccessfully ?? '',
+            backgroundColor: Colors.green,
           );
         },
+        // Phone changes only run on the Taqnyat flow, which never auto-verifies.
+        onAutoVerified: (PhoneAuthCredential credential) {},
         onError: (FirebaseAuthException e) {
           if (mounted) {
             setState(() {

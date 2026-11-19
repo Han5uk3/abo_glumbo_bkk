@@ -8,9 +8,11 @@ import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
 import 'package:abo_glumbo_bbk/providers.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +39,23 @@ Future<void> _initializeFirebaseDatabase() async {
       debugPrint('⚠️ Persistence already set or error: $e');
       _persistenceEnabled = true;
     }
+  }
+}
+
+/// Proves requests come from the genuine app. Never awaited: startup must not
+/// depend on the attestation services responding.
+Future<void> _activateAppCheck() async {
+  try {
+    await FirebaseAppCheck.instance.activate(
+      providerAndroid: kDebugMode
+          ? const AndroidDebugProvider()
+          : const AndroidPlayIntegrityProvider(),
+      providerApple: kDebugMode
+          ? const AppleDebugProvider()
+          : const AppleAppAttestWithDeviceCheckFallbackProvider(),
+    );
+  } catch (e) {
+    debugPrint('⚠️ App Check activation failed: $e');
   }
 }
 
@@ -75,6 +94,8 @@ Future<void> main() async {
       // Firebase is critical - rethrow to show error screen
       throw Exception('Firebase Init Error: $e');
     }
+
+    _activateAppCheck();
 
     // 2. Set database persistence (non-critical, can fail gracefully)
     try {

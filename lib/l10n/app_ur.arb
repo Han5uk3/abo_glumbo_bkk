@@ -1088,5 +1088,8 @@
   "complaintResolvedByAdmin": "شکایت ایڈمن کی طرف سے حل کر دی گئی",
   "adminResolvedYourComplaint": "ایڈمن نے آپ کی شکایت حل کر دی",
   "bookingRequestTimedOut": "بکنگ کی درخواست کا وقت ختم ہو گیا۔ براہ کرم دوبارہ درخواست کریں۔",
-  "technicianTrackingNotification": "ٹیکنیشن راستے میں ہے، {distance} دور، اور پہنچنے کا وقت ہے {time}"
+  "technicianTrackingNotification": "ٹیکنیشن راستے میں ہے، {distance} دور، اور پہنچنے کا وقت ہے {time}",
+  "signInAgainToChangePhone": "اپنا فون نمبر تبدیل کرنے کے لیے براہ کرم دوبارہ سائن ان کریں۔",
+  "phoneChangeUnavailable": "فون نمبر کی تبدیلی عارضی طور پر دستیاب نہیں ہے۔ براہ کرم بعد میں دوبارہ کوشش کریں۔",
+  "phoneNumberChangedSuccessfully": "فون نمبر کامیابی سے اپ ڈیٹ ہو گیا"
 }
