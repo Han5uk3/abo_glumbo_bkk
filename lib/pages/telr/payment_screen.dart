@@ -10,6 +10,7 @@ import 'package:abo_glumbo_bbk/models/telr/request_model.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/payment_failed.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
+import 'package:abo_glumbo_bbk/services/app_settings_service.dart';
 import 'package:abo_glumbo_bbk/services/telr_config.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/processing_payment_page.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
@@ -147,6 +148,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       }
     }
 
+    final testMode = await AppSettingsService.resolveGatewayTestMode();
+
     try {
       final paymentRequest = TelrPaymentRequest(
         ivp_store: TelrConfig.storeId,
@@ -159,7 +162,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
               ? widget.notesController?.text ?? "No description provided"
               : "No description provided",
           ivp_currency: TelrConfig.currency,
-          ivp_test: TelrConfig.testMode,
+          ivp_test: testMode ? '1' : '0',
         ),
         return_auth: TelrConfig.returnAuthUrl,
         return_can: TelrConfig.returnCanUrl,

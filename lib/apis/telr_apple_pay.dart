@@ -14,6 +14,7 @@ class ApplePayService {
     required String customerName,
     required String customerEmail,
     required String customerPhone,
+    required bool testMode,
   }) async {
     try {
       final fullName = customerName.split(" ");
@@ -24,7 +25,7 @@ class ApplePayService {
         "store": storeId,
         "authkey": authKey,
         "tran": {
-          "test": 1,
+          "test": testMode ? 1 : 0,
           "type": "auth",
           "class": "ecom",
           "cartid": orderId,

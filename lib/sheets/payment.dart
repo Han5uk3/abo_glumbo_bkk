@@ -11,6 +11,7 @@ import 'package:abo_glumbo_bbk/models/transaction.dart';
 import 'package:abo_glumbo_bbk/models/user.dart';
 import 'package:abo_glumbo_bbk/pages/bookings/payment_success.dart';
 import 'package:abo_glumbo_bbk/pages/telr/payment_screen.dart';
+import 'package:abo_glumbo_bbk/services/app_settings_service.dart';
 import 'package:abo_glumbo_bbk/services/booking/save_booking.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -242,6 +243,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
         );
 
         try {
+          final testMode = await AppSettingsService.resolveGatewayTestMode();
           final paymentSuccess = await applePayService.sendApplePayTokenToTelr(
             applePayToken: tokenForTelr,
             amount: finalAmount,
@@ -249,6 +251,7 @@ class _PaymentWindowState extends State<PaymentWindow> {
             customerName: widget.customerData.name.toString(),
             customerEmail: widget.customerData.email.toString(),
             customerPhone: widget.customerData.phone.toString(),
+            testMode: testMode,
           );
 
           if (paymentSuccess) {

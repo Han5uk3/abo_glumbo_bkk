@@ -4,7 +4,8 @@ class TelrConfig {
   //  'hSpz8-KLzZn~W5mp';
   // test ;
 
-  static const String testMode = '0'; // '1' for test mode, '0' for live mode
+  // Test or live mode is read for each payment from app_settings/gateway
+  // (AppSettingsService.resolveGatewayTestMode).
   static const String currency = 'SAR';
   static const String returnAuthUrl = 'https://yourapp.com/payment/success';
   static const String returnCanUrl = 'https://yourapp.com/payment/cancelled';

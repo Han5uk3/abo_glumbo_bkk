@@ -29,6 +29,14 @@ class AppSettingsService {
 
   static const Duration _otpProviderTimeout = Duration(milliseconds: 2500);
 
+  /// Payment gateway settings for card (Telr hosted page) and Apple Pay.
+  static const String gatewayDocId = 'gateway';
+
+  /// `true` sends payments to Telr as test transactions.
+  static const String gatewayTestModeField = 'testMode';
+
+  static const Duration _gatewayTimeout = Duration(seconds: 5);
+
   static DocumentReference<Object?> get _docRef =>
       AppFirestore.appSettingsCollectionRef.doc(docId);
 
@@ -54,6 +62,24 @@ class AppSettingsService {
       return provider;
     } catch (e) {
       return _parseOtpProvider(LocalStoreHelper.getOtpProvider());
+    }
+  }
+
+  /// Whether the payment about to start is a Telr test transaction, read from
+  /// `app_settings/gateway` on the server for every payment.
+  ///
+  /// Only a confirmed `true` means test. A missing document or field, a
+  /// non-bool value, or a failed or slow read all mean live, so a bad read
+  /// never lets a real payment through uncharged.
+  static Future<bool> resolveGatewayTestMode() async {
+    try {
+      final snapshot = await AppFirestore.appSettingsCollectionRef
+          .doc(gatewayDocId)
+          .get(const GetOptions(source: Source.server))
+          .timeout(_gatewayTimeout);
+      return _readFlag(snapshot, gatewayTestModeField, fallback: false);
+    } catch (_) {
+      return false;
     }
   }
 
