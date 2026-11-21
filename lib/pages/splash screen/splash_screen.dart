@@ -2,6 +2,8 @@ import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
 import 'package:abo_glumbo_bbk/pages/login/onboarding_page.dart';
 import 'package:abo_glumbo_bbk/pages/accounts/bloc/account_bloc.dart';
+import 'package:abo_glumbo_bbk/services/auth_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
@@ -101,23 +103,48 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _initializeApp() async {
-    // Redundant delay removed as it's now handled by the animation sequence completion logic
-
-    if (mounted) {
-      if (LocalStoreHelper.getUID() != null && !_isUserLogout) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => Home()),
-          (Route<dynamic> route) => false,
-        );
-      } else {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const OnboardingPage()),
-          (Route<dynamic> route) => false,
-        );
-      }
+    final uid = LocalStoreHelper.getUID();
+    if (uid == null || _isUserLogout) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const OnboardingPage()),
+        (Route<dynamic> route) => false,
+      );
+      return;
     }
+
+    // The stored UID only says who used the app last. Without the Firebase
+    // session behind it, Storage refuses uploads such as payment proofs.
+    if (!await _hasSessionFor(uid)) {
+      if (!mounted) return;
+      if (!LocalStoreHelper.getGuestUser()) {
+        await AuthServices.sendToSignIn(context, uid);
+        return;
+      }
+      // A guest who kept the UID for biometrics carries on as a guest.
+      await AuthServices.clearStaleSession(uid);
+    }
+
+    if (!mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => Home()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  /// Waits for the SDK to restore a saved session before checking it.
+  Future<bool> _hasSessionFor(String uid) async {
+    try {
+      await FirebaseAuth.instance
+          .authStateChanges()
+          .first
+          .timeout(const Duration(seconds: 3));
+    } catch (_) {}
+    return AuthServices.hasValidSessionFor(
+      uid,
+      timeout: const Duration(seconds: 5),
+    );
   }
 
   @override

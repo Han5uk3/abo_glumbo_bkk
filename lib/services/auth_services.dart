@@ -9,6 +9,7 @@ import 'package:abo_glumbo_bbk/models/address.dart';
 import 'package:abo_glumbo_bbk/models/customer.dart';
 import 'package:abo_glumbo_bbk/pages/SignUp/signup_page.dart';
 import 'package:abo_glumbo_bbk/pages/home/main_home.dart';
+import 'package:abo_glumbo_bbk/pages/login/login_page.dart';
 import 'package:abo_glumbo_bbk/services/app_settings_service.dart';
 import 'package:abo_glumbo_bbk/services/notification_services.dart';
 import 'package:abo_glumbo_bbk/services/otp_api.dart';
@@ -27,7 +28,11 @@ class AuthServices {
   /// server accepts. A disabled or deleted account or a revoked session fails;
   /// an unreachable network does not, since the SDK re-checks on its next
   /// token refresh anyway.
-  static Future<bool> hasValidSessionFor(String? uid) async {
+  /// A server check that takes longer than [timeout] counts as unreachable.
+  static Future<bool> hasValidSessionFor(
+    String? uid, {
+    Duration? timeout,
+  }) async {
     final user = FirebaseAuth.instance.currentUser;
     if (uid == null ||
         uid.isEmpty ||
@@ -37,13 +42,44 @@ class AuthServices {
       return false;
     }
     try {
-      await user.getIdToken(true);
+      final refresh = user.getIdToken(true);
+      await (timeout == null ? refresh : refresh.timeout(timeout));
+      return true;
+    } on TimeoutException {
       return true;
     } on FirebaseAuthException catch (e) {
       return e.code == 'network-request-failed';
     } catch (_) {
       return false;
     }
+  }
+
+  /// Forgets [uid] on this device once its Firebase session is gone. The
+  /// stored UID alone is enough to open the app as that customer, and
+  /// Firestore lets it read and write, but Storage refuses every upload
+  /// without a session (firebase_storage/unauthorized).
+  static Future<void> clearStaleSession(String? uid) async {
+    if (uid != null && uid.isNotEmpty) {
+      await LocalStoreHelper.clearBiometricAuthEnabled(uid);
+    }
+    await LocalStoreHelper.clearLastValidUID();
+    await LocalStoreHelper.clearUID();
+    await FirebaseAuth.instance.signOut();
+  }
+
+  /// Ends a stale session and opens the login page, saying why.
+  static Future<void> sendToSignIn(BuildContext context, String? uid) async {
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final messenger = ScaffoldMessenger.of(context);
+    final message =
+        AppLocalizations.of(context)?.biometricSessionExpired ??
+        'Your session has ended. Please sign in with your phone number again.';
+    await clearStaleSession(uid);
+    navigator.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+      (route) => false,
+    );
+    messenger.showSnackBar(SnackBar(content: Text(message)));
   }
 
   String _sanitizeOTP(String input) {

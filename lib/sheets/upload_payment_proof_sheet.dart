@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:abo_glumbo_bbk/common_widgets/elevated_button.dart';
 import 'package:abo_glumbo_bbk/common_widgets/loader.dart';
 import 'package:abo_glumbo_bbk/helpers/collections.dart';
+import 'package:abo_glumbo_bbk/helpers/hive_helper.dart';
 import 'package:abo_glumbo_bbk/l10n/app_localizations.dart';
 import 'package:abo_glumbo_bbk/models/booking.dart';
+import 'package:abo_glumbo_bbk/services/auth_services.dart';
 import 'package:abo_glumbo_bbk/styles/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -153,6 +155,15 @@ class _UploadPaymentProofSheetState extends State<UploadPaymentProofSheet> {
     setState(() {
       _isUploading = true;
     });
+
+    // Storage refuses uploads without a Firebase session, which can end while
+    // the app is open. Signing in again is the only way to send the proof.
+    final uid = LocalStoreHelper.getUID();
+    if (!await AuthServices.hasValidSessionFor(uid)) {
+      if (!mounted) return;
+      await AuthServices.sendToSignIn(context, uid);
+      return;
+    }
 
     try {
       // Upload files to Firebase Storage
